@@ -27,6 +27,7 @@
 		62E0D3602719C700009D58D2 /* Robotic Complex Workspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Robotic Complex Workspace.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		62E0D3622719C700009D58D2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62E0D3632719C700009D58D2 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		62E0D3742719CB9D009D58D2 /* Robotic Complex Workspace (iOS).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Robotic Complex Workspace (iOS).entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +51,7 @@
 		62E0D34A2719C6FC009D58D2 = {
 			isa = PBXGroup;
 			children = (
+				62E0D3742719CB9D009D58D2 /* Robotic Complex Workspace (iOS).entitlements */,
 				62E0D34F2719C6FC009D58D2 /* Shared */,
 				62E0D35A2719C700009D58D2 /* iOS */,
 				62E0D3612719C700009D58D2 /* macOS */,
@@ -327,6 +329,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Robotic Complex Workspace (iOS).entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6T64H9365J;
@@ -349,6 +352,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
 				PRODUCT_NAME = "Robotic Complex Workspace";
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -360,6 +364,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Robotic Complex Workspace (iOS).entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6T64H9365J;
@@ -382,6 +387,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
 				PRODUCT_NAME = "Robotic Complex Workspace";
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
