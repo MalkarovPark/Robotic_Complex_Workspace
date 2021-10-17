@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		62A23C4B271C70D0008FC0CC /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A23C4A271C70D0008FC0CC /* Sidebar.swift */; };
+		62A23C4C271C70D0008FC0CC /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A23C4A271C70D0008FC0CC /* Sidebar.swift */; };
 		62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */; };
 		62E0D3652719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */; };
 		62E0D3662719C700009D58D2 /* Robotic_Complex_WorkspaceDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */; };
@@ -18,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		62A23C4A271C70D0008FC0CC /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceApp.swift; sourceTree = "<group>"; };
 		62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceDocument.swift; sourceTree = "<group>"; };
 		62E0D3522719C6FC009D58D2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -66,6 +69,7 @@
 				62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */,
 				62E0D3522719C6FC009D58D2 /* ContentView.swift */,
 				62E0D3532719C6FF009D58D2 /* Assets.xcassets */,
+				62A23C4A271C70D0008FC0CC /* Sidebar.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -196,6 +200,7 @@
 			files = (
 				62E0D3662719C700009D58D2 /* Robotic_Complex_WorkspaceDocument.swift in Sources */,
 				62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
+				62A23C4B271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				62E0D3682719C700009D58D2 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -206,6 +211,7 @@
 			files = (
 				62E0D3672719C700009D58D2 /* Robotic_Complex_WorkspaceDocument.swift in Sources */,
 				62E0D3652719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
+				62A23C4C271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				62E0D3692719C700009D58D2 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
