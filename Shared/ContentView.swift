@@ -13,7 +13,11 @@ struct ContentView: View
 
     var body: some View
     {
-        TextEditor(text: $document.text)
+        NavigationView
+        {
+            Sidebar()
+            TextEditor(text: $document.text)
+        }
     }
 }
 
