@@ -30,8 +30,8 @@ struct SidebarContent: View
     {
         List
         {
-            Label("Workspace", systemImage: "book.closed")
-            Label("Robots", systemImage: "list.bullet.rectangle")
+            Label("Workspace", systemImage: "cube.transparent")
+            Label("Robots", systemImage: "circle")
         }
         .listStyle(SidebarListStyle())
         

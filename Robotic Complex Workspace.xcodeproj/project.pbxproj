@@ -68,8 +68,8 @@
 				62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */,
 				62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */,
 				62E0D3522719C6FC009D58D2 /* ContentView.swift */,
-				62E0D3532719C6FF009D58D2 /* Assets.xcassets */,
 				62A23C4A271C70D0008FC0CC /* Sidebar.swift */,
+				62E0D3532719C6FF009D58D2 /* Assets.xcassets */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
