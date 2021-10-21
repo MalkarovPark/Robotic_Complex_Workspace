@@ -14,7 +14,11 @@ struct Sidebar: View
     var body: some View
     {
         //Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        #if os(macOS)
         SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250, maxWidth: 300)
+        #else
+        SidebarContent(document: $document)//.navigationTitle("Code")
+        #endif
     }
 }
 
@@ -51,6 +55,7 @@ struct SidebarContent: View
         }
         .listStyle(SidebarListStyle())
         
+        #if os(macOS)
         .toolbar
         {
             ToolbarItem
@@ -61,12 +66,15 @@ struct SidebarContent: View
                 }
             }
         }
+        #endif
     }
     
+    #if os(macOS)
     func toggle_sidebar()
     {
         NSApp.keyWindow?.firstResponder?.tryToPerform(
           #selector(NSSplitViewController.toggleSidebar),
           with: nil)
     }
+    #endif
 }

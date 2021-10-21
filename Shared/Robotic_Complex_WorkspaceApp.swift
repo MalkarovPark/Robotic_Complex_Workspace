@@ -13,8 +13,8 @@ struct Robotic_Complex_WorkspaceApp: App
     var body: some Scene
     {
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
-        { file in
-            ContentView(document: file.$document)
+        {
+            file in ContentView(document: file.$document)
         }
     }
 }

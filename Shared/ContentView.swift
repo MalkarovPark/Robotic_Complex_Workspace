@@ -24,6 +24,7 @@ struct ContentView: View
             Sidebar(document: $document)
             //TextEditor(text: $document.text)
         }
+        .navigationViewStyle(DoubleColumnNavigationViewStyle())
     }
 }
 
