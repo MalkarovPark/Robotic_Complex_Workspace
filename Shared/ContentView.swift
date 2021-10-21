@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+enum navigation_item
+{
+    case WorkspaceView
+    case RobotsView
+}
+
 struct ContentView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -15,8 +21,8 @@ struct ContentView: View
     {
         NavigationView
         {
-            Sidebar()
-            TextEditor(text: $document.text)
+            Sidebar(document: $document)
+            //TextEditor(text: $document.text)
         }
     }
 }

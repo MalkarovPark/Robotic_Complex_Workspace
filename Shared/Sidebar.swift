@@ -29,13 +29,25 @@ struct Sidebar_Previews: PreviewProvider
 struct SidebarContent: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @State var sidebar_selection: navigation_item? = .WorkspaceView
     
     var body: some View
     {
-        List
+        List(selection: $sidebar_selection)
         {
-            Label("Workspace", systemImage: "cube.transparent")
-            Label("Robots", systemImage: "circle")
+            NavigationLink(destination: WorkspaceView(document: $document), tag: navigation_item.WorkspaceView, selection: $sidebar_selection)
+            {
+                Label("Workspace", systemImage: "cube.transparent")
+            }
+            .tag(navigation_item.WorkspaceView)
+            
+            NavigationLink(destination: RobotsView(), tag: navigation_item.RobotsView, selection: $sidebar_selection)
+            {
+                Label("Robots", systemImage: "circle")
+            }
+            .tag(navigation_item.RobotsView)
+            //Label("Workspace", systemImage: "cube.transparent")
+            //Label("Robots", systemImage: "circle")
         }
         .listStyle(SidebarListStyle())
         
