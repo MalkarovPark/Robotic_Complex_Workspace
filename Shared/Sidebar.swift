@@ -50,8 +50,6 @@ struct SidebarContent: View
                 Label("Robots", systemImage: "circle")
             }
             .tag(navigation_item.RobotsView)
-            //Label("Workspace", systemImage: "cube.transparent")
-            //Label("Robots", systemImage: "circle")
         }
         .listStyle(SidebarListStyle())
         
