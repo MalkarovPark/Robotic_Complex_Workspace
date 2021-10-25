@@ -19,33 +19,19 @@ struct ContentView: View
 
     var body: some View
     {
-        #if os(macOS)
         NavigationView
         {
             Sidebar(document: $document)
+            #if os(iOS)
+            WorkspaceView(document: $document)
+            #endif
         }
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
-        #else
-        TextEditor(text: $document.text)
-        .toolbar
-        {
-            ToolbarItem
-            {
-                Button(action: button_func)
-                {
-                    Text("КУ")
-                }
-            }
-        }
+        #if os(iOS)
+        .navigationBarHidden(true)
+        //.modifier(dismiss_modifier())
         #endif
     }
-    
-    #if os(iOS)
-    func button_func()
-    {
-        print("🔮")
-    }
-    #endif
 }
 
 struct ContentView_Previews: PreviewProvider
