@@ -14,7 +14,9 @@ struct WorkspaceView: View
     var body: some View
     {
         TextEditor(text: $document.text)
+        #if os(iOS)
             .padding()
+        #endif
         //Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }

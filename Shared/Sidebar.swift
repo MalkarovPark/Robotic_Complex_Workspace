@@ -39,6 +39,7 @@ struct SidebarContent: View
     {
         List(selection: $sidebar_selection)
         {
+            #if os(macOS)
             NavigationLink(destination: WorkspaceView(document: $document), tag: navigation_item.WorkspaceView, selection: $sidebar_selection)
             {
                 Label("Workspace", systemImage: "cube.transparent")
@@ -50,6 +51,17 @@ struct SidebarContent: View
                 Label("Robots", systemImage: "circle")
             }
             .tag(navigation_item.RobotsView)
+            #else
+            NavigationLink(destination: WorkspaceView(document: $document))
+            {
+                Label("Workspace", systemImage: "cube.transparent")
+            }
+            
+            NavigationLink(destination: RobotsView())
+            {
+                Label("Robots", systemImage: "circle")
+            }
+            #endif
         }
         .listStyle(SidebarListStyle())
         
