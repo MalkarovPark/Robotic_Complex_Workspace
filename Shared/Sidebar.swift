@@ -17,7 +17,7 @@ struct Sidebar: View
         #if os(macOS)
         SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250, maxWidth: 300)
         #else
-        SidebarContent(document: $document)//.navigationTitle("Code")
+        SidebarContent(document: $document).navigationTitle("Workspace")
         #endif
     }
 }
@@ -53,9 +53,9 @@ struct SidebarContent: View
         }
         .listStyle(SidebarListStyle())
         
-        #if os(macOS)
         .toolbar
         {
+            #if os(macOS)
             ToolbarItem
             {
                 Button(action: toggle_sidebar)
@@ -63,8 +63,13 @@ struct SidebarContent: View
                     Label("Toggle Sidebar", systemImage: "sidebar.left")
                 }
             }
+            #else
+            ToolbarItem(placement: .cancellationAction)
+            {
+                dismiss_document_button()
+            }
+            #endif
         }
-        #endif
     }
     
     #if os(macOS)

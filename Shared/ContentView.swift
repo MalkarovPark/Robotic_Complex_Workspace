@@ -29,7 +29,7 @@ struct ContentView: View
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
         #if os(iOS)
         .navigationBarHidden(true)
-        //.modifier(dismiss_modifier())
+        .modifier(DismissModifier())
         #endif
     }
 }

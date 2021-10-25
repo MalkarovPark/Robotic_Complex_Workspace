@@ -14,6 +14,7 @@ struct WorkspaceView: View
     var body: some View
     {
         TextEditor(text: $document.text)
+            .padding()
         //Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
