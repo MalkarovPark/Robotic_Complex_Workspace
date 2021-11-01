@@ -16,12 +16,13 @@ enum navigation_item
 struct ContentView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @State var file_name = ""
 
     var body: some View
     {
         NavigationView
         {
-            Sidebar(document: $document)
+            Sidebar(document: $document, file_name: file_name)
             #if os(iOS)
             WorkspaceView(document: $document)
             #endif
@@ -38,6 +39,26 @@ struct ContentView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+        #if os(macOS)
+        if #available(macOS 11.0, *)
+        {
+            ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+        }
+        else
+        {
+            // Fallback on earlier versions
+        }
+        #else
+        if #available(iOS 15.0, *)
+        {
+            ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .previewDevice("iPad Pro (11-inch) (3rd generation)")
+                .previewInterfaceOrientation(.landscapeLeft)
+        }
+        else
+        {
+            // Fallback on earlier versions
+        }
+        #endif
     }
 }
