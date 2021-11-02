@@ -10,14 +10,14 @@ import SwiftUI
 struct Sidebar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @State var file_name = ""
     
     var body: some View
     {
-        //Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
         #if os(macOS)
         SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250, maxWidth: 300)
         #else
-        SidebarContent(document: $document).navigationTitle("Workspace")
+        SidebarContent(document: $document).navigationTitle(file_name)
         #endif
     }
 }
