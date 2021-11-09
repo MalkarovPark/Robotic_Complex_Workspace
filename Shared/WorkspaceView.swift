@@ -59,7 +59,7 @@ struct WorkspaceView: View
     
     func add_robot()
     {
-        print("⚗️")
+        print("🪄")
     }
 }
 
