@@ -18,13 +18,15 @@ struct RobotsView: View
             {
                 RobotsTableView(display_rv: $display_rv)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .transition(AnyTransition.move(edge: .leading)).animation(.default)
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    //.transition(AnyTransition.move(edge: .leading)).animation(.default)
             }
             if display_rv == true
             {
                 RobotView(display_rv: $display_rv)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .transition(AnyTransition.move(edge: .trailing)).animation(.default)
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    //.transition(AnyTransition.move(edge: .trailing)).animation(.default)
             }
         }
     }
