@@ -21,7 +21,7 @@ struct ContentView: View
         #if os(iOS)
         if horizontal_size_class == .compact
         {
-            
+            TabBar(document: $document)
         }
         else
         {
