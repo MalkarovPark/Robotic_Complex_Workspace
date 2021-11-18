@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import SceneKit
 
 struct RobotsView: View
 {
     @State private var display_rv = false
+    
     var body: some View
     {
         HStack
@@ -29,6 +31,9 @@ struct RobotsView: View
                     //.transition(AnyTransition.move(edge: .trailing)).animation(.default)
             }
         }
+        #if os(macOS)
+        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600)
+        #endif
     }
 }
 
@@ -36,13 +41,18 @@ struct RobotsView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        RobotsView()
+        Group
+        {
+            RobotsView()
+            RobotView(display_rv: .constant(true))
+        }
     }
 }
 
 struct RobotsTableView: View
 {
     @Binding var display_rv: Bool
+    
     var body: some View
     {
         VStack
@@ -51,7 +61,7 @@ struct RobotsTableView: View
             {
                 self.display_rv = true
             }
-            Text("Robots")
+            Text("Robots Table View")
         }
     }
 }
@@ -59,6 +69,7 @@ struct RobotsTableView: View
 struct RobotView: View
 {
     @Binding var display_rv: Bool
+    
     var body: some View
     {
         #if os(macOS)
@@ -67,12 +78,10 @@ struct RobotView: View
         let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
         #endif
         
-        VStack
+        HStack
         {
-            Button("Back to robots table")
-            {
-                self.display_rv = false
-            }
+            RobotSceneView()
+            RobotInspectorView(display_rv: $display_rv)//.frame(width: 80)
         }
         
         .toolbar
@@ -97,5 +106,55 @@ struct RobotView: View
     func add_robot()
     {
         print("🔮")
+    }
+}
+
+struct RobotSceneView: View
+{
+    let robot_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
+    var viewed_scene: SCNScene?
+    {
+        robot_scene
+    }
+    
+    var camera_node: SCNNode?
+    {
+        let cameraNode = SCNNode()
+        cameraNode.camera = SCNCamera()
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 2)
+        return cameraNode
+    }
+    
+    var body: some View
+    {
+        SceneView(scene: viewed_scene, pointOfView: camera_node, options: [.allowsCameraControl, .autoenablesDefaultLighting])
+        .onAppear
+        {
+            print("View Loaded")
+        }
+        #if os (iOS)
+        .cornerRadius(8)
+        .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))//(20)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+}
+
+struct RobotInspectorView: View
+{
+    @Binding var display_rv: Bool
+    
+    var body: some View
+    {
+        VStack
+        {
+            Button("Back to robots table")
+            {
+                self.display_rv = false
+            }
+            .padding()
+            Text("Inspector View")
+                .padding()
+        }
     }
 }

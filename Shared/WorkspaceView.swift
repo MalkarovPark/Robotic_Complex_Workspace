@@ -22,6 +22,8 @@ struct WorkspaceView: View
         TextEditor(text: $document.text)
         #if os(iOS)
             .padding()
+        #else
+            .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600)
         #endif
         
         .toolbar

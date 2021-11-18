@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+enum navigation_item
+{
+    case WorkspaceView
+    case RobotsView
+}
+
 struct Sidebar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -14,10 +20,19 @@ struct Sidebar: View
     
     var body: some View
     {
-        #if os(macOS)
-        SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250, maxWidth: 300)
-        #else
-        SidebarContent(document: $document).navigationTitle(file_name)
+        NavigationView
+        {
+            #if os(macOS)
+            SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250)
+            #else
+            SidebarContent(document: $document).navigationTitle(file_name)
+            WorkspaceView(document: $document)
+            #endif
+        }
+        .navigationViewStyle(DoubleColumnNavigationViewStyle())
+        #if os(iOS)
+        .navigationBarHidden(true)
+        .modifier(DismissModifier())
         #endif
     }
 }

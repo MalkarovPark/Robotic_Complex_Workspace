@@ -16,5 +16,9 @@ struct Robotic_Complex_WorkspaceApp: App
         {
             file in ContentView(document: file.$document, file_name: "\(file.fileURL!.deletingPathExtension().lastPathComponent)")
         }
+        .commands
+        {
+            SidebarCommands()
+        }
     }
 }

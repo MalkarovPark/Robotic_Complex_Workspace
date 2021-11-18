@@ -7,30 +7,28 @@
 
 import SwiftUI
 
-enum navigation_item
-{
-    case WorkspaceView
-    case RobotsView
-}
-
 struct ContentView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @State var file_name = ""
 
-    var body: some View
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    #endif
+
+    @ViewBuilder var body: some View
     {
-        NavigationView
+        #if os(iOS)
+        if horizontal_size_class == .compact
+        {
+            
+        }
+        else
         {
             Sidebar(document: $document, file_name: file_name)
-            #if os(iOS)
-            WorkspaceView(document: $document)
-            #endif
         }
-        .navigationViewStyle(DoubleColumnNavigationViewStyle())
-        #if os(iOS)
-        .navigationBarHidden(true)
-        .modifier(DismissModifier())
+        #else
+        Sidebar(document: $document, file_name: file_name)
         #endif
     }
 }

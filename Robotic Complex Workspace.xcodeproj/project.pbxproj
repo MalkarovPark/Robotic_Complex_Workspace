@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		62253FD42746211D00F76A51 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 62253FD32746211D00F76A51 /* Components.scnassets */; };
+		62253FD52746211D00F76A51 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 62253FD32746211D00F76A51 /* Components.scnassets */; };
 		626E88E52727073F00631945 /* DismissModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 626E88E42727073F00631945 /* DismissModifier.swift */; };
 		6279ED6E2721A4F300EEA986 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */; };
 		6279ED6F2721A4F300EEA986 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */; };
@@ -25,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		62253FD32746211D00F76A51 /* Components.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Components.scnassets; sourceTree = "<group>"; };
 		626E88E42727073F00631945 /* DismissModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissModifier.swift; sourceTree = "<group>"; };
 		6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
 		6279ED702721A5B400EEA986 /* RobotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsView.swift; sourceTree = "<group>"; };
@@ -73,6 +76,7 @@
 		62E0D34F2719C6FC009D58D2 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				62253FD32746211D00F76A51 /* Components.scnassets */,
 				62E0D3532719C6FF009D58D2 /* Assets.xcassets */,
 				62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */,
 				62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */,
@@ -191,6 +195,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				62E0D36A2719C700009D58D2 /* Assets.xcassets in Resources */,
+				62253FD42746211D00F76A51 /* Components.scnassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,6 +204,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				62E0D36B2719C700009D58D2 /* Assets.xcassets in Resources */,
+				62253FD52746211D00F76A51 /* Components.scnassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
