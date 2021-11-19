@@ -63,6 +63,9 @@ struct RobotsTableView: View
             }
             Text("Robots Table View")
         }
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }
 
@@ -132,7 +135,7 @@ struct RobotSceneView: View
         {
             print("View Loaded")
         }
-        #if os (iOS)
+        #if os(iOS)
         .cornerRadius(8)
         .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))//(20)
         .navigationBarTitleDisplayMode(.inline)
