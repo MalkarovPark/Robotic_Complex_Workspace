@@ -45,7 +45,7 @@ struct RobotsView_Previews: PreviewProvider
         {
             RobotsView()
             RobotView(display_rv: .constant(true))
-            AddRobotView(display_arv: .constant(true))
+            AddRobotView(add_robot_view_presented: .constant(true))
         }
     }
 }
@@ -53,7 +53,7 @@ struct RobotsView_Previews: PreviewProvider
 struct RobotsTableView: View
 {
     @Binding var display_rv: Bool
-    @State private var display_arv = false
+    @State private var add_robot_view_presented = false
     
     var body: some View
     {
@@ -63,13 +63,13 @@ struct RobotsTableView: View
             {
                 self.display_rv = true
             }
-            Button(action: { display_arv.toggle() })
+            Button(action: { add_robot_view_presented.toggle() })
             {
                 Text("Add Robot")
             }
-            .sheet(isPresented: $display_arv)//, onDismiss: didDismiss)
+            .sheet(isPresented: $add_robot_view_presented)//, onDismiss: didDismiss)
             {
-                AddRobotView(display_arv: $display_arv)
+                AddRobotView(add_robot_view_presented: $add_robot_view_presented)
             }
         }
         #if os(iOS)
@@ -80,15 +80,12 @@ struct RobotsTableView: View
 
 struct AddRobotView: View
 {
-    @Binding var display_arv: Bool
+    @Binding var add_robot_view_presented: Bool
     
     var body: some View
     {
-        /*NavigationView
-        {
-            Text("List of notifications")
-            //.navigationBarTitle(Text("Notifications"), displayMode: .inline)
-        }*/
+        let button_padding = 16.0
+        
         VStack
         {
             Text("Big Label")
@@ -98,19 +95,40 @@ struct AddRobotView: View
                 .padding(50)
             Spacer()
             Divider()
+            
             HStack
             {
                 Spacer()
-                Button("Cancel", action: { display_arv.toggle() })
+                
+                #if os(macOS)
+                Button("Cancel", action: { add_robot_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
-                    .padding(.top, 8.0)
-                    .padding(.bottom, 16.0)
-                    .padding(.trailing, 8.0)
-                Button("Save", action: { display_arv.toggle() })
+                    .padding(.top, button_padding - 8.0)
+                    .padding(.bottom, button_padding)
+                    .padding(.trailing, button_padding - 8.0)
+                
+                Button("Save", action: { add_robot_view_presented.toggle() })
                     .keyboardShortcut(.defaultAction)
-                    .padding(.top, 8.0)
-                    .padding(.bottom, 16.0)
-                    .padding(.trailing, 16.0)
+                    .padding(.top, button_padding - 8.0)
+                    .padding(.bottom, button_padding)
+                    .padding(.trailing, button_padding)
+                #else
+                Button("Cancel", action: { add_robot_view_presented.toggle() })
+                    .keyboardShortcut(.cancelAction)
+                    .controlSize(.large)
+                    .padding(.top, button_padding - 8.0)
+                    .padding(.bottom, button_padding)
+                    .padding(.trailing, button_padding - 8.0)
+                
+                Button("Save", action: { add_robot_view_presented.toggle() })
+                    .font(.headline)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.roundedRectangle)
+                    .controlSize(.large)
+                    .padding(.top, button_padding - 8.0)
+                    .padding(.bottom, button_padding)
+                    .padding(.trailing, button_padding)
+                #endif
             }
         }
         .frame(minWidth: 320, minHeight: 240)
