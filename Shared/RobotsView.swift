@@ -45,6 +45,7 @@ struct RobotsView_Previews: PreviewProvider
         {
             RobotsView()
             RobotView(display_rv: .constant(true))
+            AddRobotView(display_arv: .constant(true))
         }
     }
 }
@@ -52,6 +53,7 @@ struct RobotsView_Previews: PreviewProvider
 struct RobotsTableView: View
 {
     @Binding var display_rv: Bool
+    @State private var display_arv = false
     
     var body: some View
     {
@@ -61,11 +63,57 @@ struct RobotsTableView: View
             {
                 self.display_rv = true
             }
-            Text("Robots Table View")
+            Button(action: { display_arv.toggle() })
+            {
+                Text("Add Robot")
+            }
+            .sheet(isPresented: $display_arv)//, onDismiss: didDismiss)
+            {
+                AddRobotView(display_arv: $display_arv)
+            }
         }
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+    }
+}
+
+struct AddRobotView: View
+{
+    @Binding var display_arv: Bool
+    
+    var body: some View
+    {
+        /*NavigationView
+        {
+            Text("List of notifications")
+            //.navigationBarTitle(Text("Notifications"), displayMode: .inline)
+        }*/
+        VStack
+        {
+            Text("Big Label")
+                .font(.title)
+                .padding(50)
+            Text("Text")
+                .padding(50)
+            Spacer()
+            Divider()
+            HStack
+            {
+                Spacer()
+                Button("Cancel", action: { display_arv.toggle() })
+                    .keyboardShortcut(.cancelAction)
+                    .padding(.top, 8.0)
+                    .padding(.bottom, 16.0)
+                    .padding(.trailing, 8.0)
+                Button("Save", action: { display_arv.toggle() })
+                    .keyboardShortcut(.defaultAction)
+                    .padding(.top, 8.0)
+                    .padding(.bottom, 16.0)
+                    .padding(.trailing, 16.0)
+            }
+        }
+        .frame(minWidth: 320, minHeight: 240)
     }
 }
 
