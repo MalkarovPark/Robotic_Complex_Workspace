@@ -91,12 +91,13 @@ struct AddRobotView: View
     
     var body: some View
     {
+        #if os(macOS)
         let button_padding = 16.0
         
         VStack
         {
             Text("Add Robot")
-                .font(.title)
+                .font(.title2)//(.title)
                 .padding([.top, .leading, .trailing])
             
             VStack
@@ -109,28 +110,34 @@ struct AddRobotView: View
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 
-                Picker(selection: .constant(1), label: Text("Brand")
+                Picker(selection: $new_robot_parameters_index[0], label: Text("Brand")
                         .bold())
                 {
-                    Text("Fanuc").tag(1)
-                    Text("Kuka").tag(2)
+                    ForEach(0 ..< brands.count)
+                    {
+                        Text(brands[$0])
+                    }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 
-                Picker(selection: .constant(1), label: Text("Series")
+                Picker(selection: $new_robot_parameters_index[1], label: Text("Series")
                         .bold())
                 {
-                    Text("LR-Mate").tag(1)
-                    Text("Paint").tag(2)
+                    ForEach(0 ..< series.count)
+                    {
+                        Text(series[$0])
+                    }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, 4.0)
                 
-                Picker(selection: .constant(1), label: Text("Model")
+                Picker(selection: $new_robot_parameters_index[2], label: Text("Model")
                         .bold())
                 {
-                    Text("id-4s").tag(1)
-                    Text("id-20s").tag(2)
+                    ForEach(0 ..< models.count)
+                    {
+                        Text(models[$0])
+                    }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, 4.0)
@@ -144,7 +151,6 @@ struct AddRobotView: View
             {
                 Spacer()
                 
-                #if os(macOS)
                 Button("Cancel", action: { add_robot_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
                     .padding(.top, button_padding - 8.0)
@@ -156,27 +162,55 @@ struct AddRobotView: View
                     .padding(.top, button_padding - 8.0)
                     .padding(.bottom, button_padding)
                     .padding(.trailing, button_padding)
-                #else
-                Button("Cancel", action: { add_robot_view_presented.toggle() })
-                    .keyboardShortcut(.cancelAction)
-                    .controlSize(.large)
-                    .padding(.top, button_padding - 8.0)
-                    .padding(.bottom, button_padding)
-                    .padding(.trailing, button_padding - 8.0)
-                
-                Button("Save", action: { add_robot_view_presented.toggle() })
-                    .font(.headline)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.roundedRectangle)
-                    .controlSize(.large)
-                    .padding(.top, button_padding - 8.0)
-                    .padding(.bottom, button_padding)
-                    .padding(.trailing, button_padding)
-                #endif
             }
         }
-        #if os(macOS)
         .frame(minWidth: 160, idealWidth: 240, maxWidth: 320, minHeight: 240, maxHeight: 300)
+        #else
+        NavigationView
+        {
+            Form
+            {
+                Section(header: Text("Name"))
+                {
+                    TextField(text: $new_robot_name, prompt: Text("None"))
+                    {
+                        Text("Name")
+                    }
+                }
+                
+                Section(header: Text("Parameters"))
+                {
+                    Picker(selection: $new_robot_parameters_index[0], label: Text("Brand")
+                            .bold())
+                    {
+                        ForEach(0 ..< brands.count)
+                        {
+                            Text(brands[$0])
+                        }
+                    }
+                    
+                    Picker(selection: $new_robot_parameters_index[1], label: Text("Series")
+                            .bold())
+                    {
+                        ForEach(0 ..< series.count)
+                        {
+                            Text(series[$0])
+                        }
+                    }
+                    
+                    Picker(selection: $new_robot_parameters_index[2], label: Text("Model")
+                            .bold())
+                    {
+                        ForEach(0 ..< models.count)
+                        {
+                            Text(models[$0])
+                        }
+                    }
+                }
+            }
+            .navigationBarTitle(Text("Add Robot"), displayMode: .inline)
+            .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: { add_robot_view_presented.toggle() }))
+        }
         #endif
     }
 }
