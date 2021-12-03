@@ -81,6 +81,13 @@ struct RobotsTableView: View
 struct AddRobotView: View
 {
     @Binding var add_robot_view_presented: Bool
+    @State var new_robot_name = ""
+    @State var new_robot_parameters = ["Brand", "Series", "Model"]
+    @State var new_robot_parameters_index = [0, 0, 0]
+    
+    var brands = ["Fanuc", "Kuka"]
+    var series = ["LR-Mate", "Paint"]
+    var models = ["id-4s", "id-20s"]
     
     var body: some View
     {
@@ -88,11 +95,48 @@ struct AddRobotView: View
         
         VStack
         {
-            Text("Big Label")
+            Text("Add Robot")
                 .font(.title)
-                .padding(50)
-            Text("Text")
-                .padding(50)
+                .padding([.top, .leading, .trailing])
+            
+            VStack
+            {
+                HStack
+                {
+                    Text("Name")
+                        .bold()
+                    TextField("None", text: $new_robot_name)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+                
+                Picker(selection: .constant(1), label: Text("Brand")
+                        .bold())
+                {
+                    Text("Fanuc").tag(1)
+                    Text("Kuka").tag(2)
+                }
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                
+                Picker(selection: .constant(1), label: Text("Series")
+                        .bold())
+                {
+                    Text("LR-Mate").tag(1)
+                    Text("Paint").tag(2)
+                }
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.top, 4.0)
+                
+                Picker(selection: .constant(1), label: Text("Model")
+                        .bold())
+                {
+                    Text("id-4s").tag(1)
+                    Text("id-20s").tag(2)
+                }
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.top, 4.0)
+            }
+            .padding(.horizontal)
+            
             Spacer()
             Divider()
             
@@ -131,7 +175,9 @@ struct AddRobotView: View
                 #endif
             }
         }
-        .frame(minWidth: 320, minHeight: 240)
+        #if os(macOS)
+        .frame(minWidth: 160, idealWidth: 240, maxWidth: 320, minHeight: 240, maxHeight: 300)
+        #endif
     }
 }
 
