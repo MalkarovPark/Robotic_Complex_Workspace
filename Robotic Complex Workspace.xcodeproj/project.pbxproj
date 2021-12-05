@@ -10,6 +10,10 @@
 		62253FD42746211D00F76A51 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 62253FD32746211D00F76A51 /* Components.scnassets */; };
 		62253FD52746211D00F76A51 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 62253FD32746211D00F76A51 /* Components.scnassets */; };
 		62253FD72746611900F76A51 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62253FD62746611900F76A51 /* TabBar.swift */; };
+		624DA0C2275D2EE700918A9E /* Robot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624DA0C1275D2EE700918A9E /* Robot.swift */; };
+		624DA0C3275D2EE700918A9E /* Robot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624DA0C1275D2EE700918A9E /* Robot.swift */; };
+		624DA0C8275D3AA600918A9E /* PositionsProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624DA0C7275D3AA600918A9E /* PositionsProgram.swift */; };
+		624DA0C9275D3AA600918A9E /* PositionsProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624DA0C7275D3AA600918A9E /* PositionsProgram.swift */; };
 		626E88E52727073F00631945 /* DismissModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 626E88E42727073F00631945 /* DismissModifier.swift */; };
 		6279ED6E2721A4F300EEA986 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */; };
 		6279ED6F2721A4F300EEA986 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */; };
@@ -30,6 +34,8 @@
 /* Begin PBXFileReference section */
 		62253FD32746211D00F76A51 /* Components.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Components.scnassets; sourceTree = "<group>"; };
 		62253FD62746611900F76A51 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
+		624DA0C1275D2EE700918A9E /* Robot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robot.swift; sourceTree = "<group>"; };
+		624DA0C7275D3AA600918A9E /* PositionsProgram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionsProgram.swift; sourceTree = "<group>"; };
 		626E88E42727073F00631945 /* DismissModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissModifier.swift; sourceTree = "<group>"; };
 		6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
 		6279ED702721A5B400EEA986 /* RobotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsView.swift; sourceTree = "<group>"; };
@@ -64,6 +70,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		624DA0C0275D2E3F00918A9E /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				624DA0C1275D2EE700918A9E /* Robot.swift */,
+				624DA0C7275D3AA600918A9E /* PositionsProgram.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
 		62E0D34A2719C6FC009D58D2 = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +93,7 @@
 		62E0D34F2719C6FC009D58D2 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				624DA0C0275D2E3F00918A9E /* Classes */,
 				62253FD32746211D00F76A51 /* Components.scnassets */,
 				62E0D3532719C6FF009D58D2 /* Assets.xcassets */,
 				62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */,
@@ -223,8 +239,10 @@
 				626E88E52727073F00631945 /* DismissModifier.swift in Sources */,
 				62253FD72746611900F76A51 /* TabBar.swift in Sources */,
 				62A23C4B271C70D0008FC0CC /* Sidebar.swift in Sources */,
+				624DA0C8275D3AA600918A9E /* PositionsProgram.swift in Sources */,
 				6279ED712721A5B400EEA986 /* RobotsView.swift in Sources */,
 				6279ED6E2721A4F300EEA986 /* WorkspaceView.swift in Sources */,
+				624DA0C2275D2EE700918A9E /* Robot.swift in Sources */,
 				62E0D3682719C700009D58D2 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -234,7 +252,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				62E0D3672719C700009D58D2 /* Robotic_Complex_WorkspaceDocument.swift in Sources */,
+				624DA0C9275D3AA600918A9E /* PositionsProgram.swift in Sources */,
 				62E0D3652719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
+				624DA0C3275D2EE700918A9E /* Robot.swift in Sources */,
 				62A23C4C271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				6279ED722721A5B400EEA986 /* RobotsView.swift in Sources */,
 				6279ED6F2721A4F300EEA986 /* WorkspaceView.swift in Sources */,

@@ -107,7 +107,7 @@ struct AddRobotView: View
                     Text("Name")
                         .bold()
                     TextField("None", text: $new_robot_name)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        //.textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 
                 Picker(selection: $new_robot_parameters_index[0], label: Text("Brand")
@@ -239,6 +239,15 @@ struct RobotView: View
             {
                 HStack(alignment: .center)
                 {
+                    //Button("Save", action: add_robot)
+                    //Spacer()
+                    
+                    Button(action: { display_rv = false })
+                    {
+                        Label("Robots", systemImage: "xmark")
+                    }
+                    Spacer()
+                    
                     Button(action: add_robot)
                     {
                         Label("Robots", systemImage: "stop")
