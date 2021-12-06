@@ -13,6 +13,6 @@ class Workspace
     var robot1 = Robot()
     func open_robot()
     {
-        robot1.select_program(prog_name: "f")
+        robot1.select_program(name: "f")
     }
 }

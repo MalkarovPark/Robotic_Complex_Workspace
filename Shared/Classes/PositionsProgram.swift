@@ -16,7 +16,7 @@ class PositionsProgram : Equatable
     }
     
     private var program_name: String?
-    private var points = [SCNNode]()//: [SCNNode]?
+    private var points = [SCNNode]()
     private var point_node = SCNNode()
     
     //MARK: - Initialization
@@ -71,9 +71,9 @@ class PositionsProgram : Equatable
     private var positions_group = SCNNode()
     
     #if os(macOS)
-    private var target_point_color = NSColor.systemPurple
+    private let target_point_color = NSColor.systemPurple
     #else
-    private var target_point_color = UIColor.systemPurple
+    private let target_point_color = UIColor.systemPurple
     #endif
     
     public var positions_visible = false

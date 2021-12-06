@@ -14,17 +14,28 @@ class Robot
     private var ip_address: String?
     private var programs = [PositionsProgram]()
     
-    private func to_rad(in_angle: CGFloat) -> CGFloat
+    //MARK: - Initialization
+    init()
     {
-        return in_angle * .pi / 180
+        robot_init(name: "None", ip_address: "127.0.0.1")
     }
     
-    private func to_deg(in_angle: CGFloat) -> CGFloat
+    init(name: String, ip_address: String)
     {
-        return in_angle * 180 / .pi
+        robot_init(name: name, ip_address: ip_address)
+    }
+    
+    func robot_init(name: String, ip_address: String)
+    {
+        self.name = name
+        self.ip_address = ip_address
+        
+        build_robot()
     }
     
     //MARK: - Program manage functions
+    private var selected_program_index = 0
+    
     public func add_program(prog: PositionsProgram)
     {
         programs.append(prog)
@@ -36,6 +47,11 @@ class Robot
         {
             programs[number] = prog
         }
+    }
+    
+    public func update_program(name: String, prog: PositionsProgram)
+    {
+        update_program(number: number_by_name(name: name), prog: prog)
     }
     
     public func delete_program(number: Int)
@@ -53,7 +69,7 @@ class Robot
     
     public func select_program(number: Int)
     {
-        
+        selected_program_index = number
     }
     
     public func select_program(name: String)
@@ -70,7 +86,8 @@ class Robot
     }
     
     //MARK: - Moving functions
-    public var move_time: Int?
+    public var move_time: Double?
+    
     public var demo_work = true
     {
         didSet
@@ -96,7 +113,7 @@ class Robot
     {
         if demo_work == true
         {
-            
+            pointer_node.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)))
         }
         else
         {
@@ -112,5 +129,38 @@ class Robot
     public func reset_moving()
     {
         
+    }
+    
+    //MARK: - Build functions
+    private var pointer_node: SCNNode!
+    #if os(macOS)
+    private let pointer_node_color = NSColor.systemPurple
+    #else
+    private let pointer_node_color = UIColor.systemCyan
+    #endif
+    
+    public var poiner_visible = true
+    {
+        didSet
+        {
+            pointer_node.isHidden = poiner_visible
+        }
+    }
+    
+    private func build_robot()
+    {
+        pointer_node = SCNNode()
+        pointer_node.geometry = SCNSphere(radius: 1)
+        pointer_node.geometry?.firstMaterial?.diffuse.contents = pointer_node_color
+    }
+    
+    private func to_rad(in_angle: CGFloat) -> CGFloat
+    {
+        return in_angle * .pi / 180
+    }
+    
+    private func to_deg(in_angle: CGFloat) -> CGFloat
+    {
+        return in_angle * 180 / .pi
     }
 }
