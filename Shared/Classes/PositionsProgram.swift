@@ -33,10 +33,13 @@ class PositionsProgram : Equatable
     //MARK: - Point manage functions
     public func add_point(pos_x: CGFloat, pos_y: CGFloat, pos_z: CGFloat, rot_x: CGFloat, rot_y: CGFloat, rot_z: CGFloat)
     {
+        #if os(macOS)
         point_node.position = SCNVector3(x: pos_x, y: pos_y, z: pos_z)
-        point_node.eulerAngles.x = rot_x
-        point_node.eulerAngles.y = rot_y
-        point_node.eulerAngles.z = rot_z
+        point_node.eulerAngles = SCNVector3(x: rot_x, y: rot_y, z: rot_z)
+        #else
+        point_node.position = SCNVector3(x: Float(pos_x), y: Float(pos_y), z: Float(pos_z))
+        point_node.eulerAngles = SCNVector3(x: Float(rot_x), y: Float(rot_y), z: Float(rot_z))
+        #endif
         
         points.append(point_node)
         
@@ -47,10 +50,13 @@ class PositionsProgram : Equatable
     {
         if points.indices.contains(number) == true
         {
+            #if os(macOS)
             point_node.position = SCNVector3(x: pos_x, y: pos_y, z: pos_z)
-            point_node.eulerAngles.x = rot_x
-            point_node.eulerAngles.y = rot_y
-            point_node.eulerAngles.z = rot_z
+            point_node.eulerAngles = SCNVector3(x: rot_x, y: rot_y, z: rot_z)
+            #else
+            point_node.position = SCNVector3(x: Float(pos_x), y: Float(pos_y), z: Float(pos_z))
+            point_node.eulerAngles = SCNVector3(x: Float(rot_x), y: Float(rot_y), z: Float(rot_z))
+            #endif
             
             points[number] = point_node
             
@@ -107,7 +113,11 @@ class PositionsProgram : Equatable
                         }
                         else
                         {
+                            #if os(macOS)
                             pivot_points[1] = SCNVector3(point.position.x + CGFloat.random(in: -0.001..<0.001), point.position.z + CGFloat.random(in: -0.001..<0.001), point.position.y + CGFloat.random(in: -0.001..<0.001))
+                            #else
+                            pivot_points[1] = SCNVector3(point.position.x + Float.random(in: -0.001..<0.001), point.position.z + Float.random(in: -0.001..<0.001), point.position.y + Float.random(in: -0.001..<0.001))
+                            #endif
                             positions_group.addChildNode(build_ptp_line(from: simd_float3(pivot_points[0]), to: simd_float3(pivot_points[1])))
                             pivot_points[0] = pivot_points[1]
                         }
@@ -137,7 +147,13 @@ class PositionsProgram : Equatable
         let height = simd_length(vector)
         
         let cylinder = SCNCylinder(radius: 0.2, height: CGFloat(height))
-        cylinder.firstMaterial?.diffuse.contents = NSColor.white
+        
+        #if os(macOS)
+        let cylinder_color = NSColor.white
+        #else
+        let cylinder_color = UIColor.white
+        #endif
+        cylinder.firstMaterial?.diffuse.contents = cylinder_color
         
         let line_node = SCNNode(geometry: cylinder)
         
@@ -163,7 +179,11 @@ class PositionsProgram : Equatable
             var movings_array = [SCNAction]()
             for point in points
             {
+                #if os(macOS)
                 movings_array.append(SCNAction.group([SCNAction.move(to: point.position, duration: move_time), SCNAction.rotateTo(x: point.rotation.x, y: point.rotation.y, z: point.rotation.z, duration: move_time)]))
+                #else
+                movings_array.append(SCNAction.group([SCNAction.move(to: point.position, duration: move_time), SCNAction.rotateTo(x: CGFloat(point.rotation.x), y: CGFloat(point.rotation.y), z: CGFloat(point.rotation.z), duration: move_time)]))
+                #endif
             }
             
             moving_group = SCNAction.sequence(movings_array)

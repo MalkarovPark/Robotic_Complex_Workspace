@@ -152,6 +152,7 @@ class Robot
         pointer_node = SCNNode()
         pointer_node.geometry = SCNSphere(radius: 1)
         pointer_node.geometry?.firstMaterial?.diffuse.contents = pointer_node_color
+        pointer_node.opacity = 0.5
     }
     
     private func to_rad(in_angle: CGFloat) -> CGFloat
