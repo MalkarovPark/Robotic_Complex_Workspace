@@ -76,9 +76,9 @@
 		624DA0C0275D2E3F00918A9E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				624DA0CD275D3FBB00918A9E /* Workspace.swift */,
 				624DA0C1275D2EE700918A9E /* Robot.swift */,
 				624DA0C7275D3AA600918A9E /* PositionsProgram.swift */,
-				624DA0CD275D3FBB00918A9E /* Workspace.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";

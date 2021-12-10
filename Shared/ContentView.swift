@@ -11,6 +11,7 @@ struct ContentView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @State var file_name = ""
+    @State var base_workspace = Workspace()
 
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
@@ -21,14 +22,14 @@ struct ContentView: View
         #if os(iOS)
         if horizontal_size_class == .compact
         {
-            TabBar(document: $document)
+            TabBar(document: $document, base_workspace: $base_workspace)
         }
         else
         {
-            Sidebar(document: $document, file_name: file_name)
+            Sidebar(document: $document, base_workspace: $base_workspace, file_name: file_name)
         }
         #else
-        Sidebar(document: $document, file_name: file_name)
+        Sidebar(document: $document, base_workspace: $base_workspace, file_name: file_name)
         #endif
     }
 }

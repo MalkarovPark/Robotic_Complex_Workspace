@@ -10,6 +10,7 @@ import SceneKit
 
 struct RobotsView: View
 {
+    @Binding var base_workspace: Workspace
     @State private var display_rv = false
     
     var body: some View
@@ -43,7 +44,7 @@ struct RobotsView_Previews: PreviewProvider
     {
         Group
         {
-            RobotsView()
+            RobotsView(base_workspace: .constant(Workspace()))
             RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true))
         }
@@ -157,7 +158,7 @@ struct AddRobotView: View
                     .padding(.bottom, button_padding)
                     .padding(.trailing, button_padding - 8.0)
                 
-                Button("Save", action: { add_robot_view_presented.toggle() })
+                Button("Save", action: { add_robot_in_workspace() })
                     .keyboardShortcut(.defaultAction)
                     .padding(.top, button_padding - 8.0)
                     .padding(.bottom, button_padding)
@@ -212,6 +213,13 @@ struct AddRobotView: View
             .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: { add_robot_view_presented.toggle() }))
         }
         #endif
+    }
+    
+    func add_robot_in_workspace()
+    {
+        print("🕰")
+        
+        add_robot_view_presented.toggle()
     }
 }
 
@@ -306,13 +314,19 @@ struct RobotInspectorView: View
     {
         VStack
         {
-            Button("Back to robots table")
+            Button("Add Position Program")
             {
-                self.display_rv = false
+                add_position_program()
+                //self.display_rv = false
             }
             .padding()
             Text("Inspector View")
                 .padding()
         }
+    }
+    
+    func add_position_program()
+    {
+        print("🕰")
     }
 }

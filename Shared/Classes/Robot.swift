@@ -8,9 +8,14 @@
 import Foundation
 import SceneKit
 
-class Robot
+class Robot : Equatable
 {
-    private var name: String?
+    static func == (lhs: Robot, rhs: Robot) -> Bool
+    {
+        return lhs.robot_name == rhs.robot_name
+    }
+    
+    private var robot_name: String?
     private var ip_address: String?
     private var programs = [PositionsProgram]()
     
@@ -27,7 +32,7 @@ class Robot
     
     func robot_init(name: String, ip_address: String)
     {
-        self.name = name
+        self.robot_name = name
         self.ip_address = ip_address
         
         build_robot()
