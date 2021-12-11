@@ -8,6 +8,12 @@
 import SwiftUI
 import SceneKit
 
+#if os(macOS)
+let placement_trailing: ToolbarItemPlacement = .automatic
+#else
+let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
+#endif
+
 struct RobotsView: View
 {
     @Binding var base_workspace: Workspace
@@ -64,18 +70,33 @@ struct RobotsTableView: View
             {
                 self.display_rv = true
             }
-            Button(action: { add_robot_view_presented.toggle() })
-            {
-                Text("Add Robot")
-            }
-            .sheet(isPresented: $add_robot_view_presented)//, onDismiss: didDismiss)
-            {
-                AddRobotView(add_robot_view_presented: $add_robot_view_presented)
-            }
         }
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        
+        .toolbar
+        {
+            ToolbarItem(placement: placement_trailing)
+            {
+                HStack(alignment: .center)
+                {
+                    Button(action: { add_robot_view_presented.toggle() })
+                    {
+                        Label("Robots", systemImage: "plus")
+                    }
+                    .sheet(isPresented: $add_robot_view_presented)
+                    {
+                        AddRobotView(add_robot_view_presented: $add_robot_view_presented)
+                    }
+                }
+            }
+        }
+    }
+    
+    func add_robot()
+    {
+        print("🔮")
     }
 }
 
@@ -98,7 +119,7 @@ struct AddRobotView: View
         VStack
         {
             Text("Add Robot")
-                .font(.title2)//(.title)
+                .font(.title2)
                 .padding([.top, .leading, .trailing])
             
             VStack
@@ -165,6 +186,7 @@ struct AddRobotView: View
                     .padding(.trailing, button_padding)
             }
         }
+        .controlSize(.regular)
         .frame(minWidth: 160, idealWidth: 240, maxWidth: 320, minHeight: 240, maxHeight: 300)
         #else
         NavigationView
@@ -229,12 +251,6 @@ struct RobotView: View
     
     var body: some View
     {
-        #if os(macOS)
-        let placement_trailing: ToolbarItemPlacement = .automatic
-        #else
-        let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
-        #endif
-        
         HStack
         {
             RobotSceneView()
