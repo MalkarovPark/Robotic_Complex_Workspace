@@ -69,9 +69,14 @@ class Workspace
         return robots[selected_robot_index]
     }
     
+    private func count() -> Int
+    {
+        return robots.count
+    }
+    
     //MARK: - Work with file
     public func update_file()
     {
-        
+        //print(<#T##items: Any...##Any#>)
     }
 }

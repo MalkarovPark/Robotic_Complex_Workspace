@@ -25,6 +25,11 @@ class Robot : Equatable
         robot_init(name: "None", ip_address: "127.0.0.1")
     }
     
+    init(name: String)
+    {
+        robot_init(name: name, ip_address: "127.0.0.1")
+    }
+    
     init(name: String, ip_address: String)
     {
         robot_init(name: name, ip_address: ip_address)

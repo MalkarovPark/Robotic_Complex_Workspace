@@ -25,7 +25,7 @@ struct RobotsView: View
         {
             if display_rv == false
             {
-                RobotsTableView(display_rv: $display_rv)
+                RobotsTableView(display_rv: $display_rv, base_workspace: $base_workspace)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     //.transition(AnyTransition.move(edge: .leading)).animation(.default)
@@ -52,7 +52,7 @@ struct RobotsView_Previews: PreviewProvider
         {
             RobotsView(base_workspace: .constant(Workspace()))
             RobotView(display_rv: .constant(true))
-            AddRobotView(add_robot_view_presented: .constant(true))
+            AddRobotView(add_robot_view_presented: .constant(true), base_workspace: .constant(Workspace()))
         }
     }
 }
@@ -60,15 +60,33 @@ struct RobotsView_Previews: PreviewProvider
 struct RobotsTableView: View
 {
     @Binding var display_rv: Bool
+    @Binding var base_workspace: Workspace
     @State private var add_robot_view_presented = false
+    
+    var columns: [GridItem] = [.init(.adaptive(minimum: 128, maximum: 192), spacing: 24)]
     
     var body: some View
     {
         VStack
         {
-            Button("View Robot")
+            ScrollView(.vertical, showsIndicators: false)
             {
-                self.display_rv = true
+                LazyVGrid(columns: columns, spacing: 24)
+                {
+                    ForEach((0...16), id: \.self)
+                    {
+                        index in
+                        RoundedRectangle(cornerRadius: 8)
+                            .foregroundColor(Color(
+                                red: .random(in: 0.5...1),
+                                green: .random(in: 0.5...1),
+                                blue: .random(in: 0.5...1)
+                                ))
+                            .frame(height: 128)
+                            .shadow(radius: 4.0)
+                    }
+                }
+                .padding(16)
             }
         }
         #if os(iOS)
@@ -81,28 +99,30 @@ struct RobotsTableView: View
             {
                 HStack(alignment: .center)
                 {
+                    Button("View Robot")
+                    {
+                        self.display_rv = true
+                    }
+                    
                     Button(action: { add_robot_view_presented.toggle() })
                     {
                         Label("Robots", systemImage: "plus")
                     }
                     .sheet(isPresented: $add_robot_view_presented)
                     {
-                        AddRobotView(add_robot_view_presented: $add_robot_view_presented)
+                        AddRobotView(add_robot_view_presented: $add_robot_view_presented, base_workspace: $base_workspace)
                     }
                 }
             }
         }
-    }
-    
-    func add_robot()
-    {
-        print("🔮")
     }
 }
 
 struct AddRobotView: View
 {
     @Binding var add_robot_view_presented: Bool
+    @Binding var base_workspace: Workspace
+    
     @State var new_robot_name = ""
     @State var new_robot_parameters = ["Brand", "Series", "Model"]
     @State var new_robot_parameters_index = [0, 0, 0]
@@ -114,7 +134,7 @@ struct AddRobotView: View
     var body: some View
     {
         #if os(macOS)
-        let button_padding = 16.0
+        let button_padding = 12.0 //16.0
         
         VStack
         {
@@ -239,7 +259,7 @@ struct AddRobotView: View
     
     func add_robot_in_workspace()
     {
-        print("🕰")
+        base_workspace.add_robot(robot: Robot(name: new_robot_name))
         
         add_robot_view_presented.toggle()
     }
