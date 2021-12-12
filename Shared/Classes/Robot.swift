@@ -16,28 +16,32 @@ class Robot: Equatable, ObservableObject
     }
     
     private var robot_name: String?
+    private var manufacturer: String?
+    private var model: String?
     private var ip_address: String?
     private var programs = [PositionsProgram]()
     
     //MARK: - Initialization
     init()
     {
-        robot_init(name: "None", ip_address: "127.0.0.1")
+        robot_init(name: "None", manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1")
     }
     
     init(name: String)
     {
-        robot_init(name: name, ip_address: "127.0.0.1")
+        robot_init(name: name, manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1")
     }
     
-    init(name: String, ip_address: String)
+    init(name: String, manufacturer: String, model: String, ip_address: String)
     {
-        robot_init(name: name, ip_address: ip_address)
+        robot_init(name: name, manufacturer: manufacturer, model: model, ip_address: ip_address)
     }
     
-    func robot_init(name: String, ip_address: String)
+    func robot_init(name: String, manufacturer: String, model: String, ip_address: String)
     {
         self.robot_name = name
+        self.manufacturer = manufacturer
+        self.model = model
         self.ip_address = ip_address
         
         build_robot()
@@ -174,4 +178,43 @@ class Robot: Equatable, ObservableObject
     {
         return in_angle * 180 / .pi
     }
+    
+    //MARK: - UI functions
+    #if os(macOS)
+    public func card_info() -> (title: String, subtitle: String, color: NSColor)
+    {
+        let color: NSColor
+        switch self.manufacturer
+        {
+        case "ABB":
+            color = NSColor.systemRed
+        case "Fanuc":
+            color = NSColor.systemYellow
+        case "Kuka":
+            color = NSColor.systemOrange
+        default:
+            color = NSColor.clear
+        }
+        
+        return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
+    }
+    #else
+    public func card_info() -> (title: String, subtitle: String, color: UIColor)
+    {
+        let color: UIColor
+        switch self.manufacturer
+        {
+        case "ABB":
+            color = UIColor.systemRed
+        case "Fanuc":
+            color = UIColor.systemYellow
+        case "Kuka":
+            color = UIColor.systemOrange
+        default:
+            color = UIColor.clear
+        }
+        
+        return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
+    }
+    #endif
 }

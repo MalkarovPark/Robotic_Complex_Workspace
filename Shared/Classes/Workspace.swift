@@ -48,7 +48,7 @@ class Workspace: ObservableObject
     
     private func number_by_name(name: String) -> Int
     {
-        let comparison_robot = Robot(name: name, ip_address: "127.0.0.1")
+        let comparison_robot = Robot(name: name)
         let robot_number = robots.firstIndex(of: comparison_robot)
         
         return robot_number ?? -1
@@ -78,5 +78,11 @@ class Workspace: ObservableObject
     public func update_file()
     {
         //print(<#T##items: Any...##Any#>)
+    }
+    
+    //MARK: - UI Functions
+    func get_robot_info(robot_index: Int) -> Robot
+    {
+        return robots[robot_index]
     }
 }

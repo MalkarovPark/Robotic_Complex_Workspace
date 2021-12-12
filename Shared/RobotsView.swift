@@ -24,7 +24,7 @@ struct RobotsView: View
         {
             if display_rv == false
             {
-                RobotsTableView(display_rv: $display_rv)//, base_workspace: $base_workspace)
+                RobotsTableView(display_rv: $display_rv)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     //.transition(AnyTransition.move(edge: .leading)).animation(.default)
@@ -49,10 +49,10 @@ struct RobotsView_Previews: PreviewProvider
     {
         Group
         {
-            RobotsView() //base_workspace: .constant(Workspace()))
+            RobotsView()
             RobotView(display_rv: .constant(true))
-            AddRobotView(add_robot_view_presented: .constant(true)) //, base_workspace: .constant(Workspace()))
-            RobotCardView()
+            AddRobotView(add_robot_view_presented: .constant(true))
+            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
         }
     }
 }
@@ -60,7 +60,6 @@ struct RobotsView_Previews: PreviewProvider
 struct RobotsTableView: View
 {
     @Binding var display_rv: Bool
-    //@Binding var base_workspace: Workspace
     @State private var add_robot_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -73,18 +72,20 @@ struct RobotsTableView: View
         {
             if base_workspace.robots_count() > 0
             {
-                ScrollView(.vertical, showsIndicators: false)
+                ScrollView(.vertical, showsIndicators: true)
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
                         ForEach((0...base_workspace.robots_count() - 1), id: \.self)
                         {
                             index in
-                            RobotCardView()
+                            RobotCardView(card_color: Color(base_workspace.get_robot_info(robot_index: index).card_info().color), card_title: base_workspace.get_robot_info(robot_index: index).card_info().title, card_subtitle: base_workspace.get_robot_info(robot_index: index).card_info().subtitle)
+                            //RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
                         }
                     }
                     .padding(16)
                 }
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
             }
             else
             {
@@ -121,7 +122,7 @@ struct RobotsTableView: View
                         self.display_rv = true
                     }
                     
-                    Button (action: { add_robot_view_presented.toggle() }) //(action: { base_workspace.add_robot(robot: Robot()) })
+                    Button (action: { add_robot_view_presented.toggle() })
                     {
                         Label("Robots", systemImage: "plus")
                     }
@@ -137,21 +138,25 @@ struct RobotsTableView: View
 
 struct RobotCardView: View
 {
+    @State var card_color: Color
+    @State var card_title: String
+    @State var card_subtitle: String
+    
     var body: some View
     {
         VStack(alignment: .leading, spacing: 8.0)
         {
             Rectangle()
-                .foregroundColor(.yellow)
+                .foregroundColor(card_color) //(.yellow)
             VStack(alignment: .leading)
             {
-                Text("Robot Name")
+                Text(card_title) //("Robot Name")
                     .font(.headline)
                 
                 HStack(spacing: 4.0)
                 {
                     Image(systemName: "arrow.up.doc")
-                    Text("Fanuc")
+                    Text(card_subtitle) //("Fanuc")
                 }
                 .foregroundColor(.gray)
                 .padding(.bottom, 8)
@@ -162,14 +167,14 @@ struct RobotCardView: View
         .clipShape(RoundedRectangle(cornerRadius: 16.0))
         .frame(height: 160)
         .shadow(radius: 8.0)
-        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+        .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.6)))
+        //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
     }
 }
 
 struct AddRobotView: View
 {
     @Binding var add_robot_view_presented: Bool
-    //@Binding var base_workspace: Workspace
     
     @State var new_robot_name = ""
     @State var new_robot_parameters = ["Brand", "Series", "Model"]
@@ -309,7 +314,8 @@ struct AddRobotView: View
     
     func add_robot_in_workspace()
     {
-        base_workspace.add_robot(robot: Robot(name: new_robot_name))
+        base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: brands[new_robot_parameters_index[0]], model: models[new_robot_parameters_index[2]], ip_address: "127.0.0.1"))
+        //base_workspace.add_robot(robot: Robot(name: new_robot_name))
         
         add_robot_view_presented.toggle()
     }
@@ -403,7 +409,6 @@ struct RobotInspectorView: View
             Button("Add Position Program")
             {
                 add_position_program()
-                //self.display_rv = false
             }
             .padding()
             Text("Inspector View")
