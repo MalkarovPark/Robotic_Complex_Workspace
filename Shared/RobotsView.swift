@@ -53,6 +53,7 @@ struct RobotsView_Previews: PreviewProvider
             RobotsView(base_workspace: .constant(Workspace()))
             RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true), base_workspace: .constant(Workspace()))
+            RobotCardView()
         }
     }
 }
@@ -63,31 +64,46 @@ struct RobotsTableView: View
     @Binding var base_workspace: Workspace
     @State private var add_robot_view_presented = false
     
-    var columns: [GridItem] = [.init(.adaptive(minimum: 128, maximum: 192), spacing: 24)]
+    var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: 192), spacing: 24)]
     
     var body: some View
     {
         VStack
         {
-            ScrollView(.vertical, showsIndicators: false)
+            if base_workspace.robots_count() > 0
+            {
+                ScrollView(.vertical, showsIndicators: false)
+                {
+                    LazyVGrid(columns: columns, spacing: 24)
+                    {
+                        ForEach((0...base_workspace.robots_count() - 1), id: \.self)
+                        {
+                            index in
+                            RobotCardView()
+                        }
+                    }
+                    .padding(16)
+                }
+            }
+            else
+            {
+                Text("Press '+' to add new robot")
+                    .foregroundColor(.gray)
+                    .padding(16)
+            }
+            
+            /*ScrollView(.vertical, showsIndicators: false)
             {
                 LazyVGrid(columns: columns, spacing: 24)
                 {
                     ForEach((0...16), id: \.self)
                     {
                         index in
-                        RoundedRectangle(cornerRadius: 8)
-                            .foregroundColor(Color(
-                                red: .random(in: 0.5...1),
-                                green: .random(in: 0.5...1),
-                                blue: .random(in: 0.5...1)
-                                ))
-                            .frame(height: 128)
-                            .shadow(radius: 4.0)
+                        RobotCardView()
                     }
                 }
                 .padding(16)
-            }
+            }*/
         }
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -104,7 +120,7 @@ struct RobotsTableView: View
                         self.display_rv = true
                     }
                     
-                    Button(action: { add_robot_view_presented.toggle() })
+                    Button (action: { add_robot_view_presented.toggle() }) //(action: { base_workspace.add_robot(robot: Robot()) })
                     {
                         Label("Robots", systemImage: "plus")
                     }
@@ -118,6 +134,44 @@ struct RobotsTableView: View
     }
 }
 
+struct RobotCardView: View
+{
+    var body: some View
+    {
+        VStack(alignment: .leading, spacing: 8.0)
+        {
+            Rectangle()
+                .foregroundColor(.yellow)
+            VStack(alignment: .leading)
+            {
+                Text("Robot Name")
+                    .font(.headline)
+                
+                HStack(spacing: 4.0)
+                {
+                    Image(systemName: "arrow.up.doc")
+                    Text("Fanuc")
+                }
+                .foregroundColor(.gray)
+                .padding(.bottom, 8)
+            }
+            .padding(.horizontal, 8)
+        }
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 16.0))
+        .frame(height: 160)
+        .shadow(radius: 8.0)
+        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+        
+        //.cornerRadius(8.0)
+        
+        /*RoundedRectangle(cornerRadius: 8)
+            .foregroundColor(Color(red: .random(in: 0.5...1), green: .random(in: 0.5...1), blue: .random(in: 0.5...1)))
+            .frame(height: 128)
+            .shadow(radius: 4.0)*/
+    }
+}
+
 struct AddRobotView: View
 {
     @Binding var add_robot_view_presented: Bool
@@ -127,7 +181,7 @@ struct AddRobotView: View
     @State var new_robot_parameters = ["Brand", "Series", "Model"]
     @State var new_robot_parameters_index = [0, 0, 0]
     
-    var brands = ["Fanuc", "Kuka"]
+    var brands = ["ABB", "Fanuc", "Kuka"]
     var series = ["LR-Mate", "Paint"]
     var models = ["id-4s", "id-20s"]
     

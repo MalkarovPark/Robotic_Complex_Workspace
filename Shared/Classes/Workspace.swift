@@ -8,7 +8,7 @@
 import Foundation
 import SceneKit
 
-class Workspace
+class Workspace: ObservableObject
 {
     private var workspace_name: String?
     private var robots = [Robot]()
@@ -69,7 +69,7 @@ class Workspace
         return robots[selected_robot_index]
     }
     
-    private func count() -> Int
+    public func robots_count() -> Int
     {
         return robots.count
     }

@@ -8,7 +8,7 @@
 import Foundation
 import SceneKit
 
-class PositionsProgram : Equatable
+class PositionsProgram: Equatable, ObservableObject
 {
     static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
