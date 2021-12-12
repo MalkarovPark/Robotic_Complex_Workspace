@@ -16,7 +16,6 @@ let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
 
 struct RobotsView: View
 {
-    @Binding var base_workspace: Workspace
     @State private var display_rv = false
     
     var body: some View
@@ -25,7 +24,7 @@ struct RobotsView: View
         {
             if display_rv == false
             {
-                RobotsTableView(display_rv: $display_rv, base_workspace: $base_workspace)
+                RobotsTableView(display_rv: $display_rv)//, base_workspace: $base_workspace)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     //.transition(AnyTransition.move(edge: .leading)).animation(.default)
@@ -50,9 +49,9 @@ struct RobotsView_Previews: PreviewProvider
     {
         Group
         {
-            RobotsView(base_workspace: .constant(Workspace()))
+            RobotsView() //base_workspace: .constant(Workspace()))
             RobotView(display_rv: .constant(true))
-            AddRobotView(add_robot_view_presented: .constant(true), base_workspace: .constant(Workspace()))
+            AddRobotView(add_robot_view_presented: .constant(true)) //, base_workspace: .constant(Workspace()))
             RobotCardView()
         }
     }
@@ -61,8 +60,10 @@ struct RobotsView_Previews: PreviewProvider
 struct RobotsTableView: View
 {
     @Binding var display_rv: Bool
-    @Binding var base_workspace: Workspace
+    //@Binding var base_workspace: Workspace
     @State private var add_robot_view_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: 192), spacing: 24)]
     
@@ -126,7 +127,7 @@ struct RobotsTableView: View
                     }
                     .sheet(isPresented: $add_robot_view_presented)
                     {
-                        AddRobotView(add_robot_view_presented: $add_robot_view_presented, base_workspace: $base_workspace)
+                        AddRobotView(add_robot_view_presented: $add_robot_view_presented) //, base_workspace: $base_workspace)
                     }
                 }
             }
@@ -162,24 +163,19 @@ struct RobotCardView: View
         .frame(height: 160)
         .shadow(radius: 8.0)
         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-        
-        //.cornerRadius(8.0)
-        
-        /*RoundedRectangle(cornerRadius: 8)
-            .foregroundColor(Color(red: .random(in: 0.5...1), green: .random(in: 0.5...1), blue: .random(in: 0.5...1)))
-            .frame(height: 128)
-            .shadow(radius: 4.0)*/
     }
 }
 
 struct AddRobotView: View
 {
     @Binding var add_robot_view_presented: Bool
-    @Binding var base_workspace: Workspace
+    //@Binding var base_workspace: Workspace
     
     @State var new_robot_name = ""
     @State var new_robot_parameters = ["Brand", "Series", "Model"]
     @State var new_robot_parameters_index = [0, 0, 0]
+    
+    @EnvironmentObject var base_workspace: Workspace
     
     var brands = ["ABB", "Fanuc", "Kuka"]
     var series = ["LR-Mate", "Paint"]
@@ -306,7 +302,7 @@ struct AddRobotView: View
                 }
             }
             .navigationBarTitle(Text("Add Robot"), displayMode: .inline)
-            .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: { add_robot_view_presented.toggle() }))
+            .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: { add_robot_in_workspace() }))
         }
         #endif
     }

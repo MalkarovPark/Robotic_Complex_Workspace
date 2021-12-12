@@ -10,7 +10,6 @@ import SwiftUI
 struct TabBar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    @Binding var base_workspace: Workspace
     
     var body: some View
     {
@@ -18,7 +17,7 @@ struct TabBar: View
         {
             NavigationView
             {
-                WorkspaceView(document: $document, base_workspace: $base_workspace)
+                WorkspaceView(document: $document)
             }
             .tabItem
             {
@@ -27,7 +26,7 @@ struct TabBar: View
             
             NavigationView
             {
-                RobotsView(base_workspace: $base_workspace)
+                RobotsView()
             }
             .tabItem
             {
@@ -41,6 +40,6 @@ struct TabBar_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        TabBar(document: .constant(Robotic_Complex_WorkspaceDocument()), base_workspace: .constant(Workspace()))
+        TabBar(document: .constant(Robotic_Complex_WorkspaceDocument()))
     }
 }

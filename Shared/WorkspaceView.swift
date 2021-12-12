@@ -10,7 +10,6 @@ import SwiftUI
 struct WorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    @Binding var base_workspace: Workspace
     
     var body: some View
     {
@@ -30,7 +29,7 @@ struct WorkspaceView: View
         
         .toolbar
         {
-            ToolbarItem(placement: placement_trailing) //.principal)
+            ToolbarItem(placement: placement_trailing)
             {
                 HStack(alignment: .center)
                 {
@@ -71,6 +70,6 @@ struct WorkspaceView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), base_workspace: .constant(Workspace()))
+        WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
     }
 }

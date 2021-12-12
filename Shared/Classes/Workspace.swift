@@ -10,9 +10,9 @@ import SceneKit
 
 class Workspace: ObservableObject
 {
-    private var workspace_name: String?
-    private var robots = [Robot]()
-    private var objects = [SCNNode]()
+    @Published private var workspace_name: String?
+    @Published private var robots = [Robot]()
+    @Published private var objects = [SCNNode]()
     
     //MARK: - Initialization
     init()
