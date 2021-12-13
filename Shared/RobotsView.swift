@@ -144,31 +144,56 @@ struct RobotCardView: View
     
     var body: some View
     {
-        VStack(alignment: .leading, spacing: 8.0)
+        ZStack
         {
-            Rectangle()
-                .foregroundColor(card_color) //(.yellow)
-            VStack(alignment: .leading)
+            VStack(alignment: .leading, spacing: 8.0)
             {
-                Text(card_title) //("Robot Name")
-                    .font(.headline)
+                Rectangle()
+                    .foregroundColor(card_color)
                 
-                HStack(spacing: 4.0)
+                VStack(alignment: .leading)
                 {
-                    Image(systemName: "arrow.up.doc")
-                    Text(card_subtitle) //("Fanuc")
+                    Text(card_title) //("Robot Name")
+                        .font(.headline)
+                    
+                    HStack(spacing: 4.0)
+                    {
+                        Image(systemName: "arrow.up.doc")
+                        Text(card_subtitle) //("Fanuc")
+                    }
+                    .foregroundColor(.gray)
+                    .padding(.bottom, 8)
                 }
-                .foregroundColor(.gray)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 8)
             }
-            .padding(.horizontal, 8)
+            .background(Color.white)
+            
+            VStack
+            {
+                HStack
+                {
+                    Spacer()
+                    //Circle()
+                    Button(action: {})
+                    {
+                        Label("Robots", systemImage: "xmark")
+                            .labelStyle(.iconOnly)
+                            .padding(4.0)
+                    }
+                        .foregroundColor(.white)
+                        .background(.thinMaterial)
+                        .clipShape(Circle())
+                        .frame(width: 24.0, height: 24.0)
+                        .padding(8.0)
+                }
+                Spacer()
+            }
         }
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16.0))
+        .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
         .frame(height: 160)
         .shadow(radius: 8.0)
-        .transition(AnyTransition.scale.animation(.easeInOut(duration: 0.6)))
-        //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
+        //.transition(AnyTransition.scale.animation(.easeInOut(duration: 0.6)))
+        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
     }
 }
 
