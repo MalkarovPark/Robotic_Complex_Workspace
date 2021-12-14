@@ -52,7 +52,7 @@ struct RobotsView_Previews: PreviewProvider
             RobotsView()
             RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true))
-            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc", card_index: 0)
+            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")//, card_index: 0)
         }
     }
 }
@@ -77,9 +77,40 @@ struct RobotsTableView: View
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
-                        ForEach(base_workspace.robots_cards_info)
+                        /*ForEach(base_workspace.robots_cards_info)
                         { card_item in
                             RobotCardView(card_color: card_item.card_color, card_title: card_item.card_title, card_subtitle: card_item.card_subtitle, card_index: card_item.card_number)
+                        }*/
+                        ForEach(base_workspace.previewed_robots)
+                        { robot_item in
+                            ZStack
+                            {
+                                RobotCardView(card_color: robot_item.card_info().color, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
+                                VStack
+                                {
+                                    HStack
+                                    {
+                                        Spacer()
+                                        Button(action: { self.base_workspace.previewed_robots.removeAll { $0.id == robot_item.id } })
+                                        {
+                                            Label("Robots", systemImage: "xmark")
+                                                .labelStyle(.iconOnly)
+                                                .padding(4.0)
+                                        }
+                                            .foregroundColor(.white)
+                                            .background(.thinMaterial)
+                                            .clipShape(Circle())
+                                            .frame(width: 24.0, height: 24.0)
+                                            .padding(8.0)
+                                    }
+                                    Spacer()
+                                }
+                            }
+                            .onTapGesture
+                            {
+                                print("Viewed Robot - " + robot_item.card_info().title)
+                                view_robot()
+                            }
                         }
                     }
                     .padding(16)
@@ -92,6 +123,7 @@ struct RobotsTableView: View
                 Text("Press '+' to add new robot")
                     .foregroundColor(.gray)
                     .padding(16)
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
             }
         }
         #if os(iOS)
@@ -106,7 +138,8 @@ struct RobotsTableView: View
                 {
                     Button("View Robot")
                     {
-                        self.display_rv = true
+                        view_robot()
+                        //self.display_rv = true
                     }
                     
                     Button (action: { add_robot_view_presented.toggle() })
@@ -121,6 +154,11 @@ struct RobotsTableView: View
             }
         }
     }
+    
+    func view_robot()
+    {
+        self.display_rv = true
+    }
 }
 
 struct RobotCardView: View
@@ -129,7 +167,7 @@ struct RobotCardView: View
     @State var card_title: String
     @State var card_subtitle: String
     
-    @State var card_index: Int
+    //@State var card_index: Int
     @EnvironmentObject var base_workspace: Workspace
     
     var body: some View
@@ -158,7 +196,7 @@ struct RobotCardView: View
             }
             .background(Color.white)
             
-            VStack
+            /*VStack
             {
                 HStack
                 {
@@ -176,7 +214,7 @@ struct RobotCardView: View
                         .padding(8.0)
                 }
                 Spacer()
-            }
+            }*/
         }
         .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
         .frame(height: 160)
@@ -190,7 +228,7 @@ struct RobotCardView: View
         //print(card_index)
         //print(card_title)
         
-        base_workspace.delete_robot(number: card_index)
+        //base_workspace.delete_robot(number: card_index)
     }
 }
 

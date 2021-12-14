@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class Robot: Equatable, ObservableObject
+class Robot: Identifiable, Equatable, ObservableObject
 {
     static func == (lhs: Robot, rhs: Robot) -> Bool
     {
@@ -198,42 +198,4 @@ class Robot: Equatable, ObservableObject
         
         return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
     }
-    
-    /*#if os(macOS)
-    public func card_info() -> (title: String, subtitle: String, color: NSColor)
-    {
-        let color: NSColor
-        switch self.manufacturer
-        {
-        case "ABB":
-            color = NSColor.systemRed
-        case "Fanuc":
-            color = NSColor.systemYellow
-        case "Kuka":
-            color = NSColor.systemOrange
-        default:
-            color = NSColor.clear
-        }
-        
-        return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
-    }
-    #else
-    public func card_info() -> (title: String, subtitle: String, color: UIColor)
-    {
-        let color: UIColor
-        switch self.manufacturer
-        {
-        case "ABB":
-            color = UIColor.systemRed
-        case "Fanuc":
-            color = UIColor.systemYellow
-        case "Kuka":
-            color = UIColor.systemOrange
-        default:
-            color = UIColor.clear
-        }
-        
-        return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
-    }
-    #endif*/
 }

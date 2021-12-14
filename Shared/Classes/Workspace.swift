@@ -112,4 +112,16 @@ class Workspace: ObservableObject
     {
         return robots[robot_index]
     }
+    
+    public var previewed_robots: [Robot]
+    {
+        get
+        {
+            return self.robots
+        }
+        set
+        {
+            self.robots = newValue
+        }
+    }
 }
