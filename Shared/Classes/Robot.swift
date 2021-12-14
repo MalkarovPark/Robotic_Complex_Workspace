@@ -7,6 +7,7 @@
 
 import Foundation
 import SceneKit
+import SwiftUI
 
 class Robot: Equatable, ObservableObject
 {
@@ -180,7 +181,25 @@ class Robot: Equatable, ObservableObject
     }
     
     //MARK: - UI functions
-    #if os(macOS)
+    public func card_info() -> (title: String, subtitle: String, color: Color)
+    {
+        let color: Color
+        switch self.manufacturer
+        {
+        case "ABB":
+            color = Color.red
+        case "Fanuc":
+            color = Color.yellow
+        case "Kuka":
+            color = Color.orange
+        default:
+            color = Color.clear
+        }
+        
+        return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
+    }
+    
+    /*#if os(macOS)
     public func card_info() -> (title: String, subtitle: String, color: NSColor)
     {
         let color: NSColor
@@ -216,5 +235,5 @@ class Robot: Equatable, ObservableObject
         
         return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
     }
-    #endif
+    #endif*/
 }

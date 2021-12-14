@@ -7,6 +7,7 @@
 
 import Foundation
 import SceneKit
+import SwiftUI
 
 class Workspace: ObservableObject
 {
@@ -81,7 +82,33 @@ class Workspace: ObservableObject
     }
     
     //MARK: - UI Functions
-    func get_robot_info(robot_index: Int) -> Robot
+    public struct card_data_item: Identifiable, Equatable
+    {
+        static func == (lhs: Self, rhs: Self) -> Bool
+        {
+            lhs.id == rhs.id
+        }
+        
+        let id = UUID()
+        let card_color: Color
+        let card_title: String
+        let card_subtitle: String
+        let card_number: Int
+    }
+    
+    public var robots_cards_info: [card_data_item]
+    {
+        var cards = [card_data_item]()
+        var index = 0
+        for robot in robots
+        {
+            cards.append(card_data_item(card_color: robot.card_info().color, card_title: robot.card_info().title, card_subtitle: robot.card_info().subtitle, card_number: index))
+            index += 1
+        }
+        return cards
+    }
+    
+    public func get_robot_info(robot_index: Int) -> Robot
     {
         return robots[robot_index]
     }

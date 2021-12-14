@@ -52,7 +52,7 @@ struct RobotsView_Previews: PreviewProvider
             RobotsView()
             RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true))
-            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
+            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc", card_index: 0)
         }
     }
 }
@@ -60,6 +60,7 @@ struct RobotsView_Previews: PreviewProvider
 struct RobotsTableView: View
 {
     @Binding var display_rv: Bool
+    
     @State private var add_robot_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -76,16 +77,15 @@ struct RobotsTableView: View
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
-                        ForEach((0...base_workspace.robots_count() - 1), id: \.self)
-                        {
-                            index in
-                            RobotCardView(card_color: Color(base_workspace.get_robot_info(robot_index: index).card_info().color), card_title: base_workspace.get_robot_info(robot_index: index).card_info().title, card_subtitle: base_workspace.get_robot_info(robot_index: index).card_info().subtitle)
-                            //RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
+                        ForEach(base_workspace.robots_cards_info)
+                        { card_item in
+                            RobotCardView(card_color: card_item.card_color, card_title: card_item.card_title, card_subtitle: card_item.card_subtitle, card_index: card_item.card_number)
                         }
                     }
                     .padding(16)
                 }
-                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
+                .animation(.spring(), value: base_workspace.robots_cards_info)
+                //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
             }
             else
             {
@@ -93,19 +93,6 @@ struct RobotsTableView: View
                     .foregroundColor(.gray)
                     .padding(16)
             }
-            
-            /*ScrollView(.vertical, showsIndicators: false)
-            {
-                LazyVGrid(columns: columns, spacing: 24)
-                {
-                    ForEach((0...16), id: \.self)
-                    {
-                        index in
-                        RobotCardView()
-                    }
-                }
-                .padding(16)
-            }*/
         }
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -142,6 +129,9 @@ struct RobotCardView: View
     @State var card_title: String
     @State var card_subtitle: String
     
+    @State var card_index: Int
+    @EnvironmentObject var base_workspace: Workspace
+    
     var body: some View
     {
         ZStack
@@ -153,13 +143,13 @@ struct RobotCardView: View
                 
                 VStack(alignment: .leading)
                 {
-                    Text(card_title) //("Robot Name")
+                    Text(card_title)
                         .font(.headline)
                     
                     HStack(spacing: 4.0)
                     {
                         Image(systemName: "arrow.up.doc")
-                        Text(card_subtitle) //("Fanuc")
+                        Text(card_subtitle)
                     }
                     .foregroundColor(.gray)
                     .padding(.bottom, 8)
@@ -173,8 +163,7 @@ struct RobotCardView: View
                 HStack
                 {
                     Spacer()
-                    //Circle()
-                    Button(action: {})
+                    Button(action: { delete_robot_in_workspace() })
                     {
                         Label("Robots", systemImage: "xmark")
                             .labelStyle(.iconOnly)
@@ -193,7 +182,15 @@ struct RobotCardView: View
         .frame(height: 160)
         .shadow(radius: 8.0)
         //.transition(AnyTransition.scale.animation(.easeInOut(duration: 0.6)))
-        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
+        //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
+    }
+    
+    func delete_robot_in_workspace()
+    {
+        //print(card_index)
+        //print(card_title)
+        
+        base_workspace.delete_robot(number: card_index)
     }
 }
 
