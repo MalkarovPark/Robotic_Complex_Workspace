@@ -9,11 +9,16 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class Robot: Identifiable, Equatable, ObservableObject
+class Robot: Identifiable, Equatable, Hashable, ObservableObject
 {
     static func == (lhs: Robot, rhs: Robot) -> Bool
     {
         return lhs.robot_name == rhs.robot_name
+    }
+    
+    func hash(into hasher: inout Hasher)
+    {
+        hasher.combine(robot_name)
     }
     
     private var robot_name: String?

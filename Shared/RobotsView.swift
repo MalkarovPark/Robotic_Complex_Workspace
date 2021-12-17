@@ -62,6 +62,7 @@ struct RobotsTableView: View
     @Binding var display_rv: Bool
     
     @State private var add_robot_view_presented = false
+    //@State private var delete_robot_alert_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -77,34 +78,12 @@ struct RobotsTableView: View
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
-                        /*ForEach(base_workspace.robots_cards_info)
-                        { card_item in
-                            RobotCardView(card_color: card_item.card_color, card_title: card_item.card_title, card_subtitle: card_item.card_subtitle, card_index: card_item.card_number)
-                        }*/
-                        ForEach(base_workspace.previewed_robots)
+                        ForEach(base_workspace.previewed_robots, id: \.self)
                         { robot_item in
                             ZStack
                             {
                                 RobotCardView(card_color: robot_item.card_info().color, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
-                                VStack
-                                {
-                                    HStack
-                                    {
-                                        Spacer()
-                                        Button(action: { self.base_workspace.previewed_robots.removeAll { $0.id == robot_item.id } })
-                                        {
-                                            Label("Robots", systemImage: "xmark")
-                                                .labelStyle(.iconOnly)
-                                                .padding(4.0)
-                                        }
-                                            .foregroundColor(.white)
-                                            .background(.thinMaterial)
-                                            .clipShape(Circle())
-                                            .frame(width: 24.0, height: 24.0)
-                                            .padding(8.0)
-                                    }
-                                    Spacer()
-                                }
+                                RobotDeleteButton(robots: $base_workspace.previewed_robots, robot_item: robot_item, on_delete: remove_robots)
                             }
                             .onTapGesture
                             {
@@ -148,7 +127,7 @@ struct RobotsTableView: View
                     }
                     .sheet(isPresented: $add_robot_view_presented)
                     {
-                        AddRobotView(add_robot_view_presented: $add_robot_view_presented) //, base_workspace: $base_workspace)
+                        AddRobotView(add_robot_view_presented: $add_robot_view_presented)
                     }
                 }
             }
@@ -159,6 +138,14 @@ struct RobotsTableView: View
     {
         self.display_rv = true
     }
+    
+    func remove_robots(at offsets: IndexSet)
+    {
+        withAnimation
+        {
+            base_workspace.previewed_robots.remove(atOffsets: offsets)
+        }
+    }
 }
 
 struct RobotCardView: View
@@ -167,7 +154,6 @@ struct RobotCardView: View
     @State var card_title: String
     @State var card_subtitle: String
     
-    //@State var card_index: Int
     @EnvironmentObject var base_workspace: Workspace
     
     var body: some View
@@ -195,26 +181,6 @@ struct RobotCardView: View
                 .padding(.horizontal, 8)
             }
             .background(Color.white)
-            
-            /*VStack
-            {
-                HStack
-                {
-                    Spacer()
-                    Button(action: { delete_robot_in_workspace() })
-                    {
-                        Label("Robots", systemImage: "xmark")
-                            .labelStyle(.iconOnly)
-                            .padding(4.0)
-                    }
-                        .foregroundColor(.white)
-                        .background(.thinMaterial)
-                        .clipShape(Circle())
-                        .frame(width: 24.0, height: 24.0)
-                        .padding(8.0)
-                }
-                Spacer()
-            }*/
         }
         .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
         .frame(height: 160)
@@ -222,13 +188,55 @@ struct RobotCardView: View
         //.transition(AnyTransition.scale.animation(.easeInOut(duration: 0.6)))
         //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
     }
+}
+
+struct RobotDeleteButton: View
+{
+    @Binding var robots: [Robot]
+    @State private var delete_robot_alert_presented = false
     
-    func delete_robot_in_workspace()
+    let robot_item: Robot
+    let on_delete: (IndexSet) -> ()
+    
+    var body: some View
     {
-        //print(card_index)
-        //print(card_title)
-        
-        //base_workspace.delete_robot(number: card_index)
+        VStack
+        {
+            HStack
+            {
+                Spacer()
+                Button(action: { delete_robot_alert_presented = true }) //(action: { delete_robot() })
+                {
+                    Label("Robots", systemImage: "xmark")
+                        .labelStyle(.iconOnly)
+                        .padding(4.0)
+                }
+                    .foregroundColor(.white)
+                    .background(.thinMaterial)
+                    .clipShape(Circle())
+                    .frame(width: 24.0, height: 24.0)
+                    .padding(8.0)
+            }
+            Spacer()
+        }
+        .alert(isPresented: $delete_robot_alert_presented)
+        {
+            Alert(
+                title: Text("Delete robot?"),
+                message: Text("Do you wand to delete this robot – \(robot_item.card_info().title)"),
+                primaryButton: .destructive(Text("Yes"), action: { delete_robot() }),
+                secondaryButton: .cancel(Text("No"))
+            )
+        }
+    }
+    
+    func delete_robot()
+    {
+        if let index = robots.firstIndex(of: robot_item)
+        {
+            self.on_delete(IndexSet(integer: index))
+        }
+        print("Deleted")
     }
 }
 
