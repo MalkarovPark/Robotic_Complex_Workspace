@@ -27,14 +27,12 @@ struct RobotsView: View
                 RobotsTableView(display_rv: $display_rv)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                    //.transition(AnyTransition.move(edge: .leading)).animation(.default)
             }
             if display_rv == true
             {
                 RobotView(display_rv: $display_rv)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                    //.transition(AnyTransition.move(edge: .trailing)).animation(.default)
             }
         }
         #if os(macOS)
@@ -49,10 +47,10 @@ struct RobotsView_Previews: PreviewProvider
     {
         Group
         {
-            RobotsView()
+            //RobotsView()
             RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true))
-            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")//, card_index: 0)
+            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
         }
     }
 }
@@ -62,7 +60,6 @@ struct RobotsTableView: View
     @Binding var display_rv: Bool
     
     @State private var add_robot_view_presented = false
-    //@State private var delete_robot_alert_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -87,8 +84,7 @@ struct RobotsTableView: View
                             }
                             .onTapGesture
                             {
-                                print("Viewed Robot - " + robot_item.card_info().title)
-                                view_robot()
+                                view_robot(robot_index: base_workspace.previewed_robots.firstIndex(of: robot_item) ?? 0)
                             }
                         }
                     }
@@ -115,11 +111,11 @@ struct RobotsTableView: View
             {
                 HStack(alignment: .center)
                 {
-                    Button("View Robot")
+                    /*Button("View Robot")
                     {
                         view_robot()
                         //self.display_rv = true
-                    }
+                    }*/
                     
                     Button (action: { add_robot_view_presented.toggle() })
                     {
@@ -134,8 +130,11 @@ struct RobotsTableView: View
         }
     }
     
-    func view_robot()
+    func view_robot(robot_index: Int)
     {
+        base_workspace.select_robot(number: robot_index)
+        print("Selected robot index: \(robot_index)")
+        print("Viewed Robot - " + base_workspace.selected_robot().card_info().title)
         self.display_rv = true
     }
     
@@ -205,7 +204,7 @@ struct RobotDeleteButton: View
             HStack
             {
                 Spacer()
-                Button(action: { delete_robot_alert_presented = true }) //(action: { delete_robot() })
+                Button(action: { delete_robot_alert_presented = true })
                 {
                     Label("Robots", systemImage: "xmark")
                         .labelStyle(.iconOnly)
@@ -236,7 +235,7 @@ struct RobotDeleteButton: View
         {
             self.on_delete(IndexSet(integer: index))
         }
-        print("Deleted")
+        //print("Deleted")
     }
 }
 
@@ -407,9 +406,6 @@ struct RobotView: View
             {
                 HStack(alignment: .center)
                 {
-                    //Button("Save", action: add_robot)
-                    //Spacer()
-                    
                     Button(action: { display_rv = false })
                     {
                         Label("Robots", systemImage: "xmark")
@@ -437,32 +433,39 @@ struct RobotView: View
 
 struct RobotSceneView: View
 {
-    let robot_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
-    var viewed_scene: SCNScene?
-    {
-        robot_scene
-    }
+    var viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
     
+    var box_node: SCNNode?
+    {
+        let box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
+        return box_node
+    }
     var camera_node: SCNNode?
     {
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 2)
-        return cameraNode
+        let camera_node = box_node?.childNode(withName: "camera", recursively: true)
+        return camera_node
     }
+    var points_node: SCNNode?
+    var trail_node: SCNNode?
     
     var body: some View
     {
         SceneView(scene: viewed_scene, pointOfView: camera_node, options: [.allowsCameraControl, .autoenablesDefaultLighting])
         .onAppear
         {
-            print("View Loaded")
+            scene_init()
         }
         #if os(iOS)
-        .cornerRadius(8)
-        .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))//(20)
+        //.cornerRadius(8)
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
         .navigationBarTitleDisplayMode(.inline)
         #endif
+    }
+    
+    func scene_init()
+    {
+        print("View Loaded")
     }
 }
 

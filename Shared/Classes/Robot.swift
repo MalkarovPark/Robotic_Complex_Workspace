@@ -153,11 +153,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     //MARK: - Build functions
     private var pointer_node: SCNNode!
-    #if os(macOS)
-    private let pointer_node_color = NSColor.systemPurple
-    #else
-    private let pointer_node_color = UIColor.systemCyan
-    #endif
+    private let pointer_node_color = Color.cyan
     
     public var poiner_visible = true
     {
