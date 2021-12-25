@@ -135,7 +135,7 @@ struct RobotsTableView: View
     {
         base_workspace.select_robot(number: robot_index)
         print("Selected robot index: \(robot_index)")
-        print("Viewed Robot - " + base_workspace.selected_robot().card_info().title)
+        print("Viewed Robot - " + base_workspace.selected_robot.card_info().title)
         self.display_rv = true
     }
     
@@ -496,11 +496,11 @@ struct RobotInspectorView: View
                     Picker(selection: $selected_program_index, label: Text("Program")
                             .bold())
                     {
-                        if base_workspace.selected_robot().programs_names.count > 0
+                        if base_workspace.selected_robot.programs_names.count > 0
                         {
-                            ForEach(0 ..< base_workspace.selected_robot().programs_names.count, id: \.self)
+                            ForEach(0 ..< base_workspace.selected_robot.programs_names.count, id: \.self)
                             {
-                                Text(base_workspace.selected_robot().programs_names[$0])
+                                Text(base_workspace.selected_robot.programs_names[$0])
                             }
                         }
                         else
@@ -508,13 +508,13 @@ struct RobotInspectorView: View
                             Text("None")
                         }
                     }
-                    .disabled(base_workspace.selected_robot().programs_names.count == 0)
+                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
                     
                     Button("-")
                     {
                         delete_position_program()
                     }
-                    .disabled(base_workspace.selected_robot().programs_names.count == 0)
+                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
                     .padding([.leading, .trailing], 4.0)
                     
                     Button("+")
@@ -541,14 +541,14 @@ struct RobotInspectorView: View
     
     func delete_position_program()
     {
-        if base_workspace.selected_robot().programs_names.count > 0
+        if base_workspace.selected_robot.programs_names.count > 0
         {
-            base_workspace.selected_robot().delete_program(number: selected_program_index)
-            if base_workspace.selected_robot().programs_names.count > 1
+            base_workspace.selected_robot.delete_program(number: selected_program_index)
+            if base_workspace.selected_robot.programs_names.count > 1
             {
-                if selected_program_index >= base_workspace.selected_robot().programs_names.count
+                if selected_program_index >= base_workspace.selected_robot.programs_names.count
                 {
-                    selected_program_index = base_workspace.selected_robot().programs_names.count - 1
+                    selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                 }
             }
             else
@@ -556,7 +556,7 @@ struct RobotInspectorView: View
                 selected_program_index = 0
             }
             print(selected_program_index)
-            base_workspace.updateView()
+            base_workspace.update_view()
         }
     }
 }
@@ -587,10 +587,10 @@ struct AddProgramView: View
             
             Button("Add")
             {
-                base_workspace.selected_robot().add_program(prog: PositionsProgram(name: add_text))
-                selected_program_index = base_workspace.selected_robot().programs_names.count - 1
+                base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
+                selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                 print(add_text)
-                base_workspace.updateView()
+                base_workspace.update_view()
                 add_program_view_presented.toggle()
             }
             .keyboardShortcut(.defaultAction)

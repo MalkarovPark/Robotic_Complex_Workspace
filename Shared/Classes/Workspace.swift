@@ -65,22 +65,22 @@ class Workspace: ObservableObject
         select_robot(number: number_by_name(name: name))
     }
     
-    /*public var selected_robot: Robot
+    public var selected_robot: Robot
     {
-        return self.robots[selected_robot_index]
-    }*/
+        return robots[selected_robot_index] //self.robots[selected_robot_index]
+    }
     
-    public func selected_robot() -> Robot
+    /*public func selected_robot() -> Robot
     {
         return robots[selected_robot_index]
-    }
+    }*/
     
     public func robots_count() -> Int
     {
         return robots.count
     }
     
-    func updateView()
+    func update_view()
     {
         self.objectWillChange.send()
     }
