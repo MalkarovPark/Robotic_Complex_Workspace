@@ -51,6 +51,7 @@ struct RobotsView_Previews: PreviewProvider
             RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true))
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
+            RobotInspectorView(display_rv: .constant(true))
         }
     }
 }
@@ -394,10 +395,10 @@ struct RobotView: View
     
     var body: some View
     {
-        HStack
+        HStack(spacing: 0)
         {
             RobotSceneView()
-            RobotInspectorView(display_rv: $display_rv)//.frame(width: 80)
+            RobotInspectorView(display_rv: $display_rv).frame(width: 256)
         }
         
         .toolbar
@@ -473,22 +474,127 @@ struct RobotInspectorView: View
 {
     @Binding var display_rv: Bool
     
+    @State var selected_program_index = 0
+    @State var add_program_view_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    let button_padding = 12.0
+    
     var body: some View
     {
         VStack
         {
-            Button("Add Position Program")
-            {
-                add_position_program()
-            }
-            .padding()
             Text("Inspector View")
                 .padding()
+            Spacer()
+            Divider()
+            Section
+            {
+                HStack
+                {
+                    Picker(selection: $selected_program_index, label: Text("Program")
+                            .bold())
+                    {
+                        if base_workspace.selected_robot().programs_names.count > 0
+                        {
+                            ForEach(0 ..< base_workspace.selected_robot().programs_names.count, id: \.self)
+                            {
+                                Text(base_workspace.selected_robot().programs_names[$0])
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .disabled(base_workspace.selected_robot().programs_names.count == 0)
+                    
+                    Button("-")
+                    {
+                        delete_position_program()
+                    }
+                    .disabled(base_workspace.selected_robot().programs_names.count == 0)
+                    .padding([.leading, .trailing], 4.0)
+                    
+                    Button("+")
+                    {
+                        add_position_program()
+                    }
+                    .sheet(isPresented: $add_program_view_presented)
+                    {
+                        AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $selected_program_index)
+                    }
+                }
+            }
+            .padding(8.0)
+            .padding([.leading, .bottom, .trailing], 8.0)
         }
     }
     
     func add_position_program()
     {
-        print("🕰")
+        //base_workspace.selected_robot().add_program(prog: PositionsProgram(name: "add_text"))
+        //base_workspace.updateView()
+        add_program_view_presented.toggle()
+    }
+    
+    func delete_position_program()
+    {
+        if base_workspace.selected_robot().programs_names.count > 0
+        {
+            base_workspace.selected_robot().delete_program(number: selected_program_index)
+            if base_workspace.selected_robot().programs_names.count > 1
+            {
+                if selected_program_index >= base_workspace.selected_robot().programs_names.count
+                {
+                    selected_program_index = base_workspace.selected_robot().programs_names.count - 1
+                }
+            }
+            else
+            {
+                selected_program_index = 0
+            }
+            print(selected_program_index)
+            base_workspace.updateView()
+        }
+    }
+}
+
+struct AddProgramView: View
+{
+    @Binding var add_program_view_presented: Bool
+    @Binding var selected_program_index: Int
+    
+    @State var add_text = ""
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        Text("Add Robot")
+            .padding(.top, 8.0)
+        
+        HStack
+        {
+            TextField("Name", text: $add_text)
+                .frame(width: 128.0)
+            Button("Cancel")
+            {
+                add_program_view_presented.toggle()
+            }
+            .keyboardShortcut(.cancelAction)
+            
+            Button("Add")
+            {
+                base_workspace.selected_robot().add_program(prog: PositionsProgram(name: add_text))
+                selected_program_index = base_workspace.selected_robot().programs_names.count - 1
+                print(add_text)
+                base_workspace.updateView()
+                add_program_view_presented.toggle()
+            }
+            .keyboardShortcut(.defaultAction)
+        }
+        .padding([.leading, .bottom, .trailing])
     }
 }

@@ -15,7 +15,7 @@ class PositionsProgram: Equatable, ObservableObject
         return lhs.program_name == rhs.program_name
     }
     
-    private var program_name: String?
+    public var program_name: String?
     private var points = [SCNNode]()
     private var point_node = SCNNode()
     

@@ -25,7 +25,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var manufacturer: String?
     private var model: String?
     private var ip_address: String?
-    private var programs = [PositionsProgram]()
+    @Published private var programs = [PositionsProgram]()
     
     //MARK: - Initialization
     init()
@@ -103,6 +103,19 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         let prog_number = programs.firstIndex(of: comparison_program)
         
         return prog_number ?? -1
+    }
+    
+    public var programs_names: [String]
+    {
+        var prog_names = [String]() //: [String]?
+        if programs.count > 0
+        {
+            for program in programs
+            {
+                prog_names.append(program.program_name ?? "None")
+            }
+        }
+        return prog_names
     }
     
     //MARK: - Moving functions
