@@ -493,8 +493,7 @@ struct RobotInspectorView: View
             {
                 HStack
                 {
-                    Picker(selection: $selected_program_index, label: Text("Program")
-                            .bold())
+                    Picker("Program", selection: $selected_program_index)
                     {
                         if base_workspace.selected_robot.programs_names.count > 0
                         {
@@ -508,6 +507,7 @@ struct RobotInspectorView: View
                             Text("None")
                         }
                     }
+                    .pickerStyle(.menu)
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
                     
                     Button("-")
@@ -521,10 +521,17 @@ struct RobotInspectorView: View
                     {
                         add_position_program()
                     }
+                    #if os(macOS)
                     .sheet(isPresented: $add_program_view_presented)
                     {
                         AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $selected_program_index)
                     }
+                    #else
+                    .popover(isPresented: $add_program_view_presented)
+                    {
+                        AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $selected_program_index)
+                    }
+                    #endif
                 }
             }
             .padding(8.0)
@@ -534,8 +541,8 @@ struct RobotInspectorView: View
     
     func add_position_program()
     {
-        //base_workspace.selected_robot().add_program(prog: PositionsProgram(name: "add_text"))
-        //base_workspace.updateView()
+        //base_workspace.selected_robot.add_program(prog: PositionsProgram(name: "add_text"))
+        //base_workspace.update_view()
         add_program_view_presented.toggle()
     }
     
@@ -579,6 +586,10 @@ struct AddProgramView: View
         {
             TextField("Name", text: $add_text)
                 .frame(width: 128.0)
+            #if os(iOS)
+                .textFieldStyle(.roundedBorder)
+            #endif
+            
             Button("Cancel")
             {
                 add_program_view_presented.toggle()
