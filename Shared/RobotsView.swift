@@ -525,6 +525,7 @@ struct RobotInspectorView: View
                     .sheet(isPresented: $add_program_view_presented)
                     {
                         AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $selected_program_index)
+                            .frame(height: 72.0)
                     }
                     #else
                     .popover(isPresented: $add_program_view_presented)
@@ -579,33 +580,46 @@ struct AddProgramView: View
     
     var body: some View
     {
-        Text("Add Robot")
-            .padding(.top, 8.0)
-        
-        HStack
+        VStack
         {
-            TextField("Name", text: $add_text)
-                .frame(width: 128.0)
-            #if os(iOS)
-                .textFieldStyle(.roundedBorder)
+            Text("New position program")
+            #if os(macOS)
+                .padding(.top, 12.0)
+            #else
+                .padding([.leading, .top, .trailing])
+                .padding(.bottom, 8.0)
             #endif
             
-            Button("Cancel")
+            HStack(spacing: 12.0)
             {
-                add_program_view_presented.toggle()
+                TextField("Name", text: $add_text)
+                    .frame(minWidth: 128.0, maxWidth: 256.0)
+                #if os(iOS)
+                    .frame(idealWidth: 256.0)
+                    .textFieldStyle(.roundedBorder)
+                #endif
+                
+                #if os(macOS)
+                Button("Cancel")
+                {
+                    add_program_view_presented.toggle()
+                }
+                .fixedSize()
+                .keyboardShortcut(.cancelAction)
+                #endif
+                
+                Button("Add")
+                {
+                    base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
+                    selected_program_index = base_workspace.selected_robot.programs_names.count - 1
+                    print(add_text)
+                    base_workspace.update_view()
+                    add_program_view_presented.toggle()
+                }
+                .fixedSize()
+                .keyboardShortcut(.defaultAction)
             }
-            .keyboardShortcut(.cancelAction)
-            
-            Button("Add")
-            {
-                base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
-                selected_program_index = base_workspace.selected_robot.programs_names.count - 1
-                print(add_text)
-                base_workspace.update_view()
-                add_program_view_presented.toggle()
-            }
-            .keyboardShortcut(.defaultAction)
+            .padding([.leading, .bottom, .trailing], 12.0)
         }
-        .padding([.leading, .bottom, .trailing])
     }
 }
