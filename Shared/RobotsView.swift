@@ -551,19 +551,17 @@ struct RobotInspectorView: View
     {
         if base_workspace.selected_robot.programs_names.count > 0
         {
-            base_workspace.selected_robot.delete_program(number: selected_program_index)
-            if base_workspace.selected_robot.programs_names.count > 1
+            let current_spi = selected_program_index
+            base_workspace.selected_robot.delete_program(number: current_spi)
+            if base_workspace.selected_robot.programs_names.count > 1 && current_spi > 0
             {
-                if selected_program_index >= base_workspace.selected_robot.programs_names.count
-                {
-                    selected_program_index = base_workspace.selected_robot.programs_names.count - 1
-                }
+                selected_program_index = current_spi - 1
             }
             else
             {
                 selected_program_index = 0
             }
-            print(selected_program_index)
+            //print(selected_program_index)
             base_workspace.update_view()
         }
     }
@@ -612,7 +610,7 @@ struct AddProgramView: View
                 {
                     base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
-                    print(add_text)
+                    //print(add_text)
                     base_workspace.update_view()
                     add_program_view_presented.toggle()
                 }
