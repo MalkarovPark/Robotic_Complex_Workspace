@@ -134,8 +134,8 @@ struct RobotsTableView: View
     func view_robot(robot_index: Int)
     {
         base_workspace.select_robot(number: robot_index)
-        print("Selected robot index: \(robot_index)")
-        print("Viewed Robot - " + base_workspace.selected_robot.card_info().title)
+        //print("Selected robot index: \(robot_index)")
+        //print("Viewed Robot - " + base_workspace.selected_robot.card_info().title)
         self.display_rv = true
     }
     
@@ -457,9 +457,12 @@ struct RobotSceneView: View
             scene_init()
         }
         #if os(iOS)
-        //.cornerRadius(8)
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
+        
+        //.ignoresSafeArea(.container, edges: .bottom)
+        //.edgesIgnoringSafeArea(.bottom)
+        
         .navigationBarTitleDisplayMode(.inline)
         #endif
     }
@@ -487,12 +490,21 @@ struct RobotInspectorView: View
         {
             Text("Inspector View")
                 .padding()
+            
             Spacer()
+            #if os(macOS)
             Divider()
+            #endif
+            
             Section
             {
-                HStack
+                HStack(spacing: 12.0)
                 {
+                    #if os(iOS)
+                    Text("Program")
+                        .font(.subheadline)
+                    #endif
+                    
                     Picker("Program", selection: $selected_program_index)
                     {
                         if base_workspace.selected_robot.programs_names.count > 0
@@ -509,13 +521,16 @@ struct RobotInspectorView: View
                     }
                     .pickerStyle(.menu)
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                    .frame(maxWidth: .infinity)
+                    #if os(iOS)
+                    .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                    #endif
                     
                     Button("-")
                     {
                         delete_position_program()
                     }
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
-                    .padding([.leading, .trailing], 4.0)
                     
                     Button("+")
                     {
@@ -561,7 +576,7 @@ struct RobotInspectorView: View
             {
                 selected_program_index = 0
             }
-            //print(selected_program_index)
+            
             base_workspace.update_view()
         }
     }
@@ -610,7 +625,6 @@ struct AddProgramView: View
                 {
                     base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
-                    //print(add_text)
                     base_workspace.update_view()
                     add_program_view_presented.toggle()
                 }
