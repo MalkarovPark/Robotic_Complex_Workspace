@@ -67,7 +67,15 @@ class Workspace: ObservableObject
     
     public var selected_robot: Robot
     {
-        return robots[selected_robot_index] //self.robots[selected_robot_index]
+        get
+        {
+            return robots[selected_robot_index]
+        }
+        set
+        {
+            robots[selected_robot_index] = newValue
+        }
+        //return robots[selected_robot_index] //self.robots[selected_robot_index]
     }
     
     /*public func selected_robot() -> Robot

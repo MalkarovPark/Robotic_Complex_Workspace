@@ -48,10 +48,11 @@ struct RobotsView_Previews: PreviewProvider
         Group
         {
             //RobotsView()
-            RobotView(display_rv: .constant(true))
+            //RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true))
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
-            RobotInspectorView(display_rv: .constant(true))
+            PositionItemView(item_view_pos_location: [0, 1, 2], item_view_pos_rotation: [3, 4, 5], position_item_view_presented: .constant(true))
+            //RobotInspectorView() //(display_rv: .constant(true))
         }
     }
 }
@@ -393,12 +394,14 @@ struct RobotView: View
 {
     @Binding var display_rv: Bool
     
+    @EnvironmentObject var base_workspace: Workspace
+    
     var body: some View
     {
         HStack(spacing: 0)
         {
             RobotSceneView()
-            RobotInspectorView(display_rv: $display_rv).frame(width: 256)
+            RobotInspectorView().frame(width: 256) //(display_rv: $display_rv).frame(width: 256)
         }
         
         .toolbar
@@ -475,10 +478,11 @@ struct RobotSceneView: View
 
 struct RobotInspectorView: View
 {
-    @Binding var display_rv: Bool
+    //@Binding var display_rv: Bool
     
-    @State var selected_program_index = 0
     @State var add_program_view_presented = false
+    
+    @State var points = ["Point 1", "Point 2"]
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -488,8 +492,18 @@ struct RobotInspectorView: View
     {
         VStack
         {
-            Text("Inspector View")
-                .padding()
+            //Text("Inspector View")
+                //.padding()
+            
+            List
+            {
+                ForEach(points, id: \.self)
+                { point in
+                    PositionItemListView()
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+            .padding()
             
             Spacer()
             #if os(macOS)
@@ -505,7 +519,7 @@ struct RobotInspectorView: View
                         .font(.subheadline)
                     #endif
                     
-                    Picker("Program", selection: $selected_program_index)
+                    Picker("Program", selection: $base_workspace.selected_robot.selected_program_index)
                     {
                         if base_workspace.selected_robot.programs_names.count > 0
                         {
@@ -519,6 +533,10 @@ struct RobotInspectorView: View
                             Text("None")
                         }
                     }
+                    /*.onChange(of: selected_program_index)
+                    { _ in
+                        update_program_select()
+                    }*/
                     .pickerStyle(.menu)
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
                     .frame(maxWidth: .infinity)
@@ -539,13 +557,13 @@ struct RobotInspectorView: View
                     #if os(macOS)
                     .sheet(isPresented: $add_program_view_presented)
                     {
-                        AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $selected_program_index)
+                        AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_robot.selected_program_index)
                             .frame(height: 72.0)
                     }
                     #else
                     .popover(isPresented: $add_program_view_presented)
                     {
-                        AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $selected_program_index)
+                        AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_robot.selected_program_index)
                     }
                     #endif
                 }
@@ -566,15 +584,15 @@ struct RobotInspectorView: View
     {
         if base_workspace.selected_robot.programs_names.count > 0
         {
-            let current_spi = selected_program_index
+            let current_spi = base_workspace.selected_robot.selected_program_index
             base_workspace.selected_robot.delete_program(number: current_spi)
             if base_workspace.selected_robot.programs_names.count > 1 && current_spi > 0
             {
-                selected_program_index = current_spi - 1
+                base_workspace.selected_robot.selected_program_index = current_spi - 1
             }
             else
             {
-                selected_program_index = 0
+                base_workspace.selected_robot.selected_program_index = 0
             }
             
             base_workspace.update_view()
@@ -633,5 +651,155 @@ struct AddProgramView: View
             }
             .padding([.leading, .bottom, .trailing], 12.0)
         }
+    }
+}
+
+struct PositionItemListView: View
+{
+    @State var position_item_view_presented = false
+   
+    var body: some View
+    {
+        HStack
+        {
+            Button("+")
+            {
+                position_item_view_presented.toggle()
+            }
+            #if os(macOS)
+            .sheet(isPresented: $position_item_view_presented)
+            {
+                PositionItemView(item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], position_item_view_presented: $position_item_view_presented)
+                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+            }
+            #else
+            .popover(isPresented: $position_item_view_presented)
+            {
+                PositionItemView(item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], position_item_view_presented: $position_item_view_presented)
+                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+            }
+            #endif
+        }
+    }
+}
+
+struct PositionItemView: View
+{
+    @State var item_view_pos_location = [Int]()
+    @State var item_view_pos_rotation = [Int]()
+    
+    @Binding var position_item_view_presented: Bool
+    
+    let button_padding = 12.0
+    
+    var body: some View
+    {
+        VStack
+        {
+            HStack(spacing: 12)
+            {
+                GroupBox(label: Text("Location")
+                            .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("X:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $item_view_pos_location[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $item_view_pos_location[0], in: 0...200)
+                                .labelsHidden()
+                        }
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("Y:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $item_view_pos_location[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $item_view_pos_location[1], in: 0...200)
+                                .labelsHidden()
+                        }
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("Z:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $item_view_pos_location[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $item_view_pos_location[2], in: 0...200)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+                
+                GroupBox(label: Text("Rotation")
+                            .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("W:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $item_view_pos_rotation[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $item_view_pos_rotation[0], in: 0...200)
+                                .labelsHidden()
+                        }
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("P:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $item_view_pos_rotation[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $item_view_pos_rotation[1], in: 0...200)
+                                .labelsHidden()
+                        }
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("R:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $item_view_pos_rotation[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $item_view_pos_rotation[2], in: 0...200)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+            }
+            .padding([.top, .leading, .trailing])
+            .padding(.bottom, 8.0)
+            
+            Divider()
+            
+            HStack
+            {
+                Spacer()
+                
+                Button("Cancel", action: { position_item_view_presented.toggle() })
+                    .keyboardShortcut(.cancelAction)
+                    .padding(.top, button_padding - 8.0)
+                    .padding(.bottom, button_padding)
+                    .padding(.trailing, button_padding - 8.0)
+                
+                Button("Save", action: { update_point_in_program() })
+                    .keyboardShortcut(.defaultAction)
+                    .padding(.top, button_padding - 8.0)
+                    .padding(.bottom, button_padding)
+                    .padding(.trailing, button_padding)
+            }
+        }
+    }
+    
+    func update_point_in_program()
+    {
+        position_item_view_presented.toggle()
     }
 }

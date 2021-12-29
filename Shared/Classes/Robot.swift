@@ -54,7 +54,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: - Program manage functions
-    private var selected_program_index = 0
+    public var selected_program_index = 0
     
     public func add_program(prog: PositionsProgram)
     {
@@ -97,6 +97,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         select_program(number: number_by_name(name: name))
     }
     
+    public var selected_program: PositionsProgram
+    {
+        return programs[selected_program_index]
+    }
+    
     private func number_by_name(name: String) -> Int
     {
         let comparison_program = PositionsProgram(name: name)
@@ -117,6 +122,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
         return prog_names
     }
+    
+    /*public var program_index: Int
+    {
+        return selected_program_index
+    }*/
     
     //MARK: - Moving functions
     public var move_time: Double?
