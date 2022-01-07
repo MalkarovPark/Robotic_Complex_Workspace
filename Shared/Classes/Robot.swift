@@ -123,10 +123,15 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return prog_names
     }
     
-    /*public var program_index: Int
+    public var programs_count: Int
     {
-        return selected_program_index
-    }*/
+        return programs.count
+    }
+    
+    /*public var program_index: Int
+     {
+     return selected_program_index
+     }*/
     
     //MARK: - Moving functions
     public var move_time: Double?
