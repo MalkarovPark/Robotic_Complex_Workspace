@@ -564,10 +564,14 @@ struct RobotInspectorView: View
                             }
                             .disabled(base_workspace.selected_robot.programs_count == 0)
                             .foregroundColor(.white)
-                            .background(.tint)
+                            //.background(.tint)
+                            .background(Color.accentColor)
                             .clipShape(Circle())
                             .frame(width: 24.0, height: 24.0)
                             .shadow(radius: 4.0)
+                            #if os(macOS)
+                            .buttonStyle(BorderlessButtonStyle())
+                            #endif
                             .padding(32.0)
                         }
                     }
@@ -580,7 +584,7 @@ struct RobotInspectorView: View
             {
                 VStack
                 {
-                    Picker(selection: $teach_selection, label: Text(""))
+                    Picker("LR", selection: $teach_selection)
                     {
                         ForEach(0..<teach_items.count, id: \.self)
                         { index in
@@ -588,9 +592,11 @@ struct RobotInspectorView: View
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
-                    .padding(.bottom, 8.0)
+                    .labelsHidden()
                     #if os(macOS)
-                    .padding(.top, 8.0)
+                    .padding(8.0)
+                    #else
+                    .padding(.bottom, 8.0)
                     #endif
                     
                     if teach_selection == 0
@@ -600,6 +606,7 @@ struct RobotInspectorView: View
                             Text("X: " + String(format: "%.0f", teach_location[0]))
                                 .frame(width: 64.0)
                             Slider(value: $teach_location[0], in: 0.0...200.0)
+                                .padding(.trailing)
                         }
                         
                         HStack
@@ -607,6 +614,7 @@ struct RobotInspectorView: View
                             Text("Y: " + String(format: "%.0f", teach_location[1]))
                                 .frame(width: 64.0)
                             Slider(value: $teach_location[1], in: 0.0...200.0)
+                                .padding(.trailing)
                         }
                         
                         HStack
@@ -614,7 +622,13 @@ struct RobotInspectorView: View
                             Text("Z: " + String(format: "%.0f", teach_location[2]))
                                 .frame(width: 64.0)
                             Slider(value: $teach_location[2], in: 0.0...200.0)
+                                .padding(.trailing)
                         }
+                        #if os(macOS)
+                        .padding(.bottom, 8.0)
+                        #else
+                        .padding(.bottom, 4.0)
+                        #endif
                     }
                     else
                     {
@@ -623,6 +637,7 @@ struct RobotInspectorView: View
                             Text("R: " + String(format: "%.0f", teach_rotation[0]))
                                 .frame(width: 64.0)
                             Slider(value: $teach_rotation[0], in: -180.0...180.0)
+                                .padding(.trailing)
                         }
                         
                         HStack
@@ -630,6 +645,7 @@ struct RobotInspectorView: View
                             Text("P: " + String(format: "%.0f", teach_rotation[1]))
                                 .frame(width: 64.0)
                             Slider(value: $teach_rotation[1], in: -180.0...180.0)
+                                .padding(.trailing)
                         }
                         
                         HStack
@@ -637,11 +653,22 @@ struct RobotInspectorView: View
                             Text("W: " + String(format: "%.0f", teach_rotation[2]))
                                 .frame(width: 64.0)
                             Slider(value: $teach_rotation[2], in: -180.0...180.0)
+                                .padding(.trailing)
                         }
+                        #if os(macOS)
+                        .padding(.bottom, 8.0)
+                        #else
+                        .padding(.bottom, 4.0)
+                        #endif
                     }
                 }
             }
+            #if os(macOS)
+            .padding([.leading, .trailing])
+            .padding(.bottom, 12.0)
+            #else
             .padding([.leading, .trailing, .bottom])
+            #endif
             
             Spacer()
             #if os(macOS)
