@@ -217,6 +217,9 @@ struct RobotDeleteButton: View
                     .clipShape(Circle())
                     .frame(width: 24.0, height: 24.0)
                     .padding(8.0)
+                    #if os(macOS)
+                    .buttonStyle(BorderlessButtonStyle())
+                    #endif
             }
             Spacer()
         }
@@ -564,7 +567,6 @@ struct RobotInspectorView: View
                             }
                             .disabled(base_workspace.selected_robot.programs_count == 0)
                             .foregroundColor(.white)
-                            //.background(.tint)
                             .background(Color.accentColor)
                             .clipShape(Circle())
                             .frame(width: 24.0, height: 24.0)
@@ -763,8 +765,7 @@ struct RobotInspectorView: View
     
     func add_point_to_program()
     {
-        print("🍦")
-        
+        //print("🍦")
         base_workspace.selected_robot.selected_program.add_point(pos_x: teach_location[0], pos_y: teach_location[1], pos_z: teach_location[2], rot_x: teach_rotation[0], rot_y: teach_rotation[1], rot_z: teach_rotation[2])
         
         base_workspace.update_view()
@@ -814,7 +815,7 @@ struct AddProgramView: View
                 {
                     base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
-                    base_workspace.update_view()
+                    //base_workspace.update_view()
                     add_program_view_presented.toggle()
                 }
                 .fixedSize()
@@ -855,7 +856,9 @@ struct PositionItemListView: View
             .buttonStyle(.borderless)
             .foregroundColor(Color.accentColor)
             #if os(macOS)
-            .sheet(isPresented: $position_item_view_presented)
+            //.sheet(isPresented: $position_item_view_presented)
+            .popover(isPresented: $position_item_view_presented,
+                     arrowEdge: .leading)
             {
                 PositionItemView(item_view_pos_location: [point_info[0], point_info[1], point_info[2]], item_view_pos_rotation: [point_info[3], point_info[4], point_info[5]], item_number: Int(point_info[6]) - 1, position_item_view_presented: $position_item_view_presented)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
@@ -1075,6 +1078,9 @@ struct PositionItemView: View
                     .padding(.top, button_padding - 8.0)
                     .padding(.bottom, button_padding)
                     .padding(.trailing, button_padding)
+                #if os(macOS)
+                    .foregroundColor(Color.white)
+                #endif
             }
         }
     }
@@ -1089,7 +1095,7 @@ struct PositionItemView: View
     func delete_point_from_program()
     {
         base_workspace.selected_robot.selected_program.delete_point(number: item_number)
-        position_item_view_presented.toggle()
         base_workspace.update_view()
+        position_item_view_presented.toggle()
     }
 }

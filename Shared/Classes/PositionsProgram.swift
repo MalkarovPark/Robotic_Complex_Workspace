@@ -41,7 +41,7 @@ class PositionsProgram: Equatable, ObservableObject
         #endif
         
         points.append(point_node)
-        print(points)
+        //print(points)
         
         visual_build()
     }

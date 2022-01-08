@@ -90,6 +90,7 @@ class Workspace: ObservableObject
     
     func update_view()
     {
+        //objectWillChange.send()
         self.objectWillChange.send()
     }
     
