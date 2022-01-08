@@ -852,6 +852,8 @@ struct PositionItemListView: View
                 Label("info", systemImage: "square.and.pencil")
                     .labelStyle(.iconOnly)
             }
+            .buttonStyle(.borderless)
+            .foregroundColor(Color.accentColor)
             #if os(macOS)
             .sheet(isPresented: $position_item_view_presented)
             {
