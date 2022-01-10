@@ -457,7 +457,20 @@ struct RobotView: View
 
 struct RobotSceneView: View
 {
-    @EnvironmentObject var base_workspace: Workspace
+    var body: some View
+    {
+        #if os(macOS)
+        SceneView_macOS()
+        #else
+        SceneView_iOS()
+            .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+            .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
+            
+            .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+    
+    /*@EnvironmentObject var base_workspace: Workspace
     
     var viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
     
@@ -503,11 +516,97 @@ struct RobotSceneView: View
     func scene_init()
     {
         pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
-        //print("🍔")
         print(base_workspace.selected_robot.get_pointer_position().location.x)
-        //print("View Loaded")
+    }*/
+}
+
+#if os(macOS)
+struct SceneView_macOS: NSViewRepresentable
+{
+    @EnvironmentObject var base_workspace: Workspace
+    
+    let scene_view = SCNView(frame: .zero)
+    let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
+    
+    var box_node: SCNNode?
+    {
+        let box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
+        return box_node
+    }
+    
+    var camera_node: SCNNode?
+    {
+        let camera_node = box_node?.childNode(withName: "camera", recursively: true)
+        return camera_node
+    }
+    
+    var pointer_node: SCNNode?
+    {
+        let pointer_node = box_node?.childNode(withName: "pointer", recursively: true)
+        return pointer_node
+    }
+    
+    func scn_scene(stat: Bool, context: Context) -> SCNView
+    {
+        scene_view.scene = viewed_scene
+        return scene_view
+    }
+    
+    func makeNSView(context: Context) -> SCNView
+    {
+        scn_scene(stat: true, context: context)
+    }
+
+    func updateNSView(_ ui_view: SCNView, context: Context)
+    {
+        ui_view.allowsCameraControl = true
+        pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
     }
 }
+#else
+struct SceneView_iOS: UIViewRepresentable
+{
+    @EnvironmentObject var base_workspace: Workspace
+    
+    let scene_view = SCNView(frame: .zero)
+    let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
+    
+    var box_node: SCNNode?
+    {
+        let box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
+        return box_node
+    }
+    
+    var camera_node: SCNNode?
+    {
+        let camera_node = box_node?.childNode(withName: "camera", recursively: true)
+        return camera_node
+    }
+    
+    var pointer_node: SCNNode?
+    {
+        let pointer_node = box_node?.childNode(withName: "pointer", recursively: true)
+        return pointer_node
+    }
+    
+    func scn_scene(stat: Bool, context: Context) -> SCNView
+    {
+        scene_view.scene = viewed_scene
+        return scene_view
+    }
+    
+    func makeUIView(context: Context) -> SCNView
+    {
+        scn_scene(stat: true, context: context)
+    }
+
+    func updateUIView(_ ui_view: SCNView, context: Context)
+    {
+        ui_view.allowsCameraControl = true
+        pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
+    }
+}
+#endif
 
 struct RobotInspectorView: View
 {
