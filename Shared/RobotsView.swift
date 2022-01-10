@@ -636,7 +636,7 @@ struct RobotInspectorView: View
                     {
                         HStack
                         {
-                            Text("R: " + String(format: "%.0f", teach_rotation[0]))
+                            Text("R: " + String(format: "%.0f", teach_rotation[0]) + "º")
                                 .frame(width: 64.0)
                             Slider(value: $teach_rotation[0], in: -180.0...180.0)
                                 .padding(.trailing)
@@ -644,7 +644,7 @@ struct RobotInspectorView: View
                         
                         HStack
                         {
-                            Text("P: " + String(format: "%.0f", teach_rotation[1]))
+                            Text("P: " + String(format: "%.0f", teach_rotation[1]) + "º")
                                 .frame(width: 64.0)
                             Slider(value: $teach_rotation[1], in: -180.0...180.0)
                                 .padding(.trailing)
@@ -652,7 +652,7 @@ struct RobotInspectorView: View
                         
                         HStack
                         {
-                            Text("W: " + String(format: "%.0f", teach_rotation[2]))
+                            Text("W: " + String(format: "%.0f", teach_rotation[2]) + "º")
                                 .frame(width: 64.0)
                             Slider(value: $teach_rotation[2], in: -180.0...180.0)
                                 .padding(.trailing)
