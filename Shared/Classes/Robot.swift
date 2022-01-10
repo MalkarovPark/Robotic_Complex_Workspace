@@ -128,13 +128,24 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return programs.count
     }
     
-    /*public var program_index: Int
-     {
-     return selected_program_index
-     }*/
-    
     //MARK: - Moving functions
     public var move_time: Double?
+    
+    public var pointer_location = [0.0, 0.0, 0.0] //x, y, z
+    {
+        didSet
+        {
+            update_position()
+        }
+    }
+    
+    public var pointer_rotation = [0.0, 0.0, 0.0] //r, p, w
+    {
+        didSet
+        {
+            update_position()
+        }
+    }
     
     public var demo_work = true
     {
@@ -147,9 +158,14 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    public func update_position()
+    private func update_position()
     {
-        
+        //print("🎀")
+    }
+    
+    public func get_pointer_position() -> (location: SCNVector3, rot_x: Double, rot_y: Double, rot_z: Double)
+    {
+        return(SCNVector3(pointer_location[0], pointer_location[1], pointer_location[0]), pointer_rotation[0], pointer_rotation[1], pointer_rotation[2])
     }
     
     public func move_to_point()

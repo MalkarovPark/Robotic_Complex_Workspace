@@ -397,7 +397,7 @@ struct RobotView: View
 {
     @Binding var display_rv: Bool
     
-    @EnvironmentObject var base_workspace: Workspace
+    //@EnvironmentObject var base_workspace: Workspace
     
     var body: some View
     {
@@ -457,6 +457,8 @@ struct RobotView: View
 
 struct RobotSceneView: View
 {
+    @EnvironmentObject var base_workspace: Workspace
+    
     var viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
     
     var box_node: SCNNode?
@@ -464,11 +466,19 @@ struct RobotSceneView: View
         let box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
         return box_node
     }
+    
     var camera_node: SCNNode?
     {
         let camera_node = box_node?.childNode(withName: "camera", recursively: true)
         return camera_node
     }
+    
+    var pointer_node: SCNNode?
+    {
+        let pointer_node = box_node?.childNode(withName: "pointer", recursively: true)
+        return pointer_node
+    }
+    
     var points_node: SCNNode?
     var trail_node: SCNNode?
     
@@ -492,7 +502,10 @@ struct RobotSceneView: View
     
     func scene_init()
     {
-        print("View Loaded")
+        pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
+        //print("🍔")
+        print(base_workspace.selected_robot.get_pointer_position().location.x)
+        //print("View Loaded")
     }
 }
 
@@ -501,8 +514,8 @@ struct RobotInspectorView: View
     @State var add_program_view_presented = false
     @State var points = ["Point 1", "Point 2"]
     @State private var teach_selection = 0
-    @State private var teach_location = [0.0, 0.0, 0.0] //x, y, z
-    @State private var teach_rotation = [0.0, 0.0, 0.0] //r, p, w
+    //@State private var teach_location = [0.0, 0.0, 0.0] //x, y, z
+    //@State private var teach_rotation = [0.0, 0.0, 0.0] //r, p, w
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -532,7 +545,6 @@ struct RobotInspectorView: View
                             ForEach(base_workspace.selected_robot.selected_program.points_info, id: \.self)
                             { point in
                                 PositionItemListView(point_info: point)
-                                //PositionItemListView(location: $teach_location, rotation: $teach_rotation)
                             }
                         }
                     }
@@ -605,25 +617,25 @@ struct RobotInspectorView: View
                     {
                         HStack
                         {
-                            Text("X: " + String(format: "%.0f", teach_location[0]))
+                            Text("X: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[0]))
                                 .frame(width: 64.0)
-                            Slider(value: $teach_location[0], in: 0.0...200.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_location[0], in: 0.0...200.0)
                                 .padding(.trailing)
                         }
                         
                         HStack
                         {
-                            Text("Y: " + String(format: "%.0f", teach_location[1]))
+                            Text("Y: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[1]))
                                 .frame(width: 64.0)
-                            Slider(value: $teach_location[1], in: 0.0...200.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_location[1], in: 0.0...200.0)
                                 .padding(.trailing)
                         }
                         
                         HStack
                         {
-                            Text("Z: " + String(format: "%.0f", teach_location[2]))
+                            Text("Z: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[2]))
                                 .frame(width: 64.0)
-                            Slider(value: $teach_location[2], in: 0.0...200.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_location[2], in: 0.0...200.0)
                                 .padding(.trailing)
                         }
                         #if os(macOS)
@@ -636,25 +648,25 @@ struct RobotInspectorView: View
                     {
                         HStack
                         {
-                            Text("R: " + String(format: "%.0f", teach_rotation[0]) + "º")
+                            Text("R: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[0]) + "º")
                                 .frame(width: 64.0)
-                            Slider(value: $teach_rotation[0], in: -180.0...180.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_rotation[0], in: -180.0...180.0)
                                 .padding(.trailing)
                         }
                         
                         HStack
                         {
-                            Text("P: " + String(format: "%.0f", teach_rotation[1]) + "º")
+                            Text("P: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[1]) + "º")
                                 .frame(width: 64.0)
-                            Slider(value: $teach_rotation[1], in: -180.0...180.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_rotation[1], in: -180.0...180.0)
                                 .padding(.trailing)
                         }
                         
                         HStack
                         {
-                            Text("W: " + String(format: "%.0f", teach_rotation[2]) + "º")
+                            Text("W: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[2]) + "º")
                                 .frame(width: 64.0)
-                            Slider(value: $teach_rotation[2], in: -180.0...180.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_rotation[2], in: -180.0...180.0)
                                 .padding(.trailing)
                         }
                         #if os(macOS)
@@ -766,7 +778,7 @@ struct RobotInspectorView: View
     func add_point_to_program()
     {
         //print("🍦")
-        base_workspace.selected_robot.selected_program.add_point(pos_x: teach_location[0], pos_y: teach_location[1], pos_z: teach_location[2], rot_x: teach_rotation[0], rot_y: teach_rotation[1], rot_z: teach_rotation[2])
+        base_workspace.selected_robot.selected_program.add_point(pos_x: base_workspace.selected_robot.pointer_location[0], pos_y: base_workspace.selected_robot.pointer_location[1], pos_z: base_workspace.selected_robot.pointer_location[2], rot_x: base_workspace.selected_robot.pointer_rotation[0], rot_y: base_workspace.selected_robot.pointer_rotation[1], rot_z: base_workspace.selected_robot.pointer_rotation[2])
         
         base_workspace.update_view()
     }
