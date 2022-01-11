@@ -524,10 +524,6 @@ struct SceneView_macOS: NSViewRepresentable
                 points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
             }
         }
-        /*if base_workspace.selected_robot.selected_program.positions_visible == true
-        {
-            
-        }*/
     }
 }
 #else
