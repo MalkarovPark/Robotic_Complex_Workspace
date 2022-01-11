@@ -23,6 +23,12 @@ class PositionsProgram: Equatable, ObservableObject
         self.program_name = name ?? "None"
     }
     
+    deinit
+    {
+        //print("🍩")
+        positions_visible = false
+    }
+    
     //MARK: - Point manage functions
     public func add_point(pos_x: CGFloat, pos_y: CGFloat, pos_z: CGFloat, rot_x: CGFloat, rot_y: CGFloat, rot_z: CGFloat)
     {
@@ -54,13 +60,11 @@ class PositionsProgram: Equatable, ObservableObject
         {
             #if os(macOS)
             point_node.position = SCNVector3(x: pos_x, y: pos_y, z: pos_z)
-            //point_node.eulerAngles = SCNVector3(x: rot_x, y: rot_y, z: rot_z)
             point_node.rotation.x = to_rad(in_angle: rot_x)
             point_node.rotation.y = to_rad(in_angle: rot_y)
             point_node.rotation.z = to_rad(in_angle: rot_z)
             #else
             point_node.position = SCNVector3(x: Float(pos_x), y: Float(pos_y), z: Float(pos_z))
-            //point_node.eulerAngles = SCNVector3(x: Float(rot_x), y: Float(rot_y), z: Float(rot_z))
             point_node.rotation.x = Float(to_rad(in_angle: rot_x))
             point_node.rotation.y = Float(to_rad(in_angle: rot_y))
             point_node.rotation.z = Float(to_rad(in_angle: rot_z))
@@ -113,7 +117,7 @@ class PositionsProgram: Equatable, ObservableObject
     }
     
     //MARK: - Visual functions
-    private var positions_group = SCNNode()
+    public var positions_group = SCNNode()
     
     private let target_point_color = Color.purple
     
@@ -127,53 +131,74 @@ class PositionsProgram: Equatable, ObservableObject
     
     private func visual_build()
     {
+        //positions_group = SCNNode()
+        positions_group.enumerateChildNodes
+        { (node, stop) in
+            node.removeFromParentNode()
+        }
+        
         if positions_visible == true
         {
             if points.count > 0
             {
+                let visual_point = SCNNode()
+                
+                visual_point.geometry = SCNSphere(radius: 0.4)
+                visual_point.geometry?.firstMaterial?.diffuse.contents = target_point_color
+                
                 if points.count > 1
                 {
                     var is_first = true
                     var pivot_points = [SCNVector3(), SCNVector3()]
+                    var point_location = SCNVector3()
                     
                     for point in points
                     {
-                        point.geometry = SCNSphere(radius: 0.4)
-                        point.geometry?.firstMaterial?.diffuse.contents = target_point_color
+                        point_location = SCNVector3(x: point.position.x / 10 - 10, y: point.position.z / 10 - 10, z: point.position.y / 10 - 10)
+                        
+                        visual_point.position = point_location
+                        visual_point.rotation.x = point.rotation.x
+                        visual_point.rotation.y = point.rotation.y
+                        visual_point.rotation.z = point.rotation.z
                         
                         if is_first == true
                         {
-                            pivot_points[0] = point.position
+                            pivot_points[0] = point_location
                             is_first = false
                         }
                         else
                         {
                             #if os(macOS)
-                            pivot_points[1] = SCNVector3(point.position.x + CGFloat.random(in: -0.001..<0.001), point.position.z + CGFloat.random(in: -0.001..<0.001), point.position.y + CGFloat.random(in: -0.001..<0.001))
+                            pivot_points[1] = SCNVector3(point_location.x + CGFloat.random(in: -0.001..<0.001), point_location.y + CGFloat.random(in: -0.001..<0.001), point_location.z + CGFloat.random(in: -0.001..<0.001))
                             #else
-                            pivot_points[1] = SCNVector3(point.position.x + Float.random(in: -0.001..<0.001), point.position.z + Float.random(in: -0.001..<0.001), point.position.y + Float.random(in: -0.001..<0.001))
+                            pivot_points[1] = SCNVector3(point_location.x + Float.random(in: -0.001..<0.001), point_location.z + Float.random(in: -0.001..<0.001), point_location.y + Float.random(in: -0.001..<0.001))
                             #endif
                             positions_group.addChildNode(build_ptp_line(from: simd_float3(pivot_points[0]), to: simd_float3(pivot_points[1])))
                             pivot_points[0] = pivot_points[1]
                         }
                         
-                        positions_group.addChildNode(point)
+                        positions_group.addChildNode(visual_point)
                     }
                 }
                 else
                 {
-                    var point = points.first
-                    point?.geometry = SCNSphere(radius: 0.4)
-                    point?.geometry?.firstMaterial?.diffuse.contents = target_point_color
+                    let point = points.first ?? SCNNode()
                     
-                    positions_group.addChildNode(point!)
+                    let point_location = SCNVector3(x: point.position.x / 10 - 10, y: point.position.z / 10 - 10, z: point.position.y / 10 - 10)
+                    
+                    visual_point.position = point_location
+                    visual_point.rotation.x = point.rotation.x
+                    visual_point.rotation.y = point.rotation.y
+                    visual_point.rotation.z = point.rotation.z
+                    
+                    positions_group.addChildNode(visual_point)
                 }
             }
         }
-        else
+        /*else
         {
             positions_group = SCNNode()
-        }
+        }*/
     }
     
     private func build_ptp_line(from: simd_float3, to: simd_float3) -> SCNNode

@@ -58,14 +58,18 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func add_program(prog: PositionsProgram)
     {
+        selected_program.positions_visible = false
         programs.append(prog)
+        selected_program.positions_visible = true
     }
     
     public func update_program(number: Int, prog: PositionsProgram)
     {
         if programs.indices.contains(number) == true
         {
+            selected_program.positions_visible = false
             programs[number] = prog
+            selected_program.positions_visible = true
         }
     }
     
@@ -89,7 +93,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func select_program(number: Int)
     {
+        selected_program.positions_visible = false
         selected_program_index = number
+        selected_program.positions_visible = true
     }
     
     public func select_program(name: String)
@@ -99,7 +105,15 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public var selected_program: PositionsProgram
     {
-        return programs[selected_program_index]
+        var sprogram: PositionsProgram?
+        if programs.indices.contains(selected_program_index) == true
+        {
+            sprogram = programs[selected_program_index]
+        }
+        
+        return sprogram ?? PositionsProgram()
+        
+        //return programs[selected_program_index]
     }
     
     private func number_by_name(name: String) -> Int
