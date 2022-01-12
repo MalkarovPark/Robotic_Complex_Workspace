@@ -552,6 +552,12 @@ struct SceneView_iOS: UIViewRepresentable
         return pointer_node
     }
     
+    var points_node: SCNNode?
+    {
+        let points_node = box_node?.childNode(withName: "points", recursively: true)
+        return points_node
+    }
+    
     func scn_scene(stat: Bool, context: Context) -> SCNView
     {
         scene_view.scene = viewed_scene
@@ -566,7 +572,16 @@ struct SceneView_iOS: UIViewRepresentable
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         ui_view.allowsCameraControl = true
+        
         pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
+        
+        if base_workspace.selected_robot.programs_count > 0
+        {
+            if base_workspace.selected_robot.selected_program.points_count > 0
+            {
+                points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
+            }
+        }
     }
 }
 #endif

@@ -119,7 +119,13 @@ class PositionsProgram: Equatable, ObservableObject
     //MARK: - Visual functions
     public var positions_group = SCNNode()
     
-    private let target_point_color = Color.purple
+    #if os(macOS)
+    private let target_point_color = NSColor.systemPurple //Color.purple
+    private let cylinder_color = NSColor.white
+    #else
+    private let target_point_color = UIColor.systemPurple
+    private let cylinder_color = UIColor.white
+    #endif
     
     public func visual_build()
     {
@@ -155,7 +161,7 @@ class PositionsProgram: Equatable, ObservableObject
                         #if os(macOS)
                         pivot_points[1] = SCNVector3(point_location.x + CGFloat.random(in: -0.001..<0.001), point_location.y + CGFloat.random(in: -0.001..<0.001), point_location.z + CGFloat.random(in: -0.001..<0.001))
                         #else
-                        pivot_points[1] = SCNVector3(point_location.x + Float.random(in: -0.001..<0.001), point_location.z + Float.random(in: -0.001..<0.001), point_location.y + Float.random(in: -0.001..<0.001))
+                        pivot_points[1] = SCNVector3(point_location.x + Float.random(in: -0.001..<0.001), point_location.y + Float.random(in: -0.001..<0.001), point_location.z + Float.random(in: -0.001..<0.001))
                         #endif
                         positions_group.addChildNode(build_ptp_line(from: simd_float3(pivot_points[0]), to: simd_float3(pivot_points[1])))
                         pivot_points[0] = pivot_points[1]
@@ -193,11 +199,6 @@ class PositionsProgram: Equatable, ObservableObject
         
         let cylinder = SCNCylinder(radius: 0.2, height: CGFloat(height))
         
-        #if os(macOS)
-        let cylinder_color = NSColor.white
-        #else
-        let cylinder_color = UIColor.white
-        #endif
         cylinder.firstMaterial?.diffuse.contents = cylinder_color
         
         let line_node = SCNNode(geometry: cylinder)
