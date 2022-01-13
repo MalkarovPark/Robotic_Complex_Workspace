@@ -65,7 +65,8 @@ struct RobotsTableView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
-    var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: 192), spacing: 24)]
+    //var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: 192), spacing: 24)]
+    var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: .infinity), spacing: 24)]
     
     var body: some View
     {
@@ -173,7 +174,7 @@ struct RobotCardView: View
                     
                     HStack(spacing: 4.0)
                     {
-                        Image(systemName: "arrow.up.doc")
+                        //Image(systemName: "arrow.up.doc")
                         Text(card_subtitle)
                     }
                     .foregroundColor(.gray)
@@ -183,7 +184,7 @@ struct RobotCardView: View
             }
             .background(Color.white)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         .frame(height: 160)
         .shadow(radius: 8.0)
         //.transition(AnyTransition.scale.animation(.easeInOut(duration: 0.6)))

@@ -63,7 +63,7 @@ struct SidebarContent: View
             
             NavigationLink(destination: RobotsView(), tag: navigation_item.RobotsView, selection: $sidebar_selection)
             {
-                Label("Robots", systemImage: "circle")
+                Label("Robots", image: "factory.robot") //systemImage: "circle")
             }
             .tag(navigation_item.RobotsView)
             #else
@@ -74,7 +74,7 @@ struct SidebarContent: View
             
             NavigationLink(destination: RobotsView())
             {
-                Label("Robots", systemImage: "circle")
+                Label("Robots", image: "factory.robot") //systemImage: "circle")
             }
             #endif
         }

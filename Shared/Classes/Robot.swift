@@ -13,7 +13,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
 {
     static func == (lhs: Robot, rhs: Robot) -> Bool
     {
-        return lhs.robot_name == rhs.robot_name
+        return lhs.id == rhs.id
     }
     
     func hash(into hasher: inout Hasher)

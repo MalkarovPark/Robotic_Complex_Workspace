@@ -30,7 +30,7 @@ struct TabBar: View
             }
             .tabItem
             {
-                Label("Robots", systemImage: "circle")
+                Label("Robots", image: "factory.robot") //systemImage: "circle")
             }
         }
     }

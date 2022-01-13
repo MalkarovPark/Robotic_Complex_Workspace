@@ -2,11 +2,11 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class PositionsProgram: Equatable, ObservableObject
+class PositionsProgram: Identifiable, Equatable, ObservableObject
 {
     static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
-        return lhs.program_name == rhs.program_name
+        return lhs.id == rhs.id
     }
     
     public var program_name: String?
