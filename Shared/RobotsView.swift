@@ -472,6 +472,7 @@ struct RobotSceneView: View
 struct SceneView_macOS: NSViewRepresentable
 {
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     let scene_view = SCNView(frame: .zero)
     let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
@@ -502,6 +503,8 @@ struct SceneView_macOS: NSViewRepresentable
     
     func scn_scene(stat: Bool, context: Context) -> SCNView
     {
+        print("🧁")
+        app_state.reset_view = false
         scene_view.scene = viewed_scene
         return scene_view
     }
@@ -526,6 +529,15 @@ struct SceneView_macOS: NSViewRepresentable
             {
                 points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
             }
+        }
+        
+        if app_state.reset_view == true
+        {
+            print("🧇")
+            app_state.reset_view = false
+            
+            scene_view.defaultCameraController.pointOfView?.runAction(
+                SCNAction.group([SCNAction.move(to: camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: camera_node!.rotation, duration: 1.0)]))//, completionHandler: {self.view_menu?.item(withTitle: "Reset camera")?.isEnabled = true})
         }
     }
 }
