@@ -120,8 +120,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
         
         return sprogram ?? PositionsProgram()
-        
-        //return programs[selected_program_index]
     }
     
     private func number_by_name(name: String) -> Int
@@ -180,14 +178,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    /*private func update_position()
-    {
-        //print("🎀")
-    }*/
-    
     public func get_pointer_position() -> (location: SCNVector3, rot_x: Double, rot_y: Double, rot_z: Double)
     {
-        return(SCNVector3(pointer_location[0] / 10 - 10, pointer_location[2] / 10 - 10, pointer_location[1] / 10 - 10), pointer_rotation[0], pointer_rotation[1], pointer_rotation[2])
+        //return(SCNVector3(pointer_location[0] / 10 - 10, pointer_location[2] / 10 - 10, pointer_location[1] / 10 - 10), pointer_rotation[0], pointer_rotation[1], pointer_rotation[2])
+        return(SCNVector3(pointer_location[0] / 10 - 10, pointer_location[2] / 10 - 10, pointer_location[1] / 10 - 10), to_rad(in_angle: pointer_rotation[0]), to_rad(in_angle: pointer_rotation[2]), to_rad(in_angle: pointer_rotation[1]))
     }
     
     public func move_to_point()
