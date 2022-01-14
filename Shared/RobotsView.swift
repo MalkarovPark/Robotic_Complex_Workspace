@@ -463,7 +463,6 @@ struct RobotSceneView: View
         SceneView_iOS()
             .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
             .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
-            
             .navigationBarTitleDisplayMode(.inline)
         #endif
     }
@@ -578,6 +577,9 @@ struct SceneView_iOS: UIViewRepresentable
         ui_view.allowsCameraControl = true
         
         pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
+        pointer_node?.eulerAngles.x = base_workspace.selected_robot.get_pointer_position().rot_x
+        pointer_node?.eulerAngles.y = base_workspace.selected_robot.get_pointer_position().rot_y
+        pointer_node?.eulerAngles.z = base_workspace.selected_robot.get_pointer_position().rot_z
         
         if base_workspace.selected_robot.programs_count > 0
         {

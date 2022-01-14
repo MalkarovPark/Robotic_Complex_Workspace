@@ -178,11 +178,18 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
+    #if os(macOS)
     public func get_pointer_position() -> (location: SCNVector3, rot_x: Double, rot_y: Double, rot_z: Double)
     {
         //return(SCNVector3(pointer_location[0] / 10 - 10, pointer_location[2] / 10 - 10, pointer_location[1] / 10 - 10), pointer_rotation[0], pointer_rotation[1], pointer_rotation[2])
         return(SCNVector3(pointer_location[0] / 10 - 10, pointer_location[2] / 10 - 10, pointer_location[1] / 10 - 10), to_rad(in_angle: pointer_rotation[0]), to_rad(in_angle: pointer_rotation[2]), to_rad(in_angle: pointer_rotation[1]))
     }
+    #else
+    public func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
+    {
+        return(SCNVector3(pointer_location[0] / 10 - 10, pointer_location[2] / 10 - 10, pointer_location[1] / 10 - 10), Float(to_rad(in_angle: pointer_rotation[0])), Float(to_rad(in_angle: pointer_rotation[2])), Float(to_rad(in_angle: pointer_rotation[1])))
+    }
+    #endif
     
     public func move_to_point()
     {

@@ -19,6 +19,17 @@ struct Robotic_Complex_WorkspaceApp: App
         .commands
         {
             SidebarCommands()
+            
+            CommandGroup(after: CommandGroupPlacement.sidebar)
+            {
+                Divider()
+                Button("Reset Camera")
+                {
+                    print("🧁")
+                }
+                .keyboardShortcut("r", modifiers: .command)
+                Divider()
+            }
         }
     }
 }
