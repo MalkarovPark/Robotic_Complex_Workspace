@@ -495,6 +495,12 @@ struct SceneView_macOS: NSViewRepresentable
         return pointer_node
     }
     
+    var tool_node: SCNNode?
+    {
+        let tool_node = pointer_node?.childNode(withName: "tool", recursively: true)
+        return tool_node
+    }
+    
     var points_node: SCNNode?
     {
         let points_node = box_node?.childNode(withName: "points", recursively: true)
@@ -519,9 +525,9 @@ struct SceneView_macOS: NSViewRepresentable
         ui_view.allowsCameraControl = true
         
         pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
-        pointer_node?.eulerAngles.x = base_workspace.selected_robot.get_pointer_position().rot_x
-        pointer_node?.eulerAngles.y = base_workspace.selected_robot.get_pointer_position().rot_y
-        pointer_node?.eulerAngles.z = base_workspace.selected_robot.get_pointer_position().rot_z
+        pointer_node?.eulerAngles.y = base_workspace.selected_robot.get_pointer_position().rot_z
+        pointer_node?.eulerAngles.x = base_workspace.selected_robot.get_pointer_position().rot_y
+        tool_node?.eulerAngles.z = base_workspace.selected_robot.get_pointer_position().rot_x
         
         if base_workspace.selected_robot.programs_count > 0
         {
@@ -567,6 +573,12 @@ struct SceneView_iOS: UIViewRepresentable
         return pointer_node
     }
     
+    var tool_node: SCNNode?
+    {
+        let tool_node = pointer_node?.childNode(withName: "tool", recursively: true)
+        return tool_node
+    }
+    
     var points_node: SCNNode?
     {
         let points_node = box_node?.childNode(withName: "points", recursively: true)
@@ -589,9 +601,9 @@ struct SceneView_iOS: UIViewRepresentable
         ui_view.allowsCameraControl = true
         
         pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
-        pointer_node?.eulerAngles.x = base_workspace.selected_robot.get_pointer_position().rot_x
-        pointer_node?.eulerAngles.y = base_workspace.selected_robot.get_pointer_position().rot_y
-        pointer_node?.eulerAngles.z = base_workspace.selected_robot.get_pointer_position().rot_z
+        pointer_node?.eulerAngles.y = base_workspace.selected_robot.get_pointer_position().rot_z
+        pointer_node?.eulerAngles.x = base_workspace.selected_robot.get_pointer_position().rot_y
+        tool_node?.eulerAngles.z = base_workspace.selected_robot.get_pointer_position().rot_x
         
         if base_workspace.selected_robot.programs_count > 0
         {
