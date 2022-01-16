@@ -539,7 +539,7 @@ struct SceneView_macOS: NSViewRepresentable
         
         if app_state.reset_view == true
         {
-            print("🧇")
+            //print("🧇")
             app_state.reset_view = false
             
             scene_view.defaultCameraController.pointOfView?.runAction(
@@ -882,7 +882,6 @@ struct RobotInspectorView: View
     
     func add_point_to_program()
     {
-        //print("🍦")
         base_workspace.selected_robot.selected_program.add_point(pos_x: base_workspace.selected_robot.pointer_location[0], pos_y: base_workspace.selected_robot.pointer_location[1], pos_z: base_workspace.selected_robot.pointer_location[2], rot_x: base_workspace.selected_robot.pointer_rotation[0], rot_y: base_workspace.selected_robot.pointer_rotation[1], rot_z: base_workspace.selected_robot.pointer_rotation[2])
         
         base_workspace.update_view()

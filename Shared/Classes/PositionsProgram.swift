@@ -35,12 +35,12 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         var point_node = SCNNode()
         
         #if os(macOS)
-        point_node.position = SCNVector3(x: pos_x, y: pos_y, z: pos_z)
+        point_node.position = SCNVector3(x: pos_y, y: pos_x, z: pos_z)
         point_node.rotation.x = to_rad(in_angle: rot_x)
         point_node.rotation.y = to_rad(in_angle: rot_y)
         point_node.rotation.z = to_rad(in_angle: rot_z)
         #else
-        point_node.position = SCNVector3(x: Float(pos_x), y: Float(pos_y), z: Float(pos_z))
+        point_node.position = SCNVector3(x: Float(pos_y), y: Float(pos_x), z: Float(pos_z))
         point_node.rotation.x = Float(to_rad(in_angle: rot_x))
         point_node.rotation.y = Float(to_rad(in_angle: rot_y))
         point_node.rotation.z = Float(to_rad(in_angle: rot_z))
