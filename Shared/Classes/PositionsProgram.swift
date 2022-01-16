@@ -120,10 +120,14 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     public var positions_group = SCNNode()
     
     #if os(macOS)
-    private let target_point_color = NSColor.systemPurple //Color.purple
+    private let target_point_color = NSColor.systemPurple
+    private let target_point_cone_colors = [NSColor.systemBlue, NSColor.systemPink, NSColor.systemTeal]
+    private let target_point_cone_pos = [[0.0, 0.0, 0.8], [0.8, 0.0, 0.0], [0.0, 0.8, 0.0]]
+    private let target_point_cone_rot = [[90.0 * .pi / 180, 0.0, 0.0], [0.0, 0.0, -90 * .pi / 180], [0.0, 0.0, 0.0]]
     private let cylinder_color = NSColor.white
     #else
     private let target_point_color = UIColor.systemPurple
+    private let target_point_cone_colors = [UIColor.systemBlue, UIColor.systemPink, UIColor.systemTeal]
     private let cylinder_color = UIColor.white
     #endif
     
@@ -134,12 +138,26 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         if points.count > 0
         {
             let visual_point = SCNNode()
+            let cone_node = SCNNode()
             
             visual_point.geometry = SCNSphere(radius: 0.4)
             visual_point.geometry?.firstMaterial?.diffuse.contents = target_point_color
             
+            for i in 0..<3
+            {
+                let cone = SCNNode()
+                cone.geometry = SCNCone(topRadius: 0, bottomRadius: 0.2, height: 0.4)
+                cone.geometry?.firstMaterial?.diffuse.contents = target_point_cone_colors[i]
+                cone.position = SCNVector3(x: target_point_cone_pos[i][0], y: target_point_cone_pos[i][1], z: target_point_cone_pos[i][2])
+                cone.eulerAngles.x = target_point_cone_rot[i][0]
+                cone.eulerAngles.y = target_point_cone_rot[i][1]
+                cone.eulerAngles.z = target_point_cone_rot[i][2]
+                cone_node.addChildNode(cone.copy() as! SCNNode)
+            }
+            
             if points.count > 1
             {
+                let internal_cone_node = cone_node.clone()
                 var is_first = true
                 var pivot_points = [SCNVector3(), SCNVector3()]
                 var point_location = SCNVector3()
@@ -149,7 +167,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                     point_location = SCNVector3(x: point.position.x / 10 - 10, y: point.position.z / 10 - 10, z: point.position.y / 10 - 10)
                     
                     visual_point.position = point_location
-                    visual_point.rotation = point.rotation
+                    //visual_point.rotation = point.rotation
                     
                     if is_first == true
                     {
@@ -167,7 +185,12 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                         pivot_points[0] = pivot_points[1]
                     }
                     
-                    positions_group.addChildNode(visual_point.copy() as! SCNNode)
+                    internal_cone_node.eulerAngles.z = point.rotation.x
+                    visual_point.addChildNode(internal_cone_node)
+                    visual_point.eulerAngles.x = point.rotation.y
+                    visual_point.eulerAngles.y = point.rotation.z
+                    
+                    positions_group.addChildNode(visual_point.clone()) //(visual_point.copy() as! SCNNode)
                 }
             }
             else
@@ -177,7 +200,10 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 let point_location = SCNVector3(x: point.position.x / 10 - 10, y: point.position.z / 10 - 10, z: point.position.y / 10 - 10)
                 
                 visual_point.position = point_location
-                visual_point.rotation = point.rotation
+                cone_node.eulerAngles.z = point.rotation.x
+                visual_point.addChildNode(cone_node)
+                visual_point.eulerAngles.x = point.rotation.y
+                visual_point.eulerAngles.y = point.rotation.z
                 
                 positions_group.addChildNode(visual_point)
             }

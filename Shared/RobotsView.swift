@@ -509,7 +509,6 @@ struct SceneView_macOS: NSViewRepresentable
     
     func scn_scene(stat: Bool, context: Context) -> SCNView
     {
-        print("🧁")
         app_state.reset_view = false
         scene_view.scene = viewed_scene
         return scene_view
@@ -539,7 +538,6 @@ struct SceneView_macOS: NSViewRepresentable
         
         if app_state.reset_view == true
         {
-            //print("🧇")
             app_state.reset_view = false
             
             scene_view.defaultCameraController.pointOfView?.runAction(
@@ -1053,7 +1051,7 @@ struct PositionItemView: View
                     {
                         HStack(spacing: 8)
                         {
-                            Text("W:")
+                            Text("R:")
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -1073,7 +1071,7 @@ struct PositionItemView: View
                         
                         HStack(spacing: 8)
                         {
-                            Text("R:")
+                            Text("W:")
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -1134,7 +1132,7 @@ struct PositionItemView: View
                     {
                         HStack(spacing: 8)
                         {
-                            Text("W:")
+                            Text("R:")
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -1154,7 +1152,7 @@ struct PositionItemView: View
                         
                         HStack(spacing: 8)
                         {
-                            Text("R:")
+                            Text("W:")
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
