@@ -128,6 +128,8 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     #else
     private let target_point_color = UIColor.systemPurple
     private let target_point_cone_colors = [UIColor.systemBlue, UIColor.systemPink, UIColor.systemTeal]
+    private let target_point_cone_pos: [[Float]] = [[0.0, 0.0, 0.8], [0.8, 0.0, 0.0], [0.0, 0.8, 0.0]]
+    private let target_point_cone_rot: [[Float]] = [[90.0 * .pi / 180, 0.0, 0.0], [0.0, 0.0, -90 * .pi / 180], [0.0, 0.0, 0.0]]
     private let cylinder_color = UIColor.white
     #endif
     
