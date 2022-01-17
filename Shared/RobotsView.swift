@@ -51,6 +51,7 @@ struct RobotsView_Previews: PreviewProvider
             //RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true))
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
+            PositionParameterView(position_parameter_view_presented: .constant(true), parameter_name: "N", parameter_value: .constant(0))
             PositionItemView(item_view_pos_location: [0, 1, 2], item_view_pos_rotation: [3, 4, 5], position_item_view_presented: .constant(true))
             //RobotInspectorView() //(display_rv: .constant(true))
         }
@@ -617,7 +618,8 @@ struct SceneView_iOS: UIViewRepresentable
 struct RobotInspectorView: View
 {
     @State var add_program_view_presented = false
-    @State var points = ["Point 1", "Point 2"]
+    @State var ppv_presented_location = [false, false, false]
+    @State var ppv_presented_rotation = [false, false, false]
     @State private var teach_selection = 0
     
     @EnvironmentObject var base_workspace: Workspace
@@ -720,24 +722,60 @@ struct RobotInspectorView: View
                     {
                         HStack
                         {
-                            Text("X: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[0]))
-                                .frame(width: 64.0)
+                            /*Text("X: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[0]))
+                                .frame(width: 64.0)*/
+                            Button(action: { ppv_presented_location[0].toggle() })
+                            {
+                                Label("X: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[0]), systemImage: "square")
+                                    .labelStyle(.titleOnly)
+                                    .foregroundColor(Color.accentColor)
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(width: 64.0)
+                            .popover(isPresented: $ppv_presented_location[0])
+                            {
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_name: "X", parameter_value: $base_workspace.selected_robot.pointer_location[0])
+                            }
                             Slider(value: $base_workspace.selected_robot.pointer_location[0], in: 0.0...200.0)
                                 .padding(.trailing)
                         }
                         
                         HStack
                         {
-                            Text("Y: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[1]))
-                                .frame(width: 64.0)
+                            /*Text("Y: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[1]))
+                                .frame(width: 64.0)*/
+                            Button(action: { ppv_presented_location[1].toggle() })
+                            {
+                                Label("Y: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[1]), systemImage: "square")
+                                    .labelStyle(.titleOnly)
+                                    .foregroundColor(Color.accentColor)
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(width: 64.0)
+                            .popover(isPresented: $ppv_presented_location[1])
+                            {
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_name: "Y", parameter_value: $base_workspace.selected_robot.pointer_location[1])
+                            }
                             Slider(value: $base_workspace.selected_robot.pointer_location[1], in: 0.0...200.0)
                                 .padding(.trailing)
                         }
                         
                         HStack
                         {
-                            Text("Z: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[2]))
-                                .frame(width: 64.0)
+                            /*Text("Z: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[2]))
+                                .frame(width: 64.0)*/
+                            Button(action: { ppv_presented_location[2].toggle() })
+                            {
+                                Label("Z: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[2]), systemImage: "square")
+                                    .labelStyle(.titleOnly)
+                                    .foregroundColor(Color.accentColor)
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(width: 64.0)
+                            .popover(isPresented: $ppv_presented_location[2])
+                            {
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_name: "Z", parameter_value: $base_workspace.selected_robot.pointer_location[2])
+                            }
                             Slider(value: $base_workspace.selected_robot.pointer_location[2], in: 0.0...200.0)
                                 .padding(.trailing)
                         }
@@ -751,24 +789,60 @@ struct RobotInspectorView: View
                     {
                         HStack
                         {
-                            Text("R: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[0]) + "º")
-                                .frame(width: 80.0)
+                            /*Text("R: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[0]) + "º")
+                                .frame(width: 80.0)*/
+                            Button(action: { ppv_presented_rotation[0].toggle() })
+                            {
+                                Label("R: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[0]), systemImage: "square")
+                                    .labelStyle(.titleOnly)
+                                    .foregroundColor(Color.accentColor)
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(width: 64.0)
+                            .popover(isPresented: $ppv_presented_rotation[0])
+                            {
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_name: "R", parameter_value: $base_workspace.selected_robot.pointer_rotation[0])
+                            }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[0], in: -180.0...180.0)
                                 .padding(.trailing)
                         }
                         
                         HStack
                         {
-                            Text("P: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[1]) + "º")
-                                .frame(width: 80.0)
+                            /*Text("P: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[1]) + "º")
+                                .frame(width: 80.0)*/
+                            Button(action: { ppv_presented_rotation[1].toggle() })
+                            {
+                                Label("P: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[1]), systemImage: "square")
+                                    .labelStyle(.titleOnly)
+                                    .foregroundColor(Color.accentColor)
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(width: 64.0)
+                            .popover(isPresented: $ppv_presented_rotation[1])
+                            {
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_name: "P", parameter_value: $base_workspace.selected_robot.pointer_rotation[1])
+                            }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[1], in: -180.0...180.0)
                                 .padding(.trailing)
                         }
                         
                         HStack
                         {
-                            Text("W: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[2]) + "º")
-                                .frame(width: 80.0)
+                            /*Text("W: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[2]) + "º")
+                                .frame(width: 80.0)*/
+                            Button(action: { ppv_presented_rotation[2].toggle() })
+                            {
+                                Label("W: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[2]), systemImage: "square")
+                                    .labelStyle(.titleOnly)
+                                    .foregroundColor(Color.accentColor)
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(width: 64.0)
+                            .popover(isPresented: $ppv_presented_rotation[2])
+                            {
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_name: "W", parameter_value: $base_workspace.selected_robot.pointer_rotation[2])
+                            }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[2], in: -180.0...180.0)
                                 .padding(.trailing)
                         }
@@ -883,6 +957,27 @@ struct RobotInspectorView: View
         base_workspace.selected_robot.selected_program.add_point(pos_x: base_workspace.selected_robot.pointer_location[0], pos_y: base_workspace.selected_robot.pointer_location[1], pos_z: base_workspace.selected_robot.pointer_location[2], rot_x: base_workspace.selected_robot.pointer_rotation[0], rot_y: base_workspace.selected_robot.pointer_rotation[1], rot_z: base_workspace.selected_robot.pointer_rotation[2])
         
         base_workspace.update_view()
+    }
+}
+
+struct PositionParameterView: View
+{
+    @Binding var position_parameter_view_presented: Bool
+    @State var parameter_name = String()
+    @Binding var parameter_value: Double // = Double()
+    
+    var body: some View
+    {
+        HStack(spacing: 8)
+        {
+            Text(parameter_name + ": ")
+            TextField("0", value: $parameter_value, format: .number)
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 64.0)
+            Stepper("Enter", value: $parameter_value, in: 0...200)
+                .labelsHidden()
+        }
+        .padding(8.0)
     }
 }
 
