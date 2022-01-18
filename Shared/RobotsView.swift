@@ -51,7 +51,7 @@ struct RobotsView_Previews: PreviewProvider
             //RobotView(display_rv: .constant(true))
             AddRobotView(add_robot_view_presented: .constant(true))
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
-            PositionParameterView(position_parameter_view_presented: .constant(true), parameter_name: "N", parameter_value: .constant(0))
+            PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
             PositionItemView(item_view_pos_location: [0, 1, 2], item_view_pos_rotation: [3, 4, 5], position_item_view_presented: .constant(true))
             //RobotInspectorView() //(display_rv: .constant(true))
         }
@@ -734,7 +734,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_location[0])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_name: "X", parameter_value: $base_workspace.selected_robot.pointer_location[0])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_value: $base_workspace.selected_robot.pointer_location[0])
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_location[0], in: 0.0...200.0)
                                 .padding(.trailing)
@@ -754,7 +754,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_location[1])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_name: "Y", parameter_value: $base_workspace.selected_robot.pointer_location[1])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_value: $base_workspace.selected_robot.pointer_location[1])
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_location[1], in: 0.0...200.0)
                                 .padding(.trailing)
@@ -774,7 +774,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_location[2])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_name: "Z", parameter_value: $base_workspace.selected_robot.pointer_location[2])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_value: $base_workspace.selected_robot.pointer_location[2])
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_location[2], in: 0.0...200.0)
                                 .padding(.trailing)
@@ -801,7 +801,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_rotation[0])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_name: "R", parameter_value: $base_workspace.selected_robot.pointer_rotation[0])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_value: $base_workspace.selected_robot.pointer_rotation[0])
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[0], in: -180.0...180.0)
                                 .padding(.trailing)
@@ -821,7 +821,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_rotation[1])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_name: "P", parameter_value: $base_workspace.selected_robot.pointer_rotation[1])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_value: $base_workspace.selected_robot.pointer_rotation[1])
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[1], in: -180.0...180.0)
                                 .padding(.trailing)
@@ -841,7 +841,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_rotation[2])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_name: "W", parameter_value: $base_workspace.selected_robot.pointer_rotation[2])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_value: $base_workspace.selected_robot.pointer_rotation[2])
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[2], in: -180.0...180.0)
                                 .padding(.trailing)
@@ -963,19 +963,41 @@ struct RobotInspectorView: View
 struct PositionParameterView: View
 {
     @Binding var position_parameter_view_presented: Bool
-    @State var parameter_name = String()
     @Binding var parameter_value: Double // = Double()
     
     var body: some View
     {
         HStack(spacing: 8)
         {
-            Text(parameter_name + ": ")
+            Button(action: {
+                parameter_value = 0
+                position_parameter_view_presented.toggle()
+            })
+            {
+                Label("Reset", systemImage: "arrow.counterclockwise")
+                    .labelStyle(.iconOnly)
+            }
+            .keyboardShortcut(.defaultAction)
+            .buttonStyle(.borderedProminent)
+            #if os(macOS)
+            .foregroundColor(Color.white)
+            #else
+            .padding(.leading, 8.0)
+            #endif
+            
             TextField("0", value: $parameter_value, format: .number)
                 .textFieldStyle(.roundedBorder)
+            #if os(macOS)
                 .frame(width: 64.0)
+            #else
+                .frame(width: 128.0)
+            #endif
+            
             Stepper("Enter", value: $parameter_value, in: 0...200)
                 .labelsHidden()
+            #if os(iOS)
+                .padding(.trailing, 8.0)
+            #endif
         }
         .padding(8.0)
     }
