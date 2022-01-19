@@ -356,30 +356,30 @@ struct AddRobotView: View
                 
                 Section(header: Text("Parameters"))
                 {
-                    Picker(selection: $new_robot_parameters_index[0], label: Text("Brand")
+                    Picker(selection: $app_state.manufacturer_name, label: Text("Brand")
                             .bold())
                     {
-                        ForEach(0 ..< brands.count)
+                        ForEach(app_state.manufacturers, id: \.self)
                         {
-                            Text(brands[$0])
+                            Text($0)
                         }
                     }
                     
-                    Picker(selection: $new_robot_parameters_index[1], label: Text("Series")
+                    Picker(selection: $app_state.series_name, label: Text("Series")
                             .bold())
                     {
-                        ForEach(0 ..< series.count)
+                        ForEach(app_state.series, id: \.self)
                         {
-                            Text(series[$0])
+                            Text($0)
                         }
                     }
                     
-                    Picker(selection: $new_robot_parameters_index[2], label: Text("Model")
+                    Picker(selection: $app_state.model_name, label: Text("Model")
                             .bold())
                     {
-                        ForEach(0 ..< models.count)
+                        ForEach(app_state.models, id: \.self)
                         {
-                            Text(models[$0])
+                            Text($0)
                         }
                     }
                 }
@@ -393,7 +393,7 @@ struct AddRobotView: View
     
     func add_robot_in_workspace()
     {
-        base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: models[new_robot_parameters_index[2]], ip_address: "127.0.0.1"))
+        base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: app_state.model_name, ip_address: "127.0.0.1"))
         //base_workspace.add_robot(robot: Robot(name: new_robot_name))
         
         add_robot_view_presented.toggle()

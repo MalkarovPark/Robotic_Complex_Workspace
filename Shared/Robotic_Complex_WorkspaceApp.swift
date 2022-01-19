@@ -47,15 +47,7 @@ class AppState : ObservableObject
             {
                 did_updated = false
                 
-                series_dictionary = robots_dictionary[manufacturer_name]!
-                series = Array(series_dictionary.keys).sorted(by: <)
-                series_name = series.first ?? "None"
-                
-                models_dictionary = series_dictionary[series_name]!
-                models = Array(models_dictionary.keys).sorted(by: <)
-                model_name = models.first ?? "None"
-                
-                print(series_dictionary.keys)
+                update_series_info()
                 
                 did_updated = true
             }
@@ -69,11 +61,7 @@ class AppState : ObservableObject
             {
                 did_updated = false
                 
-                models_dictionary = series_dictionary[series_name]!
-                models = Array(models_dictionary.keys).sorted(by: <)
-                model_name = models.first ?? "None"
-                
-                print(models_dictionary.keys)
+                update_models_info()
                 
                 did_updated = true
             }
@@ -85,7 +73,7 @@ class AppState : ObservableObject
         {
             if did_updated == true
             {
-                //update_robot_info()
+                update_robot_info()
             }
         }
     }
@@ -93,6 +81,7 @@ class AppState : ObservableObject
     private var robots_dictionary: [String: [String: [String: [String: Any]]]]
     private var series_dictionary = [String: [String: [String: Any]]]()
     private var models_dictionary = [String: [String: Any]]()
+    private var robot_model_dictionary = [String: Any]()
     
     public var manufacturers: [String]
     public var series = [String]()
@@ -119,60 +108,47 @@ class AppState : ObservableObject
         models = Array(models_dictionary.keys).sorted(by: <)
         model_name = models.first ?? "None"
         
-        did_updated = true
+        robot_model_dictionary = models_dictionary[model_name]!
         
-        //print(manufacturers)
-        
-        //let series_dictionary = robots_dictionary["ABB"]
-        //print(series_dictionary)
-        //print(robots_dictionary.keys)
-        
-        /*for manufacturer_name in robots_dictionary.keys
+        for model_parameter in robot_model_dictionary.keys
         {
-            let series_dictionary = (robots_dictionary as AnyObject).object(forKey: manufacturer_name) as! NSDictionary
-            
-            //print("Series of \(manufacturer_name) robots:")
-            
-            for series_name in series_dictionary.allKeys
-            {
-                print("  Models of \(series_name):")
-                let models_dictionary = (series_dictionary as AnyObject).object(forKey: series_name) as! NSDictionary
-                
-                //print(models_dictionary.allKeys)
-                
-                for model_name in models_dictionary.allKeys
-                {
-                    print("    \(model_name)")
-                    
-                    let current_model_dictionary = (models_dictionary as AnyObject).object(forKey: model_name) as! NSDictionary
-                    
-                    //print(current_model_dictionary.allKeys)
-                    
-                    for model_parameter in current_model_dictionary.allKeys
-                    {
-                        let parameter_name_info = (current_model_dictionary as AnyObject).object(forKey: model_parameter) as? String
-                        /*guard let parameter_name_info = (current_model_dictionary as AnyObject).object(forKey: model_parameter) as? String
-                                else
-                                {
-                                    return
-                                }*/
-                        print("      Named – \(parameter_name_info ?? "None")")
-                    }
-                }
-            }
-        }*/
+            let info = robot_model_dictionary[model_parameter] ?? "None"
+            print("\(model_parameter) – \(info) 🍪")
+        }
+        
+        did_updated = true
     }
     
-    /*func update_robot_info()
+    private func update_series_info()
     {
-        did_updated = false
-        
         series_dictionary = robots_dictionary[manufacturer_name]!
         series = Array(series_dictionary.keys).sorted(by: <)
         series_name = series.first ?? "None"
         
         print(series_dictionary.keys)
         
-        did_updated = true
-    }*/
+        update_models_info()
+    }
+    
+    private func update_models_info()
+    {
+        models_dictionary = series_dictionary[series_name]!
+        models = Array(models_dictionary.keys).sorted(by: <)
+        model_name = models.first ?? "None"
+        
+        print(models_dictionary.keys)
+        
+        update_robot_info()
+    }
+    
+    private func update_robot_info()
+    {
+        robot_model_dictionary = models_dictionary[model_name]!
+        
+        for model_parameter in robot_model_dictionary.keys
+        {
+            let info = robot_model_dictionary[model_parameter] ?? "None"
+            print("\(model_parameter) – \(info) 🍪")
+        }
+    }
 }
