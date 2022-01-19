@@ -255,9 +255,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
         case "ABB":
             color = Color.red
-        case "Fanuc":
+        case "FANUC":
             color = Color.yellow
-        case "Kuka":
+        case "KUKA":
             color = Color.orange
         default:
             color = Color.clear

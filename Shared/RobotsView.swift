@@ -66,7 +66,6 @@ struct RobotsTableView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
-    //var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: 192), spacing: 24)]
     var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: .infinity), spacing: 24)]
     
     var body: some View
@@ -253,10 +252,17 @@ struct AddRobotView: View
     @State var new_robot_parameters = ["Brand", "Series", "Model"]
     @State var new_robot_parameters_index = [0, 0, 0]
     
+    //@State var manufacturer_name = "ABB"
+    
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var brands = ["ABB", "Fanuc", "Kuka"]
-    var series = ["LR-Mate", "Paint"]
+    
+    var series = ["ABB 0", "ABB 1"]
+    //var series1 = ["LR-Mate", "CR"]
+    //var series2 = ["Kuka 0", "Kuka 1"]
+    
     var models = ["id-4s", "id-20s"]
     
     var body: some View
@@ -277,36 +283,35 @@ struct AddRobotView: View
                     Text("Name")
                         .bold()
                     TextField("None", text: $new_robot_name)
-                        //.textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 
-                Picker(selection: $new_robot_parameters_index[0], label: Text("Brand")
+                Picker(selection: $app_state.manufacturer_name, label: Text("Brand")
                         .bold())
                 {
-                    ForEach(0 ..< brands.count)
+                    ForEach(app_state.manufacturers, id: \.self)
                     {
-                        Text(brands[$0])
+                        Text($0)
                     }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 
-                Picker(selection: $new_robot_parameters_index[1], label: Text("Series")
+                Picker(selection: $app_state.series_name, label: Text("Series")
                         .bold())
                 {
-                    ForEach(0 ..< series.count)
+                    ForEach(app_state.series, id: \.self)
                     {
-                        Text(series[$0])
+                        Text($0)
                     }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, 4.0)
                 
-                Picker(selection: $new_robot_parameters_index[2], label: Text("Model")
+                Picker(selection: $app_state.model_name, label: Text("Model")
                         .bold())
                 {
-                    ForEach(0 ..< models.count)
+                    ForEach(app_state.models, id: \.self)
                     {
-                        Text(models[$0])
+                        Text($0)
                     }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -380,14 +385,15 @@ struct AddRobotView: View
                 }
             }
             .navigationBarTitle(Text("Add Robot"), displayMode: .inline)
-            .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: { add_robot_in_workspace() }))
+            .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: { add_robot_in_workspace() })
+                                    .keyboardShortcut(.defaultAction))
         }
         #endif
     }
     
     func add_robot_in_workspace()
     {
-        base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: brands[new_robot_parameters_index[0]], model: models[new_robot_parameters_index[2]], ip_address: "127.0.0.1"))
+        base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: models[new_robot_parameters_index[2]], ip_address: "127.0.0.1"))
         //base_workspace.add_robot(robot: Robot(name: new_robot_name))
         
         add_robot_view_presented.toggle()
@@ -550,6 +556,7 @@ struct SceneView_macOS: NSViewRepresentable
 struct SceneView_iOS: UIViewRepresentable
 {
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     let scene_view = SCNView(frame: .zero)
     let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
@@ -610,6 +617,14 @@ struct SceneView_iOS: UIViewRepresentable
             {
                 points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
             }
+        }
+        
+        if app_state.reset_view == true
+        {
+            app_state.reset_view = false
+            
+            scene_view.defaultCameraController.pointOfView?.runAction(
+                SCNAction.group([SCNAction.move(to: camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: camera_node!.rotation, duration: 1.0)]))//, completionHandler: {self.view_menu?.item(withTitle: "Reset camera")?.isEnabled = true})
         }
     }
 }

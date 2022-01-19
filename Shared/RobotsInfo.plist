@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ABB</key>
+	<dict>
+		<key>Series</key>
+		<dict>
+			<key>Model</key>
+			<dict>
+				<key>Name</key>
+				<string>ABB Model</string>
+			</dict>
+		</dict>
+	</dict>
+	<key>FANUC</key>
+	<dict>
+		<key>CR Collaborative</key>
+		<dict>
+			<key>4iA</key>
+			<dict>
+				<key>Name</key>
+				<string>CR-4iA</string>
+			</dict>
+			<key>7iA</key>
+			<dict>
+				<key>Name</key>
+				<string>CR-7iA</string>
+			</dict>
+			<key>7iA/L</key>
+			<dict>
+				<key>Name</key>
+				<string>CR-7iA/L</string>
+			</dict>
+			<key>14iA/L</key>
+			<dict>
+				<key>Name</key>
+				<string>CR-14iA/L</string>
+			</dict>
+			<key>15iA</key>
+			<dict>
+				<key>Name</key>
+				<string>CR-15iA</string>
+			</dict>
+			<key>35iA</key>
+			<dict>
+				<key>Name</key>
+				<string>CR-35iA</string>
+			</dict>
+		</dict>
+		<key>LR Mate</key>
+		<dict>
+			<key>200iD</key>
+			<dict>
+				<key>Name</key>
+				<string>LR Mate 200iD</string>
+			</dict>
+			<key>200iD/4S</key>
+			<dict>
+				<key>Name</key>
+				<string>LR Mate 200iD/4S</string>
+			</dict>
+			<key>200iD/7C</key>
+			<dict>
+				<key>Name</key>
+				<string>LR Mate 200iD/7C</string>
+			</dict>
+			<key>200iD/14L</key>
+			<dict>
+				<key>Name</key>
+				<string>LR Mate 200iD/14L</string>
+			</dict>
+		</dict>
+	</dict>
+	<key>KUKA</key>
+	<dict>
+		<key>Series</key>
+		<dict>
+			<key>Model</key>
+			<dict>
+				<key>Name</key>
+				<string>KUKA Model</string>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>
