@@ -49,7 +49,8 @@ struct RobotsView_Previews: PreviewProvider
         {
             //RobotsView()
             //RobotView(display_rv: .constant(true))
-            AddRobotView(add_robot_view_presented: .constant(true))
+            //AddRobotView(add_robot_view_presented: .constant(true))
+            //AddRobotView(add_robot_view_presented: .constant(true), new_robot_name: "Name", brands: ["Mnf 1", "Mnf 2"], series: ["Series 1", "Series 2"], models: ["Model 1", "Model 2"])
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
             PositionItemView(item_view_pos_location: [0, 1, 2], item_view_pos_rotation: [3, 4, 5], position_item_view_presented: .constant(true))
@@ -250,20 +251,9 @@ struct AddRobotView: View
     
     @State var new_robot_name = ""
     @State var new_robot_parameters = ["Brand", "Series", "Model"]
-    @State var new_robot_parameters_index = [0, 0, 0]
-    
-    //@State var manufacturer_name = "ABB"
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
-    
-    var brands = ["ABB", "Fanuc", "Kuka"]
-    
-    var series = ["ABB 0", "ABB 1"]
-    //var series1 = ["LR-Mate", "CR"]
-    //var series2 = ["Kuka 0", "Kuka 1"]
-    
-    var models = ["id-4s", "id-20s"]
     
     var body: some View
     {
@@ -1081,7 +1071,7 @@ struct PositionItemListView: View
     {
         HStack
         {
-            Text(String(format: "%.0f", point_info[6]) + ".") //("N.")
+            Text(String(format: "%.0f", point_info[6]) + ".")
                 .foregroundColor(.accentColor)
             
             Spacer()
@@ -1327,6 +1317,14 @@ struct PositionItemView: View
                     .foregroundColor(Color.white)
                 #endif
             }
+        }
+        .onAppear()
+        {
+            base_workspace.selected_robot.selected_program.selected_point_index = item_number
+        }
+        .onDisappear()
+        {
+            base_workspace.selected_robot.selected_program.selected_point_index = -1
         }
     }
     

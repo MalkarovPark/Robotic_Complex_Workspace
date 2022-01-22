@@ -118,10 +118,18 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     
     //MARK: - Visual functions
     public var positions_group = SCNNode()
+    public var selected_point_index = -1
+    {
+        didSet
+        {
+            visual_build()
+        }
+    }
     
     #if os(macOS)
     private let target_point_color = NSColor.systemPurple
     private let target_point_cone_colors = [NSColor.systemBlue, NSColor.systemPink, NSColor.systemTeal]
+    private let selected_point_color = NSColor.systemIndigo
     private let target_point_cone_pos = [[0.0, 0.0, 0.8], [0.8, 0.0, 0.0], [0.0, 0.8, 0.0]]
     private let target_point_cone_rot = [[90.0 * .pi / 180, 0.0, 0.0], [0.0, 0.0, -90 * .pi / 180], [0.0, 0.0, 0.0]]
     private let cylinder_color = NSColor.white
@@ -139,11 +147,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         
         if points.count > 0
         {
-            let visual_point = SCNNode()
             let cone_node = SCNNode()
-            
-            visual_point.geometry = SCNSphere(radius: 0.4)
-            visual_point.geometry?.firstMaterial?.diffuse.contents = target_point_color
             
             for i in 0..<3
             {
@@ -163,13 +167,16 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 var is_first = true
                 var pivot_points = [SCNVector3(), SCNVector3()]
                 var point_location = SCNVector3()
+                var point_index = 0
                 
                 for point in points
                 {
+                    let visual_point = SCNNode()
+                    visual_point.geometry = SCNSphere(radius: 0.4)
+                    
                     point_location = SCNVector3(x: point.position.x / 10 - 10, y: point.position.z / 10 - 10, z: point.position.y / 10 - 10)
                     
                     visual_point.position = point_location
-                    //visual_point.rotation = point.rotation
                     
                     if is_first == true
                     {
@@ -192,11 +199,24 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                     visual_point.eulerAngles.x = point.rotation.y
                     visual_point.eulerAngles.y = point.rotation.z
                     
+                    if point_index == selected_point_index
+                    {
+                        visual_point.geometry?.firstMaterial?.diffuse.contents = selected_point_color
+                    }
+                    else
+                    {
+                        visual_point.geometry?.firstMaterial?.diffuse.contents = target_point_color
+                    }
+                    
                     positions_group.addChildNode(visual_point.clone()) //(visual_point.copy() as! SCNNode)
+                    point_index += 1
                 }
             }
             else
             {
+                let visual_point = SCNNode()
+                visual_point.geometry = SCNSphere(radius: 0.4)
+                
                 let point = points.first ?? SCNNode()
                 
                 let point_location = SCNVector3(x: point.position.x / 10 - 10, y: point.position.z / 10 - 10, z: point.position.y / 10 - 10)
@@ -206,6 +226,15 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 visual_point.addChildNode(cone_node)
                 visual_point.eulerAngles.x = point.rotation.y
                 visual_point.eulerAngles.y = point.rotation.z
+                
+                if selected_point_index == 0
+                {
+                    visual_point.geometry?.firstMaterial?.diffuse.contents = selected_point_color
+                }
+                else
+                {
+                    visual_point.geometry?.firstMaterial?.diffuse.contents = target_point_color
+                }
                 
                 positions_group.addChildNode(visual_point)
             }
@@ -228,6 +257,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         let cylinder = SCNCylinder(radius: 0.2, height: CGFloat(height))
         
         cylinder.firstMaterial?.diffuse.contents = cylinder_color
+        //cylinder.firstMaterial?.transparency = 0.5
         
         let line_node = SCNNode(geometry: cylinder)
         
