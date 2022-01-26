@@ -50,7 +50,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         self.model = model
         self.ip_address = ip_address
         
-        build_robot()
+        //build_robot()
     }
     
     //MARK: - Program manage functions
@@ -150,24 +150,26 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     //MARK: - Moving functions
     public var move_time: Double?
+    public var trail_draw = false
+    private var is_moving = false
     
     public var pointer_location = [0.0, 0.0, 0.0] //x, y, z
-    /*{
+    {
         didSet
         {
             update_position()
         }
-    }*/
+    }
     
     public var pointer_rotation = [0.0, 0.0, 0.0] //r, p, w
-    /*{
+    {
         didSet
         {
             update_position()
         }
-    }*/
+    }
     
-    public var demo_work = true
+    private var demo_work = true
     {
         didSet
         {
@@ -197,13 +199,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func start_moving()
     {
-        if demo_work == true
+        if is_moving == false
         {
-            pointer_node.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)))
-        }
-        else
-        {
-            
+            if demo_work == true
+            {
+                pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)))
+            }
+            else
+            {
+                
+            }
         }
     }
     
@@ -218,23 +223,37 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: - Build functions
-    private var pointer_node: SCNNode!
+    //private var pointer_node: SCNNode!
     private let pointer_node_color = Color.cyan
+    
+    public var box_node: SCNNode?
+    public var camera_node: SCNNode?
+    public var pointer_node: SCNNode?
+    public var tool_node: SCNNode?
+    public var points_node: SCNNode?
     
     public var poiner_visible = true
     {
         didSet
         {
-            pointer_node.isHidden = poiner_visible
+            pointer_node?.isHidden = poiner_visible
         }
     }
     
-    private func build_robot()
+    /*private func build_robot()
     {
         pointer_node = SCNNode()
         pointer_node.geometry = SCNSphere(radius: 1)
         pointer_node.geometry?.firstMaterial?.diffuse.contents = pointer_node_color
         pointer_node.opacity = 0.5
+    }*/
+    
+    private func update_position()
+    {
+        pointer_node?.position = get_pointer_position().location
+        pointer_node?.eulerAngles.y = get_pointer_position().rot_z
+        pointer_node?.eulerAngles.x = get_pointer_position().rot_y
+        tool_node?.eulerAngles.z = get_pointer_position().rot_x
     }
     
     private func to_rad(in_angle: CGFloat) -> CGFloat

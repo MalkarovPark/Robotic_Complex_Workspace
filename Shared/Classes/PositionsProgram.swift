@@ -23,11 +23,11 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         self.program_name = name ?? "None"
     }
     
-    deinit
+    /*deinit
     {
-        //print("🍩")
+        print("🍩")
         //positions_visible = false
-    }
+    }*/
     
     //MARK: - Point manage functions
     public func add_point(pos_x: CGFloat, pos_y: CGFloat, pos_z: CGFloat, rot_x: CGFloat, rot_y: CGFloat, rot_z: CGFloat)

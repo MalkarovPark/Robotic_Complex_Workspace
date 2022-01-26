@@ -53,7 +53,7 @@ struct RobotsView_Previews: PreviewProvider
             //AddRobotView(add_robot_view_presented: .constant(true), new_robot_name: "Name", brands: ["Mnf 1", "Mnf 2"], series: ["Series 1", "Series 2"], models: ["Model 1", "Model 2"])
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
-            PositionItemView(item_view_pos_location: [0, 1, 2], item_view_pos_rotation: [3, 4, 5], position_item_view_presented: .constant(true))
+            //PositionItemView(item_view_pos_location: [0, 1, 2], item_view_pos_rotation: [3, 4, 5], position_item_view_presented: .constant(true))
             //RobotInspectorView() //(display_rv: .constant(true))
         }
     }
@@ -115,12 +115,6 @@ struct RobotsTableView: View
             {
                 HStack(alignment: .center)
                 {
-                    /*Button("View Robot")
-                    {
-                        view_robot()
-                        //self.display_rv = true
-                    }*/
-                    
                     Button (action: { add_robot_view_presented.toggle() })
                     {
                         Label("Robots", systemImage: "plus")
@@ -394,6 +388,8 @@ struct RobotView: View
 {
     @Binding var display_rv: Bool
     
+    @EnvironmentObject var base_workspace: Workspace
+    
     var body: some View
     {
         HStack(spacing: 0)
@@ -431,11 +427,11 @@ struct RobotView: View
                     Spacer()
                     #endif
                             
-                    Button(action: add_robot)
+                    Button(action: stop_robot)
                     {
                         Label("Stop", systemImage: "stop")
                     }
-                    Button(action: add_robot)
+                    Button(action: move_robot)
                     {
                         Label("Play Pause", systemImage: "playpause")
                     }
@@ -444,9 +440,14 @@ struct RobotView: View
         }
     }
     
-    func add_robot()
+    func stop_robot()
     {
         print("🔮")
+    }
+    
+    func move_robot()
+    {
+        base_workspace.selected_robot.start_moving()
     }
 }
 
@@ -474,36 +475,6 @@ struct SceneView_macOS: NSViewRepresentable
     let scene_view = SCNView(frame: .zero)
     let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
     
-    var box_node: SCNNode?
-    {
-        let box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
-        return box_node
-    }
-    
-    var camera_node: SCNNode?
-    {
-        let camera_node = box_node?.childNode(withName: "camera", recursively: true)
-        return camera_node
-    }
-    
-    var pointer_node: SCNNode?
-    {
-        let pointer_node = box_node?.childNode(withName: "pointer", recursively: true)
-        return pointer_node
-    }
-    
-    var tool_node: SCNNode?
-    {
-        let tool_node = pointer_node?.childNode(withName: "tool", recursively: true)
-        return tool_node
-    }
-    
-    var points_node: SCNNode?
-    {
-        let points_node = box_node?.childNode(withName: "points", recursively: true)
-        return points_node
-    }
-    
     func scn_scene(stat: Bool, context: Context) -> SCNView
     {
         app_state.reset_view = false
@@ -513,23 +484,26 @@ struct SceneView_macOS: NSViewRepresentable
     
     func makeNSView(context: Context) -> SCNView
     {
-        scn_scene(stat: true, context: context)
+        base_workspace.selected_robot.box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
+        base_workspace.selected_robot.camera_node = base_workspace.selected_robot.box_node?.childNode(withName: "camera", recursively: true)
+        base_workspace.selected_robot.pointer_node = base_workspace.selected_robot.box_node?.childNode(withName: "pointer", recursively: true)
+        base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
+        base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)
+        
+        return scn_scene(stat: true, context: context)
     }
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         ui_view.allowsCameraControl = true
         
-        pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
-        pointer_node?.eulerAngles.y = base_workspace.selected_robot.get_pointer_position().rot_z
-        pointer_node?.eulerAngles.x = base_workspace.selected_robot.get_pointer_position().rot_y
-        tool_node?.eulerAngles.z = base_workspace.selected_robot.get_pointer_position().rot_x
+        //base_workspace.selected_robot.update_position()
         
         if base_workspace.selected_robot.programs_count > 0
         {
             if base_workspace.selected_robot.selected_program.points_count > 0
             {
-                points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
+                base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
             }
         }
         
@@ -538,7 +512,7 @@ struct SceneView_macOS: NSViewRepresentable
             app_state.reset_view = false
             
             scene_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: camera_node!.rotation, duration: 1.0)]))//, completionHandler: {self.view_menu?.item(withTitle: "Reset camera")?.isEnabled = true})
+                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 1.0)]))//, completionHandler: { })
         }
     }
 }
@@ -643,11 +617,6 @@ struct RobotInspectorView: View
             {
                 List
                 {
-                    /*ForEach(points, id: \.self)
-                    { point in
-                        PositionItemListView()
-                    }*/
-                    
                     if base_workspace.selected_robot.programs_count > 0
                     {
                         if base_workspace.selected_robot.selected_program.points_count > 0
@@ -727,8 +696,6 @@ struct RobotInspectorView: View
                     {
                         HStack
                         {
-                            /*Text("X: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[0]))
-                                .frame(width: 64.0)*/
                             Button(action: { ppv_presented_location[0].toggle() })
                             {
                                 Label("X: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[0]), systemImage: "square")
@@ -747,8 +714,6 @@ struct RobotInspectorView: View
                         
                         HStack
                         {
-                            /*Text("Y: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[1]))
-                                .frame(width: 64.0)*/
                             Button(action: { ppv_presented_location[1].toggle() })
                             {
                                 Label("Y: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[1]), systemImage: "square")
@@ -767,8 +732,6 @@ struct RobotInspectorView: View
                         
                         HStack
                         {
-                            /*Text("Z: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[2]))
-                                .frame(width: 64.0)*/
                             Button(action: { ppv_presented_location[2].toggle() })
                             {
                                 Label("Z: " + String(format: "%.0f", base_workspace.selected_robot.pointer_location[2]), systemImage: "square")
@@ -794,8 +757,6 @@ struct RobotInspectorView: View
                     {
                         HStack
                         {
-                            /*Text("R: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[0]) + "º")
-                                .frame(width: 80.0)*/
                             Button(action: { ppv_presented_rotation[0].toggle() })
                             {
                                 Label("R: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[0]), systemImage: "square")
@@ -814,8 +775,6 @@ struct RobotInspectorView: View
                         
                         HStack
                         {
-                            /*Text("P: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[1]) + "º")
-                                .frame(width: 80.0)*/
                             Button(action: { ppv_presented_rotation[1].toggle() })
                             {
                                 Label("P: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[1]), systemImage: "square")
@@ -834,8 +793,6 @@ struct RobotInspectorView: View
                         
                         HStack
                         {
-                            /*Text("W: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[2]) + "º")
-                                .frame(width: 80.0)*/
                             Button(action: { ppv_presented_rotation[2].toggle() })
                             {
                                 Label("W: " + String(format: "%.0f", base_workspace.selected_robot.pointer_rotation[2]), systemImage: "square")
@@ -1333,6 +1290,8 @@ struct PositionItemView: View
         base_workspace.selected_robot.selected_program.update_point(number: item_number, pos_x: item_view_pos_location[0], pos_y: item_view_pos_location[1], pos_z: item_view_pos_location[2], rot_x: item_view_pos_rotation[0], rot_y: item_view_pos_rotation[1], rot_z: item_view_pos_rotation[2])
         base_workspace.update_view()
         position_item_view_presented.toggle()
+        
+        base_workspace.selected_robot.selected_program.selected_point_index = -1
     }
     
     func delete_point_from_program()
@@ -1340,5 +1299,7 @@ struct PositionItemView: View
         base_workspace.selected_robot.selected_program.delete_point(number: item_number)
         base_workspace.update_view()
         position_item_view_presented.toggle()
+        
+        base_workspace.selected_robot.selected_program.selected_point_index = -1
     }
 }
