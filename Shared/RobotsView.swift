@@ -525,61 +525,35 @@ struct SceneView_iOS: UIViewRepresentable
     let scene_view = SCNView(frame: .zero)
     let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
     
-    var box_node: SCNNode?
-    {
-        let box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
-        return box_node
-    }
-    
-    var camera_node: SCNNode?
-    {
-        let camera_node = box_node?.childNode(withName: "camera", recursively: true)
-        return camera_node
-    }
-    
-    var pointer_node: SCNNode?
-    {
-        let pointer_node = box_node?.childNode(withName: "pointer", recursively: true)
-        return pointer_node
-    }
-    
-    var tool_node: SCNNode?
-    {
-        let tool_node = pointer_node?.childNode(withName: "tool", recursively: true)
-        return tool_node
-    }
-    
-    var points_node: SCNNode?
-    {
-        let points_node = box_node?.childNode(withName: "points", recursively: true)
-        return points_node
-    }
-    
     func scn_scene(stat: Bool, context: Context) -> SCNView
     {
+        app_state.reset_view = false
         scene_view.scene = viewed_scene
         return scene_view
     }
     
     func makeUIView(context: Context) -> SCNView
     {
-        scn_scene(stat: true, context: context)
+        base_workspace.selected_robot.box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
+        base_workspace.selected_robot.camera_node = base_workspace.selected_robot.box_node?.childNode(withName: "camera", recursively: true)
+        base_workspace.selected_robot.pointer_node = base_workspace.selected_robot.box_node?.childNode(withName: "pointer", recursively: true)
+        base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
+        base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)
+        
+        return scn_scene(stat: true, context: context)
     }
 
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         ui_view.allowsCameraControl = true
         
-        pointer_node?.position = base_workspace.selected_robot.get_pointer_position().location
-        pointer_node?.eulerAngles.y = base_workspace.selected_robot.get_pointer_position().rot_z
-        pointer_node?.eulerAngles.x = base_workspace.selected_robot.get_pointer_position().rot_y
-        tool_node?.eulerAngles.z = base_workspace.selected_robot.get_pointer_position().rot_x
+        //base_workspace.selected_robot.update_position()
         
         if base_workspace.selected_robot.programs_count > 0
         {
             if base_workspace.selected_robot.selected_program.points_count > 0
             {
-                points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
+                base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
             }
         }
         
@@ -588,7 +562,7 @@ struct SceneView_iOS: UIViewRepresentable
             app_state.reset_view = false
             
             scene_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: camera_node!.rotation, duration: 1.0)]))//, completionHandler: {self.view_menu?.item(withTitle: "Reset camera")?.isEnabled = true})
+                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 1.0)]))//, completionHandler: { })
         }
     }
 }

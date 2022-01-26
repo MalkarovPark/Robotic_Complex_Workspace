@@ -276,24 +276,36 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     //MARK: - Create moving group for robot
     //var moving_actions_group: [SCNAction]?
     
-    public func points_moving_group(move_time: TimeInterval) -> SCNAction
+    public func points_moving_group(move_time: TimeInterval) -> (moving: SCNAction, additive_rotation: SCNAction)
     {
         var moving_group = SCNAction()
+        var additive_rotation_group = SCNAction()
+        var moving_position: SCNVector3
+        var moving_rotation = [0.0, 0.0, 0.0]
+        
         if points.count > 0
         {
             var movings_array = [SCNAction]()
+            var movings_array2 = [SCNAction]()
             for point in points
             {
+                moving_position = SCNVector3(point.position.x / 10 - 10, point.position.z / 10 - 10, point.position.y / 10 - 10)
+                
                 #if os(macOS)
-                movings_array.append(SCNAction.group([SCNAction.move(to: point.position, duration: move_time), SCNAction.rotateTo(x: point.rotation.x, y: point.rotation.y, z: point.rotation.z, duration: move_time)]))
+                moving_rotation = [point.rotation.y, point.rotation.z, 0]
+                movings_array.append(SCNAction.group([SCNAction.move(to: moving_position, duration: move_time), SCNAction.rotateTo(x: moving_rotation[0], y: moving_rotation[1], z: moving_rotation[2], duration: move_time)]))
+                movings_array2.append(SCNAction.rotateTo(x: 0, y: 0, z: point.rotation.x, duration: move_time))
                 #else
-                movings_array.append(SCNAction.group([SCNAction.move(to: point.position, duration: move_time), SCNAction.rotateTo(x: CGFloat(point.rotation.x), y: CGFloat(point.rotation.y), z: CGFloat(point.rotation.z), duration: move_time)]))
+                moving_rotation = [CGFloat(point.rotation.y), CGFloat(point.rotation.z), 0]
+                movings_array.append(SCNAction.group([SCNAction.move(to: moving_position, duration: move_time), SCNAction.rotateTo(x: CGFloat(moving_rotation[0]), y: CGFloat(moving_rotation[1]), z: CGFloat(moving_rotation[2]), duration: move_time)]))
+                movings_array2.append(SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(point.rotation.x), duration: move_time))
                 #endif
             }
             
             moving_group = SCNAction.sequence(movings_array)
+            additive_rotation_group = SCNAction.sequence(movings_array2)
         }
         
-        return moving_group
+        return (moving_group, additive_rotation_group)
     }
 }

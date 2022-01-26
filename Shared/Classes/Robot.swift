@@ -203,7 +203,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             if demo_work == true
             {
-                pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)))
+                pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving)
+                tool_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).additive_rotation)
             }
             else
             {
