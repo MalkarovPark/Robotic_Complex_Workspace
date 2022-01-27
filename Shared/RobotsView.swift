@@ -427,27 +427,17 @@ struct RobotView: View
                     Spacer()
                     #endif
                             
-                    Button(action: stop_robot)
+                    Button(action: { base_workspace.selected_robot.reset_moving() })
                     {
                         Label("Stop", systemImage: "stop")
                     }
-                    Button(action: move_robot)
+                    Button(action: { base_workspace.selected_robot.start_pause_moving() })
                     {
                         Label("Play Pause", systemImage: "playpause")
                     }
                 }
             }
         }
-    }
-    
-    func stop_robot()
-    {
-        print("🔮")
-    }
-    
-    func move_robot()
-    {
-        base_workspace.selected_robot.start_moving()
     }
 }
 
@@ -496,6 +486,7 @@ struct SceneView_macOS: NSViewRepresentable
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         ui_view.allowsCameraControl = true
+        ui_view.rendersContinuously = true
         
         //base_workspace.selected_robot.update_position()
         
@@ -546,6 +537,7 @@ struct SceneView_iOS: UIViewRepresentable
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         ui_view.allowsCameraControl = true
+        ui_view.rendersContinuously = true
         
         //base_workspace.selected_robot.update_position()
         

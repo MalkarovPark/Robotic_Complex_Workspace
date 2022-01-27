@@ -151,6 +151,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Moving functions
     public var move_time: Double?
     public var trail_draw = false
+    public var moving_started = false
+    public var target_point_index = 0
     private var is_moving = false
     
     public var pointer_location = [0.0, 0.0, 0.0] //x, y, z
@@ -192,35 +194,82 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     #endif
     
-    public func move_to_point()
+    public func move_to_next_point()
     {
-        
+        if demo_work == true
+        {
+            //print("\(target_point_index) ☕️")
+            pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index], completionHandler: {
+                self.moving_finished = true
+                self.select_new_point()
+            })
+            tool_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).rotation[target_point_index], completionHandler: {
+                self.rotation_finished = true
+                self.select_new_point()
+            })
+            //print("\(target_point_index) ☕️")
+        }
+        else
+        {
+            //Move to point for real robot.
+        }
     }
     
-    public func start_moving()
+    private var moving_finished = false
+    private var rotation_finished = false
+    
+    private func select_new_point()
     {
-        if is_moving == false
+        if moving_finished == true && rotation_finished == true
         {
-            if demo_work == true
+            moving_finished = false
+            rotation_finished = false
+            
+            if target_point_index < selected_program.points_count - 1
             {
-                pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving)
-                tool_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).additive_rotation)
+                target_point_index += 1
+                move_to_next_point()
             }
             else
             {
-                
+                target_point_index = 0
+                moving_started = false
             }
         }
     }
     
-    public func pause_moving()
+    public func start_pause_moving()
+    {
+        if moving_started == false
+        {
+            moving_started = true
+            
+            move_to_next_point()
+        }
+        else
+        {
+            moving_started = false
+            pointer_node?.removeAllActions()
+            tool_node?.removeAllActions()
+        }
+    }
+    
+    /*public func pause_moving()
     {
         
-    }
+    }*/
     
     public func reset_moving()
     {
-        
+        pointer_node?.removeAllActions()
+        tool_node?.removeAllActions()
+        moving_started = false
+        target_point_index = 0
+    }
+    
+    private func end_moving()
+    {
+        //is_moving = false
     }
     
     //MARK: - Build functions

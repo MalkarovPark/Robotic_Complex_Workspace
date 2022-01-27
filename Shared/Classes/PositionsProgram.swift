@@ -276,17 +276,17 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     //MARK: - Create moving group for robot
     //var moving_actions_group: [SCNAction]?
     
-    public func points_moving_group(move_time: TimeInterval) -> (moving: SCNAction, additive_rotation: SCNAction)
+    public func points_moving_group(move_time: TimeInterval) -> (moving: [SCNAction], rotation: [SCNAction])
     {
-        var moving_group = SCNAction()
-        var additive_rotation_group = SCNAction()
         var moving_position: SCNVector3
         var moving_rotation = [0.0, 0.0, 0.0]
         
+        var movings_array = [SCNAction]()
+        var movings_array2 = [SCNAction]()
+        
         if points.count > 0
         {
-            var movings_array = [SCNAction]()
-            var movings_array2 = [SCNAction]()
+            
             for point in points
             {
                 moving_position = SCNVector3(point.position.x / 10 - 10, point.position.z / 10 - 10, point.position.y / 10 - 10)
@@ -301,11 +301,8 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 movings_array2.append(SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(point.rotation.x), duration: move_time))
                 #endif
             }
-            
-            moving_group = SCNAction.sequence(movings_array)
-            additive_rotation_group = SCNAction.sequence(movings_array2)
         }
         
-        return (moving_group, additive_rotation_group)
+        return (movings_array, movings_array2)
     }
 }
