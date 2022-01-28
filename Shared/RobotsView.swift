@@ -414,7 +414,7 @@ struct RobotView: View
                 }
             }
             #endif
-                    
+            
             ToolbarItem(placement: placement_trailing)
             {
                 HStack(alignment: .center)
@@ -427,11 +427,15 @@ struct RobotView: View
                     Spacer()
                     #endif
                             
-                    Button(action: { base_workspace.selected_robot.reset_moving() })
+                    Button(action: { base_workspace.selected_robot.reset_moving()
+                        base_workspace.update_view()
+                    })
                     {
                         Label("Stop", systemImage: "stop")
                     }
-                    Button(action: { base_workspace.selected_robot.start_pause_moving() })
+                    Button(action: { base_workspace.selected_robot.start_pause_moving()
+                        base_workspace.update_view()
+                    })
                     {
                         Label("Play Pause", systemImage: "playpause")
                     }
@@ -469,6 +473,7 @@ struct SceneView_macOS: NSViewRepresentable
     {
         app_state.reset_view = false
         scene_view.scene = viewed_scene
+        scene_view.delegate = context.coordinator
         return scene_view
     }
     
@@ -503,7 +508,36 @@ struct SceneView_macOS: NSViewRepresentable
             app_state.reset_view = false
             
             scene_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 1.0)]))//, completionHandler: { })
+                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 1.0)]))
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator
+    {
+        Coordinator(self)
+    }
+    
+    final class Coordinator: NSObject, SCNSceneRendererDelegate
+    {
+        var control: SceneView_macOS
+        
+        init(_ control: SceneView_macOS)
+        {
+            self.control = control
+        }
+
+        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
+        {
+            control.scene_check()
+        }
+    }
+    
+    func scene_check()
+    {
+        if base_workspace.selected_robot.moving_completed == true
+        {
+            base_workspace.update_view()
+            base_workspace.selected_robot.moving_completed = false
         }
     }
 }
@@ -520,6 +554,7 @@ struct SceneView_iOS: UIViewRepresentable
     {
         app_state.reset_view = false
         scene_view.scene = viewed_scene
+        scene_view.delegate = context.coordinator
         return scene_view
     }
     
@@ -555,6 +590,35 @@ struct SceneView_iOS: UIViewRepresentable
             
             scene_view.defaultCameraController.pointOfView?.runAction(
                 SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 1.0)]))//, completionHandler: { })
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator
+    {
+        Coordinator(self)
+    }
+    
+    final class Coordinator: NSObject, SCNSceneRendererDelegate
+    {
+        var control: SceneView_iOS
+        
+        init(_ control: SceneView_iOS)
+        {
+            self.control = control
+        }
+
+        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
+        {
+            control.scene_check()
+        }
+    }
+    
+    func scene_check()
+    {
+        if base_workspace.selected_robot.moving_completed == true
+        {
+            base_workspace.update_view()
+            base_workspace.selected_robot.moving_completed = false
         }
     }
 }
@@ -782,6 +846,7 @@ struct RobotInspectorView: View
                     }
                 }
             }
+            .disabled(base_workspace.selected_robot.moving_started == true)
             #if os(macOS)
             .padding([.leading, .trailing])
             .padding(.bottom, 12.0)

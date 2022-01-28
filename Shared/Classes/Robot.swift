@@ -153,7 +153,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var trail_draw = false
     public var moving_started = false
     public var target_point_index = 0
-    private var is_moving = false
+    public var moving_completed = true
+    //private var is_moving = false
     
     public var pointer_location = [0.0, 0.0, 0.0] //x, y, z
     {
@@ -234,6 +235,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             {
                 target_point_index = 0
                 moving_started = false
+                moving_completed = true
             }
         }
     }
