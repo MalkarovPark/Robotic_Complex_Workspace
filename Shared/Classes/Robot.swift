@@ -160,7 +160,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         didSet
         {
-            update_position()
+            update_location()
         }
     }
     
@@ -168,7 +168,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         didSet
         {
-            update_position()
+            update_rotation()
         }
     }
     
@@ -195,11 +195,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     #endif
     
+    private func current_pointer_position_select()
+    {
+        pointer_location = [Double(((pointer_node?.position.z ?? 0) + 10) * 10), Double(((pointer_node?.position.x ?? 0) + 10) * 10), Double(((pointer_node?.position.y ?? 0) + 10) * 10)]
+        pointer_rotation = [to_deg(in_angle: Double(tool_node?.eulerAngles.z ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.x ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.y ?? 0))]
+    }
+    
     public func move_to_next_point()
     {
         if demo_work == true
         {
-            //print("\(target_point_index) ☕️")
             pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index], completionHandler: {
                 self.moving_finished = true
                 self.select_new_point()
@@ -236,6 +241,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 target_point_index = 0
                 moving_started = false
                 moving_completed = true
+                current_pointer_position_select()
             }
         }
     }
@@ -253,25 +259,17 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             moving_started = false
             pointer_node?.removeAllActions()
             tool_node?.removeAllActions()
+            current_pointer_position_select()
         }
     }
-    
-    /*public func pause_moving()
-    {
-        
-    }*/
     
     public func reset_moving()
     {
         pointer_node?.removeAllActions()
         tool_node?.removeAllActions()
+        current_pointer_position_select()
         moving_started = false
         target_point_index = 0
-    }
-    
-    private func end_moving()
-    {
-        //is_moving = false
     }
     
     //MARK: - Build functions
@@ -300,11 +298,21 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         pointer_node.opacity = 0.5
     }*/
     
-    private func update_position()
+    public func update_position()
+    {
+        update_location()
+        update_rotation()
+    }
+    
+    private func update_location()
     {
         pointer_node?.position = get_pointer_position().location
-        pointer_node?.eulerAngles.y = get_pointer_position().rot_z
+    }
+    
+    private func update_rotation()
+    {
         pointer_node?.eulerAngles.x = get_pointer_position().rot_y
+        pointer_node?.eulerAngles.y = get_pointer_position().rot_z
         tool_node?.eulerAngles.z = get_pointer_position().rot_x
     }
     

@@ -434,6 +434,7 @@ struct RobotView: View
                         Label("Stop", systemImage: "stop")
                     }
                     Button(action: { base_workspace.selected_robot.start_pause_moving()
+                        //RobotInspectorView.ppv_presented_location
                         base_workspace.update_view()
                     })
                     {
@@ -484,6 +485,8 @@ struct SceneView_macOS: NSViewRepresentable
         base_workspace.selected_robot.pointer_node = base_workspace.selected_robot.box_node?.childNode(withName: "pointer", recursively: true)
         base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
         base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)
+        
+        base_workspace.selected_robot.update_position()
         
         return scn_scene(stat: true, context: context)
     }
@@ -701,6 +704,7 @@ struct RobotInspectorView: View
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
             }
+            .disabled(base_workspace.selected_robot.moving_started == true)
             
             Spacer()
             GroupBox
