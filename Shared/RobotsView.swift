@@ -569,6 +569,8 @@ struct SceneView_iOS: UIViewRepresentable
         base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
         base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)
         
+        base_workspace.selected_robot.update_position()
+        
         return scn_scene(stat: true, context: context)
     }
 
