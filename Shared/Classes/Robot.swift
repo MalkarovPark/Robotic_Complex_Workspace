@@ -59,6 +59,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         willSet
         {
             selected_program.visual_clear()
+            moving_started = false
+            moving_completed = true
+            target_point_index = 0
         }
         didSet
         {
@@ -103,7 +106,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public func select_program(number: Int)
     {
         selected_program_index = number
-        selected_program.visual_clear()
+        //selected_program.visual_clear()
     }
     
     public func select_program(name: String)
@@ -152,9 +155,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var move_time: Double?
     public var trail_draw = false
     public var moving_started = false
-    public var target_point_index = 0
     public var moving_completed = true
-    //private var is_moving = false
+    public var target_point_index = 0
     
     public var pointer_location = [0.0, 0.0, 0.0] //x, y, z
     {
@@ -259,7 +261,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             moving_started = false
             pointer_node?.removeAllActions()
             tool_node?.removeAllActions()
-            current_pointer_position_select()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+            {
+                self.current_pointer_position_select()
+            }
         }
     }
     
