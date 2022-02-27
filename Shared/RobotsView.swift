@@ -664,8 +664,9 @@ struct RobotInspectorView: View
                         }
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 6.0, style: .continuous))
                 .padding([.leading, .trailing, .bottom])
+                //.clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                 
                 if base_workspace.selected_robot.programs_count == 0
                 {
@@ -1215,6 +1216,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_location[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
                             Stepper("Enter", value: $item_view_pos_location[0], in: 0...200)
                                 .labelsHidden()
                         }
@@ -1225,6 +1227,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_location[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
                             Stepper("Enter", value: $item_view_pos_location[1], in: 0...200)
                                 .labelsHidden()
                         }
@@ -1235,6 +1238,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_location[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
                             Stepper("Enter", value: $item_view_pos_location[2], in: 0...200)
                                 .labelsHidden()
                         }
@@ -1253,6 +1257,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
                             Stepper("Enter", value: $item_view_pos_rotation[0], in: 0...200)
                                 .labelsHidden()
                         }
@@ -1263,6 +1268,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
                             Stepper("Enter", value: $item_view_pos_rotation[1], in: 0...200)
                                 .labelsHidden()
                         }
@@ -1273,6 +1279,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
                             Stepper("Enter", value: $item_view_pos_rotation[2], in: 0...200)
                                 .labelsHidden()
                         }
