@@ -435,8 +435,11 @@ struct RobotView: View
                         Label("Stop", systemImage: "stop")
                     }
                     Button(action: { base_workspace.selected_robot.start_pause_moving()
-                        //RobotInspectorView.ppv_presented_location
-                        base_workspace.update_view()
+                        //base_workspace.update_view()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                        {
+                            base_workspace.update_view()
+                        }
                     })
                     {
                         Label("Play Pause", systemImage: "playpause")
