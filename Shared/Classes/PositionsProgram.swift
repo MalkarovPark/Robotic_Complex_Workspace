@@ -35,12 +35,12 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         var point_node = SCNNode()
         
         #if os(macOS)
-        point_node.position = SCNVector3(x: pos_y, y: pos_x, z: pos_z)
+        point_node.position = SCNVector3(x: pos_x, y: pos_y, z: pos_z)
         point_node.rotation.x = to_rad(in_angle: rot_x)
         point_node.rotation.y = to_rad(in_angle: rot_y)
         point_node.rotation.z = to_rad(in_angle: rot_z)
         #else
-        point_node.position = SCNVector3(x: Float(pos_y), y: Float(pos_x), z: Float(pos_z))
+        point_node.position = SCNVector3(x: Float(pos_x), y: Float(pos_y), z: Float(pos_z))
         point_node.rotation.x = Float(to_rad(in_angle: rot_x))
         point_node.rotation.y = Float(to_rad(in_angle: rot_y))
         point_node.rotation.z = Float(to_rad(in_angle: rot_z))
@@ -175,7 +175,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                     let visual_point = SCNNode()
                     visual_point.geometry = SCNSphere(radius: 0.4)
                     
-                    point_location = SCNVector3(x: point.position.x / 10 - 10, y: point.position.z / 10 - 10, z: point.position.y / 10 - 10)
+                    point_location = SCNVector3(x: point.position.y / 10 - 10, y: point.position.z / 10 - 10, z: point.position.x / 10 - 10)
                     
                     visual_point.position = point_location
                     
@@ -220,7 +220,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 
                 let point = points.first ?? SCNNode()
                 
-                let point_location = SCNVector3(x: point.position.x / 10 - 10, y: point.position.z / 10 - 10, z: point.position.y / 10 - 10)
+                let point_location = SCNVector3(x: point.position.y / 10 - 10, y: point.position.z / 10 - 10, z: point.position.x / 10 - 10)
                 
                 visual_point.position = point_location
                 cone_node.eulerAngles.z = point.rotation.x
@@ -289,7 +289,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
             
             for point in points
             {
-                moving_position = SCNVector3(point.position.x / 10 - 10, point.position.z / 10 - 10, point.position.y / 10 - 10)
+                moving_position = SCNVector3(point.position.y / 10, point.position.z / 10, point.position.x / 10)
                 
                 #if os(macOS)
                 moving_rotation = [point.rotation.y, point.rotation.z, 0]
