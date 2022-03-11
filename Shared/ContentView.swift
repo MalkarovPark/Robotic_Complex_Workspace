@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ContentView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     @State var file_name = ""
     @StateObject private var base_workspace = Workspace()
+    @StateObject var document: Robotic_Complex_WorkspaceDocument
 
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
@@ -22,17 +22,20 @@ struct ContentView: View
         #if os(iOS)
         if horizontal_size_class == .compact
         {
-            TabBar(document: $document)
+            TabBar()
                 .environmentObject(base_workspace)
+                .environmentObject(document)
         }
         else
         {
-            Sidebar(document: $document, file_name: file_name)
+            Sidebar(file_name: file_name)
                 .environmentObject(base_workspace)
+                .environmentObject(document)
         }
         #else
-        Sidebar(document: $document, file_name: file_name)
+        Sidebar(file_name: file_name)
             .environmentObject(base_workspace)
+            .environmentObject(document)
         #endif
     }
 }
@@ -44,7 +47,7 @@ struct ContentView_Previews: PreviewProvider
         #if os(macOS)
         if #available(macOS 11.0, *)
         {
-            ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            ContentView(document: Robotic_Complex_WorkspaceDocument())//document: .constant(Robotic_Complex_WorkspaceDocument()))
         }
         else
         {
@@ -53,7 +56,7 @@ struct ContentView_Previews: PreviewProvider
         #else
         if #available(iOS 15.0, *)
         {
-            ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            ContentView(document: Robotic_Complex_WorkspaceDocument())
                 .previewDevice("iPad Pro (11-inch) (3rd generation)")
                 .previewInterfaceOrientation(.landscapeLeft)
         }

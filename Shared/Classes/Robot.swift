@@ -349,9 +349,15 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         box_node?.position.y += robot_details[0].position.y
         
+        #if os(macOS)
         box_node?.position.x += CGFloat(origin_location[1])
         box_node?.position.y += CGFloat(origin_location[2])
         box_node?.position.z += CGFloat(origin_location[0])
+        #else
+        box_node?.position.x += Float(origin_location[1])
+        box_node?.position.y += Float(origin_location[2])
+        box_node?.position.z += Float(origin_location[0])
+        #endif
     }
     
     public var ik_angles: [Double]
@@ -426,24 +432,33 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             theta[4] = Double(atan2(cos(Float(theta[3])) * asx + sin(Float(theta[3])) * asy, asz))
             theta[5] = Double(atan2(cos(Float(theta[3])) * bsy - sin(Float(theta[3])) * bsx, -bsz / sin(Float(theta[4]))))
             
-            angles.append(-(CGFloat(theta[0]) + .pi))
-            angles.append(-(CGFloat(theta[1])))
-            angles.append(-(CGFloat(theta[2])))
-            angles.append(-(CGFloat(theta[3]) + .pi))
-            angles.append((CGFloat(theta[4])))
-            angles.append(-(CGFloat(theta[5])))
+            angles.append(-(theta[0] + .pi))
+            angles.append(-theta[1])
+            angles.append(-theta[2])
+            angles.append(-(theta[3] + .pi))
+            angles.append(theta[4])
+            angles.append(-theta[5])
         }
         return angles
     }
     
     public func update_robot()
     {
-        robot_details[0].eulerAngles.y = ik_angles[0]
-        robot_details[1].eulerAngles.z = ik_angles[1]
-        robot_details[2].eulerAngles.z = ik_angles[2]
-        robot_details[3].eulerAngles.y = ik_angles[3]
-        robot_details[4].eulerAngles.z = ik_angles[4]
-        robot_details[5].eulerAngles.y = ik_angles[5]
+        #if os(macOS)
+        robot_details[0].eulerAngles.y = CGFloat(ik_angles[0])
+        robot_details[1].eulerAngles.z = CGFloat(ik_angles[1])
+        robot_details[2].eulerAngles.z = CGFloat(ik_angles[2])
+        robot_details[3].eulerAngles.y = CGFloat(ik_angles[3])
+        robot_details[4].eulerAngles.z = CGFloat(ik_angles[4])
+        robot_details[5].eulerAngles.y = CGFloat(ik_angles[5])
+        #else
+        robot_details[0].eulerAngles.y = Float(ik_angles[0])
+        robot_details[1].eulerAngles.z = Float(ik_angles[1])
+        robot_details[2].eulerAngles.z = Float(ik_angles[2])
+        robot_details[3].eulerAngles.y = Float(ik_angles[3])
+        robot_details[4].eulerAngles.z = Float(ik_angles[4])
+        robot_details[5].eulerAngles.y = Float(ik_angles[5])
+        #endif
     }
     
     //MARK: - UI functions

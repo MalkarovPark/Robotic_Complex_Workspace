@@ -94,11 +94,22 @@ class Workspace: ObservableObject
         self.objectWillChange.send()
     }
     
-    //MARK: - Work with file
+    //MARK: - Work with file system
     public func update_file()
     {
         //print(<#T##items: Any...##Any#>)
     }
+    
+    /*public func workspace_data() -> (names: [String], count: Int)
+    {
+        var robot_names = [String]()
+        for robot in robots
+        {
+            //robot_names.append(robot.robot_name ?? "None")
+        }
+        
+        return (robot_names, robots.count)
+    }*/
     
     //MARK: - UI Functions
     public struct card_data_item: Identifiable, Equatable

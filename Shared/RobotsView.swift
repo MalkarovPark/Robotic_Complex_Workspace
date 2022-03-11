@@ -66,6 +66,7 @@ struct RobotsTableView: View
     @State private var add_robot_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: .infinity), spacing: 24)]
     
@@ -141,6 +142,7 @@ struct RobotsTableView: View
         withAnimation
         {
             base_workspace.previewed_robots.remove(atOffsets: offsets)
+            document.preset.robots_count = base_workspace.robots_count()
         }
     }
 }
@@ -248,6 +250,7 @@ struct AddRobotView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var body: some View
     {
@@ -379,6 +382,7 @@ struct AddRobotView: View
     {
         base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: app_state.model_name, ip_address: "127.0.0.1"))
         //base_workspace.add_robot(robot: Robot(name: new_robot_name))
+        document.preset.robots_count = base_workspace.robots_count()
         
         add_robot_view_presented.toggle()
     }

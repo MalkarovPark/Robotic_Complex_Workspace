@@ -9,7 +9,8 @@ import SwiftUI
 
 struct WorkspaceView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
+    //@Binding var document: Robotic_Complex_WorkspaceDocument
+    @EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var body: some View
     {
@@ -19,7 +20,10 @@ struct WorkspaceView: View
         let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
         #endif
         
-        TextEditor(text: $document.text)
+        //TextEditor(text: $document.text)
+        Text("\(document.preset.robots_count)")
+        //Label($document.preset.robots_count, systemImage: "stop")
+        
         #if os(iOS)
             .padding()
             .navigationBarTitleDisplayMode(.inline)
@@ -70,6 +74,6 @@ struct WorkspaceView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+        WorkspaceView()//document: .constant(Robotic_Complex_WorkspaceDocument()))
     }
 }
