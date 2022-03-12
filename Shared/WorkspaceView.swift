@@ -9,8 +9,8 @@ import SwiftUI
 
 struct WorkspaceView: View
 {
-    //@Binding var document: Robotic_Complex_WorkspaceDocument
-    @EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    //@EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var body: some View
     {
@@ -74,6 +74,6 @@ struct WorkspaceView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        WorkspaceView()//document: .constant(Robotic_Complex_WorkspaceDocument()))
+        WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
     }
 }

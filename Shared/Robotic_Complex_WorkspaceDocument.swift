@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 
 extension UTType
 {
-    static let workspace_preset_document = UTType(importedAs: "mv-park.RoboticComplexWorkspace.preset")
+    static let workspace_preset_document = UTType(exportedAs: "mv-park.RoboticComplexWorkspace.preset")
     
     /*static var workspace_preset_document: UTType
     {
@@ -23,7 +23,7 @@ extension UTType
     }*/
 }
 
-class Robotic_Complex_WorkspaceDocument: FileDocument, ObservableObject
+struct Robotic_Complex_WorkspaceDocument: FileDocument
 {
     var preset: WorkspacePreset
     
@@ -34,7 +34,7 @@ class Robotic_Complex_WorkspaceDocument: FileDocument, ObservableObject
     
     static var readableContentTypes: [UTType] { [.workspace_preset_document] }
     
-    required init(configuration: ReadConfiguration) throws
+    init(configuration: ReadConfiguration) throws
     {
         guard let data = configuration.file.regularFileContents
         else

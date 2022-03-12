@@ -9,13 +9,15 @@ import SwiftUI
 
 struct TabBar: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     var body: some View
     {
         TabView
         {
             NavigationView
             {
-                WorkspaceView()
+                WorkspaceView(document: $document)
             }
             .tabItem
             {
@@ -24,7 +26,7 @@ struct TabBar: View
             
             NavigationView
             {
-                RobotsView()
+                RobotsView(document: $document)
             }
             .tabItem
             {
@@ -38,6 +40,6 @@ struct TabBar_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        TabBar()
+        TabBar(document: .constant(Robotic_Complex_WorkspaceDocument()))
     }
 }

@@ -15,7 +15,7 @@ struct Robotic_Complex_WorkspaceApp: App
     {
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
         {
-            file in ContentView(file_name: "\(file.fileURL!.deletingPathExtension().lastPathComponent)", document: file.document)
+            file in ContentView(file_name: "\(file.fileURL!.deletingPathExtension().lastPathComponent)", document: file.$document)
                 .environmentObject(app_state)
         }
         .commands

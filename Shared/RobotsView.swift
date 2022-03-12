@@ -16,6 +16,8 @@ let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
 
 struct RobotsView: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @State private var display_rv = false
     
     var body: some View
@@ -24,7 +26,7 @@ struct RobotsView: View
         {
             if display_rv == false
             {
-                RobotsTableView(display_rv: $display_rv)
+                RobotsTableView(display_rv: $display_rv, document: $document)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
@@ -62,11 +64,12 @@ struct RobotsView_Previews: PreviewProvider
 struct RobotsTableView: View
 {
     @Binding var display_rv: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var add_robot_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
+    //@EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: .infinity), spacing: 24)]
     
@@ -122,7 +125,7 @@ struct RobotsTableView: View
                     }
                     .sheet(isPresented: $add_robot_view_presented)
                     {
-                        AddRobotView(add_robot_view_presented: $add_robot_view_presented)
+                        AddRobotView(add_robot_view_presented: $add_robot_view_presented, document: $document)
                     }
                 }
             }
@@ -244,13 +247,14 @@ struct RobotDeleteButton: View
 struct AddRobotView: View
 {
     @Binding var add_robot_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var new_robot_name = ""
     @State var new_robot_parameters = ["Brand", "Series", "Model"]
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
-    @EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
+    //@EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var body: some View
     {
@@ -382,6 +386,10 @@ struct AddRobotView: View
     {
         base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: app_state.model_name, ip_address: "127.0.0.1"))
         //base_workspace.add_robot(robot: Robot(name: new_robot_name))
+        /*DispatchQueue.main.async
+        {
+            document.preset.robots_count = base_workspace.robots_count()
+        }*/
         document.preset.robots_count = base_workspace.robots_count()
         
         add_robot_view_presented.toggle()
