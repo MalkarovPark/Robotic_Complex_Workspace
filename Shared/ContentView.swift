@@ -29,10 +29,6 @@ struct ContentView: View
         {
             Sidebar(document: $document, file_name: file_name)
                 .environmentObject(base_workspace)
-                /*.onAppear
-                {
-                    document.preset.robots_count = 666
-                }*/
         }
         #else
         Sidebar(document: $document, file_name: file_name)

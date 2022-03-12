@@ -586,11 +586,19 @@ struct SceneView_iOS: UIViewRepresentable
     
     func makeUIView(context: Context) -> SCNView
     {
+        //Connect workcell box and pointer
         base_workspace.selected_robot.box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
         base_workspace.selected_robot.camera_node = base_workspace.selected_robot.box_node?.childNode(withName: "camera", recursively: true)
         base_workspace.selected_robot.pointer_node = base_workspace.selected_robot.box_node?.childNode(withName: "pointer", recursively: true)
         base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
         base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)
+        
+        //Connect robot details
+        base_workspace.selected_robot.robot_node = viewed_scene.rootNode.childNode(withName: "robot", recursively: true)!
+        base_workspace.selected_robot.robot_details_connect()
+        
+        //Place cell box
+        base_workspace.selected_robot.robot_location_place()
         
         base_workspace.selected_robot.update_position()
         
@@ -601,8 +609,6 @@ struct SceneView_iOS: UIViewRepresentable
     {
         ui_view.allowsCameraControl = true
         ui_view.rendersContinuously = true
-        
-        //base_workspace.selected_robot.update_position()
         
         if base_workspace.selected_robot.programs_count > 0
         {
@@ -617,7 +623,7 @@ struct SceneView_iOS: UIViewRepresentable
             app_state.reset_view = false
             
             scene_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 1.0), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 1.0)]))//, completionHandler: { })
+                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]))
         }
     }
     
@@ -643,6 +649,7 @@ struct SceneView_iOS: UIViewRepresentable
     
     func scene_check()
     {
+        base_workspace.selected_robot.update_robot()
         if base_workspace.selected_robot.moving_completed == true
         {
             base_workspace.update_view()
