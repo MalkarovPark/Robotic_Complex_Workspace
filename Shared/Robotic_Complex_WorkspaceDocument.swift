@@ -80,9 +80,7 @@ struct Robotic_Complex_WorkspaceDocument: FileDocument
 
 struct WorkspacePreset: Codable
 {
-    //var robots = [robot_struct]()
-    
-    //var robots_names = [String]()
+    var robots = [robot_struct]()
     var robots_count = Int()
     
     /*init(workspace: Workspace)
@@ -92,17 +90,17 @@ struct WorkspacePreset: Codable
         self.robots_names = workspace.workspace_data().names
         self.robots_count = workspace.workspace_data().count
     }*/
-    
-    /*struct program_struct: Codable
-    {
-        var name: String
-        var points = [Double](repeating: 0.0, count: 6) //x y z| r p w
-    }
-    
-    struct robot_struct: Codable
-    {
-        var name: String
-        var manufacturer: String
-        var programs: [program_struct]
-    }*/
+}
+
+struct program_struct: Codable
+{
+    var name: String
+    var points = [[Double](repeating: 0.0, count: 6)] //x y z| r p w
+}
+
+struct robot_struct: Codable
+{
+    var name: String
+    var manufacturer: String
+    var programs: [program_struct]
 }

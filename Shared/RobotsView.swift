@@ -145,7 +145,8 @@ struct RobotsTableView: View
         withAnimation
         {
             base_workspace.previewed_robots.remove(atOffsets: offsets)
-            document.preset.robots_count = base_workspace.robots_count()
+            document.preset.robots_count = base_workspace.file_data().count //base_workspace.robots_count()
+            document.preset.robots = base_workspace.file_data().robots
         }
     }
 }
@@ -390,7 +391,8 @@ struct AddRobotView: View
         {
             document.preset.robots_count = base_workspace.robots_count()
         }*/
-        document.preset.robots_count = base_workspace.robots_count()
+        document.preset.robots_count = base_workspace.file_data().count //base_workspace.robots_count()
+        document.preset.robots = base_workspace.file_data().robots
         
         add_robot_view_presented.toggle()
     }

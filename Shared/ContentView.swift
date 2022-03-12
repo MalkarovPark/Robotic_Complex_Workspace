@@ -24,16 +24,33 @@ struct ContentView: View
         {
             TabBar(document: $document)
                 .environmentObject(base_workspace)
+                .onAppear
+                {
+                    get_file_data()
+                }
         }
         else
         {
             Sidebar(document: $document, file_name: file_name)
                 .environmentObject(base_workspace)
+                .onAppear
+                {
+                    get_file_data()
+                }
         }
         #else
         Sidebar(document: $document, file_name: file_name)
             .environmentObject(base_workspace)
+            .onAppear
+            {
+                get_file_data()
+            }
         #endif
+    }
+    
+    func get_file_data()
+    {
+        base_workspace.file_view(preset: document.preset)
     }
 }
 

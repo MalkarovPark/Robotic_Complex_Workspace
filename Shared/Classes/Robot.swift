@@ -479,4 +479,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         
         return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
     }
+    
+    //MARK: - Work with file system
+    public var robot_info: robot_struct
+    {
+        var programs_array = [program_struct]()
+        for program in programs
+        {
+            programs_array.append(program.program_info)
+        }
+        
+        return robot_struct(name: robot_name ?? "None", manufacturer: manufacturer ?? "None", programs: programs_array)
+    }
 }

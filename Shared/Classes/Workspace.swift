@@ -95,21 +95,21 @@ class Workspace: ObservableObject
     }
     
     //MARK: - Work with file system
-    public func update_file()
+    public func file_data() -> (robots: [robot_struct], count: Int)
     {
-        //print(<#T##items: Any...##Any#>)
-    }
-    
-    /*public func workspace_data() -> (names: [String], count: Int)
-    {
-        var robot_names = [String]()
+        var robots_file_info = [robot_struct]()
         for robot in robots
         {
-            //robot_names.append(robot.robot_name ?? "None")
+            robots_file_info.append(robot.robot_info)
         }
         
-        return (robot_names, robots.count)
-    }*/
+        return(robots_file_info, robots_count())
+    }
+    
+    public func file_view(preset: WorkspacePreset)
+    {
+        print("\(preset.robots_count) 🎀")
+    }
     
     //MARK: - UI Functions
     public struct card_data_item: Identifiable, Equatable
