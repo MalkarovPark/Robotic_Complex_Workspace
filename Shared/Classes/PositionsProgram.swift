@@ -309,10 +309,14 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     //MARK: - Work with file system
     public var program_info: program_struct
     {
-        var points_array = [[Double](repeating: 0.0, count: 6)]
-        for point in points
+        var points_array = [[Double]]() //(repeating: 0.0, count: 6)]
+        
+        if points.count > 0
         {
-            points_array.append([point.position.x, point.position.y, point.position.z, point.rotation.x, point.rotation.y, point.rotation.z])
+            for point in points
+            {
+                points_array.append([point.position.x, point.position.y, point.position.z, point.rotation.x, point.rotation.y, point.rotation.z])
+            }
         }
         
         return program_struct(name: program_name ?? "None", points: points_array)

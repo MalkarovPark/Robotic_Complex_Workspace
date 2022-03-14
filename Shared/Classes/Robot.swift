@@ -488,9 +488,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var robot_info: robot_struct
     {
         var programs_array = [program_struct]()
-        for program in programs
+        
+        if programs_count > 0
         {
-            programs_array.append(program.program_info)
+            for program in programs
+            {
+                programs_array.append(program.program_info)
+            }
         }
         
         return robot_struct(name: robot_name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", programs: programs_array)
@@ -505,10 +509,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             for program_struct in robot_struct.programs
             {
                 viewed_program = PositionsProgram(name: program_struct.name)
-                for point_struct in program_struct.points
+                
+                if program_struct.points.count > 0
                 {
-                    viewed_program?.add_point(pos_x: point_struct[0], pos_y: point_struct[1], pos_z: point_struct[2], rot_x: point_struct[3], rot_y: point_struct[4], rot_z: point_struct[5])
+                    //print(program_struct.points.count)
+                    for point_struct in program_struct.points
+                    {
+                        viewed_program?.add_point(pos_x: point_struct[0], pos_y: point_struct[1], pos_z: point_struct[2], rot_x: point_struct[3], rot_y: point_struct[4], rot_z: point_struct[5])
+                    }
                 }
+                
                 programs.append(viewed_program!)
             }
         }

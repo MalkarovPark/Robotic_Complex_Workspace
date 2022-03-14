@@ -32,7 +32,7 @@ struct RobotsView: View
             }
             if display_rv == true
             {
-                RobotView(display_rv: $display_rv)
+                RobotView(display_rv: $display_rv, document: $document)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
@@ -69,7 +69,6 @@ struct RobotsTableView: View
     @State private var add_robot_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
-    //@EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: .infinity), spacing: 24)]
     
@@ -391,7 +390,7 @@ struct AddRobotView: View
         {
             document.preset.robots_count = base_workspace.robots_count()
         }*/
-        document.preset.robots_count = base_workspace.file_data().count //base_workspace.robots_count()
+        document.preset.robots_count = base_workspace.file_data().count
         document.preset.robots = base_workspace.file_data().robots
         
         add_robot_view_presented.toggle()
@@ -401,6 +400,7 @@ struct AddRobotView: View
 struct RobotView: View
 {
     @Binding var display_rv: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -409,7 +409,7 @@ struct RobotView: View
         HStack(spacing: 0)
         {
             RobotSceneView()
-            RobotInspectorView()
+            RobotInspectorView(document: $document)
                 .disabled(base_workspace.selected_robot.moving_started == true)
             #if os(macOS)
                 .frame(width: 256)
@@ -663,6 +663,8 @@ struct SceneView_iOS: UIViewRepresentable
 
 struct RobotInspectorView: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @State var add_program_view_presented = false
     @State var ppv_presented_location = [false, false, false]
     @State var ppv_presented_rotation = [false, false, false]
@@ -690,7 +692,7 @@ struct RobotInspectorView: View
                         {
                             ForEach(base_workspace.selected_robot.selected_program.points_info, id: \.self)
                             { point in
-                                PositionItemListView(point_info: point)
+                                PositionItemListView(document: $document, point_info: point)
                             }
                         }
                     }
@@ -942,13 +944,13 @@ struct RobotInspectorView: View
                     #if os(macOS)
                     .sheet(isPresented: $add_program_view_presented)
                     {
-                        AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_robot.selected_program_index)
+                        AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
                             .frame(height: 72.0)
                     }
                     #else
                     .popover(isPresented: $add_program_view_presented)
                     {
-                        AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_robot.selected_program_index)
+                        AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
                     }
                     #endif
                 }
@@ -980,6 +982,7 @@ struct RobotInspectorView: View
                 base_workspace.selected_robot.selected_program_index = 0
             }
             
+            document.preset.robots = base_workspace.file_data().robots
             base_workspace.update_view()
         }
     }
@@ -988,6 +991,7 @@ struct RobotInspectorView: View
     {
         base_workspace.selected_robot.selected_program.add_point(pos_x: base_workspace.selected_robot.pointer_location[0], pos_y: base_workspace.selected_robot.pointer_location[1], pos_z: base_workspace.selected_robot.pointer_location[2], rot_x: base_workspace.selected_robot.pointer_rotation[0], rot_y: base_workspace.selected_robot.pointer_rotation[1], rot_z: base_workspace.selected_robot.pointer_rotation[2])
         
+        document.preset.robots = base_workspace.file_data().robots
         base_workspace.update_view()
     }
 }
@@ -1038,6 +1042,7 @@ struct PositionParameterView: View
 struct AddProgramView: View
 {
     @Binding var add_program_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var selected_program_index: Int
     
     @State var add_text = ""
@@ -1079,6 +1084,8 @@ struct AddProgramView: View
                     base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                     //base_workspace.update_view()
+                    
+                    document.preset.robots = base_workspace.file_data().robots
                     add_program_view_presented.toggle()
                 }
                 .fixedSize()
@@ -1091,6 +1098,8 @@ struct AddProgramView: View
 
 struct PositionItemListView: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @State var position_item_view_presented = false
     @State var point_info: [Double]
     
@@ -1122,13 +1131,13 @@ struct PositionItemListView: View
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .leading)
             {
-                PositionItemView(item_view_pos_location: [point_info[0], point_info[1], point_info[2]], item_view_pos_rotation: [point_info[3], point_info[4], point_info[5]], item_number: Int(point_info[6]) - 1, position_item_view_presented: $position_item_view_presented)
+                PositionItemView(item_view_pos_location: [point_info[0], point_info[1], point_info[2]], item_view_pos_rotation: [point_info[3], point_info[4], point_info[5]], item_number: Int(point_info[6]) - 1, position_item_view_presented: $position_item_view_presented, document: $document)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
             }
             #else
             .popover(isPresented: $position_item_view_presented)
             {
-                PositionItemView(item_view_pos_location: [point_info[0], point_info[1], point_info[2]], item_view_pos_rotation: [point_info[3], point_info[4], point_info[5]], item_number: Int(point_info[6]) - 1, position_item_view_presented: $position_item_view_presented)
+                PositionItemView(item_view_pos_location: [point_info[0], point_info[1], point_info[2]], item_view_pos_rotation: [point_info[3], point_info[4], point_info[5]], item_number: Int(point_info[6]) - 1, position_item_view_presented: $position_item_view_presented, document: $document)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
             }
             #endif
@@ -1143,6 +1152,7 @@ struct PositionItemView: View
     @State var item_number = Int()
     
     @Binding var position_item_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -1368,6 +1378,7 @@ struct PositionItemView: View
         position_item_view_presented.toggle()
         
         base_workspace.selected_robot.selected_program.selected_point_index = -1
+        document.preset.robots = base_workspace.file_data().robots
     }
     
     func delete_point_from_program()
@@ -1377,5 +1388,6 @@ struct PositionItemView: View
         position_item_view_presented.toggle()
         
         base_workspace.selected_robot.selected_program.selected_point_index = -1
+        document.preset.robots = base_workspace.file_data().robots
     }
 }
