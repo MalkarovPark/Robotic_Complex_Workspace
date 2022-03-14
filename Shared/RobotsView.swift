@@ -98,7 +98,6 @@ struct RobotsTableView: View
                     .padding(16)
                 }
                 .animation(.spring(), value: base_workspace.robots_cards_info)
-                //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
             }
             else
             {
@@ -134,8 +133,6 @@ struct RobotsTableView: View
     func view_robot(robot_index: Int)
     {
         base_workspace.select_robot(number: robot_index)
-        //print("Selected robot index: \(robot_index)")
-        //print("Viewed Robot - " + base_workspace.selected_robot.card_info().title)
         self.display_rv = true
     }
     
@@ -144,7 +141,7 @@ struct RobotsTableView: View
         withAnimation
         {
             base_workspace.previewed_robots.remove(atOffsets: offsets)
-            document.preset.robots_count = base_workspace.file_data().count //base_workspace.robots_count()
+            document.preset.robots_count = base_workspace.file_data().count
             document.preset.robots = base_workspace.file_data().robots
         }
     }
@@ -174,7 +171,6 @@ struct RobotCardView: View
                     
                     HStack(spacing: 4.0)
                     {
-                        //Image(systemName: "arrow.up.doc")
                         Text(card_subtitle)
                     }
                     .foregroundColor(.gray)
@@ -187,8 +183,6 @@ struct RobotCardView: View
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         .frame(height: 160)
         .shadow(radius: 8.0)
-        //.transition(AnyTransition.scale.animation(.easeInOut(duration: 0.6)))
-        //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
     }
 }
 
@@ -254,12 +248,11 @@ struct AddRobotView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
-    //@EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var body: some View
     {
         #if os(macOS)
-        let button_padding = 12.0 //16.0
+        let button_padding = 12.0
         
         VStack
         {
@@ -385,11 +378,6 @@ struct AddRobotView: View
     func add_robot_in_workspace()
     {
         base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: app_state.model_name, ip_address: "127.0.0.1"))
-        //base_workspace.add_robot(robot: Robot(name: new_robot_name))
-        /*DispatchQueue.main.async
-        {
-            document.preset.robots_count = base_workspace.robots_count()
-        }*/
         document.preset.robots_count = base_workspace.file_data().count
         document.preset.robots = base_workspace.file_data().robots
         
@@ -449,7 +437,6 @@ struct RobotView: View
                         Label("Stop", systemImage: "stop")
                     }
                     Button(action: { base_workspace.selected_robot.start_pause_moving()
-                        //base_workspace.update_view()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                         {
                             base_workspace.update_view()
@@ -699,7 +686,6 @@ struct RobotInspectorView: View
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 6.0, style: .continuous))
                 .padding([.leading, .trailing, .bottom])
-                //.clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                 
                 if base_workspace.selected_robot.programs_count == 0
                 {
@@ -741,7 +727,6 @@ struct RobotInspectorView: View
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
             }
-            //.disabled(base_workspace.selected_robot.moving_started == true)
             
             Spacer()
             GroupBox
@@ -887,7 +872,6 @@ struct RobotInspectorView: View
                     }
                 }
             }
-            //.disabled(base_workspace.selected_robot.moving_started == true)
             #if os(macOS)
             .padding([.leading, .trailing])
             .padding(.bottom, 12.0)
@@ -939,7 +923,7 @@ struct RobotInspectorView: View
                     
                     Button("+")
                     {
-                        add_position_program()
+                        add_program_view_presented.toggle()
                     }
                     #if os(macOS)
                     .sheet(isPresented: $add_program_view_presented)
@@ -958,13 +942,6 @@ struct RobotInspectorView: View
             .padding(8.0)
             .padding([.leading, .bottom, .trailing], 8.0)
         }
-    }
-    
-    func add_position_program()
-    {
-        //base_workspace.selected_robot.add_program(prog: PositionsProgram(name: "add_text"))
-        //base_workspace.update_view()
-        add_program_view_presented.toggle()
     }
     
     func delete_position_program()
@@ -999,7 +976,7 @@ struct RobotInspectorView: View
 struct PositionParameterView: View
 {
     @Binding var position_parameter_view_presented: Bool
-    @Binding var parameter_value: Double // = Double()
+    @Binding var parameter_value: Double
     
     var body: some View
     {
@@ -1083,7 +1060,6 @@ struct AddProgramView: View
                 {
                     base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
-                    //base_workspace.update_view()
                     
                     document.preset.robots = base_workspace.file_data().robots
                     add_program_view_presented.toggle()

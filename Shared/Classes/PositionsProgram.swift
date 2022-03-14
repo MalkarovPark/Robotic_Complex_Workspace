@@ -47,7 +47,6 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         #endif
         
         points.append(point_node)
-        //print(points)
         
         visual_build()
     }
@@ -107,7 +106,6 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 pindex += 1
             }
         }
-        //print(pinfo)
         return pinfo
     }
     
@@ -274,8 +272,6 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     }
     
     //MARK: - Create moving group for robot
-    //var moving_actions_group: [SCNAction]?
-    
     public func points_moving_group(move_time: TimeInterval) -> (moving: [SCNAction], rotation: [SCNAction])
     {
         var moving_position: SCNVector3
@@ -309,7 +305,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     //MARK: - Work with file system
     public var program_info: program_struct
     {
-        var points_array = [[Double]]() //(repeating: 0.0, count: 6)]
+        var points_array = [[Double]]()
         
         if points.count > 0
         {

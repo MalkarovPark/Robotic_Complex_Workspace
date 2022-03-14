@@ -10,7 +10,6 @@ import SwiftUI
 struct WorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    //@EnvironmentObject var document: Robotic_Complex_WorkspaceDocument
     
     var body: some View
     {
@@ -20,9 +19,7 @@ struct WorkspaceView: View
         let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
         #endif
         
-        //TextEditor(text: $document.text)
-        Text("\(document.preset.robots_count)")
-        //Label($document.preset.robots_count, systemImage: "stop")
+        Text("Robots in workspace – \(document.preset.robots_count)")
         
         #if os(iOS)
             .padding()

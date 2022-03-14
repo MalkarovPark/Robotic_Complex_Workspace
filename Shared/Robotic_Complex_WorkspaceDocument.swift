@@ -16,11 +16,6 @@ extension UTType
     {
         UTType(exportedAs: "mv-park.RoboticComplexWorkspace.preset")
     }*/
-    
-    /*static var exampleText: UTType
-    {
-        UTType(importedAs: "com.example.plain-text")
-    }*/
 }
 
 struct Robotic_Complex_WorkspaceDocument: FileDocument

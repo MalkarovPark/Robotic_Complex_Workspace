@@ -139,7 +139,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public var programs_names: [String]
     {
-        var prog_names = [String]() //: [String]?
+        var prog_names = [String]()
         if programs.count > 0
         {
             for program in programs
@@ -219,7 +219,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 self.rotation_finished = true
                 self.select_new_point()
             })
-            //print("\(target_point_index) ☕️")
         }
         else
         {
@@ -379,19 +378,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             
             var M, N, A, B: Float
             
-            px = -(Float(pointer_node?.position.z ?? 0) + origin_location[0]) // - 32
+            px = -(Float(pointer_node?.position.z ?? 0) + origin_location[0])
             py = Float(pointer_node?.position.x ?? 0) + origin_location[1]
             pz = Float(pointer_node?.position.y ?? 0) + origin_location[2]
-            
-            //print(pointer_node?.position)
-            //print(robot_details[6].worldPosition)
             
             rx = -Float(tool_node?.eulerAngles.z ?? 0)
             ry = -Float(pointer_node?.eulerAngles.x ?? 0) + (.pi)
             rz = -Float(pointer_node?.eulerAngles.y ?? 0)
-            
-            //print(pointer_node.eulerAngles)
-            //print(tool_node.eulerAngles)
             
             bx = cos(rx) * sin(ry) * cos(rz) - sin(rx) * sin(rz)
             by = cos(rx) * sin(ry) * sin(rz) - sin(rx) * cos(rz)
@@ -512,7 +505,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 
                 if program_struct.points.count > 0
                 {
-                    //print(program_struct.points.count)
                     for point_struct in program_struct.points
                     {
                         viewed_program?.add_point(pos_x: point_struct[0], pos_y: point_struct[1], pos_z: point_struct[2], rot_x: point_struct[3], rot_y: point_struct[4], rot_z: point_struct[5])

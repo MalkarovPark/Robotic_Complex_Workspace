@@ -58,26 +58,6 @@ struct ContentView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        #if os(macOS)
-        if #available(macOS 11.0, *)
-        {
-            ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-        }
-        else
-        {
-            // Fallback on earlier versions
-        }
-        #else
-        if #available(iOS 15.0, *)
-        {
-            ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-                .previewDevice("iPad Pro (11-inch) (3rd generation)")
-                .previewInterfaceOrientation(.landscapeLeft)
-        }
-        else
-        {
-            // Fallback on earlier versions
-        }
-        #endif
+        ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
     }
 }
