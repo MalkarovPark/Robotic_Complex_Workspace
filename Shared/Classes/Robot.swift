@@ -43,14 +43,18 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         robot_init(name: name, manufacturer: manufacturer, model: model, ip_address: ip_address)
     }
     
+    init(robot_struct: robot_struct)
+    {
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, ip_address: robot_struct.ip_addrerss)
+        read_programs(robot_struct: robot_struct)
+    }
+    
     func robot_init(name: String, manufacturer: String, model: String, ip_address: String)
     {
         self.robot_name = name
         self.manufacturer = manufacturer
         self.model = model
         self.ip_address = ip_address
-        
-        //build_robot()
     }
     
     //MARK: - Program manage functions
@@ -489,6 +493,24 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             programs_array.append(program.program_info)
         }
         
-        return robot_struct(name: robot_name ?? "None", manufacturer: manufacturer ?? "None", programs: programs_array)
+        return robot_struct(name: robot_name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", programs: programs_array)
+    }
+    
+    private func read_programs(robot_struct: robot_struct)
+    {
+        var viewed_program: PositionsProgram?
+        
+        if robot_struct.programs.count > 0
+        {
+            for program_struct in robot_struct.programs
+            {
+                viewed_program = PositionsProgram(name: program_struct.name)
+                for point_struct in program_struct.points
+                {
+                    viewed_program?.add_point(pos_x: point_struct[0], pos_y: point_struct[1], pos_z: point_struct[2], rot_x: point_struct[3], rot_y: point_struct[4], rot_z: point_struct[5])
+                }
+                programs.append(viewed_program!)
+            }
+        }
     }
 }

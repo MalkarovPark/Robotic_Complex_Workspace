@@ -50,46 +50,12 @@ struct Robotic_Complex_WorkspaceDocument: FileDocument
         let data = try JSONEncoder().encode(preset)
         return .init(regularFileWithContents: data)
     }
-    
-    /*var text: String
-
-    init(text: String = "Hello, world!")
-    {
-        self.text = text
-    }
-
-    static var readableContentTypes: [UTType] { [.exampleText] }
-
-    init(configuration: ReadConfiguration) throws
-    {
-        guard let data = configuration.file.regularFileContents,
-              let string = String(data: data, encoding: .utf8)
-        else
-        {
-            throw CocoaError(.fileReadCorruptFile)
-        }
-        text = string
-    }
-    
-    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper
-    {
-        let data = text.data(using: .utf8)!
-        return .init(regularFileWithContents: data)
-    }*/
 }
 
 struct WorkspacePreset: Codable
 {
     var robots = [robot_struct]()
     var robots_count = Int()
-    
-    /*init(workspace: Workspace)
-    {
-        robots.removeAll()
-        
-        self.robots_names = workspace.workspace_data().names
-        self.robots_count = workspace.workspace_data().count
-    }*/
 }
 
 struct program_struct: Codable
@@ -102,5 +68,7 @@ struct robot_struct: Codable
 {
     var name: String
     var manufacturer: String
+    var model: String
+    var ip_addrerss: String
     var programs: [program_struct]
 }

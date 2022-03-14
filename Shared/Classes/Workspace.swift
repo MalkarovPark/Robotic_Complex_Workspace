@@ -11,20 +11,20 @@ import SwiftUI
 
 class Workspace: ObservableObject
 {
-    @Published private var workspace_name: String?
+    //@Published private var workspace_name: String?
     @Published private var robots = [Robot]()
     @Published private var objects = [SCNNode]()
     
     //MARK: - Initialization
     init()
     {
-        self.workspace_name = "None"
+        //self.workspace_name = "None"
     }
     
-    init(name: String?)
+    /*init(name: String?)
     {
         self.workspace_name = name ?? "None"
-    }
+    }*/
     
     //MARK: - Robot manage functions
     private var selected_robot_index = 0
@@ -75,13 +75,7 @@ class Workspace: ObservableObject
         {
             robots[selected_robot_index] = newValue
         }
-        //return robots[selected_robot_index] //self.robots[selected_robot_index]
     }
-    
-    /*public func selected_robot() -> Robot
-    {
-        return robots[selected_robot_index]
-    }*/
     
     public func robots_count() -> Int
     {
@@ -109,6 +103,11 @@ class Workspace: ObservableObject
     public func file_view(preset: WorkspacePreset)
     {
         print("\(preset.robots_count) 🎀")
+        
+        for robot_struct in preset.robots
+        {
+            robots.append(Robot(robot_struct: robot_struct))
+        }
     }
     
     //MARK: - UI Functions
