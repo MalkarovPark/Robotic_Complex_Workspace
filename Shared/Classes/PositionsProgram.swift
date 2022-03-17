@@ -312,9 +312,9 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
             for point in points
             {
                 #if os(macOS)
-                points_array.append([point.position.x, point.position.y, point.position.z, point.rotation.x, point.rotation.y, point.rotation.z])
+                points_array.append([point.position.x, point.position.y, point.position.z, to_deg(in_angle: point.rotation.x), to_deg(in_angle: point.rotation.y), to_deg(in_angle: point.rotation.z)])
                 #else
-                points_array.append([CGFloat(point.position.x), CGFloat(point.position.y), CGFloat(point.position.z), CGFloat(point.rotation.x), CGFloat(point.rotation.y), CGFloat(point.rotation.z)])
+                points_array.append([CGFloat(point.position.x), CGFloat(point.position.y), CGFloat(point.position.z), to_deg(in_angle: CGFloat(point.rotation.x)), to_deg(in_angle: CGFloat(point.rotation.y)), to_deg(in_angle: CGFloat(point.rotation.z))])
                 #endif
             }
         }

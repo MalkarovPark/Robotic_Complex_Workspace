@@ -10,6 +10,8 @@ import SwiftUI
 struct WorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @State var cycle = false
+    @State var worked = false
     
     var body: some View
     {
@@ -36,20 +38,22 @@ struct WorkspaceView: View
                 {
                     Button(action: add_robot)
                     {
-                        Label("Robots", systemImage: "stop")
+                        Label("Reset", systemImage: "stop")
                     }
-                    Button(action: add_robot)
+                    Button(action: change_work)
                     {
-                        Label("Robots", systemImage: "play")
+                        Label("PlayPause", systemImage: "playpause")
                     }
-                    Divider()
-                    Button(action: add_robot)
+                    Button(action: change_cycle)
                     {
-                        Label("Robots", systemImage: "arrow.uturn.backward")
-                    }
-                    Button(action: add_robot)
-                    {
-                        Label("Robots", systemImage: "arrow.uturn.forward")
+                        if cycle == false
+                        {
+                            Label("Repeat", systemImage: "repeat.1")
+                        }
+                        else
+                        {
+                            Label("Repeat", systemImage: "repeat")
+                        }
                     }
                     Divider()
                     Button(action: add_robot)
@@ -65,6 +69,16 @@ struct WorkspaceView: View
     {
         print("🪄")
     }
+    
+    func change_work()
+    {
+        print("🪄")
+    }
+    
+    func change_cycle()
+    {
+        cycle.toggle()
+    }
 }
 
 struct WorkspaceView_Previews: PreviewProvider
@@ -72,5 +86,6 @@ struct WorkspaceView_Previews: PreviewProvider
     static var previews: some View
     {
         WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            .environmentObject(Workspace())
     }
 }

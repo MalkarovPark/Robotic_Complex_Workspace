@@ -49,14 +49,18 @@ struct RobotsView_Previews: PreviewProvider
     {
         Group
         {
-            //RobotsView()
-            //RobotView(display_rv: .constant(true))
-            //AddRobotView(add_robot_view_presented: .constant(true))
-            //AddRobotView(add_robot_view_presented: .constant(true), new_robot_name: "Name", brands: ["Mnf 1", "Mnf 2"], series: ["Series 1", "Series 2"], models: ["Model 1", "Model 2"])
+            RobotsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
+            AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(AppState())
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
-            //PositionItemView(item_view_pos_location: [0, 1, 2], item_view_pos_rotation: [3, 4, 5], position_item_view_presented: .constant(true))
-            //RobotInspectorView() //(display_rv: .constant(true))
+            //PositionItemView(position_item_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                //.environmentObject(Workspace())
+            //RobotInspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                //.environmentObject(Workspace())
+            //RobotView(display_rv: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                //.environmentObject(Workspace())
         }
     }
 }
@@ -82,16 +86,16 @@ struct RobotsTableView: View
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
-                        ForEach(base_workspace.previewed_robots, id: \.self)
+                        ForEach(base_workspace.robots, id: \.self)
                         { robot_item in
                             ZStack
                             {
                                 RobotCardView(card_color: robot_item.card_info().color, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
-                                RobotDeleteButton(robots: $base_workspace.previewed_robots, robot_item: robot_item, on_delete: remove_robots)
+                                RobotDeleteButton(robots: $base_workspace.robots, robot_item: robot_item, on_delete: remove_robots)
                             }
                             .onTapGesture
                             {
-                                view_robot(robot_index: base_workspace.previewed_robots.firstIndex(of: robot_item) ?? 0)
+                                view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
                             }
                         }
                     }
@@ -140,7 +144,7 @@ struct RobotsTableView: View
     {
         withAnimation
         {
-            base_workspace.previewed_robots.remove(atOffsets: offsets)
+            base_workspace.robots.remove(atOffsets: offsets)
             document.preset.robots_count = base_workspace.file_data().count
             document.preset.robots = base_workspace.file_data().robots
         }
@@ -244,7 +248,6 @@ struct AddRobotView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var new_robot_name = ""
-    @State var new_robot_parameters = ["Brand", "Series", "Model"]
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -408,28 +411,18 @@ struct RobotView: View
         
         .toolbar
         {
-            #if os(iOS)
-            ToolbarItem(placement: .cancellationAction)
+            ToolbarItem(placement: .navigation)
             {
                 Button(action: { display_rv = false })
                 {
                     Label("Close", systemImage: "xmark")
                 }
             }
-            #endif
             
             ToolbarItem(placement: placement_trailing)
             {
                 HStack(alignment: .center)
                 {
-                    #if os(macOS)
-                    Button(action: { display_rv = false })
-                    {
-                        Label("Close", systemImage: "xmark")
-                    }
-                    Spacer()
-                    #endif
-                            
                     Button(action: { base_workspace.selected_robot.reset_moving()
                         base_workspace.update_view()
                     })

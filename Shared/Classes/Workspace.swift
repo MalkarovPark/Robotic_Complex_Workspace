@@ -11,7 +11,7 @@ import SwiftUI
 
 class Workspace: ObservableObject
 {
-    @Published private var robots = [Robot]()
+    @Published public var robots = [Robot]()
     @Published private var objects = [SCNNode]()
     
     //MARK: - Initialization
@@ -96,6 +96,7 @@ class Workspace: ObservableObject
     
     public func file_view(preset: WorkspacePreset)
     {
+        robots.removeAll()
         for robot_struct in preset.robots
         {
             robots.append(Robot(robot_struct: robot_struct))
@@ -132,17 +133,5 @@ class Workspace: ObservableObject
     public func get_robot_info(robot_index: Int) -> Robot
     {
         return robots[robot_index]
-    }
-    
-    public var previewed_robots: [Robot]
-    {
-        get
-        {
-            return self.robots
-        }
-        set
-        {
-            self.robots = newValue
-        }
     }
 }

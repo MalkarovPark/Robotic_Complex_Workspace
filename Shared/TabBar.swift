@@ -30,7 +30,16 @@ struct TabBar: View
             }
             .tabItem
             {
-                Label("Robots", image: "factory.robot") //systemImage: "circle")
+                Label("Robots", systemImage: "r.square") //image: "factory.robot") //systemImage: "circle")
+            }
+            
+            NavigationView
+            {
+                ToolsView(document: $document)
+            }
+            .tabItem
+            {
+                Label("Tools", systemImage: "hammer")
             }
         }
     }

@@ -11,6 +11,7 @@ enum navigation_item
 {
     case WorkspaceView
     case RobotsView
+    case ToolsView
 }
 
 struct Sidebar: View
@@ -63,9 +64,15 @@ struct SidebarContent: View
             
             NavigationLink(destination: RobotsView(document: $document), tag: navigation_item.RobotsView, selection: $sidebar_selection)
             {
-                Label("Robots", image: "factory.robot") //systemImage: "circle")
+                Label("Robots", systemImage: "r.square") //image: "factory.robot") //systemImage: "circle")
             }
             .tag(navigation_item.RobotsView)
+            
+            NavigationLink(destination: ToolsView(document: $document), tag: navigation_item.ToolsView, selection: $sidebar_selection)
+            {
+                Label("Tools", systemImage: "hammer")
+            }
+            .tag(navigation_item.ToolsView)
             #else
             NavigationLink(destination: WorkspaceView(document: $document))
             {
@@ -74,7 +81,12 @@ struct SidebarContent: View
             
             NavigationLink(destination: RobotsView(document: $document))
             {
-                Label("Robots", image: "factory.robot") //systemImage: "circle")
+                Label("Robots", systemImage: "r.square") //image: "factory.robot") //systemImage: "circle")
+            }
+            
+            NavigationLink(destination: ToolsView(document: $document))
+            {
+                Label("Tools", systemImage: "hammer")
             }
             #endif
         }

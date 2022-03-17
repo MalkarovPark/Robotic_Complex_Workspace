@@ -25,6 +25,8 @@
 		62A23C4C271C70D0008FC0CC /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A23C4A271C70D0008FC0CC /* Sidebar.swift */; };
 		62C05D0427971FBB003A2F0B /* RobotsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 62C05D0327971FBB003A2F0B /* RobotsInfo.plist */; };
 		62C05D0527971FBB003A2F0B /* RobotsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 62C05D0327971FBB003A2F0B /* RobotsInfo.plist */; };
+		62DFC8E927E3841B00ABCE1E /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DFC8E827E3841B00ABCE1E /* ToolsView.swift */; };
+		62DFC8EA27E3841B00ABCE1E /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DFC8E827E3841B00ABCE1E /* ToolsView.swift */; };
 		62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */; };
 		62E0D3652719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */; };
 		62E0D3662719C700009D58D2 /* Robotic_Complex_WorkspaceDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */; };
@@ -46,6 +48,7 @@
 		6279ED702721A5B400EEA986 /* RobotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsView.swift; sourceTree = "<group>"; };
 		62A23C4A271C70D0008FC0CC /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		62C05D0327971FBB003A2F0B /* RobotsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RobotsInfo.plist; sourceTree = "<group>"; };
+		62DFC8E827E3841B00ABCE1E /* ToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
 		62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceApp.swift; sourceTree = "<group>"; };
 		62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceDocument.swift; sourceTree = "<group>"; };
 		62E0D3522719C6FC009D58D2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -111,6 +114,7 @@
 				62253FD62746611900F76A51 /* TabBar.swift */,
 				6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */,
 				6279ED702721A5B400EEA986 /* RobotsView.swift */,
+				62DFC8E827E3841B00ABCE1E /* ToolsView.swift */,
 				626E88E42727073F00631945 /* DismissModifier.swift */,
 			);
 			path = Shared;
@@ -250,6 +254,7 @@
 				62253FD72746611900F76A51 /* TabBar.swift in Sources */,
 				62A23C4B271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				624DA0C8275D3AA600918A9E /* PositionsProgram.swift in Sources */,
+				62DFC8E927E3841B00ABCE1E /* ToolsView.swift in Sources */,
 				6279ED712721A5B400EEA986 /* RobotsView.swift in Sources */,
 				6279ED6E2721A4F300EEA986 /* WorkspaceView.swift in Sources */,
 				624DA0C2275D2EE700918A9E /* Robot.swift in Sources */,
@@ -266,6 +271,7 @@
 				624DA0C9275D3AA600918A9E /* PositionsProgram.swift in Sources */,
 				62E0D3652719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
 				624DA0C3275D2EE700918A9E /* Robot.swift in Sources */,
+				62DFC8EA27E3841B00ABCE1E /* ToolsView.swift in Sources */,
 				62A23C4C271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				6279ED722721A5B400EEA986 /* RobotsView.swift in Sources */,
 				624DA0CF275D3FBB00918A9E /* Workspace.swift in Sources */,
