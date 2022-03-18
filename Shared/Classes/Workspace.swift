@@ -54,10 +54,10 @@ class Workspace: ObservableObject
         selected_robot_index = number
     }
     
-    public func select_robot(name: String)
+    /*public func select_robot(name: String)
     {
         select_robot(number: number_by_name(name: name))
-    }
+    }*/
     
     public var selected_robot: Robot
     {
@@ -134,4 +134,7 @@ class Workspace: ObservableObject
     {
         return robots[robot_index]
     }
+    
+    //MARK: - Visual functions
+    public var camera_node: SCNNode?
 }

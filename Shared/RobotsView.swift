@@ -29,6 +29,7 @@ struct RobotsView: View
                 RobotsTableView(display_rv: $display_rv, document: $document)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    .background(Color.white)
             }
             if display_rv == true
             {
@@ -102,6 +103,7 @@ struct RobotsTableView: View
                     .padding(16)
                 }
                 .animation(.spring(), value: base_workspace.robots_cards_info)
+                .padding([.leading, .trailing], 4)
             }
             else
             {
@@ -114,7 +116,6 @@ struct RobotsTableView: View
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
-        
         .toolbar
         {
             ToolbarItem(placement: placement_trailing)
@@ -449,9 +450,9 @@ struct RobotSceneView: View
     var body: some View
     {
         #if os(macOS)
-        SceneView_macOS()
+        CellSceneView_macOS()
         #else
-        SceneView_iOS()
+        CellSceneView_iOS()
             .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
             .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
             .navigationBarTitleDisplayMode(.inline)
@@ -460,7 +461,7 @@ struct RobotSceneView: View
 }
 
 #if os(macOS)
-struct SceneView_macOS: NSViewRepresentable
+struct CellSceneView_macOS: NSViewRepresentable
 {
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -526,9 +527,9 @@ struct SceneView_macOS: NSViewRepresentable
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate
     {
-        var control: SceneView_macOS
+        var control: CellSceneView_macOS
         
-        init(_ control: SceneView_macOS)
+        init(_ control: CellSceneView_macOS)
         {
             self.control = control
         }
@@ -550,7 +551,7 @@ struct SceneView_macOS: NSViewRepresentable
     }
 }
 #else
-struct SceneView_iOS: UIViewRepresentable
+struct CellSceneView_iOS: UIViewRepresentable
 {
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -616,9 +617,9 @@ struct SceneView_iOS: UIViewRepresentable
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate
     {
-        var control: SceneView_iOS
+        var control: CellSceneView_iOS
         
-        init(_ control: SceneView_iOS)
+        init(_ control: CellSceneView_iOS)
         {
             self.control = control
         }
