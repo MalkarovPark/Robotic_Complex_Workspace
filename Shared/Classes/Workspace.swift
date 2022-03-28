@@ -12,12 +12,13 @@ import SwiftUI
 class Workspace: ObservableObject
 {
     @Published public var robots = [Robot]()
+    @Published public var program = WorkspaceProgram()
     @Published private var objects = [SCNNode]()
     
     //MARK: - Initialization
     init()
     {
-        
+        test_card_build()
     }
     
     //MARK: - Robot manage functions
@@ -54,11 +55,6 @@ class Workspace: ObservableObject
         selected_robot_index = number
     }
     
-    /*public func select_robot(name: String)
-    {
-        select_robot(number: number_by_name(name: name))
-    }*/
-    
     public var selected_robot: Robot
     {
         get
@@ -80,6 +76,23 @@ class Workspace: ObservableObject
     {
         //objectWillChange.send()
         self.objectWillChange.send()
+    }
+    
+    //MARK: - Control program functions
+    private func test_card_build()
+    {
+        for i in 1...4
+        {
+            self.program.elements.append(WorkspaceProgramElement(name: "\(i)"))
+        }
+    }
+    
+    public func delete_element(number: Int)
+    {
+        if program.elements.indices.contains(number) == true
+        {
+            program.elements.remove(at: number)
+        }
     }
     
     //MARK: - Work with file system
@@ -118,7 +131,7 @@ class Workspace: ObservableObject
         let card_number: Int
     }
     
-    public var robots_cards_info: [card_data_item]
+    /*public var robots_cards_info: [card_data_item]
     {
         var cards = [card_data_item]()
         var index = 0
@@ -128,13 +141,36 @@ class Workspace: ObservableObject
             index += 1
         }
         return cards
-    }
+    }*/
     
-    public func get_robot_info(robot_index: Int) -> Robot
+    /*public func get_robot_info(robot_index: Int) -> Robot
     {
         return robots[robot_index]
-    }
+    }*/
     
     //MARK: - Visual functions
     public var camera_node: SCNNode?
+}
+
+struct WorkspacePreset: Codable
+{
+    var robots = [robot_struct]()
+    var robots_count = Int()
+}
+
+struct WorkspaceProgram: Codable
+{
+    var elements = [WorkspaceProgramElement]()
+}
+
+struct WorkspaceProgramElement: Codable, Hashable
+{
+    func hash(into hasher: inout Hasher)
+    {
+        hasher.combine(name)
+    }
+    
+    var name = String()
+    var type: [Int] = [0, 0] //0 - Performer [Robot, Tool], 1 – Modificator [Observer, Other]
+    var device_index: Int = 0 //-1 //Index of robot in workspace, -1 is none selection
 }

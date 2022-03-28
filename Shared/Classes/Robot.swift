@@ -110,7 +110,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public func select_program(number: Int)
     {
         selected_program_index = number
-        //selected_program.visual_clear()
     }
     
     public func select_program(name: String)
@@ -515,4 +514,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
     }
+}
+
+struct robot_struct: Codable
+{
+    var name: String
+    var manufacturer: String
+    var model: String
+    var ip_addrerss: String
+    var programs: [program_struct]
 }

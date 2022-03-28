@@ -25,8 +25,6 @@ struct WorkspaceView: View
         let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
         #endif
         
-        //Text("Robots in workspace – \(document.preset.robots_count)")
-        
         VStack
         {
             if wv_selection == 0
@@ -279,9 +277,209 @@ struct ControlProgramView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
     var body: some View
     {
-        Text("Robots in workspace – \(document.preset.robots_count)")
+        //Text("Robots in workspace – \(document.preset.robots_count)")
+        ScrollView
+        {
+            LazyVGrid(columns: program_columns) {
+                ForEach(base_workspace.program.elements, id: \.self)
+                { element in
+                    ElementCardView(element_index: base_workspace.program.elements.firstIndex(of: element) ?? 0)
+                }
+                .padding(4)
+            }
+            .padding()
+        }
+        .animation(.spring(), value: base_workspace.program.elements)
+    }
+}
+
+struct ElementCardView: View
+{
+    @State var element_view_presented = false
+    @State var element_index = Int()
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        ZStack
+        {
+            VStack
+            {
+                HStack(spacing: 0)
+                {
+                    ObjectBadge()
+                    VStack(alignment: .leading)
+                    {
+                        Text("Name")
+                            .font(.title3)
+                        Text("Type")
+                            .foregroundColor(.secondary)
+                    }
+                    .padding([.trailing], 32.0)
+                    //Divider().padding()
+                    
+                    //Spacer()
+                }
+                //Spacer()
+            }
+        }
+        .frame(height: 80
+        )
+        .background(.thinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .shadow(radius: 8.0)
+        .onTapGesture
+        {
+            element_view_presented.toggle()
+            //print("🍪 \(element_index)")
+        }
+        .popover(isPresented: $element_view_presented,
+                 arrowEdge: .trailing)
+        {
+            ElementView(element_view_presented: $element_view_presented, element_index: element_index, device_index: base_workspace.program.elements[element_index].device_index, type: base_workspace.program.elements[element_index].type)
+        }
+    }
+}
+
+struct ObjectBadge: View
+{
+    var body: some View
+    {
+        ZStack
+        {
+            Image("factory.robot") //(systemName: "applelogo")
+                .foregroundColor(.white)
+                .imageScale(.large)
+            //.font(.system(size: 32))
+        }
+        .frame(width: 48, height: 48)
+        .background(.green)
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .padding(16)
+    }
+}
+
+struct ElementView: View
+{
+    @Binding var element_view_presented: Bool
+    
+    @State var element_index: Int
+    @State var device_index: Int
+    @State var type: [Int]
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    private let type_picker_items: [String] = ["Performer", "Modificator"]
+    private let subtype_picker_items: [[String]] = [["Robot", "Tool"], ["Observer", "Other"]]
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            VStack
+            {
+                Picker("Type", selection: $type[0])
+                {
+                    ForEach(0..<type_picker_items.count, id: \.self)
+                    { index in
+                        Text(self.type_picker_items[index]).tag(index)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .labelsHidden()
+                .padding(.bottom, 8.0)
+                
+                Picker("Type", selection: $type[1])
+                {
+                    ForEach(0..<subtype_picker_items[type[0]].count, id: \.self)
+                    { index in
+                        Text(self.subtype_picker_items[type[0]][index]).tag(index)
+                    }
+                }
+            }
+            .padding()
+            Divider()
+            
+            Spacer()
+            
+            VStack
+            {
+                switch type[0]
+                {
+                case 0:
+                    switch type[1]
+                    {
+                    case 0:
+                        Picker("Name", selection: $device_index)
+                        {
+                            ForEach(0..<base_workspace.robots.count, id: \.self)
+                            { index in
+                                Text(base_workspace.robots[index].robot_info.name).tag(index)
+                            }
+                        }
+                    case 1:
+                        Text("Tool")
+                    default:
+                        Text("None")
+                    }
+                case 1:
+                    switch type[1]
+                    {
+                    case 0:
+                        Text("Observer")
+                    case 1:
+                        Text("Other")
+                    default:
+                        Text("None")
+                    }
+                default:
+                    Text("None")
+                }
+            }
+            .padding()
+            
+            Spacer()
+            
+            Divider()
+            HStack
+            {
+                Button("Delete", action: { delete_program_element() })
+                    .padding()
+                
+                Spacer()
+                
+                Button("Save", action: { update_program_element() })
+                    .keyboardShortcut(.defaultAction)
+                    .padding()
+                #if os(macOS)
+                    .foregroundColor(Color.white)
+                #endif
+            }
+        }
+    }
+    
+    func update_program_element()
+    {
+        base_workspace.program.elements[element_index].type = self.type
+        base_workspace.program.elements[element_index].device_index = self.device_index
+        element_view_presented.toggle()
+    }
+    
+    func delete_program_element()
+    {
+        base_workspace.delete_element(number: element_index)
+        //base_workspace.update_view()
+        
+        //document.preset.robots = base_workspace.file_data().robots
+        
+        element_view_presented.toggle()
     }
 }
 
@@ -289,7 +487,17 @@ struct WorkspaceView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-            .environmentObject(Workspace())
+        Group
+        {
+            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
+                .environmentObject(AppState())
+            ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
+                .frame(width: 640, height: 480)
+            ElementCardView()
+            ElementView(element_view_presented: .constant(true), element_index: 0, device_index: 0, type: [0, 0])
+                .environmentObject(Workspace())
+        }
     }
 }

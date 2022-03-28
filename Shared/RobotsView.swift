@@ -56,12 +56,6 @@ struct RobotsView_Previews: PreviewProvider
                 .environmentObject(AppState())
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
-            //PositionItemView(position_item_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
-                //.environmentObject(Workspace())
-            //RobotInspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-                //.environmentObject(Workspace())
-            //RobotView(display_rv: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
-                //.environmentObject(Workspace())
         }
     }
 }
@@ -102,7 +96,7 @@ struct RobotsTableView: View
                     }
                     .padding(16)
                 }
-                .animation(.spring(), value: base_workspace.robots_cards_info)
+                .animation(.spring(), value: base_workspace.robots)
                 .padding([.leading, .trailing], 4)
             }
             else
@@ -1130,10 +1124,10 @@ struct PositionItemView: View
     
     var body: some View
     {
-        VStack
+        VStack(spacing: 0)
         {
             #if os(macOS)
-            HStack(spacing: 12)
+            HStack(spacing: 16)
             {
                 GroupBox(label: Text("Location")
                             .font(.headline))
@@ -1211,8 +1205,7 @@ struct PositionItemView: View
                     .padding(8.0)
                 }
             }
-            .padding([.top, .leading, .trailing])
-            .padding(.bottom, 8.0)
+            .padding()
             #else
             VStack(spacing: 12)
             {
@@ -1305,27 +1298,16 @@ struct PositionItemView: View
             #endif
             
             Divider()
-            
             HStack
             {
                 Button("Delete", action: { delete_point_from_program() })
-                    .padding(.top, button_padding - 8.0)
-                    .padding(.bottom, button_padding)
-                    .padding(.leading, button_padding)
+                    .padding()
                 
                 Spacer()
                 
-                Button("Cancel", action: { position_item_view_presented.toggle() })
-                    .keyboardShortcut(.cancelAction)
-                    .padding(.top, button_padding - 8.0)
-                    .padding(.bottom, button_padding)
-                    .padding(.trailing, button_padding - 8.0)
-                
                 Button("Save", action: { update_point_in_program() })
                     .keyboardShortcut(.defaultAction)
-                    .padding(.top, button_padding - 8.0)
-                    .padding(.bottom, button_padding)
-                    .padding(.trailing, button_padding)
+                    .padding()
                 #if os(macOS)
                     .foregroundColor(Color.white)
                 #endif

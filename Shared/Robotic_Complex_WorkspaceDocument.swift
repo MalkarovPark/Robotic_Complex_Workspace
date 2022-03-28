@@ -46,24 +46,3 @@ struct Robotic_Complex_WorkspaceDocument: FileDocument
         return .init(regularFileWithContents: data)
     }
 }
-
-struct WorkspacePreset: Codable
-{
-    var robots = [robot_struct]()
-    var robots_count = Int()
-}
-
-struct program_struct: Codable
-{
-    var name: String
-    var points = [[Double](repeating: 0.0, count: 6)] //x y z| r p w
-}
-
-struct robot_struct: Codable
-{
-    var name: String
-    var manufacturer: String
-    var model: String
-    var ip_addrerss: String
-    var programs: [program_struct]
-}

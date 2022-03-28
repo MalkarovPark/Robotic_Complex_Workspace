@@ -207,7 +207,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                         visual_point.geometry?.firstMaterial?.diffuse.contents = target_point_color
                     }
                     
-                    positions_group.addChildNode(visual_point.clone()) //(visual_point.copy() as! SCNNode)
+                    positions_group.addChildNode(visual_point.clone())
                     point_index += 1
                 }
             }
@@ -321,4 +321,10 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         
         return program_struct(name: program_name ?? "None", points: points_array)
     }
+}
+
+struct program_struct: Codable
+{
+    var name: String
+    var points = [[Double](repeating: 0.0, count: 6)] //x y z| r p w
 }
