@@ -287,24 +287,42 @@ struct ControlProgramView: View
         ScrollView
         {
             LazyVGrid(columns: program_columns) {
-                ForEach(base_workspace.program.elements, id: \.self)
+                ForEach(base_workspace.elements)
                 { element in
-                    ElementCardView(element_index: base_workspace.program.elements.firstIndex(of: element) ?? 0)
+                    ZStack
+                    {
+                        ElementCardView(elements: $base_workspace.elements, element_index: base_workspace.elements.firstIndex(of: element) ?? 0, element_item: element, on_delete: remove_elements)
+                    }
                 }
                 .padding(4)
             }
             .padding()
         }
-        .animation(.spring(), value: base_workspace.program.elements)
+        .animation(.spring(), value: base_workspace.elements)
+    }
+    
+    func remove_elements(at offsets: IndexSet)
+    {
+        withAnimation
+        {
+            base_workspace.elements.remove(atOffsets: offsets)
+            //document.preset.robots_count = base_workspace.file_data().count
+            //document.preset.robots = base_workspace.file_data().robots
+        }
     }
 }
 
 struct ElementCardView: View
 {
+    @Binding var elements: [WorkspaceProgramElement]
+    
     @State var element_view_presented = false
     @State var element_index = Int()
     
     @EnvironmentObject var base_workspace: Workspace
+    
+    @State var element_item: WorkspaceProgramElement
+    let on_delete: (IndexSet) -> ()
     
     var body: some View
     {
@@ -317,9 +335,9 @@ struct ElementCardView: View
                     ObjectBadge()
                     VStack(alignment: .leading)
                     {
-                        Text("Name")
+                        Text(element_item.name) //("Name")
                             .font(.title3)
-                        Text("Type")
+                        Text("\(element_item.type[0])") //("Type")
                             .foregroundColor(.secondary)
                     }
                     .padding([.trailing], 32.0)
@@ -330,8 +348,7 @@ struct ElementCardView: View
                 //Spacer()
             }
         }
-        .frame(height: 80
-        )
+        .frame(height: 80)
         .background(.thinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         .shadow(radius: 8.0)
@@ -343,7 +360,7 @@ struct ElementCardView: View
         .popover(isPresented: $element_view_presented,
                  arrowEdge: .trailing)
         {
-            ElementView(element_view_presented: $element_view_presented, element_index: element_index, device_index: base_workspace.program.elements[element_index].device_index, type: base_workspace.program.elements[element_index].type)
+            ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, on_delete: on_delete)
         }
     }
 }
@@ -368,13 +385,13 @@ struct ObjectBadge: View
 
 struct ElementView: View
 {
+    @Binding var elements: [WorkspaceProgramElement]
+    @Binding var element_item: WorkspaceProgramElement
     @Binding var element_view_presented: Bool
     
-    @State var element_index: Int
-    @State var device_index: Int
-    @State var type: [Int]
-    
     @EnvironmentObject var base_workspace: Workspace
+    
+    let on_delete: (IndexSet) -> ()
     
     private let type_picker_items: [String] = ["Performer", "Modificator"]
     private let subtype_picker_items: [[String]] = [["Robot", "Tool"], ["Observer", "Other"]]
@@ -385,7 +402,7 @@ struct ElementView: View
         {
             VStack
             {
-                Picker("Type", selection: $type[0])
+                Picker("Type", selection: $element_item.type[0])
                 {
                     ForEach(0..<type_picker_items.count, id: \.self)
                     { index in
@@ -396,11 +413,11 @@ struct ElementView: View
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
-                Picker("Type", selection: $type[1])
+                Picker("Type", selection: $element_item.type[1])
                 {
-                    ForEach(0..<subtype_picker_items[type[0]].count, id: \.self)
+                    ForEach(0..<subtype_picker_items[element_item.type[0]].count, id: \.self)
                     { index in
-                        Text(self.subtype_picker_items[type[0]][index]).tag(index)
+                        Text(self.subtype_picker_items[element_item.type[0]][index]).tag(index)
                     }
                 }
             }
@@ -411,13 +428,13 @@ struct ElementView: View
             
             VStack
             {
-                switch type[0]
+                switch element_item.type[0]
                 {
                 case 0:
-                    switch type[1]
+                    switch element_item.type[1]
                     {
                     case 0:
-                        Picker("Name", selection: $device_index)
+                        Picker("Name", selection: $element_item.device_index)
                         {
                             ForEach(0..<base_workspace.robots.count, id: \.self)
                             { index in
@@ -430,7 +447,7 @@ struct ElementView: View
                         Text("None")
                     }
                 case 1:
-                    switch type[1]
+                    switch element_item.type[1]
                     {
                     case 0:
                         Text("Observer")
@@ -467,19 +484,25 @@ struct ElementView: View
     
     func update_program_element()
     {
-        base_workspace.program.elements[element_index].type = self.type
-        base_workspace.program.elements[element_index].device_index = self.device_index
+        base_workspace.elements[base_workspace.elements.firstIndex(of: element_item) ?? 0] = element_item
+        
         element_view_presented.toggle()
     }
     
     func delete_program_element()
     {
-        base_workspace.delete_element(number: element_index)
-        //base_workspace.update_view()
-        
+        delete_element()
         //document.preset.robots = base_workspace.file_data().robots
         
         element_view_presented.toggle()
+    }
+    
+    func delete_element()
+    {
+        if let index = elements.firstIndex(of: element_item)
+        {
+            self.on_delete(IndexSet(integer: index))
+        }
     }
 }
 
@@ -495,9 +518,9 @@ struct WorkspaceView_Previews: PreviewProvider
             ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .frame(width: 640, height: 480)
-            ElementCardView()
-            ElementView(element_view_presented: .constant(true), element_index: 0, device_index: 0, type: [0, 0])
-                .environmentObject(Workspace())
+            //ElementCardView()
+            //ElementView(element_view_presented: .constant(true), element_index: 0, device_index: 0, type: [0, 0])
+                //.environmentObject(Workspace())
         }
     }
 }

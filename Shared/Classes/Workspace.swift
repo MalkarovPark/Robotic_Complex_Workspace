@@ -12,7 +12,7 @@ import SwiftUI
 class Workspace: ObservableObject
 {
     @Published public var robots = [Robot]()
-    @Published public var program = WorkspaceProgram()
+    @Published public var elements = [WorkspaceProgramElement]() //var program = WorkspaceProgram()
     @Published private var objects = [SCNNode]()
     
     //MARK: - Initialization
@@ -83,15 +83,23 @@ class Workspace: ObservableObject
     {
         for i in 1...4
         {
-            self.program.elements.append(WorkspaceProgramElement(name: "\(i)"))
+            self.elements.append(WorkspaceProgramElement(name: "\(i)"))
         }
     }
     
-    public func delete_element(number: Int)
+    /*public func delete_element(number: Int)
     {
         if program.elements.indices.contains(number) == true
         {
             program.elements.remove(at: number)
+        }
+    }*/
+    
+    public func delete_element(number: Int)
+    {
+        if elements.indices.contains(number) == true
+        {
+            elements.remove(at: number)
         }
     }
     
@@ -158,17 +166,19 @@ struct WorkspacePreset: Codable
     var robots_count = Int()
 }
 
-struct WorkspaceProgram: Codable
+/*struct WorkspaceProgram: Codable
 {
     var elements = [WorkspaceProgramElement]()
-}
+}*/
 
-struct WorkspaceProgramElement: Codable, Hashable
+struct WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
     func hash(into hasher: inout Hasher)
     {
         hasher.combine(name)
     }
+    
+    var id = UUID()
     
     var name = String()
     var type: [Int] = [0, 0] //0 - Performer [Robot, Tool], 1 – Modificator [Observer, Other]
