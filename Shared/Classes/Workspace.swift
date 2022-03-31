@@ -87,14 +87,6 @@ class Workspace: ObservableObject
         }
     }
     
-    /*public func delete_element(number: Int)
-    {
-        if program.elements.indices.contains(number) == true
-        {
-            program.elements.remove(at: number)
-        }
-    }*/
-    
     public func delete_element(number: Int)
     {
         if elements.indices.contains(number) == true
@@ -139,23 +131,6 @@ class Workspace: ObservableObject
         let card_number: Int
     }
     
-    /*public var robots_cards_info: [card_data_item]
-    {
-        var cards = [card_data_item]()
-        var index = 0
-        for robot in robots
-        {
-            cards.append(card_data_item(card_color: robot.card_info().color, card_title: robot.card_info().title, card_subtitle: robot.card_info().subtitle, card_number: index))
-            index += 1
-        }
-        return cards
-    }*/
-    
-    /*public func get_robot_info(robot_index: Int) -> Robot
-    {
-        return robots[robot_index]
-    }*/
-    
     //MARK: - Visual functions
     public var camera_node: SCNNode?
 }
@@ -166,11 +141,6 @@ struct WorkspacePreset: Codable
     var robots_count = Int()
 }
 
-/*struct WorkspaceProgram: Codable
-{
-    var elements = [WorkspaceProgramElement]()
-}*/
-
 struct WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
     func hash(into hasher: inout Hasher)
@@ -179,8 +149,97 @@ struct WorkspaceProgramElement: Codable, Hashable, Identifiable
     }
     
     var id = UUID()
-    
     var name = String()
-    var type: [Int] = [0, 0] //0 - Performer [Robot, Tool], 1 – Modificator [Observer, Other]
-    var device_index: Int = 0 //-1 //Index of robot in workspace, -1 is none selection
+    
+    var type: ProgramElementType = .perofrmer
+    {
+        didSet
+        {
+            type_data[0] = type.rawValue
+            //print("🚪 \(type_data[0])")
+        }
+    }
+    var type_info: String
+    {
+        var info = "\(self.type.rawValue) – "
+        
+        switch type
+        {
+        case .perofrmer:
+            info += "\(self.performer_type.rawValue)"
+        case .modificator:
+            info += "\(self.modificator_type.rawValue)"
+        case .logic:
+            info += "\(self.logic_type.rawValue)"
+        }
+        
+        return info
+    }
+    var type_data = ["Perforemer", "Robot"]
+    
+    //For Performer
+    var performer_type: PerformerType = .robot
+    {
+        didSet
+        {
+            type_data[1] = performer_type.rawValue
+        }
+    }
+    
+    var robot_name = String()
+    var tool_name = String()
+    
+    var program_index = Int()
+    
+    //For Modififcator
+    var modificator_type: ModificatorType = .observer
+    {
+        didSet
+        {
+            type_data[1] = modificator_type.rawValue
+        }
+    }
+
+    //For logic
+    var logic_type: LogicType = .jump
+    {
+        didSet
+        {
+            type_data[1] = logic_type.rawValue
+        }
+    }
+}
+
+enum ProgramElementType: String, Codable, Equatable, CaseIterable
+{
+    case perofrmer = "Performer"
+    case modificator = "Modificator"
+    case logic = "Logic"
+    
+    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
+}
+
+enum PerformerType: String, Codable, Equatable, CaseIterable
+{
+    case robot = "Robot"
+    case tool = "Tool"
+    
+    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
+}
+
+enum ModificatorType: String, Codable, Equatable, CaseIterable
+{
+    case observer = "Observer"
+    case changer = "Changer"
+    
+    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
+}
+
+enum LogicType: String, Codable, Equatable, CaseIterable
+{
+    case jump = "Jump"
+    case equal = "Equal"
+    case unequal = "Unequal"
+    
+    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }

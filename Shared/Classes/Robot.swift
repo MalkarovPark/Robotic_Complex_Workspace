@@ -21,10 +21,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         hasher.combine(robot_name)
     }
     
+    var id = UUID()
+    
     private var robot_name: String?
     private var manufacturer: String?
     private var model: String?
     private var ip_address: String?
+    
     @Published private var programs = [PositionsProgram]()
     
     //MARK: - Initialization

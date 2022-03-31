@@ -291,7 +291,7 @@ struct ControlProgramView: View
                 { element in
                     ZStack
                     {
-                        ElementCardView(elements: $base_workspace.elements, element_index: base_workspace.elements.firstIndex(of: element) ?? 0, element_item: element, on_delete: remove_elements)
+                        ElementCardView(elements: $base_workspace.elements, element_item: element, on_delete: remove_elements)
                     }
                 }
                 .padding(4)
@@ -316,12 +316,11 @@ struct ElementCardView: View
 {
     @Binding var elements: [WorkspaceProgramElement]
     
+    @State var element_item: WorkspaceProgramElement
     @State var element_view_presented = false
-    @State var element_index = Int()
     
     @EnvironmentObject var base_workspace: Workspace
     
-    @State var element_item: WorkspaceProgramElement
     let on_delete: (IndexSet) -> ()
     
     var body: some View
@@ -335,9 +334,9 @@ struct ElementCardView: View
                     ObjectBadge()
                     VStack(alignment: .leading)
                     {
-                        Text(element_item.name) //("Name")
+                        Text(element_item.name)
                             .font(.title3)
-                        Text("\(element_item.type[0])") //("Type")
+                        Text("\(element_item.type_info)")
                             .foregroundColor(.secondary)
                     }
                     .padding([.trailing], 32.0)
@@ -355,7 +354,7 @@ struct ElementCardView: View
         .onTapGesture
         {
             element_view_presented.toggle()
-            //print("🍪 \(element_index)")
+            //element_item.clear_new_data()
         }
         .popover(isPresented: $element_view_presented,
                  arrowEdge: .trailing)
@@ -393,8 +392,8 @@ struct ElementView: View
     
     let on_delete: (IndexSet) -> ()
     
-    private let type_picker_items: [String] = ["Performer", "Modificator"]
-    private let subtype_picker_items: [[String]] = [["Robot", "Tool"], ["Observer", "Other"]]
+    //private let type_picker_items: [String] = ["Performer", "Modificator"]
+    //private let subtype_picker_items: [[String]] = [["Robot", "Tool"], ["Observer", "Other"]]
     
     var body: some View
     {
@@ -402,22 +401,42 @@ struct ElementView: View
         {
             VStack
             {
-                Picker("Type", selection: $element_item.type[0])
+                Picker("Type", selection: $element_item.type)
                 {
-                    ForEach(0..<type_picker_items.count, id: \.self)
-                    { index in
-                        Text(self.type_picker_items[index]).tag(index)
+                    ForEach(ProgramElementType.allCases, id: \.self)
+                    { type in
+                        Text(type.localizedName).tag(type)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
-                Picker("Type", selection: $element_item.type[1])
+                switch element_item.type
                 {
-                    ForEach(0..<subtype_picker_items[element_item.type[0]].count, id: \.self)
-                    { index in
-                        Text(self.subtype_picker_items[element_item.type[0]][index]).tag(index)
+                case .perofrmer:
+                    Picker("Type", selection: $element_item.performer_type)
+                    {
+                        ForEach(PerformerType.allCases, id: \.self)
+                        { type in
+                            Text(type.localizedName).tag(type)
+                        }
+                    }
+                case .modificator:
+                    Picker("Type", selection: $element_item.modificator_type)
+                    {
+                        ForEach(ModificatorType.allCases, id: \.self)
+                        { type in
+                            Text(type.localizedName).tag(type)
+                        }
+                    }
+                case .logic:
+                    Picker("Type", selection: $element_item.logic_type)
+                    {
+                        ForEach(LogicType.allCases, id: \.self)
+                        { type in
+                            Text(type.localizedName).tag(type)
+                        }
                     }
                 }
             }
@@ -428,13 +447,13 @@ struct ElementView: View
             
             VStack
             {
-                switch element_item.type[0]
+                /*switch element_item.new_type[0]
                 {
                 case 0:
-                    switch element_item.type[1]
+                    switch element_item.new_type[1]
                     {
                     case 0:
-                        Picker("Name", selection: $element_item.device_index)
+                        Picker("Name", selection: $element_item.new_device_index)
                         {
                             ForEach(0..<base_workspace.robots.count, id: \.self)
                             { index in
@@ -458,7 +477,9 @@ struct ElementView: View
                     }
                 default:
                     Text("None")
-                }
+                }*/
+                
+                Text("None")
             }
             .padding()
             
@@ -472,26 +493,28 @@ struct ElementView: View
                 
                 Spacer()
                 
-                Button("Save", action: { update_program_element() })
+                /*Button("Save", action: { update_program_element() })
                     .keyboardShortcut(.defaultAction)
                     .padding()
                 #if os(macOS)
                     .foregroundColor(Color.white)
-                #endif
+                #endif*/
             }
         }
     }
     
-    func update_program_element()
+    /*func update_program_element()
     {
-        base_workspace.elements[base_workspace.elements.firstIndex(of: element_item) ?? 0] = element_item
+        //base_workspace.elements[base_workspace.elements.firstIndex(of: element_item) ?? 0] = element_item
+        element_item.update_data()
         
         element_view_presented.toggle()
-    }
+    }*/
     
     func delete_program_element()
     {
         delete_element()
+        base_workspace.update_view()
         //document.preset.robots = base_workspace.file_data().robots
         
         element_view_presented.toggle()

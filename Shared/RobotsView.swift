@@ -81,7 +81,7 @@ struct RobotsTableView: View
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
-                        ForEach(base_workspace.robots, id: \.self)
+                        ForEach(base_workspace.robots)
                         { robot_item in
                             ZStack
                             {
