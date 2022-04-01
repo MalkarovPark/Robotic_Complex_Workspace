@@ -359,7 +359,7 @@ struct ElementCardView: View
         .popover(isPresented: $element_view_presented,
                  arrowEdge: .trailing)
         {
-            ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, on_delete: on_delete)
+            ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, element_item2: workspace_program_struct(name: element_item.name, type: element_item.type, performer_type: element_item.performer_type, modificator_type: element_item.modificator_type, logic_type: element_item.logic_type), on_delete: on_delete)
         }
     }
 }
@@ -388,12 +388,11 @@ struct ElementView: View
     @Binding var element_item: WorkspaceProgramElement
     @Binding var element_view_presented: Bool
     
+    @State var element_item2: workspace_program_struct
+    
     @EnvironmentObject var base_workspace: Workspace
     
     let on_delete: (IndexSet) -> ()
-    
-    //private let type_picker_items: [String] = ["Performer", "Modificator"]
-    //private let subtype_picker_items: [[String]] = [["Robot", "Tool"], ["Observer", "Other"]]
     
     var body: some View
     {
@@ -401,21 +400,25 @@ struct ElementView: View
         {
             VStack
             {
-                Picker("Type", selection: $element_item.type)
+                Picker("Type", selection: $element_item2.type)
                 {
                     ForEach(ProgramElementType.allCases, id: \.self)
                     { type in
                         Text(type.localizedName).tag(type)
                     }
                 }
+                /*.onChange(of: element_item2.type)
+                { _ in
+                    update_program_element()
+                }*/
                 .pickerStyle(SegmentedPickerStyle())
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
-                switch element_item.type
+                switch element_item2.type
                 {
                 case .perofrmer:
-                    Picker("Type", selection: $element_item.performer_type)
+                    Picker("Type", selection: $element_item2.performer_type)
                     {
                         ForEach(PerformerType.allCases, id: \.self)
                         { type in
@@ -423,7 +426,7 @@ struct ElementView: View
                         }
                     }
                 case .modificator:
-                    Picker("Type", selection: $element_item.modificator_type)
+                    Picker("Type", selection: $element_item2.modificator_type)
                     {
                         ForEach(ModificatorType.allCases, id: \.self)
                         { type in
@@ -431,7 +434,7 @@ struct ElementView: View
                         }
                     }
                 case .logic:
-                    Picker("Type", selection: $element_item.logic_type)
+                    Picker("Type", selection: $element_item2.logic_type)
                     {
                         ForEach(LogicType.allCases, id: \.self)
                         { type in
@@ -493,23 +496,27 @@ struct ElementView: View
                 
                 Spacer()
                 
-                /*Button("Save", action: { update_program_element() })
+                Button("Save", action: { update_program_element() })
                     .keyboardShortcut(.defaultAction)
                     .padding()
                 #if os(macOS)
                     .foregroundColor(Color.white)
-                #endif*/
+                #endif
             }
         }
     }
     
-    /*func update_program_element()
+    func update_program_element()
     {
-        //base_workspace.elements[base_workspace.elements.firstIndex(of: element_item) ?? 0] = element_item
-        element_item.update_data()
+        element_item.type = element_item2.type
+        element_item.performer_type = element_item2.performer_type
+        element_item.modificator_type = element_item2.modificator_type
+        element_item.logic_type = element_item2.logic_type
+        
+        //base_workspace.update_view()
         
         element_view_presented.toggle()
-    }*/
+    }
     
     func delete_program_element()
     {
@@ -522,8 +529,10 @@ struct ElementView: View
     
     func delete_element()
     {
+        print(element_item)
         if let index = elements.firstIndex(of: element_item)
         {
+            print("☕️ \(index)")
             self.on_delete(IndexSet(integer: index))
         }
     }

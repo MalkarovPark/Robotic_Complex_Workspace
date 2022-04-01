@@ -83,7 +83,7 @@ class Workspace: ObservableObject
     {
         for i in 1...4
         {
-            self.elements.append(WorkspaceProgramElement(name: "\(i)"))
+            self.elements.append(WorkspaceProgramElement(name: "\(i)")) //(WorkspaceProgramElement(name: "\(i)"))
         }
     }
     
@@ -139,107 +139,4 @@ struct WorkspacePreset: Codable
 {
     var robots = [robot_struct]()
     var robots_count = Int()
-}
-
-struct WorkspaceProgramElement: Codable, Hashable, Identifiable
-{
-    func hash(into hasher: inout Hasher)
-    {
-        hasher.combine(name)
-    }
-    
-    var id = UUID()
-    var name = String()
-    
-    var type: ProgramElementType = .perofrmer
-    {
-        didSet
-        {
-            type_data[0] = type.rawValue
-            //print("🚪 \(type_data[0])")
-        }
-    }
-    var type_info: String
-    {
-        var info = "\(self.type.rawValue) – "
-        
-        switch type
-        {
-        case .perofrmer:
-            info += "\(self.performer_type.rawValue)"
-        case .modificator:
-            info += "\(self.modificator_type.rawValue)"
-        case .logic:
-            info += "\(self.logic_type.rawValue)"
-        }
-        
-        return info
-    }
-    var type_data = ["Perforemer", "Robot"]
-    
-    //For Performer
-    var performer_type: PerformerType = .robot
-    {
-        didSet
-        {
-            type_data[1] = performer_type.rawValue
-        }
-    }
-    
-    var robot_name = String()
-    var tool_name = String()
-    
-    var program_index = Int()
-    
-    //For Modififcator
-    var modificator_type: ModificatorType = .observer
-    {
-        didSet
-        {
-            type_data[1] = modificator_type.rawValue
-        }
-    }
-
-    //For logic
-    var logic_type: LogicType = .jump
-    {
-        didSet
-        {
-            type_data[1] = logic_type.rawValue
-        }
-    }
-}
-
-enum ProgramElementType: String, Codable, Equatable, CaseIterable
-{
-    case perofrmer = "Performer"
-    case modificator = "Modificator"
-    case logic = "Logic"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
-}
-
-enum PerformerType: String, Codable, Equatable, CaseIterable
-{
-    case robot = "Robot"
-    case tool = "Tool"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
-}
-
-enum ModificatorType: String, Codable, Equatable, CaseIterable
-{
-    case observer = "Observer"
-    case changer = "Changer"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
-}
-
-enum LogicType: String, Codable, Equatable, CaseIterable
-{
-    case jump = "Jump"
-    case equal = "Equal"
-    case unequal = "Unequal"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }
