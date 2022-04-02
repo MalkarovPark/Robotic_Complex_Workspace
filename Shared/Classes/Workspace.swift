@@ -83,7 +83,7 @@ class Workspace: ObservableObject
     {
         for i in 1...4
         {
-            self.elements.append(WorkspaceProgramElement(name: "\(i)")) //(WorkspaceProgramElement(name: "\(i)"))
+            self.elements.append(WorkspaceProgramElement(name: "\(i)", element_type: .perofrmer, performer_type: .robot, modificator_type: .observer, logic_type: .jump))
         }
     }
     

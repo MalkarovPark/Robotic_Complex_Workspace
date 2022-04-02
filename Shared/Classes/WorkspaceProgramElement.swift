@@ -12,49 +12,49 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
     static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
-        return lhs.name + lhs.type.rawValue == rhs.name + rhs.type.rawValue
+        return lhs.name + lhs.element_data.element_type.rawValue == rhs.name + rhs.element_data.element_type.rawValue
     }
     
     func hash(into hasher: inout Hasher)
     {
-        hasher.combine(name + type.rawValue)
+        hasher.combine(name + element_data.element_type.rawValue)
     }
     
-    init(name: String)
+    init(name: String, element_type: ProgramElementType, performer_type: PerformerType, modificator_type: ModificatorType, logic_type: LogicType)
     {
         self.name = name
+        self.element_data = workspace_program_element_struct(element_type: element_type, performer_type: performer_type, modificator_type: modificator_type, logic_type: logic_type)
     }
     
     var id = UUID()
     var name = String()
     
-    var type: ProgramElementType = .perofrmer
+    //var type: ProgramElementType = .perofrmer
+    var element_data: workspace_program_element_struct
     var type_info: String
     {
-        var info = "\(self.type.rawValue) – "
+        var info = "\(self.element_data.element_type.rawValue) – "
         
-        switch type
+        switch element_data.element_type
         {
         case .perofrmer:
-            info += "\(self.performer_type.rawValue)"
+            info += "\(self.element_data.performer_type.rawValue)"
         case .modificator:
-            info += "\(self.modificator_type.rawValue)"
+            info += "\(self.element_data.modificator_type.rawValue)"
         case .logic:
-            info += "\(self.logic_type.rawValue)"
+            info += "\(self.element_data.logic_type.rawValue)"
         }
         
         return info
     }
-    //var type_data = ["Perforemer", "Robot"]
+    
+    func update_type_data()
+    {
+        
+    }
     
     //For Performer
-    var performer_type: PerformerType = .robot
-    {
-        didSet
-        {
-            
-        }
-    }
+    //var performer_type: PerformerType = .robot
     
     var robot_name = String()
     var tool_name = String()
@@ -62,17 +62,17 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
     var program_index = Int()
     
     //For Modififcator
-    var modificator_type: ModificatorType = .observer
+    //var modificator_type: ModificatorType = .observer
 
     //For logic
-    var logic_type: LogicType = .jump
+    //var logic_type: LogicType = .jump
 }
 
-struct workspace_program_struct: Codable, Hashable
+struct workspace_program_element_struct: Codable, Hashable
 {
-    var name = String()
+    //var name = String()
     
-    var type: ProgramElementType = .perofrmer
+    var element_type: ProgramElementType = .perofrmer
     
     //For Performer
     var performer_type: PerformerType = .robot

@@ -359,7 +359,8 @@ struct ElementCardView: View
         .popover(isPresented: $element_view_presented,
                  arrowEdge: .trailing)
         {
-            ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, element_item2: workspace_program_struct(name: element_item.name, type: element_item.type, performer_type: element_item.performer_type, modificator_type: element_item.modificator_type, logic_type: element_item.logic_type), on_delete: on_delete)
+            ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, new_element_item_data: element_item.element_data, on_delete: on_delete)
+            //ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, element_item2: workspace_program_struct(name: element_item.name, type: element_item.type, performer_type: element_item.performer_type, modificator_type: element_item.modificator_type, logic_type: element_item.logic_type), on_delete: on_delete)
         }
     }
 }
@@ -388,7 +389,7 @@ struct ElementView: View
     @Binding var element_item: WorkspaceProgramElement
     @Binding var element_view_presented: Bool
     
-    @State var element_item2: workspace_program_struct
+    @State var new_element_item_data: workspace_program_element_struct
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -400,14 +401,14 @@ struct ElementView: View
         {
             VStack
             {
-                Picker("Type", selection: $element_item2.type)
+                Picker("Type", selection: $new_element_item_data.element_type)
                 {
                     ForEach(ProgramElementType.allCases, id: \.self)
                     { type in
                         Text(type.localizedName).tag(type)
                     }
                 }
-                /*.onChange(of: element_item2.type)
+                /*.onChange(of: new_element_item_data.element_type)
                 { _ in
                     update_program_element()
                 }*/
@@ -415,10 +416,10 @@ struct ElementView: View
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
-                switch element_item2.type
+                switch new_element_item_data.element_type
                 {
                 case .perofrmer:
-                    Picker("Type", selection: $element_item2.performer_type)
+                    Picker("Type", selection: $new_element_item_data.performer_type)
                     {
                         ForEach(PerformerType.allCases, id: \.self)
                         { type in
@@ -426,7 +427,7 @@ struct ElementView: View
                         }
                     }
                 case .modificator:
-                    Picker("Type", selection: $element_item2.modificator_type)
+                    Picker("Type", selection: $new_element_item_data.modificator_type)
                     {
                         ForEach(ModificatorType.allCases, id: \.self)
                         { type in
@@ -434,7 +435,7 @@ struct ElementView: View
                         }
                     }
                 case .logic:
-                    Picker("Type", selection: $element_item2.logic_type)
+                    Picker("Type", selection: $new_element_item_data.logic_type)
                     {
                         ForEach(LogicType.allCases, id: \.self)
                         { type in
@@ -508,10 +509,12 @@ struct ElementView: View
     
     func update_program_element()
     {
-        element_item.type = element_item2.type
+        /*element_item.type = element_item2.type
         element_item.performer_type = element_item2.performer_type
         element_item.modificator_type = element_item2.modificator_type
-        element_item.logic_type = element_item2.logic_type
+        element_item.logic_type = element_item2.logic_type*/
+        
+        element_item.element_data = new_element_item_data
         
         //base_workspace.update_view()
         
