@@ -12,28 +12,41 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
     static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
-        return lhs.name + lhs.element_data.element_type.rawValue == rhs.name + rhs.element_data.element_type.rawValue
+        return lhs.id.uuidString + lhs.element_data.element_type.rawValue == rhs.id.uuidString + rhs.element_data.element_type.rawValue
     }
     
     func hash(into hasher: inout Hasher)
     {
-        hasher.combine(name + element_data.element_type.rawValue)
+        hasher.combine(id.uuidString + element_data.element_type.rawValue)
     }
     
-    init(name: String, element_type: ProgramElementType, performer_type: PerformerType, modificator_type: ModificatorType, logic_type: LogicType)
+    init(element_type: ProgramElementType, performer_type: PerformerType, modificator_type: ModificatorType, logic_type: LogicType)
     {
-        self.name = name
         self.element_data = workspace_program_element_struct(element_type: element_type, performer_type: performer_type, modificator_type: modificator_type, logic_type: logic_type)
+    }
+    init(element_type: ProgramElementType, performer_type: PerformerType)
+    {
+        self.element_data.element_type = element_type
+        self.element_data.performer_type = performer_type
+    }
+    init(element_type: ProgramElementType, modificator_type: ModificatorType)
+    {
+        self.element_data.element_type = element_type
+        self.element_data.modificator_type = modificator_type
+    }
+    init(element_type: ProgramElementType, logic_type: LogicType)
+    {
+        self.element_data.logic_type = logic_type
+        self.element_data.logic_type = logic_type
     }
     
     var id = UUID()
-    var name = String()
     
     //var type: ProgramElementType = .perofrmer
-    var element_data: workspace_program_element_struct
+    var element_data = workspace_program_element_struct(element_type: .perofrmer, performer_type: .robot, modificator_type: .observer, logic_type: .jump)
     var type_info: String
     {
-        var info = "\(self.element_data.element_type.rawValue) – "
+        var info = "Type – "
         
         switch element_data.element_type
         {
@@ -70,8 +83,6 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
 
 struct workspace_program_element_struct: Codable, Hashable
 {
-    //var name = String()
-    
     var element_type: ProgramElementType = .perofrmer
     
     //For Performer

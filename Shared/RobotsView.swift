@@ -222,7 +222,7 @@ struct RobotDeleteButton: View
             Alert(
                 title: Text("Delete robot?"),
                 message: Text("Do you wand to delete this robot – \(robot_item.card_info().title)"),
-                primaryButton: .destructive(Text("Yes"), action: { delete_robot() }),
+                primaryButton: .destructive(Text("Yes"), action: delete_robot),
                 secondaryButton: .cancel(Text("No"))
             )
         }
@@ -367,7 +367,7 @@ struct AddRobotView: View
                 }
             }
             .navigationBarTitle(Text("Add Robot"), displayMode: .inline)
-            .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: { add_robot_in_workspace() })
+            .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: add_robot_in_workspace)
                                     .keyboardShortcut(.defaultAction))
         }
         #endif
@@ -694,7 +694,7 @@ struct RobotInspectorView: View
                         HStack
                         {
                             Spacer()
-                            Button(action: { add_point_to_program() })
+                            Button(action: add_point_to_program)
                             {
                                 Label("Add Point", systemImage: "plus")
                                     .labelStyle(.iconOnly)
@@ -1300,12 +1300,12 @@ struct PositionItemView: View
             Divider()
             HStack
             {
-                Button("Delete", action: { delete_point_from_program() })
+                Button("Delete", action: delete_point_from_program)
                     .padding()
                 
                 Spacer()
                 
-                Button("Save", action: { update_point_in_program() })
+                Button("Save", action: update_point_in_program)
                     .keyboardShortcut(.defaultAction)
                     .padding()
                 #if os(macOS)

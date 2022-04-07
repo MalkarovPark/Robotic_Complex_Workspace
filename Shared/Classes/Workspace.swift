@@ -81,9 +81,9 @@ class Workspace: ObservableObject
     //MARK: - Control program functions
     private func test_card_build()
     {
-        for i in 1...4
+        for _ in 1...4
         {
-            self.elements.append(WorkspaceProgramElement(name: "\(i)", element_type: .perofrmer, performer_type: .robot, modificator_type: .observer, logic_type: .jump))
+            self.elements.append(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot))
         }
     }
     

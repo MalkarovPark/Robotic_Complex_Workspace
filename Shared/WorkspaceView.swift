@@ -278,27 +278,59 @@ struct ControlProgramView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
+    @State var add_element_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     
     var body: some View
     {
-        //Text("Robots in workspace – \(document.preset.robots_count)")
-        ScrollView
+        ZStack
         {
-            LazyVGrid(columns: program_columns) {
-                ForEach(base_workspace.elements)
-                { element in
-                    ZStack
-                    {
-                        ElementCardView(elements: $base_workspace.elements, element_item: element, on_delete: remove_elements)
+            ScrollView
+            {
+                LazyVGrid(columns: program_columns) {
+                    ForEach(base_workspace.elements)
+                    { element in
+                        ZStack
+                        {
+                            ElementCardView(elements: $base_workspace.elements, element_item: element, on_delete: remove_elements)
+                        }
                     }
+                    .padding(4)
                 }
-                .padding(4)
+                .padding()
             }
-            .padding()
+            .animation(.spring(), value: base_workspace.elements)
+            
+            VStack
+            {
+                Spacer()
+                HStack
+                {
+                    Spacer()
+                    Button(action: { add_element_view_presented.toggle() })
+                    {
+                        Label("Add Element", systemImage: "plus")
+                            .imageScale(.large)
+                            .labelStyle(.iconOnly)
+                            .padding(8.0)
+                    }
+                    .foregroundColor(.white)
+                    .background(Color.accentColor)
+                    .clipShape(Circle())
+                    .frame(width: 16.0, height: 16.0)
+                    .shadow(radius: 4.0)
+                    .popover(isPresented: $add_element_view_presented)
+                    {
+                        AddElementView(add_element_view_presented: $add_element_view_presented)
+                    }
+                    #if os(macOS)
+                    .buttonStyle(BorderlessButtonStyle())
+                    #endif
+                    .padding(32.0)
+                }
+            }
         }
-        .animation(.spring(), value: base_workspace.elements)
     }
     
     func remove_elements(at offsets: IndexSet)
@@ -306,8 +338,6 @@ struct ControlProgramView: View
         withAnimation
         {
             base_workspace.elements.remove(atOffsets: offsets)
-            //document.preset.robots_count = base_workspace.file_data().count
-            //document.preset.robots = base_workspace.file_data().robots
         }
     }
 }
@@ -331,13 +361,29 @@ struct ElementCardView: View
             {
                 HStack(spacing: 0)
                 {
-                    ObjectBadge()
+                    ZStack
+                    {
+                        badge_image()
+                            .foregroundColor(.white)
+                            .imageScale(.large)
+                            .animation(.easeInOut(duration: 0.2), value: badge_image())
+                        //("factory.robot") //(systemName: "applelogo")
+                        //.font(.system(size: 32))
+                    }
+                    .frame(width: 48, height: 48)
+                    .background(badge_color())
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .padding(16)
+                    .animation(.easeInOut(duration: 0.2), value: badge_color())
+                    
                     VStack(alignment: .leading)
                     {
-                        Text(element_item.name)
+                        Text(element_item.element_data.element_type.rawValue)
                             .font(.title3)
-                        Text("\(element_item.type_info)")
+                            .animation(.easeInOut(duration: 0.2), value: element_item.element_data.element_type.rawValue)
+                        Text(element_item.type_info)
                             .foregroundColor(.secondary)
+                            .animation(.easeInOut(duration: 0.2), value: element_item.type_info)
                     }
                     .padding([.trailing], 32.0)
                     //Divider().padding()
@@ -354,32 +400,80 @@ struct ElementCardView: View
         .onTapGesture
         {
             element_view_presented.toggle()
-            //element_item.clear_new_data()
         }
         .popover(isPresented: $element_view_presented,
                  arrowEdge: .trailing)
         {
             ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, new_element_item_data: element_item.element_data, on_delete: on_delete)
-            //ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, element_item2: workspace_program_struct(name: element_item.name, type: element_item.type, performer_type: element_item.performer_type, modificator_type: element_item.modificator_type, logic_type: element_item.logic_type), on_delete: on_delete)
         }
+    }
+    
+    func badge_image() -> Image
+    {
+        var badge_image: Image
+        
+        switch element_item.element_data.element_type
+        {
+        case .perofrmer:
+            switch element_item.element_data.performer_type
+            {
+            case .robot:
+                badge_image = Image(systemName: "r.square")
+            case .tool:
+                badge_image = Image(systemName: "hammer")
+            }
+        case .modificator:
+            switch element_item.element_data.modificator_type
+            {
+            case .observer:
+                badge_image = Image(systemName: "loupe")
+            case .changer:
+                badge_image = Image(systemName: "wand.and.rays")
+            }
+        case .logic:
+            switch element_item.element_data.logic_type
+            {
+            case .jump:
+                badge_image = Image(systemName: "arrowshape.bounce.forward")
+            case .equal:
+                badge_image = Image(systemName: "equal")
+            case .unequal:
+                badge_image = Image(systemName: "lessthan")
+            }
+        }
+        
+        return badge_image
+    }
+    
+    func badge_color() -> Color
+    {
+        var badge_color: Color
+        
+        switch element_item.element_data.element_type
+        {
+        case .perofrmer:
+            badge_color = .green
+        case .modificator:
+            badge_color = .pink
+        case .logic:
+            badge_color = .gray
+        }
+        
+        return badge_color
     }
 }
 
-struct ObjectBadge: View
+struct AddElementView: View
 {
+    @Binding var add_element_view_presented: Bool
+    
     var body: some View
     {
-        ZStack
+        VStack
         {
-            Image("factory.robot") //(systemName: "applelogo")
-                .foregroundColor(.white)
-                .imageScale(.large)
-            //.font(.system(size: 32))
+            Text("None")
+                .padding(64)
         }
-        .frame(width: 48, height: 48)
-        .background(.green)
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .padding(16)
     }
 }
 
@@ -416,31 +510,54 @@ struct ElementView: View
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
-                switch new_element_item_data.element_type
+                HStack(spacing: 16)
                 {
-                case .perofrmer:
-                    Picker("Type", selection: $new_element_item_data.performer_type)
+                    #if os(iOS)
+                    Text("Type")
+                        .font(.subheadline)
+                    #endif
+                    switch new_element_item_data.element_type
                     {
-                        ForEach(PerformerType.allCases, id: \.self)
-                        { type in
-                            Text(type.localizedName).tag(type)
+                    case .perofrmer:
+                        
+                        Picker("Type", selection: $new_element_item_data.performer_type)
+                        {
+                            ForEach(PerformerType.allCases, id: \.self)
+                            { type in
+                                Text(type.localizedName).tag(type)
+                            }
                         }
-                    }
-                case .modificator:
-                    Picker("Type", selection: $new_element_item_data.modificator_type)
-                    {
-                        ForEach(ModificatorType.allCases, id: \.self)
-                        { type in
-                            Text(type.localizedName).tag(type)
+                        .pickerStyle(.menu)
+                        .frame(maxWidth: .infinity)
+                        #if os(iOS)
+                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        #endif
+                    case .modificator:
+                        Picker("Type", selection: $new_element_item_data.modificator_type)
+                        {
+                            ForEach(ModificatorType.allCases, id: \.self)
+                            { type in
+                                Text(type.localizedName).tag(type)
+                            }
                         }
-                    }
-                case .logic:
-                    Picker("Type", selection: $new_element_item_data.logic_type)
-                    {
-                        ForEach(LogicType.allCases, id: \.self)
-                        { type in
-                            Text(type.localizedName).tag(type)
+                        .pickerStyle(.menu)
+                        .frame(maxWidth: .infinity)
+                        #if os(iOS)
+                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        #endif
+                    case .logic:
+                        Picker("Type", selection: $new_element_item_data.logic_type)
+                        {
+                            ForEach(LogicType.allCases, id: \.self)
+                            { type in
+                                Text(type.localizedName).tag(type)
+                            }
                         }
+                        .pickerStyle(.menu)
+                        .frame(maxWidth: .infinity)
+                        #if os(iOS)
+                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        #endif
                     }
                 }
             }
@@ -451,38 +568,6 @@ struct ElementView: View
             
             VStack
             {
-                /*switch element_item.new_type[0]
-                {
-                case 0:
-                    switch element_item.new_type[1]
-                    {
-                    case 0:
-                        Picker("Name", selection: $element_item.new_device_index)
-                        {
-                            ForEach(0..<base_workspace.robots.count, id: \.self)
-                            { index in
-                                Text(base_workspace.robots[index].robot_info.name).tag(index)
-                            }
-                        }
-                    case 1:
-                        Text("Tool")
-                    default:
-                        Text("None")
-                    }
-                case 1:
-                    switch element_item.type[1]
-                    {
-                    case 0:
-                        Text("Observer")
-                    case 1:
-                        Text("Other")
-                    default:
-                        Text("None")
-                    }
-                default:
-                    Text("None")
-                }*/
-                
                 Text("None")
             }
             .padding()
@@ -492,12 +577,12 @@ struct ElementView: View
             Divider()
             HStack
             {
-                Button("Delete", action: { delete_program_element() })
+                Button("Delete", action: delete_program_element)
                     .padding()
                 
                 Spacer()
                 
-                Button("Save", action: { update_program_element() })
+                Button("Save", action: update_program_element)
                     .keyboardShortcut(.defaultAction)
                     .padding()
                 #if os(macOS)
@@ -509,11 +594,6 @@ struct ElementView: View
     
     func update_program_element()
     {
-        /*element_item.type = element_item2.type
-        element_item.performer_type = element_item2.performer_type
-        element_item.modificator_type = element_item2.modificator_type
-        element_item.logic_type = element_item2.logic_type*/
-        
         element_item.element_data = new_element_item_data
         
         //base_workspace.update_view()
@@ -535,14 +615,45 @@ struct ElementView: View
         print(element_item)
         if let index = elements.firstIndex(of: element_item)
         {
-            print("☕️ \(index)")
             self.on_delete(IndexSet(integer: index))
+        }
+    }
+}
+
+struct ElementAddButton: View
+{
+    var body: some View
+    {
+        VStack
+        {
+            Spacer()
+            HStack
+            {
+                Spacer()
+                Button(action: { print("🍪") })
+                {
+                    Label("Add Point", systemImage: "plus")
+                        .labelStyle(.iconOnly)
+                        .padding(8.0)
+                }
+                .foregroundColor(.white)
+                .background(Color.accentColor)
+                .clipShape(Circle())
+                .frame(width: 24.0, height: 24.0)
+                .shadow(radius: 4.0)
+                #if os(macOS)
+                .buttonStyle(BorderlessButtonStyle())
+                #endif
+                .padding(32.0)
+            }
         }
     }
 }
 
 struct WorkspaceView_Previews: PreviewProvider
 {
+    @EnvironmentObject var base_workspace: Workspace
+    
     static var previews: some View
     {
         Group
@@ -553,9 +664,7 @@ struct WorkspaceView_Previews: PreviewProvider
             ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .frame(width: 640, height: 480)
-            //ElementCardView()
-            //ElementView(element_view_presented: .constant(true), element_index: 0, device_index: 0, type: [0, 0])
-                //.environmentObject(Workspace())
+            //ElementView(elements: <#T##[WorkspaceProgramElement]#>, element_item: <#T##WorkspaceProgramElement#>, element_view_presented: <#T##Bool#>, new_element_item_data: <#T##workspace_program_element_struct#>, base_workspace: <#T##Workspace#>, on_delete: <#T##(IndexSet) -> Void#>)
         }
     }
 }
