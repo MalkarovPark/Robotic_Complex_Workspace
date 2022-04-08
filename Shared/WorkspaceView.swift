@@ -279,6 +279,7 @@ struct ControlProgramView: View
     
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
     @State var add_element_view_presented = false
+    @State var add_new_element_data = workspace_program_element_struct()
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -308,29 +309,99 @@ struct ControlProgramView: View
                 HStack
                 {
                     Spacer()
-                    Button(action: { add_element_view_presented.toggle() })
+                    ZStack(alignment: .trailing)
                     {
-                        Label("Add Element", systemImage: "plus")
-                            .imageScale(.large)
-                            .labelStyle(.iconOnly)
-                            .padding(8.0)
+                        Button(action: { print("Add element 🎀") })
+                        {
+                            HStack
+                            {
+                                Text("Add Element")
+                                Spacer()
+                            }
+                            .padding()
+                        }
+                        .frame(maxWidth: 144.0, alignment: .leading)
+                        .background(.white)
+                        .cornerRadius(32)
+                        .shadow(radius: 4.0)
+                        #if os(macOS)
+                        .buttonStyle(BorderlessButtonStyle())
+                        #endif
+                        .padding()
+                        
+                        Button(action: { add_element_view_presented.toggle() })
+                        {
+                            Circle()
+                                .foregroundColor(add_button_color())
+                                .overlay(add_button_image().foregroundColor(.white).imageScale(.large))
+                                .frame(width: 32, height: 32)
+                        }
+                        .popover(isPresented: $add_element_view_presented)
+                        {
+                            AddElementView(add_element_view_presented: $add_element_view_presented, add_new_element_data: $add_new_element_data)
+                        }
+                        #if os(macOS)
+                        .buttonStyle(BorderlessButtonStyle())
+                        #endif
+                        .padding(.trailing, 24)
                     }
-                    .foregroundColor(.white)
-                    .background(Color.accentColor)
-                    .clipShape(Circle())
-                    .frame(width: 16.0, height: 16.0)
-                    .shadow(radius: 4.0)
-                    .popover(isPresented: $add_element_view_presented)
-                    {
-                        AddElementView(add_element_view_presented: $add_element_view_presented)
-                    }
-                    #if os(macOS)
-                    .buttonStyle(BorderlessButtonStyle())
-                    #endif
-                    .padding(32.0)
                 }
             }
         }
+    }
+    
+    func add_button_image() -> Image
+    {
+        var badge_image: Image
+        
+        switch add_new_element_data.element_type
+        {
+        case .perofrmer:
+            switch add_new_element_data.performer_type
+            {
+            case .robot:
+                badge_image = Image(systemName: "r.square")
+            case .tool:
+                badge_image = Image(systemName: "hammer")
+            }
+        case .modificator:
+            switch add_new_element_data.modificator_type
+            {
+            case .observer:
+                badge_image = Image(systemName: "loupe")
+            case .changer:
+                badge_image = Image(systemName: "wand.and.rays")
+            }
+        case .logic:
+            switch add_new_element_data.logic_type
+            {
+            case .jump:
+                badge_image = Image(systemName: "arrowshape.bounce.forward")
+            case .equal:
+                badge_image = Image(systemName: "equal")
+            case .unequal:
+                badge_image = Image(systemName: "lessthan")
+            }
+        }
+        
+        return badge_image
+    }
+    
+    func add_button_color() -> Color
+    {
+        var badge_color: Color
+        
+        switch add_new_element_data.element_type
+        {
+        case .perofrmer:
+            badge_color = .green
+        case .modificator:
+            badge_color = .pink
+        case .logic:
+            badge_color = .gray
+        }
+        
+        return badge_color
     }
     
     func remove_elements(at offsets: IndexSet)
@@ -466,13 +537,81 @@ struct ElementCardView: View
 struct AddElementView: View
 {
     @Binding var add_element_view_presented: Bool
+    @Binding var add_new_element_data: workspace_program_element_struct
     
     var body: some View
     {
-        VStack
+        VStack(spacing: 0)
         {
-            Text("None")
-                .padding(64)
+            VStack
+            {
+                Picker("Type", selection: $add_new_element_data.element_type)
+                {
+                    ForEach(ProgramElementType.allCases, id: \.self)
+                    { type in
+                        Text(type.localizedName).tag(type)
+                    }
+                }
+                /*.onChange(of: new_element_item_data.element_type)
+                { _ in
+                    update_program_element()
+                }*/
+                .pickerStyle(SegmentedPickerStyle())
+                .labelsHidden()
+                .padding(.bottom, 8.0)
+                
+                HStack(spacing: 16)
+                {
+                    #if os(iOS)
+                    Text("Type")
+                        .font(.subheadline)
+                    #endif
+                    switch add_new_element_data.element_type
+                    {
+                    case .perofrmer:
+                        
+                        Picker("Type", selection: $add_new_element_data.performer_type)
+                        {
+                            ForEach(PerformerType.allCases, id: \.self)
+                            { type in
+                                Text(type.localizedName).tag(type)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .frame(maxWidth: .infinity)
+                        #if os(iOS)
+                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        #endif
+                    case .modificator:
+                        Picker("Type", selection: $add_new_element_data.modificator_type)
+                        {
+                            ForEach(ModificatorType.allCases, id: \.self)
+                            { type in
+                                Text(type.localizedName).tag(type)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .frame(maxWidth: .infinity)
+                        #if os(iOS)
+                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        #endif
+                    case .logic:
+                        Picker("Type", selection: $add_new_element_data.logic_type)
+                        {
+                            ForEach(LogicType.allCases, id: \.self)
+                            { type in
+                                Text(type.localizedName).tag(type)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .frame(maxWidth: .infinity)
+                        #if os(iOS)
+                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        #endif
+                    }
+                }
+            }
+            .padding()
         }
     }
 }
