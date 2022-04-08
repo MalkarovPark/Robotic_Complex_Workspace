@@ -320,7 +320,11 @@ struct ControlProgramView: View
                             }
                             .padding()
                         }
+                        #if os(macOS)
                         .frame(maxWidth: 144.0, alignment: .leading)
+                        #else
+                        .frame(maxWidth: 176.0, alignment: .leading)
+                        #endif
                         .background(.white)
                         .cornerRadius(32)
                         .shadow(radius: 4.0)
@@ -333,8 +337,14 @@ struct ControlProgramView: View
                         {
                             Circle()
                                 .foregroundColor(add_button_color())
-                                .overlay(add_button_image().foregroundColor(.white).imageScale(.large))
+                                .overlay(
+                                    add_button_image()
+                                        .foregroundColor(.white)
+                                        .imageScale(.large)
+                                        .animation(.easeInOut(duration: 0.2), value: add_button_image())
+                                )
                                 .frame(width: 32, height: 32)
+                                .animation(.easeInOut(duration: 0.2), value: add_button_color())
                         }
                         .popover(isPresented: $add_element_view_presented)
                         {
