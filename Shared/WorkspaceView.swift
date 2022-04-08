@@ -311,7 +311,7 @@ struct ControlProgramView: View
                     Spacer()
                     ZStack(alignment: .trailing)
                     {
-                        Button(action: { print("Add element 🎀") })
+                        Button(action: add_new_program_element)
                         {
                             HStack
                             {
@@ -348,6 +348,11 @@ struct ControlProgramView: View
                 }
             }
         }
+    }
+    
+    func add_new_program_element()
+    {
+        base_workspace.elements.append(WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type))
     }
     
     func add_button_image() -> Image
@@ -552,10 +557,6 @@ struct AddElementView: View
                         Text(type.localizedName).tag(type)
                     }
                 }
-                /*.onChange(of: new_element_item_data.element_type)
-                { _ in
-                    update_program_element()
-                }*/
                 .pickerStyle(SegmentedPickerStyle())
                 .labelsHidden()
                 .padding(.bottom, 8.0)

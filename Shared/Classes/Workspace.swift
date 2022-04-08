@@ -18,7 +18,7 @@ class Workspace: ObservableObject
     //MARK: - Initialization
     init()
     {
-        test_card_build()
+        //test_card_build()
     }
     
     //MARK: - Robot manage functions
