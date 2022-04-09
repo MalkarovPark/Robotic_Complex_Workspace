@@ -59,5 +59,6 @@ struct ContentView_Previews: PreviewProvider
     static var previews: some View
     {
         ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            .environmentObject(AppState())
     }
 }

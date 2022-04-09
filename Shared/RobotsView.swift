@@ -390,17 +390,43 @@ struct RobotView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    @State private var rv_selection = 0
+    private let rv_items: [String] = ["View", "Control"]
+    #endif
+    
     var body: some View
     {
         HStack(spacing: 0)
         {
+            #if os(macOS)
             RobotSceneView()
             RobotInspectorView(document: $document)
                 .disabled(base_workspace.selected_robot.moving_started == true)
-            #if os(macOS)
                 .frame(width: 256)
             #else
-                .frame(width: 288)
+            if horizontal_size_class == .compact
+            {
+                if rv_selection == 0
+                {
+                    RobotSceneView()
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                }
+                else
+                {
+                    RobotInspectorView(document: $document)
+                        .disabled(base_workspace.selected_robot.moving_started == true)
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                }
+            }
+            else
+            {
+                RobotSceneView()
+                RobotInspectorView(document: $document)
+                    .disabled(base_workspace.selected_robot.moving_started == true)
+                    .frame(width: 288)
+            }
             #endif
         }
         
@@ -413,6 +439,24 @@ struct RobotView: View
                     Label("Close", systemImage: "xmark")
                 }
             }
+            
+            #if os(iOS)
+            ToolbarItem(placement: .automatic)
+            {
+                if horizontal_size_class == .compact
+                {
+                    Picker("Workspace", selection: $rv_selection)
+                    {
+                        ForEach(0..<rv_items.count, id: \.self)
+                        { index in
+                            Text(self.rv_items[index]).tag(index)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .labelsHidden()
+                }
+            }
+            #endif
             
             ToolbarItem(placement: placement_trailing)
             {

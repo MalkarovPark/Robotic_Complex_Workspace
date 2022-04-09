@@ -13,9 +13,13 @@ struct WorkspaceView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @State var cycle = false
     @State var worked = false
-    @State private var wv_selection = 0
     
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    @State private var wv_selection = 0
     private let wv_items: [String] = ["View", "Control"]
+    #endif
     
     var body: some View
     {
@@ -25,18 +29,37 @@ struct WorkspaceView: View
         let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
         #endif
         
-        VStack
+        HStack(spacing: 0)
         {
-            if wv_selection == 0
+            #if os(macOS)
+            ComplexWorkspaceView(document: $document)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+            ControlProgramView(document: $document)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                .frame(width: 256)
+            #else
+            if horizontal_size_class == .compact
             {
-                ComplexWorkspaceView(document: $document)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                if wv_selection == 0
+                {
+                    ComplexWorkspaceView(document: $document)
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                }
+                else
+                {
+                    ControlProgramView(document: $document)
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                }
             }
             else
             {
+                ComplexWorkspaceView(document: $document)
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 ControlProgramView(document: $document)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    .frame(width: 288)
             }
+            #endif
         }
         #if os(iOS)
             .padding()
@@ -50,22 +73,8 @@ struct WorkspaceView: View
             #if os(iOS)
             ToolbarItem(placement: .cancellationAction)
             {
-                Picker("Workspace", selection: $wv_selection)
+                if horizontal_size_class == .compact
                 {
-                    ForEach(0..<wv_items.count, id: \.self)
-                    { index in
-                        Text(self.wv_items[index]).tag(index)
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .labelsHidden()
-            }
-            #endif
-            ToolbarItem(placement: placement_trailing)
-            {
-                HStack(alignment: .center)
-                {
-                    #if os(macOS)
                     Picker("Workspace", selection: $wv_selection)
                     {
                         ForEach(0..<wv_items.count, id: \.self)
@@ -75,7 +84,24 @@ struct WorkspaceView: View
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     .labelsHidden()
-                    #endif
+                }
+            }
+            #endif
+            ToolbarItem(placement: placement_trailing)
+            {
+                HStack(alignment: .center)
+                {
+                    /*#if os(macOS)
+                    Picker("Workspace", selection: $wv_selection)
+                    {
+                        ForEach(0..<wv_items.count, id: \.self)
+                        { index in
+                            Text(self.wv_items[index]).tag(index)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .labelsHidden()
+                    #endif*/
                     
                     Button(action: change_cycle)
                     {
@@ -96,11 +122,6 @@ struct WorkspaceView: View
                     {
                         Label("PlayPause", systemImage: "playpause")
                     }
-                    /*Divider()
-                    Button(action: add_robot)
-                    {
-                        Label("Robots", systemImage: "plus")
-                    }*/
                 }
             }
         }
@@ -340,7 +361,7 @@ struct ControlProgramView: View
                                 .overlay(
                                     add_button_image()
                                         .foregroundColor(.white)
-                                        .imageScale(.large)
+                                        //.imageScale(.large)
                                         .animation(.easeInOut(duration: 0.2), value: add_button_image())
                                 )
                                 .frame(width: 32, height: 32)
@@ -362,6 +383,7 @@ struct ControlProgramView: View
     
     func add_new_program_element()
     {
+        base_workspace.update_view()
         base_workspace.elements.append(WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type))
     }
     
@@ -453,7 +475,7 @@ struct ElementCardView: View
                             .foregroundColor(.white)
                             .imageScale(.large)
                             .animation(.easeInOut(duration: 0.2), value: badge_image())
-                        //("factory.robot") //(systemName: "applelogo")
+                        //("factory.robot")
                         //.font(.system(size: 32))
                     }
                     .frame(width: 48, height: 48)
@@ -718,7 +740,38 @@ struct ElementView: View
             
             VStack
             {
-                Text("None")
+                switch new_element_item_data.element_type
+                {
+                case .perofrmer:
+                    Text("Performer")
+                    switch new_element_item_data.performer_type
+                    {
+                    case .robot:
+                        Text("Robot")
+                    case .tool:
+                        Text("Tool")
+                    }
+                case .modificator:
+                    Text("Modificator")
+                    switch new_element_item_data.modificator_type
+                    {
+                    case .observer:
+                        Text("Observer")
+                    case .changer:
+                        Text("Changer")
+                    }
+                case .logic:
+                    Text("Logic")
+                    switch new_element_item_data.logic_type
+                    {
+                    case .jump:
+                        Text("Jump")
+                    case .equal:
+                        Text("Equal")
+                    case .unequal:
+                        Text("Unequal")
+                    }
+                }
             }
             .padding()
             
@@ -770,36 +823,6 @@ struct ElementView: View
     }
 }
 
-struct ElementAddButton: View
-{
-    var body: some View
-    {
-        VStack
-        {
-            Spacer()
-            HStack
-            {
-                Spacer()
-                Button(action: { print("🍪") })
-                {
-                    Label("Add Point", systemImage: "plus")
-                        .labelStyle(.iconOnly)
-                        .padding(8.0)
-                }
-                .foregroundColor(.white)
-                .background(Color.accentColor)
-                .clipShape(Circle())
-                .frame(width: 24.0, height: 24.0)
-                .shadow(radius: 4.0)
-                #if os(macOS)
-                .buttonStyle(BorderlessButtonStyle())
-                #endif
-                .padding(32.0)
-            }
-        }
-    }
-}
-
 struct WorkspaceView_Previews: PreviewProvider
 {
     @EnvironmentObject var base_workspace: Workspace
@@ -814,7 +837,9 @@ struct WorkspaceView_Previews: PreviewProvider
             ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .frame(width: 640, height: 480)
-            //ElementView(elements: <#T##[WorkspaceProgramElement]#>, element_item: <#T##WorkspaceProgramElement#>, element_view_presented: <#T##Bool#>, new_element_item_data: <#T##workspace_program_element_struct#>, base_workspace: <#T##Workspace#>, on_delete: <#T##(IndexSet) -> Void#>)
+            ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
+            ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
+                .environmentObject(Workspace())
         }
     }
 }
