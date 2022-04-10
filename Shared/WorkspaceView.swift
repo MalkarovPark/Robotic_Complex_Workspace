@@ -62,7 +62,6 @@ struct WorkspaceView: View
             #endif
         }
         #if os(iOS)
-            .padding()
             .navigationBarTitleDisplayMode(.inline)
         #else
             .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600)
@@ -91,23 +90,11 @@ struct WorkspaceView: View
             {
                 HStack(alignment: .center)
                 {
-                    /*#if os(macOS)
-                    Picker("Workspace", selection: $wv_selection)
-                    {
-                        ForEach(0..<wv_items.count, id: \.self)
-                        { index in
-                            Text(self.wv_items[index]).tag(index)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .labelsHidden()
-                    #endif*/
-                    
                     Button(action: change_cycle)
                     {
                         if cycle == false
                         {
-                            Label("Repeat", systemImage: "repeat.1")
+                            Label("One", systemImage: "arrow.forward.to.line")
                         }
                         else
                         {
@@ -154,7 +141,7 @@ struct ComplexWorkspaceView: View
         #else
         WorkspaceSceneView_iOS()
             .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-            .padding(8.0)
+            .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8)) //(8.0)
             .navigationBarTitleDisplayMode(.inline)
         #endif
     }
@@ -494,11 +481,7 @@ struct ElementCardView: View
                             .animation(.easeInOut(duration: 0.2), value: element_item.type_info)
                     }
                     .padding([.trailing], 32.0)
-                    //Divider().padding()
-                    
-                    //Spacer()
                 }
-                //Spacer()
             }
         }
         .frame(height: 80)
@@ -743,14 +726,7 @@ struct ElementView: View
                 switch new_element_item_data.element_type
                 {
                 case .perofrmer:
-                    Text("Performer")
-                    switch new_element_item_data.performer_type
-                    {
-                    case .robot:
-                        Text("Robot")
-                    case .tool:
-                        Text("Tool")
-                    }
+                    PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, robot_program_name: $new_element_item_data.robot_program_name, tool_name: $new_element_item_data.tool_name)
                 case .modificator:
                     Text("Modificator")
                     switch new_element_item_data.modificator_type
@@ -823,6 +799,89 @@ struct ElementView: View
     }
 }
 
+struct PerformerElementView: View
+{
+    @Binding var performer_type: PerformerType
+    @Binding var robot_name: String
+    @Binding var robot_program_name: String
+    @Binding var tool_name: String
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        VStack
+        {
+            switch performer_type
+            {
+            case .robot:
+                HStack(spacing: 16)
+                {
+                    #if os(iOS)
+                    Text("Name")
+                        .font(.subheadline)
+                    #endif
+                    
+                    Picker("Name", selection: $robot_name)
+                    {
+                        if base_workspace.robots_names.count > 0
+                        {
+                            ForEach(base_workspace.robots_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .onChange(of: robot_name)
+                    { _ in
+                        base_workspace.select_robot(name: robot_name)
+                        if base_workspace.selected_robot.programs_names.count > 0
+                        {
+                            robot_program_name = base_workspace.selected_robot.programs_names[0]
+                        }
+                    }
+                    .disabled(base_workspace.robots_names.count == 0)
+                    .frame(maxWidth: .infinity)
+                    #if os(iOS)
+                    .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                    #endif
+                    
+                    #if os(iOS)
+                    Text("Program")
+                        .font(.subheadline)
+                    #endif
+                    
+                    Picker("Program", selection: $robot_program_name)
+                    {
+                        if base_workspace.selected_robot.programs_names.count > 0
+                        {
+                            ForEach(base_workspace.selected_robot.programs_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                    .frame(maxWidth: .infinity)
+                    #if os(iOS)
+                    .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                    #endif
+                }
+            case .tool:
+                Text("Tool")
+            }
+        }
+    }
+}
+
 struct WorkspaceView_Previews: PreviewProvider
 {
     @EnvironmentObject var base_workspace: Workspace
@@ -834,11 +893,13 @@ struct WorkspaceView_Previews: PreviewProvider
             WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            /*ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
-                .frame(width: 640, height: 480)
+                .frame(width: 640, height: 480)*/
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
+                .environmentObject(Workspace())
+            PerformerElementView(performer_type: .constant(.robot), robot_name: .constant("Robot"), robot_program_name: .constant("Robot Program"), tool_name: .constant("Tool"))
                 .environmentObject(Workspace())
         }
     }

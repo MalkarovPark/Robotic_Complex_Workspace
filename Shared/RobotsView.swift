@@ -939,7 +939,6 @@ struct RobotInspectorView: View
                             Text("None")
                         }
                     }
-                    
                     .pickerStyle(.menu)
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
                     .frame(maxWidth: .infinity)

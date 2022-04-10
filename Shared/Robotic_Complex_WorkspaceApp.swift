@@ -113,7 +113,7 @@ class AppState : ObservableObject
         for model_parameter in robot_model_dictionary.keys
         {
             let info = robot_model_dictionary[model_parameter] ?? "None"
-            print("\(model_parameter) – \(info) 🍪")
+            //print("\(model_parameter) – \(info) 🍪")
         }
         
         did_updated = true
@@ -148,7 +148,7 @@ class AppState : ObservableObject
         for model_parameter in robot_model_dictionary.keys
         {
             let info = robot_model_dictionary[model_parameter] ?? "None"
-            print("\(model_parameter) – \(info) 🍪")
+            //print("\(model_parameter) – \(info) 🍪")
         }
     }
 }

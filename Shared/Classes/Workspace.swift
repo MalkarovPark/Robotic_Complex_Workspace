@@ -26,6 +26,19 @@ class Workspace: ObservableObject
     
     public func add_robot(robot: Robot)
     {
+        var name_count = 1
+        for viewed_robot in robots
+        {
+            if viewed_robot.robot_info.name == robot.robot_info.name
+            {
+                name_count += 1
+            }
+        }
+        
+        if name_count > 1
+        {
+            robot.name! += " \(name_count)"
+        }
         robots.append(robot)
     }
     
@@ -55,6 +68,11 @@ class Workspace: ObservableObject
         selected_robot_index = number
     }
     
+    public func select_robot(name: String)
+    {
+        selected_robot_index = number_by_name(name: name)
+    }
+    
     public var selected_robot: Robot
     {
         get
@@ -79,12 +97,17 @@ class Workspace: ObservableObject
     }
     
     //MARK: - Control program functions
-    private func test_card_build()
+    public var robots_names: [String]
     {
-        for _ in 1...4
+        var robots_names = [String]()
+        if robots.count > 0
         {
-            self.elements.append(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot))
+            for robot in robots
+            {
+                robots_names.append(robot.name ?? "None")
+            }
         }
+        return robots_names
     }
     
     public func delete_element(number: Int)

@@ -13,17 +13,17 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
 {
     static func == (lhs: Robot, rhs: Robot) -> Bool
     {
-        return lhs.id == rhs.id
+        return lhs.name == rhs.name //lhs.id == rhs.id
     }
     
     func hash(into hasher: inout Hasher)
     {
-        hasher.combine(robot_name)
+        hasher.combine(name)
     }
     
     var id = UUID()
     
-    private var robot_name: String?
+    public var name: String?
     private var manufacturer: String?
     private var model: String?
     private var ip_address: String?
@@ -54,7 +54,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     func robot_init(name: String, manufacturer: String, model: String, ip_address: String)
     {
-        self.robot_name = name
+        self.name = name
         self.manufacturer = manufacturer
         self.model = model
         self.ip_address = ip_address
@@ -78,7 +78,21 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func add_program(prog: PositionsProgram)
     {
+        var name_count = 1
+        for viewed_program in programs
+        {
+            if viewed_program.name == prog.name
+            {
+                name_count += 1
+            }
+        }
+        
+        if name_count > 1
+        {
+            prog.name! += " \(name_count)"
+        }
         programs.append(prog)
+        
         selected_program.visual_clear()
     }
     
@@ -146,7 +160,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             for program in programs
             {
-                prog_names.append(program.program_name ?? "None")
+                prog_names.append(program.name ?? "None")
             }
         }
         return prog_names
@@ -476,7 +490,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             color = Color.clear
         }
         
-        return("\(self.robot_name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
+        return("\(self.name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color)
     }
     
     //MARK: - Work with file system
@@ -492,7 +506,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        return robot_struct(name: robot_name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", programs: programs_array)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", programs: programs_array)
     }
     
     private func read_programs(robot_struct: robot_struct)

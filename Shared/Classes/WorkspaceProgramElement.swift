@@ -67,18 +67,10 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
     }
     
     //For Performer
-    //var performer_type: PerformerType = .robot
-    
-    var robot_name = String()
-    var tool_name = String()
-    
-    var program_index = Int()
     
     //For Modififcator
-    //var modificator_type: ModificatorType = .observer
 
     //For logic
-    //var logic_type: LogicType = .jump
 }
 
 struct workspace_program_element_struct: Codable, Hashable
@@ -87,6 +79,10 @@ struct workspace_program_element_struct: Codable, Hashable
     
     //For Performer
     var performer_type: PerformerType = .robot
+    
+    var robot_name = String()
+    var robot_program_name = String()
+    var tool_name = String()
     
     //For Modififcator
     var modificator_type: ModificatorType = .observer

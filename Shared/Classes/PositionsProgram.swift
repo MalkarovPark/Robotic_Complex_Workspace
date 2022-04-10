@@ -9,18 +9,18 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         return lhs.id == rhs.id
     }
     
-    public var program_name: String?
+    public var name: String?
     private var points = [SCNNode]()
     
     //MARK: - Initialization
     init()
     {
-        self.program_name = "None"
+        self.name = "None"
     }
     
     init(name: String?)
     {
-        self.program_name = name ?? "None"
+        self.name = name ?? "None"
     }
     
     /*deinit
@@ -319,7 +319,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
             }
         }
         
-        return program_struct(name: program_name ?? "None", points: points_array)
+        return program_struct(name: name ?? "None", points: points_array)
     }
 }
 
