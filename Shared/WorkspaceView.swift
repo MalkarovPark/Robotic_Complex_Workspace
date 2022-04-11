@@ -815,12 +815,65 @@ struct PerformerElementView: View
             switch performer_type
             {
             case .robot:
+                #if os(macOS)
+                Picker("Name", selection: $robot_name)
+                {
+                    if base_workspace.robots_names.count > 0
+                    {
+                        ForEach(base_workspace.robots_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    else
+                    {
+                        Text("None")
+                    }
+                }
+                .onChange(of: robot_name)
+                { _ in
+                    base_workspace.select_robot(name: robot_name)
+                    if base_workspace.selected_robot.programs_names.count > 0
+                    {
+                        robot_program_name = base_workspace.selected_robot.programs_names[0]
+                    }
+                    base_workspace.update_view()
+                }
+                .onAppear
+                {
+                    if robot_name == ""
+                    {
+                        robot_name = base_workspace.robots_names[0]
+                    }
+                    else
+                    {
+                        base_workspace.select_robot(name: robot_name)
+                        base_workspace.update_view()
+                    }
+                }
+                .disabled(base_workspace.robots_names.count == 0)
+                .frame(maxWidth: .infinity)
+                
+                Picker("Program", selection: $robot_program_name)
+                {
+                    if base_workspace.selected_robot.programs_names.count > 0
+                    {
+                        ForEach(base_workspace.selected_robot.programs_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    else
+                    {
+                        Text("None")
+                    }
+                }
+                .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                #else
                 HStack(spacing: 16)
                 {
-                    #if os(iOS)
                     Text("Name")
                         .font(.subheadline)
-                    #endif
                     
                     Picker("Name", selection: $robot_name)
                     {
@@ -843,17 +896,29 @@ struct PerformerElementView: View
                         {
                             robot_program_name = base_workspace.selected_robot.programs_names[0]
                         }
+                        base_workspace.update_view()
+                    }
+                    .onAppear
+                    {
+                        if robot_name == ""
+                        {
+                            robot_name = base_workspace.robots_names[0]
+                        }
+                        else
+                        {
+                            base_workspace.select_robot(name: robot_name)
+                            base_workspace.update_view()
+                        }
                     }
                     .disabled(base_workspace.robots_names.count == 0)
                     .frame(maxWidth: .infinity)
-                    #if os(iOS)
                     .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
-                    #endif
-                    
-                    #if os(iOS)
+                }
+                
+                HStack
+                {
                     Text("Program")
                         .font(.subheadline)
-                    #endif
                     
                     Picker("Program", selection: $robot_program_name)
                     {
@@ -871,10 +936,9 @@ struct PerformerElementView: View
                     }
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
                     .frame(maxWidth: .infinity)
-                    #if os(iOS)
                     .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
-                    #endif
                 }
+                #endif
             case .tool:
                 Text("Tool")
             }
@@ -899,8 +963,8 @@ struct WorkspaceView_Previews: PreviewProvider
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
-            PerformerElementView(performer_type: .constant(.robot), robot_name: .constant("Robot"), robot_program_name: .constant("Robot Program"), tool_name: .constant("Tool"))
-                .environmentObject(Workspace())
+            //PerformerElementView(performer_type: .constant(.robot), robot_name: .constant("Robot"), robot_program_name: .constant("Robot Program"), tool_name: .constant("Tool"))
+                //.environmentObject(Workspace())
         }
     }
 }
