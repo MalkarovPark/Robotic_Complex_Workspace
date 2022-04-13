@@ -94,7 +94,7 @@ struct WorkspaceView: View
                     {
                         if cycle == false
                         {
-                            Label("One", systemImage: "arrow.forward.to.line")
+                            Label("One", systemImage: "repeat.1")
                         }
                         else
                         {
@@ -401,6 +401,8 @@ struct ControlProgramView: View
             {
             case .jump:
                 badge_image = Image(systemName: "arrowshape.bounce.forward")
+            case .mark:
+                badge_image = Image(systemName: "record.circle")
             case .equal:
                 badge_image = Image(systemName: "equal")
             case .unequal:
@@ -526,6 +528,8 @@ struct ElementCardView: View
             {
             case .jump:
                 badge_image = Image(systemName: "arrowshape.bounce.forward")
+            case .mark:
+                badge_image = Image(systemName: "record.circle")
             case .equal:
                 badge_image = Image(systemName: "equal")
             case .unequal:
@@ -728,25 +732,9 @@ struct ElementView: View
                 case .perofrmer:
                     PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, robot_program_name: $new_element_item_data.robot_program_name, tool_name: $new_element_item_data.tool_name)
                 case .modificator:
-                    Text("Modificator")
-                    switch new_element_item_data.modificator_type
-                    {
-                    case .observer:
-                        Text("Observer")
-                    case .changer:
-                        Text("Changer")
-                    }
+                    ModificatorElementView(modificator_type: $new_element_item_data.modificator_type)
                 case .logic:
-                    Text("Logic")
-                    switch new_element_item_data.logic_type
-                    {
-                    case .jump:
-                        Text("Jump")
-                    case .equal:
-                        Text("Equal")
-                    case .unequal:
-                        Text("Unequal")
-                    }
+                    LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name)
                 }
             }
             .padding()
@@ -946,6 +934,107 @@ struct PerformerElementView: View
     }
 }
 
+struct ModificatorElementView: View
+{
+    @Binding var modificator_type: ModificatorType
+    var body: some View
+    {
+        Text("Modificator")
+        switch modificator_type
+        {
+        case .observer:
+            Text("Observer")
+        case .changer:
+            Text("Changer")
+        }
+    }
+}
+
+struct LogicElementView: View
+{
+    @Binding var logic_type: LogicType
+    @Binding var mark_name: String
+    @Binding var target_mark_name: String
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        VStack
+        {
+            switch logic_type
+            {
+            case .jump:
+                #if os(macOS)
+                HStack
+                {
+                    Picker("To Mark:", selection: $target_mark_name)
+                    {
+                        if base_workspace.marks_names.count > 0
+                        {
+                            ForEach(base_workspace.marks_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .onAppear
+                    {
+                        if base_workspace.marks_names.count > 0 && target_mark_name == ""
+                        {
+                            target_mark_name = base_workspace.marks_names[0]
+                        }
+                    }
+                    .disabled(base_workspace.marks_names.count == 0)
+                }
+                #else
+                VStack
+                {
+                    Text("To mark:")
+                    Picker("To Mark:", selection: $target_mark_name)
+                    {
+                        if base_workspace.marks_names.count > 0
+                        {
+                            ForEach(base_workspace.marks_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .onAppear
+                    {
+                        if base_workspace.marks_names.count > 0 && target_mark_name == ""
+                        {
+                            target_mark_name = base_workspace.marks_names[0]
+                        }
+                    }
+                    .disabled(base_workspace.marks_names.count == 0)
+                    .pickerStyle(.wheel)
+                }
+                #endif
+            case .mark:
+                HStack
+                {
+                    Text("Name")
+                    TextField("None", text: $mark_name)
+                }
+            case .equal:
+                Text("Equal")
+            case .unequal:
+                Text("Unequal")
+            }
+        }
+    }
+}
+
 struct WorkspaceView_Previews: PreviewProvider
 {
     @EnvironmentObject var base_workspace: Workspace
@@ -957,14 +1046,12 @@ struct WorkspaceView_Previews: PreviewProvider
             WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            /*ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-                .environmentObject(Workspace())
-                .frame(width: 640, height: 480)*/
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
             //PerformerElementView(performer_type: .constant(.robot), robot_name: .constant("Robot"), robot_program_name: .constant("Robot Program"), tool_name: .constant("Tool"))
                 //.environmentObject(Workspace())
+            LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))
         }
     }
 }

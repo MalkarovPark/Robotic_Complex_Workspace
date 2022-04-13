@@ -42,7 +42,6 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
     
     var id = UUID()
     
-    //var type: ProgramElementType = .perofrmer
     var element_data = workspace_program_element_struct(element_type: .perofrmer, performer_type: .robot, modificator_type: .observer, logic_type: .jump)
     var type_info: String
     {
@@ -60,17 +59,6 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
         
         return info
     }
-    
-    func update_type_data()
-    {
-        
-    }
-    
-    //For Performer
-    
-    //For Modififcator
-
-    //For logic
 }
 
 struct workspace_program_element_struct: Codable, Hashable
@@ -86,9 +74,13 @@ struct workspace_program_element_struct: Codable, Hashable
     
     //For Modififcator
     var modificator_type: ModificatorType = .observer
+    
+    var target_mark_name = String()
 
     //For logic
     var logic_type: LogicType = .jump
+    
+    var mark_name = String()
 }
 
 enum ProgramElementType: String, Codable, Equatable, CaseIterable
@@ -119,6 +111,7 @@ enum ModificatorType: String, Codable, Equatable, CaseIterable
 enum LogicType: String, Codable, Equatable, CaseIterable
 {
     case jump = "Jump"
+    case mark = "Mark"
     case equal = "Equal"
     case unequal = "Unequal"
     

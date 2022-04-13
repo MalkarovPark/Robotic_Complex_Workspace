@@ -118,6 +118,20 @@ class Workspace: ObservableObject
         }
     }
     
+    var marks_names: [String]
+    {
+        var marks_names = [String]()
+        for program_element in self.elements
+        {
+            if program_element.element_data.logic_type == .mark && program_element.element_data.mark_name != ""
+            {
+                marks_names.append(program_element.element_data.mark_name)
+            }
+        }
+        
+        return marks_names
+    }
+    
     //MARK: - Work with file system
     public func file_data() -> (robots: [robot_struct], count: Int)
     {
