@@ -75,7 +75,7 @@ struct RobotsTableView: View
     {
         VStack
         {
-            if base_workspace.robots_count() > 0
+            if base_workspace.robots.count > 0
             {
                 ScrollView(.vertical, showsIndicators: true)
                 {

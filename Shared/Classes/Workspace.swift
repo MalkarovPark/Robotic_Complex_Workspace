@@ -85,11 +85,6 @@ class Workspace: ObservableObject
         }
     }
     
-    public func robots_count() -> Int
-    {
-        return robots.count
-    }
-    
     func update_view()
     {
         //objectWillChange.send()
@@ -141,7 +136,7 @@ class Workspace: ObservableObject
             robots_file_info.append(robot.robot_info)
         }
         
-        return(robots_file_info, robots_count())
+        return(robots_file_info, self.robots.count)
     }
     
     public func file_view(preset: WorkspacePreset)

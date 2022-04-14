@@ -333,7 +333,7 @@ struct ControlProgramView: View
                         #else
                         .frame(maxWidth: 176.0, alignment: .leading)
                         #endif
-                        .background(.white)
+                        .background(.thinMaterial)
                         .cornerRadius(32)
                         .shadow(radius: 4.0)
                         #if os(macOS)
@@ -348,7 +348,6 @@ struct ControlProgramView: View
                                 .overlay(
                                     add_button_image()
                                         .foregroundColor(.white)
-                                        //.imageScale(.large)
                                         .animation(.easeInOut(duration: 0.2), value: add_button_image())
                                 )
                                 .frame(width: 32, height: 32)
@@ -803,66 +802,9 @@ struct PerformerElementView: View
             switch performer_type
             {
             case .robot:
-                #if os(macOS)
-                Picker("Name", selection: $robot_name)
+                if base_workspace.robots.count > 0
                 {
-                    if base_workspace.robots_names.count > 0
-                    {
-                        ForEach(base_workspace.robots_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    else
-                    {
-                        Text("None")
-                    }
-                }
-                .onChange(of: robot_name)
-                { _ in
-                    base_workspace.select_robot(name: robot_name)
-                    if base_workspace.selected_robot.programs_names.count > 0
-                    {
-                        robot_program_name = base_workspace.selected_robot.programs_names[0]
-                    }
-                    base_workspace.update_view()
-                }
-                .onAppear
-                {
-                    if robot_name == ""
-                    {
-                        robot_name = base_workspace.robots_names[0]
-                    }
-                    else
-                    {
-                        base_workspace.select_robot(name: robot_name)
-                        base_workspace.update_view()
-                    }
-                }
-                .disabled(base_workspace.robots_names.count == 0)
-                .frame(maxWidth: .infinity)
-                
-                Picker("Program", selection: $robot_program_name)
-                {
-                    if base_workspace.selected_robot.programs_names.count > 0
-                    {
-                        ForEach(base_workspace.selected_robot.programs_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    else
-                    {
-                        Text("None")
-                    }
-                }
-                .disabled(base_workspace.selected_robot.programs_names.count == 0)
-                #else
-                HStack(spacing: 16)
-                {
-                    Text("Name")
-                        .font(.subheadline)
-                    
+                    #if os(macOS)
                     Picker("Name", selection: $robot_name)
                     {
                         if base_workspace.robots_names.count > 0
@@ -900,13 +842,6 @@ struct PerformerElementView: View
                     }
                     .disabled(base_workspace.robots_names.count == 0)
                     .frame(maxWidth: .infinity)
-                    .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
-                }
-                
-                HStack
-                {
-                    Text("Program")
-                        .font(.subheadline)
                     
                     Picker("Program", selection: $robot_program_name)
                     {
@@ -923,10 +858,83 @@ struct PerformerElementView: View
                         }
                     }
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
-                    .frame(maxWidth: .infinity)
-                    .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                    #else
+                    VStack
+                    {
+                        GeometryReader
+                        { geometry in
+                            HStack(spacing: 0)
+                            {
+                                Picker("Name", selection: $robot_name)
+                                {
+                                    if base_workspace.robots_names.count > 0
+                                    {
+                                        ForEach(base_workspace.robots_names, id: \.self)
+                                        { name in
+                                            Text(name)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .onChange(of: robot_name)
+                                { _ in
+                                    base_workspace.select_robot(name: robot_name)
+                                    if base_workspace.selected_robot.programs_names.count > 0
+                                    {
+                                        robot_program_name = base_workspace.selected_robot.programs_names[0]
+                                    }
+                                    base_workspace.update_view()
+                                }
+                                .onAppear
+                                {
+                                    if robot_name == ""
+                                    {
+                                        robot_name = base_workspace.robots_names[0]
+                                    }
+                                    else
+                                    {
+                                        base_workspace.select_robot(name: robot_name)
+                                        base_workspace.update_view()
+                                    }
+                                }
+                                .disabled(base_workspace.robots_names.count == 0)
+                                .pickerStyle(.wheel)
+                                .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
+                                .compositingGroup()
+                                .clipped()
+                                
+                                Picker("Program", selection: $robot_program_name)
+                                {
+                                    if base_workspace.selected_robot.programs_names.count > 0
+                                    {
+                                        ForEach(base_workspace.selected_robot.programs_names, id: \.self)
+                                        { name in
+                                            Text(name)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                                .pickerStyle(.wheel)
+                                .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
+                                .compositingGroup()
+                                .clipped()
+                            }
+                        }
+                    }
+                    .frame(height: 128)
+                    #endif
                 }
-                #endif
+                else
+                {
+                    Text("No robots in this workspace")
+                }
             case .tool:
                 Text("Tool")
             }
@@ -994,30 +1002,30 @@ struct LogicElementView: View
                 #else
                 VStack
                 {
-                    Text("To mark:")
-                    Picker("To Mark:", selection: $target_mark_name)
+                    if base_workspace.marks_names.count > 0
                     {
-                        if base_workspace.marks_names.count > 0
+                        Text("To mark:")
+                        Picker("To Mark:", selection: $target_mark_name)
                         {
                             ForEach(base_workspace.marks_names, id: \.self)
                             { name in
                                 Text(name)
                             }
                         }
-                        else
+                        .onAppear
                         {
-                            Text("None")
+                            if base_workspace.marks_names.count > 0 && target_mark_name == ""
+                            {
+                                target_mark_name = base_workspace.marks_names[0]
+                            }
                         }
+                        .disabled(base_workspace.marks_names.count == 0)
+                        .pickerStyle(.wheel)
                     }
-                    .onAppear
+                    else
                     {
-                        if base_workspace.marks_names.count > 0 && target_mark_name == ""
-                        {
-                            target_mark_name = base_workspace.marks_names[0]
-                        }
+                        Text("No marks")
                     }
-                    .disabled(base_workspace.marks_names.count == 0)
-                    .pickerStyle(.wheel)
                 }
                 #endif
             case .mark:
