@@ -188,7 +188,10 @@ struct RobotCardView: View
 struct RobotDeleteButton: View
 {
     @Binding var robots: [Robot]
+    
     @State private var delete_robot_alert_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
     
     let robot_item: Robot
     let on_delete: (IndexSet) -> ()
@@ -233,6 +236,7 @@ struct RobotDeleteButton: View
         if let index = robots.firstIndex(of: robot_item)
         {
             self.on_delete(IndexSet(integer: index))
+            base_workspace.elements_check()
         }
     }
 }

@@ -113,6 +113,79 @@ class Workspace: ObservableObject
         }
     }
     
+    public func elements_check()
+    {
+        for element in elements
+        {
+            switch element.element_data.element_type
+            {
+            case .perofrmer:
+                switch element.element_data.performer_type
+                {
+                case .robot:
+                    element_robot_check(element: element)
+                case .tool:
+                    break
+                }
+            case .modificator:
+                break
+            case .logic:
+                switch element.element_data.logic_type
+                {
+                case .jump:
+                    element_jump_check(element: element)
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    private func element_robot_check(element: WorkspaceProgramElement)
+    {
+        if self.number_by_name(name: element.element_data.robot_name) == -1
+        {
+            if self.robots.count > 0
+            {
+                element.element_data.robot_name = self.robots_names[0]
+            }
+            else
+            {
+                element.element_data.robot_name = ""
+            }
+        }
+    }
+    
+    private func element_jump_check(element: WorkspaceProgramElement)
+    {
+        if marks_names.count > 0
+        {
+            var mark_founded = false
+            
+            for mark_name in self.marks_names
+            {
+                if mark_name == element.element_data.target_mark_name
+                {
+                    mark_founded = true
+                }
+                
+                if mark_founded == true
+                {
+                    break
+                }
+            }
+            
+            if mark_founded == false || element.element_data.mark_name == ""
+            {
+                element.element_data.target_mark_name = marks_names[0]
+            }
+        }
+        else
+        {
+            element.element_data.target_mark_name = ""
+        }
+    }
+    
     var marks_names: [String]
     {
         var marks_names = [String]()

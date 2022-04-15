@@ -370,7 +370,33 @@ struct ControlProgramView: View
     func add_new_program_element()
     {
         base_workspace.update_view()
-        base_workspace.elements.append(WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type))
+        var new_program_element = WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type)
+        
+        //Checking for existing workspace components for element selection
+        switch new_program_element.element_data.element_type
+        {
+        case .perofrmer:
+            switch new_program_element.element_data.performer_type
+            {
+            case .robot:
+                if base_workspace.robots.count > 0
+                {
+                    new_program_element.element_data.robot_name = base_workspace.robots[0].name!
+                    if base_workspace.robots[0].programs_count > 0
+                    {
+                        new_program_element.element_data.robot_program_name = base_workspace.robots[0].programs_names[0]
+                    }
+                }
+            case .tool:
+                break
+            }
+        case .modificator:
+            break
+        case .logic:
+            break
+        }
+        
+        base_workspace.elements.append(new_program_element)
     }
     
     func add_button_image() -> Image
@@ -463,7 +489,6 @@ struct ElementCardView: View
                             .foregroundColor(.white)
                             .imageScale(.large)
                             .animation(.easeInOut(duration: 0.2), value: badge_image())
-                        //("factory.robot")
                         //.font(.system(size: 32))
                     }
                     .frame(width: 48, height: 48)
@@ -474,12 +499,12 @@ struct ElementCardView: View
                     
                     VStack(alignment: .leading)
                     {
-                        Text(element_item.element_data.element_type.rawValue)
+                        Text(element_item.subtype)
                             .font(.title3)
                             .animation(.easeInOut(duration: 0.2), value: element_item.element_data.element_type.rawValue)
-                        Text(element_item.type_info)
+                        Text(element_item.info)
                             .foregroundColor(.secondary)
-                            .animation(.easeInOut(duration: 0.2), value: element_item.type_info)
+                            .animation(.easeInOut(duration: 0.2), value: element_item.info)
                     }
                     .padding([.trailing], 32.0)
                 }
@@ -761,6 +786,7 @@ struct ElementView: View
     func update_program_element()
     {
         element_item.element_data = new_element_item_data
+        base_workspace.elements_check()
         
         //base_workspace.update_view()
         
@@ -778,10 +804,10 @@ struct ElementView: View
     
     func delete_element()
     {
-        print(element_item)
         if let index = elements.firstIndex(of: element_item)
         {
             self.on_delete(IndexSet(integer: index))
+            base_workspace.elements_check()
         }
     }
 }
