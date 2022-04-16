@@ -302,7 +302,7 @@ struct ControlProgramView: View
                     { element in
                         ZStack
                         {
-                            ElementCardView(elements: $base_workspace.elements, element_item: element, on_delete: remove_elements)
+                            ElementCardView(elements: $base_workspace.elements, document: $document, element_item: element, on_delete: remove_elements)
                         }
                     }
                     .padding(4)
@@ -397,6 +397,7 @@ struct ControlProgramView: View
         }
         
         base_workspace.elements.append(new_program_element)
+        document.preset.elements = base_workspace.file_data().elements
     }
     
     func add_button_image() -> Image
@@ -461,12 +462,15 @@ struct ControlProgramView: View
         {
             base_workspace.elements.remove(atOffsets: offsets)
         }
+        
+        document.preset.elements = base_workspace.file_data().elements
     }
 }
 
 struct ElementCardView: View
 {
     @Binding var elements: [WorkspaceProgramElement]
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var element_item: WorkspaceProgramElement
     @State var element_view_presented = false
@@ -521,7 +525,7 @@ struct ElementCardView: View
         .popover(isPresented: $element_view_presented,
                  arrowEdge: .trailing)
         {
-            ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, new_element_item_data: element_item.element_data, on_delete: on_delete)
+            ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, document: $document, new_element_item_data: element_item.element_data, on_delete: on_delete)
         }
     }
     
@@ -665,6 +669,7 @@ struct ElementView: View
     @Binding var elements: [WorkspaceProgramElement]
     @Binding var element_item: WorkspaceProgramElement
     @Binding var element_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var new_element_item_data: workspace_program_element_struct
     
@@ -789,6 +794,7 @@ struct ElementView: View
         base_workspace.elements_check()
         
         //base_workspace.update_view()
+        document.preset.elements = base_workspace.file_data().elements
         
         element_view_presented.toggle()
     }
@@ -797,7 +803,6 @@ struct ElementView: View
     {
         delete_element()
         base_workspace.update_view()
-        //document.preset.robots = base_workspace.file_data().robots
         
         element_view_presented.toggle()
     }
@@ -1080,8 +1085,8 @@ struct WorkspaceView_Previews: PreviewProvider
             WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
-            ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
+            ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
+            ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
             //PerformerElementView(performer_type: .constant(.robot), robot_name: .constant("Robot"), robot_program_name: .constant("Robot Program"), tool_name: .constant("Tool"))
                 //.environmentObject(Workspace())

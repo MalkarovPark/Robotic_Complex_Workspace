@@ -22,9 +22,9 @@ struct Robotic_Complex_WorkspaceDocument: FileDocument
 {
     var preset: WorkspacePreset
     
-    init(robots_count: Int = 0)
+    init() //robots_count: Int = 0)
     {
-        self.preset = WorkspacePreset(robots_count: robots_count)
+        self.preset = WorkspacePreset() //robots_count: robots_count)
     }
     
     static var readableContentTypes: [UTType] { [.workspace_preset_document] }

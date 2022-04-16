@@ -39,6 +39,10 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
         self.element_data.logic_type = logic_type
         self.element_data.logic_type = logic_type
     }
+    init(element_struct: workspace_program_element_struct)
+    {
+        self.element_data = element_struct
+    }
     
     var id = UUID()
     

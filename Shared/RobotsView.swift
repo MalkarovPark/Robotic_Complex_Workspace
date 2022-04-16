@@ -140,7 +140,6 @@ struct RobotsTableView: View
         withAnimation
         {
             base_workspace.robots.remove(atOffsets: offsets)
-            document.preset.robots_count = base_workspace.file_data().count
             document.preset.robots = base_workspace.file_data().robots
         }
     }
@@ -380,7 +379,6 @@ struct AddRobotView: View
     func add_robot_in_workspace()
     {
         base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: app_state.model_name, ip_address: "127.0.0.1"))
-        document.preset.robots_count = base_workspace.file_data().count
         document.preset.robots = base_workspace.file_data().robots
         
         base_workspace.elements_check()

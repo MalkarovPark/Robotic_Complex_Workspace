@@ -201,23 +201,39 @@ class Workspace: ObservableObject
     }
     
     //MARK: - Work with file system
-    public func file_data() -> (robots: [robot_struct], count: Int)
+    public func file_data() -> (robots: [robot_struct], elements: [workspace_program_element_struct])
     {
+        //Get robots info for save to file
         var robots_file_info = [robot_struct]()
         for robot in robots
         {
             robots_file_info.append(robot.robot_info)
         }
         
-        return(robots_file_info, self.robots.count)
+        //Get workspace program elements info for save to file
+        var elements_file_info = [workspace_program_element_struct]()
+        for element in elements
+        {
+            elements_file_info.append(element.element_data)
+        }
+        
+        return(robots_file_info, elements_file_info)
     }
     
     public func file_view(preset: WorkspacePreset)
     {
+        //Update robots data from file
         robots.removeAll()
         for robot_struct in preset.robots
         {
             robots.append(Robot(robot_struct: robot_struct))
+        }
+        
+        //Update workspace program elements data from file
+        elements.removeAll()
+        for element_struct in preset.elements
+        {
+            elements.append(WorkspaceProgramElement(element_struct: element_struct))
         }
     }
     
@@ -243,5 +259,5 @@ class Workspace: ObservableObject
 struct WorkspacePreset: Codable
 {
     var robots = [robot_struct]()
-    var robots_count = Int()
+    var elements = [workspace_program_element_struct]()
 }
