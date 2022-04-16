@@ -383,6 +383,8 @@ struct AddRobotView: View
         document.preset.robots_count = base_workspace.file_data().count
         document.preset.robots = base_workspace.file_data().robots
         
+        base_workspace.elements_check()
+        
         add_robot_view_presented.toggle()
     }
 }
