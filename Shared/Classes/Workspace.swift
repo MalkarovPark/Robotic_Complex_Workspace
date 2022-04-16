@@ -175,7 +175,7 @@ class Workspace: ObservableObject
                 }
             }
             
-            if mark_founded == false || element.element_data.mark_name == ""
+            if mark_founded == false && element.element_data.mark_name == ""
             {
                 element.element_data.target_mark_name = marks_names[0]
             }

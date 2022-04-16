@@ -793,7 +793,6 @@ struct ElementView: View
         element_item.element_data = new_element_item_data
         base_workspace.elements_check()
         
-        //base_workspace.update_view()
         document.preset.elements = base_workspace.file_data().elements
         
         element_view_presented.toggle()
