@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import UniformTypeIdentifiers
 
 struct WorkspaceView: View
 {
@@ -286,6 +287,7 @@ struct ControlProgramView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
+    @State var dragged_element: WorkspaceProgramElement?
     @State var add_element_view_presented = false
     @State var add_new_element_data = workspace_program_element_struct()
     
@@ -297,17 +299,27 @@ struct ControlProgramView: View
         {
             ScrollView
             {
-                LazyVGrid(columns: program_columns) {
+                LazyVGrid(columns: program_columns)
+                {
                     ForEach(base_workspace.elements)
                     { element in
                         ZStack
                         {
                             ElementCardView(elements: $base_workspace.elements, document: $document, element_item: element, on_delete: remove_elements)
                         }
+                        .onDrag({
+                            self.dragged_element = element
+                            return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
+                        })
+                        .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, element: element))
                     }
                     .padding(4)
                 }
                 .padding()
+                .onChange(of: base_workspace.elements)
+                { _ in
+                    document.preset.elements = base_workspace.file_data().elements
+                }
             }
             .animation(.spring(), value: base_workspace.elements)
             
@@ -464,6 +476,37 @@ struct ControlProgramView: View
         }
         
         document.preset.elements = base_workspace.file_data().elements
+    }
+}
+
+struct WorkspaceDropDelegate : DropDelegate
+{
+    @Binding var elements : [WorkspaceProgramElement]
+    @Binding var dragged_element : WorkspaceProgramElement?
+    
+    let element: WorkspaceProgramElement
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        return true
+    }
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragged_element = self.dragged_element else
+        {
+            return
+        }
+        
+        if dragged_element != element
+        {
+            let from = elements.firstIndex(of: dragged_element)!
+            let to = elements.firstIndex(of: element)!
+            withAnimation(.default)
+            {
+                self.elements.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
+        }
     }
 }
 
