@@ -303,13 +303,12 @@ struct ControlProgramView: View
                 {
                     ForEach(base_workspace.elements)
                     { element in
-                        ZStack
-                        {
-                            ElementCardView(elements: $base_workspace.elements, document: $document, element_item: element, on_delete: remove_elements)
-                        }
+                        ElementCardView(elements: $base_workspace.elements, document: $document, element_item: element, on_delete: remove_elements)
                         .onDrag({
                             self.dragged_element = element
                             return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
+                        }, preview: {
+                            ElementCardViewPreview(element_item: element)
                         })
                         .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, element: element))
                     }
@@ -318,6 +317,7 @@ struct ControlProgramView: View
                 .padding()
                 .onChange(of: base_workspace.elements)
                 { _ in
+                    //Update file after elements reordering
                     document.preset.elements = base_workspace.file_data().elements
                 }
             }
@@ -570,6 +570,103 @@ struct ElementCardView: View
         {
             ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, document: $document, new_element_item_data: element_item.element_data, on_delete: on_delete)
         }
+    }
+    
+    func badge_image() -> Image
+    {
+        var badge_image: Image
+        
+        switch element_item.element_data.element_type
+        {
+        case .perofrmer:
+            switch element_item.element_data.performer_type
+            {
+            case .robot:
+                badge_image = Image(systemName: "r.square")
+            case .tool:
+                badge_image = Image(systemName: "hammer")
+            }
+        case .modificator:
+            switch element_item.element_data.modificator_type
+            {
+            case .observer:
+                badge_image = Image(systemName: "loupe")
+            case .changer:
+                badge_image = Image(systemName: "wand.and.rays")
+            }
+        case .logic:
+            switch element_item.element_data.logic_type
+            {
+            case .jump:
+                badge_image = Image(systemName: "arrowshape.bounce.forward")
+            case .mark:
+                badge_image = Image(systemName: "record.circle")
+            case .equal:
+                badge_image = Image(systemName: "equal")
+            case .unequal:
+                badge_image = Image(systemName: "lessthan")
+            }
+        }
+        
+        return badge_image
+    }
+    
+    func badge_color() -> Color
+    {
+        var badge_color: Color
+        
+        switch element_item.element_data.element_type
+        {
+        case .perofrmer:
+            badge_color = .green
+        case .modificator:
+            badge_color = .pink
+        case .logic:
+            badge_color = .gray
+        }
+        
+        return badge_color
+    }
+}
+
+struct ElementCardViewPreview: View
+{
+    @State var element_item: WorkspaceProgramElement
+    
+    var body: some View
+    {
+        ZStack
+        {
+            VStack
+            {
+                HStack(spacing: 0)
+                {
+                    ZStack
+                    {
+                        badge_image()
+                            .foregroundColor(.white)
+                            .imageScale(.large)
+                            .animation(.easeInOut(duration: 0.2), value: badge_image())
+                    }
+                    .frame(width: 48, height: 48)
+                    .background(badge_color())
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .padding(16)
+                    
+                    VStack(alignment: .leading)
+                    {
+                        Text(element_item.subtype)
+                            .font(.title3)
+                        Text(element_item.info)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding([.trailing], 32.0)
+                }
+            }
+        }
+        .frame(height: 80)
+        .background(.thinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
     }
     
     func badge_image() -> Image
