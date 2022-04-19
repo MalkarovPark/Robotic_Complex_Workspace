@@ -18,12 +18,10 @@ class Workspace: ObservableObject
     //MARK: - Initialization
     init()
     {
-        //test_card_build()
+        
     }
     
     //MARK: - Robot manage functions
-    private var selected_robot_index = 0
-    
     public func add_robot(robot: Robot)
     {
         var name_count = 1
@@ -55,7 +53,10 @@ class Workspace: ObservableObject
         delete_robot(number: number_by_name(name: name))
     }
     
-    private func number_by_name(name: String) -> Int
+    //MARK: Robot selection functions
+    private var selected_robot_index = 0
+    
+    private func number_by_name(name: String) -> Int //Get index number of robot by name
     {
         let comparison_robot = Robot(name: name)
         let robot_number = robots.firstIndex(of: comparison_robot)
@@ -73,7 +74,7 @@ class Workspace: ObservableObject
         selected_robot_index = number_by_name(name: name)
     }
     
-    public var selected_robot: Robot
+    public var selected_robot: Robot //Return robot by selected index
     {
         get
         {
@@ -85,14 +86,8 @@ class Workspace: ObservableObject
         }
     }
     
-    func update_view()
-    {
-        //objectWillChange.send()
-        self.objectWillChange.send()
-    }
-    
     //MARK: - Control program functions
-    public var robots_names: [String]
+    public var robots_names: [String] //Get names of robots in workspace
     {
         var robots_names = [String]()
         if robots.count > 0
@@ -105,6 +100,20 @@ class Workspace: ObservableObject
         return robots_names
     }
     
+    var marks_names: [String] //Get names of marks in workspace program
+    {
+        var marks_names = [String]()
+        for program_element in self.elements
+        {
+            if program_element.element_data.logic_type == .mark && program_element.element_data.mark_name != ""
+            {
+                marks_names.append(program_element.element_data.mark_name)
+            }
+        }
+        
+        return marks_names
+    }
+    
     public func delete_element(number: Int)
     {
         if elements.indices.contains(number) == true
@@ -113,7 +122,8 @@ class Workspace: ObservableObject
         }
     }
     
-    public func elements_check()
+    //MARK: Workspace progem elements checking functions
+    public func elements_check() //Selec check by element type
     {
         for element in elements
         {
@@ -141,7 +151,7 @@ class Workspace: ObservableObject
         }
     }
     
-    private func element_robot_check(element: WorkspaceProgramElement)
+    private func element_robot_check(element: WorkspaceProgramElement) //Check element by selected robot exists
     {
         if self.number_by_name(name: element.element_data.robot_name) == -1
         {
@@ -156,7 +166,7 @@ class Workspace: ObservableObject
         }
     }
     
-    private func element_jump_check(element: WorkspaceProgramElement)
+    private func element_jump_check(element: WorkspaceProgramElement) //Check element by selected mark exists
     {
         if marks_names.count > 0
         {
@@ -184,20 +194,6 @@ class Workspace: ObservableObject
         {
             element.element_data.target_mark_name = ""
         }
-    }
-    
-    var marks_names: [String]
-    {
-        var marks_names = [String]()
-        for program_element in self.elements
-        {
-            if program_element.element_data.logic_type == .mark && program_element.element_data.mark_name != ""
-            {
-                marks_names.append(program_element.element_data.mark_name)
-            }
-        }
-        
-        return marks_names
     }
     
     //MARK: - Work with file system
@@ -238,24 +234,16 @@ class Workspace: ObservableObject
     }
     
     //MARK: - UI Functions
-    public struct card_data_item: Identifiable, Equatable
+    func update_view() //Force update SwiftUI view
     {
-        static func == (lhs: Self, rhs: Self) -> Bool
-        {
-            lhs.id == rhs.id
-        }
-        
-        let id = UUID()
-        let card_color: Color
-        let card_title: String
-        let card_subtitle: String
-        let card_number: Int
+        self.objectWillChange.send()
     }
     
     //MARK: - Visual functions
     public var camera_node: SCNNode?
 }
 
+//MARK: - Structure for workspace preset document handling
 struct WorkspacePreset: Codable
 {
     var robots = [robot_struct]()

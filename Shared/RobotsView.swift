@@ -26,6 +26,7 @@ struct RobotsView: View
         {
             if display_rv == false
             {
+                //Display robots table view
                 RobotsTableView(display_rv: $display_rv, document: $document)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
@@ -33,13 +34,14 @@ struct RobotsView: View
             }
             if display_rv == true
             {
+                //Display robot view when selected
                 RobotView(display_rv: $display_rv, document: $document)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
         }
         #if os(macOS)
-        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600)
+        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
     }
 }
@@ -77,6 +79,7 @@ struct RobotsTableView: View
         {
             if base_workspace.robots.count > 0
             {
+                //MARK: Scroll view for robots
                 ScrollView(.vertical, showsIndicators: true)
                 {
                     LazyVGrid(columns: columns, spacing: 24)
@@ -112,6 +115,7 @@ struct RobotsTableView: View
         #endif
         .toolbar
         {
+            //MARK: Toolbar
             ToolbarItem(placement: placement_trailing)
             {
                 HStack(alignment: .center)
@@ -129,6 +133,7 @@ struct RobotsTableView: View
         }
     }
     
+    //MARK: Robots manage functions
     func view_robot(robot_index: Int)
     {
         base_workspace.select_robot(number: robot_index)
@@ -145,6 +150,7 @@ struct RobotsTableView: View
     }
 }
 
+//MARK: - Robots card view
 struct RobotCardView: View
 {
     @State var card_color: Color
@@ -240,6 +246,7 @@ struct RobotDeleteButton: View
     }
 }
 
+//MARK: - Add robot view
 struct AddRobotView: View
 {
     @Binding var add_robot_view_presented: Bool
@@ -261,6 +268,7 @@ struct AddRobotView: View
                 .font(.title2)
                 .padding([.top, .leading, .trailing])
             
+            //MARK: Robot model selection
             VStack
             {
                 HStack
@@ -307,6 +315,7 @@ struct AddRobotView: View
             Spacer()
             Divider()
             
+            //MARK: Cancel and Save buttons
             HStack
             {
                 Spacer()
@@ -329,6 +338,7 @@ struct AddRobotView: View
         #else
         NavigationView
         {
+            //MARK: Robot model selection
             Form
             {
                 Section(header: Text("Name"))
@@ -387,6 +397,7 @@ struct AddRobotView: View
     }
 }
 
+//MARK: Robot view
 struct RobotView: View
 {
     @Binding var display_rv: Bool
@@ -395,7 +406,10 @@ struct RobotView: View
     @EnvironmentObject var base_workspace: Workspace
     
     #if os(iOS)
+    //MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    
+    //Picker data for thin window size
     @State private var rv_selection = 0
     private let rv_items: [String] = ["View", "Control"]
     #endif
@@ -436,6 +450,7 @@ struct RobotView: View
         
         .toolbar
         {
+            //MARK: Toolbar items
             ToolbarItem(placement: .navigation)
             {
                 Button(action: { display_rv = false })
@@ -487,6 +502,7 @@ struct RobotView: View
     }
 }
 
+//MARK: - Cell scene views
 struct RobotSceneView: View
 {
     var body: some View
@@ -684,6 +700,7 @@ struct CellSceneView_iOS: UIViewRepresentable
 }
 #endif
 
+//MARK: - Robot inspector view
 struct RobotInspectorView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -1008,6 +1025,7 @@ struct RobotInspectorView: View
     }
 }
 
+//MARK: Position parameter view
 struct PositionParameterView: View
 {
     @Binding var position_parameter_view_presented: Bool
@@ -1051,6 +1069,7 @@ struct PositionParameterView: View
     }
 }
 
+//MARK: Add program view
 struct AddProgramView: View
 {
     @Binding var add_program_view_presented: Bool
@@ -1107,6 +1126,7 @@ struct AddProgramView: View
     }
 }
 
+//MARK: - Position item view for list
 struct PositionItemListView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -1156,6 +1176,7 @@ struct PositionItemListView: View
     }
 }
 
+//MARK: - Position item edit view
 struct PositionItemView: View
 {
     @State var item_view_pos_location = [Double]()
@@ -1370,6 +1391,7 @@ struct PositionItemView: View
         }
     }
     
+    //MARK: Point manage functions
     func update_point_in_program()
     {
         base_workspace.selected_robot.selected_program.update_point(number: item_number, pos_x: item_view_pos_location[0], pos_y: item_view_pos_location[1], pos_z: item_view_pos_location[2], rot_x: item_view_pos_rotation[0], rot_y: item_view_pos_rotation[1], rot_z: item_view_pos_rotation[2])

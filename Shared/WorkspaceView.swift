@@ -15,9 +15,11 @@ struct WorkspaceView: View
     @State var cycle = false
     @State var worked = false
     
-    
     #if os(iOS)
+    //MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    
+    //Picker data for thin window size
     @State private var wv_selection = 0
     private let wv_items: [String] = ["View", "Control"]
     #endif
@@ -65,9 +67,10 @@ struct WorkspaceView: View
         #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
         #else
-            .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600)
+            .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
         
+        //MARK: Toolbar
         .toolbar
         {
             #if os(iOS)
@@ -89,6 +92,7 @@ struct WorkspaceView: View
             #endif
             ToolbarItem(placement: placement_trailing)
             {
+                //MARK: Workspace performing elements
                 HStack(alignment: .center)
                 {
                     Button(action: change_cycle)
@@ -131,6 +135,7 @@ struct WorkspaceView: View
     }
 }
 
+//MARK: - Workspace scene views
 struct ComplexWorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -282,6 +287,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
 }
 #endif
 
+//MARK: - Control program view
 struct ControlProgramView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -297,6 +303,7 @@ struct ControlProgramView: View
     {
         ZStack
         {
+            //MARK: Scroll view for program elements
             ScrollView
             {
                 LazyVGrid(columns: program_columns)
@@ -323,6 +330,7 @@ struct ControlProgramView: View
             }
             .animation(.spring(), value: base_workspace.elements)
             
+            //MARK: New program element button
             VStack
             {
                 Spacer()
@@ -331,7 +339,7 @@ struct ControlProgramView: View
                     Spacer()
                     ZStack(alignment: .trailing)
                     {
-                        Button(action: add_new_program_element)
+                        Button(action: add_new_program_element) //Add element button
                         {
                             HStack
                             {
@@ -353,7 +361,7 @@ struct ControlProgramView: View
                         #endif
                         .padding()
                         
-                        Button(action: { add_element_view_presented.toggle() })
+                        Button(action: { add_element_view_presented.toggle() }) //Configure new element button
                         {
                             Circle()
                                 .foregroundColor(add_button_color())
@@ -408,10 +416,12 @@ struct ControlProgramView: View
             break
         }
         
+        //Add new program element and save to file
         base_workspace.elements.append(new_program_element)
         document.preset.elements = base_workspace.file_data().elements
     }
     
+    //MARK: Button image by element subtype
     func add_button_image() -> Image
     {
         var badge_image: Image
@@ -451,6 +461,7 @@ struct ControlProgramView: View
         return badge_image
     }
     
+    //MARK: Button color by element type
     func add_button_color() -> Color
     {
         var badge_color: Color
@@ -468,7 +479,7 @@ struct ControlProgramView: View
         return badge_color
     }
     
-    func remove_elements(at offsets: IndexSet)
+    func remove_elements(at offsets: IndexSet) //Remove program element function
     {
         withAnimation
         {
@@ -479,6 +490,7 @@ struct ControlProgramView: View
     }
 }
 
+//MARK: - Drag and Drop delegate
 struct WorkspaceDropDelegate : DropDelegate
 {
     @Binding var elements : [WorkspaceProgramElement]
@@ -510,6 +522,7 @@ struct WorkspaceDropDelegate : DropDelegate
     }
 }
 
+//MARK: - Workspace program element card view
 struct ElementCardView: View
 {
     @Binding var elements: [WorkspaceProgramElement]
@@ -572,6 +585,7 @@ struct ElementCardView: View
         }
     }
     
+    //MARK: Badge image by element subtype
     func badge_image() -> Image
     {
         var badge_image: Image
@@ -611,6 +625,7 @@ struct ElementCardView: View
         return badge_image
     }
     
+    //MARK: Badge color by element type
     func badge_color() -> Color
     {
         var badge_color: Color
@@ -629,6 +644,7 @@ struct ElementCardView: View
     }
 }
 
+//MARK: - Workspace program element card preview for drag
 struct ElementCardViewPreview: View
 {
     @State var element_item: WorkspaceProgramElement
@@ -726,6 +742,7 @@ struct ElementCardViewPreview: View
     }
 }
 
+//MARK: - Add element view
 struct AddElementView: View
 {
     @Binding var add_element_view_presented: Bool
@@ -737,6 +754,7 @@ struct AddElementView: View
         {
             VStack
             {
+                //MARK: Type picker
                 Picker("Type", selection: $add_new_element_data.element_type)
                 {
                     ForEach(ProgramElementType.allCases, id: \.self)
@@ -748,6 +766,7 @@ struct AddElementView: View
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
+                //MARK: Subtype pickers cases
                 HStack(spacing: 16)
                 {
                     #if os(iOS)
@@ -823,6 +842,7 @@ struct ElementView: View
         {
             VStack
             {
+                //MARK: Type picker
                 Picker("Type", selection: $new_element_item_data.element_type)
                 {
                     ForEach(ProgramElementType.allCases, id: \.self)
@@ -838,6 +858,7 @@ struct ElementView: View
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
+                //MARK: Subtype pickers cases
                 HStack(spacing: 16)
                 {
                     #if os(iOS)
@@ -894,6 +915,7 @@ struct ElementView: View
             
             Spacer()
             
+            //MARK: Type views cases
             VStack
             {
                 switch new_element_item_data.element_type
@@ -910,6 +932,7 @@ struct ElementView: View
             
             Spacer()
             
+            //MARK: Delete and save buttons
             Divider()
             HStack
             {
@@ -928,6 +951,7 @@ struct ElementView: View
         }
     }
     
+    //MARK: Program elements manage functions
     func update_program_element()
     {
         element_item.element_data = new_element_item_data
@@ -956,6 +980,7 @@ struct ElementView: View
     }
 }
 
+//MARK: - Performer element view
 struct PerformerElementView: View
 {
     @Binding var performer_type: PerformerType
@@ -974,8 +999,9 @@ struct PerformerElementView: View
             case .robot:
                 if base_workspace.robots.count > 0
                 {
+                    //MARK: Robot subview
                     #if os(macOS)
-                    Picker("Name", selection: $robot_name)
+                    Picker("Name", selection: $robot_name) //Robot picker
                     {
                         if base_workspace.robots_names.count > 0
                         {
@@ -1013,7 +1039,7 @@ struct PerformerElementView: View
                     .disabled(base_workspace.robots_names.count == 0)
                     .frame(maxWidth: .infinity)
                     
-                    Picker("Program", selection: $robot_program_name)
+                    Picker("Program", selection: $robot_program_name) //Robot program picker
                     {
                         if base_workspace.selected_robot.programs_names.count > 0
                         {
@@ -1035,7 +1061,7 @@ struct PerformerElementView: View
                         { geometry in
                             HStack(spacing: 0)
                             {
-                                Picker("Name", selection: $robot_name)
+                                Picker("Name", selection: $robot_name) //Robot picker
                                 {
                                     if base_workspace.robots_names.count > 0
                                     {
@@ -1076,7 +1102,7 @@ struct PerformerElementView: View
                                 .compositingGroup()
                                 .clipped()
                                 
-                                Picker("Program", selection: $robot_program_name)
+                                Picker("Program", selection: $robot_program_name) //Robot program picker
                                 {
                                     if base_workspace.selected_robot.programs_names.count > 0
                                     {
@@ -1106,12 +1132,14 @@ struct PerformerElementView: View
                     Text("No robots in this workspace")
                 }
             case .tool:
+                //MARK: Tool subview
                 Text("Tool")
             }
         }
     }
 }
 
+//MARK: - Modificator element view
 struct ModificatorElementView: View
 {
     @Binding var modificator_type: ModificatorType
@@ -1121,13 +1149,16 @@ struct ModificatorElementView: View
         switch modificator_type
         {
         case .observer:
+            //MARK: Observer subview
             Text("Observer")
         case .changer:
+            //MARK: Changer subview
             Text("Changer")
         }
     }
 }
 
+//MARK: - Logic element view
 struct LogicElementView: View
 {
     @Binding var logic_type: LogicType
@@ -1143,10 +1174,11 @@ struct LogicElementView: View
             switch logic_type
             {
             case .jump:
+                //MARK: Jump subview
                 #if os(macOS)
                 HStack
                 {
-                    Picker("To Mark:", selection: $target_mark_name)
+                    Picker("To Mark:", selection: $target_mark_name) //Target mark picker
                     {
                         if base_workspace.marks_names.count > 0
                         {
@@ -1175,7 +1207,7 @@ struct LogicElementView: View
                     if base_workspace.marks_names.count > 0
                     {
                         Text("To mark:")
-                        Picker("To Mark:", selection: $target_mark_name)
+                        Picker("To Mark:", selection: $target_mark_name) //Target mark picker
                         {
                             ForEach(base_workspace.marks_names, id: \.self)
                             { name in
@@ -1199,20 +1231,25 @@ struct LogicElementView: View
                 }
                 #endif
             case .mark:
+                //MARK: Mark subview
                 HStack
                 {
                     Text("Name")
-                    TextField("None", text: $mark_name)
+                    TextField("None", text: $mark_name) //Mark name field
+                        .textFieldStyle(.roundedBorder)
                 }
             case .equal:
+                //MARK: Equal subview
                 Text("Equal")
             case .unequal:
+                //MARK: Unequal subview
                 Text("Unequal")
             }
         }
     }
 }
 
+//MARK: - Previews
 struct WorkspaceView_Previews: PreviewProvider
 {
     @EnvironmentObject var base_workspace: Workspace

@@ -8,27 +8,25 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+//MARK: - Extension info
 extension UTType
 {
     static let workspace_preset_document = UTType(exportedAs: "mv-park.RoboticComplexWorkspace.preset")
-    
-    /*static var workspace_preset_document: UTType
-    {
-        UTType(exportedAs: "mv-park.RoboticComplexWorkspace.preset")
-    }*/
 }
 
+//MARK: - Preset file document structure
 struct Robotic_Complex_WorkspaceDocument: FileDocument
 {
     var preset: WorkspacePreset
     
-    init() //robots_count: Int = 0)
-    {
-        self.preset = WorkspacePreset() //robots_count: robots_count)
-    }
-    
     static var readableContentTypes: [UTType] { [.workspace_preset_document] }
     
+    init()
+    {
+        self.preset = WorkspacePreset()
+    }
+    
+    //MARK: Read data from preset file
     init(configuration: ReadConfiguration) throws
     {
         guard let data = configuration.file.regularFileContents
@@ -40,6 +38,7 @@ struct Robotic_Complex_WorkspaceDocument: FileDocument
         preset = try JSONDecoder().decode(WorkspacePreset.self, from: data)
     }
     
+    //MARK: Write data from preset file
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper
     {
         let data = try JSONEncoder().encode(preset)

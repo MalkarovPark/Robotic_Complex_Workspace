@@ -12,7 +12,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     public var name: String?
     private var points = [SCNNode]()
     
-    //MARK: - Initialization
+    //MARK: - Positions program init functions
     init()
     {
         self.name = "None"
@@ -140,6 +140,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     private let cylinder_color = UIColor.white
     #endif
     
+    //MARK: Build points view model
     public func visual_build()
     {
         visual_clear()
@@ -240,7 +241,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         }
     }
     
-    public func visual_clear()
+    public func visual_clear() //Remove positions points from cell
     {
         positions_group.enumerateChildNodes
         { (node, stop) in
@@ -248,7 +249,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         }
     }
     
-    private func build_ptp_line(from: simd_float3, to: simd_float3) -> SCNNode
+    private func build_ptp_line(from: simd_float3, to: simd_float3) -> SCNNode //Build line between neighboring points
     {
         let vector = to - from
         let height = simd_length(vector)
@@ -323,6 +324,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     }
 }
 
+//MARK: - Program structure for workspace preset document handling
 struct program_struct: Codable
 {
     var name: String

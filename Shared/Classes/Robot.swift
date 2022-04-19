@@ -13,7 +13,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
 {
     static func == (lhs: Robot, rhs: Robot) -> Bool
     {
-        return lhs.name == rhs.name //lhs.id == rhs.id
+        return lhs.name == rhs.name //Identity condition
     }
     
     func hash(into hasher: inout Hasher)
@@ -30,7 +30,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     @Published private var programs = [PositionsProgram]()
     
-    //MARK: - Initialization
+    //MARK: - Robot init functions
     init()
     {
         robot_init(name: "None", manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1")
@@ -65,6 +65,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         willSet
         {
+            //Stop robot moving before program change
             selected_program.visual_clear()
             moving_started = false
             moving_completed = true
@@ -145,7 +146,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return sprogram ?? PositionsProgram()
     }
     
-    private func number_by_name(name: String) -> Int
+    private func number_by_name(name: String) -> Int //Get index number of program by name
     {
         let comparison_program = PositionsProgram(name: name)
         let prog_number = programs.firstIndex(of: comparison_program)
@@ -153,7 +154,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return prog_number ?? -1
     }
     
-    public var programs_names: [String]
+    public var programs_names: [String] //Get names of programs in robot
     {
         var prog_names = [String]()
         if programs.count > 0
@@ -166,7 +167,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return prog_names
     }
     
-    public var programs_count: Int
+    public var programs_count: Int //Get count of programs in robot
     {
         return programs.count
     }
@@ -205,6 +206,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
+    //Return robot pointer position
     #if os(macOS)
     public func get_pointer_position() -> (location: SCNVector3, rot_x: Double, rot_y: Double, rot_z: Double)
     {
@@ -217,7 +219,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     #endif
     
-    private func current_pointer_position_select()
+    private func current_pointer_position_select() //Return current robot pointer position
     {
         pointer_location = [Double(((pointer_node?.position.z ?? 0)) * 10), Double(((pointer_node?.position.x ?? 0)) * 10), Double(((pointer_node?.position.y ?? 0)) * 10)]
         pointer_rotation = [to_deg(in_angle: Double(tool_node?.eulerAngles.z ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.x ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.y ?? 0))]
@@ -227,6 +229,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         if demo_work == true
         {
+            //Move to point for virtual robot
             pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index], completionHandler: {
                 self.moving_finished = true
                 self.select_new_point()
@@ -245,20 +248,22 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var moving_finished = false
     private var rotation_finished = false
     
-    private func select_new_point()
+    private func select_new_point() //Set new target point index
     {
-        if moving_finished == true && rotation_finished == true
+        if moving_finished == true && rotation_finished == true //Waiting for the target point reach
         {
             moving_finished = false
             rotation_finished = false
             
             if target_point_index < selected_program.points_count - 1
             {
+                //Select and move to next point
                 target_point_index += 1
                 move_to_next_point()
             }
             else
             {
+                //Reset target point index if all points passed
                 target_point_index = 0
                 moving_started = false
                 moving_completed = true
@@ -267,28 +272,29 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    public func start_pause_moving()
+    public func start_pause_moving() //Handling robot moving
     {
         if moving_started == false
         {
+            //Move to next point if moving was stop
             moving_started = true
-            
             move_to_next_point()
         }
         else
         {
+            //Remove all action if moving was perform
             moving_started = false
             pointer_node?.removeAllActions()
             tool_node?.removeAllActions()
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
             {
                 self.current_pointer_position_select()
             }
         }
     }
     
-    public func reset_moving()
+    public func reset_moving() //Reset robot moving
     {
         pointer_node?.removeAllActions()
         tool_node?.removeAllActions()
@@ -333,12 +339,12 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         tool_node?.eulerAngles.z = get_pointer_position().rot_x
     }
     
-    private func to_rad(in_angle: CGFloat) -> CGFloat
+    private func to_rad(in_angle: CGFloat) -> CGFloat //Convert angles to radians
     {
         return in_angle * .pi / 180
     }
     
-    private func to_deg(in_angle: CGFloat) -> CGFloat
+    private func to_deg(in_angle: CGFloat) -> CGFloat //Convert radians to angles
     {
         return in_angle * 180 / .pi
     }
@@ -349,7 +355,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     var lenghts = [Float](repeating: 0, count: 6)
     var origin_location: [Float] = [32, 0, 0] //x, y, z 32 0 0
     
-    public func robot_details_connect()
+    public func robot_details_connect() //Connect robot instance to manipulator model details
     {
         robot_details.removeAll()
         for i in 0...6
@@ -359,12 +365,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             if i > 0
             {
                 lenghts[i - 1] = Float(robot_details[i].position.y)
-                //print(robot_details[i].position.y)
             }
         }
     }
     
-    public func robot_location_place()
+    public func robot_location_place() //Place cell workspace relative to manipulator
     {
         box_node?.position.y += robot_details[0].position.y
         
@@ -379,7 +384,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         #endif
     }
     
-    public var ik_angles: [Double]
+    //MARK: Inverse kinematic calculations
+    public var ik_angles: [Double] //Calculate manipulator details rotation angles
     {
         var angles = [Double]()
         var C3 = Float()
@@ -455,7 +461,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return angles
     }
     
-    public func update_robot()
+    public func update_robot() //Set manipulator details rotation angles
     {
         #if os(macOS)
         robot_details[0].eulerAngles.y = CGFloat(ik_angles[0])
@@ -475,7 +481,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: - UI functions
-    public func card_info() -> (title: String, subtitle: String, color: Color)
+    public func card_info() -> (title: String, subtitle: String, color: Color) //Get info for robot card view
     {
         let color: Color
         switch self.manufacturer
@@ -494,10 +500,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: - Work with file system
-    public var robot_info: robot_struct
+    public var robot_info: robot_struct //Convert robot data to robot_struct
     {
+        //Robot programs set to program_struct array
         var programs_array = [program_struct]()
-        
         if programs_count > 0
         {
             for program in programs
@@ -509,7 +515,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", programs: programs_array)
     }
     
-    private func read_programs(robot_struct: robot_struct)
+    private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
     {
         var viewed_program: PositionsProgram?
         
@@ -533,6 +539,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
 }
 
+//MARK: - Robot structure for workspace preset document handling
 struct robot_struct: Codable
 {
     var name: String
