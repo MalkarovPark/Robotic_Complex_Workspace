@@ -12,7 +12,7 @@ import SwiftUI
 class Workspace: ObservableObject
 {
     @Published public var robots = [Robot]()
-    @Published public var elements = [WorkspaceProgramElement]() //var program = WorkspaceProgram()
+    @Published public var elements = [WorkspaceProgramElement]()
     @Published private var objects = [SCNNode]()
     
     //MARK: - Initialization

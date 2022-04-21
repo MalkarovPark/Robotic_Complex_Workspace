@@ -10,7 +10,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     }
     
     public var name: String?
-    private var points = [SCNNode]()
+    public var points = [SCNNode]()
     
     //MARK: - Positions program init functions
     init()
@@ -22,12 +22,6 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     {
         self.name = name ?? "None"
     }
-    
-    /*deinit
-    {
-        print("🍩")
-        //positions_visible = false
-    }*/
     
     //MARK: - Point manage functions
     public func add_point(pos_x: CGFloat, pos_y: CGFloat, pos_z: CGFloat, rot_x: CGFloat, rot_y: CGFloat, rot_z: CGFloat)
@@ -147,6 +141,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         
         if points.count > 0
         {
+            //MARK: Building cones showing tool rotation at point
             let cone_node = SCNNode()
             
             for i in 0..<3
@@ -161,6 +156,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 cone_node.addChildNode(cone.copy() as! SCNNode)
             }
             
+            //MARK: Build positions points in robot cell
             if points.count > 1
             {
                 let internal_cone_node = cone_node.clone()

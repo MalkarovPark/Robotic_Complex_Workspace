@@ -137,13 +137,22 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public var selected_program: PositionsProgram
     {
-        var sprogram: PositionsProgram?
+        /*var sprogram: PositionsProgram?
         if programs.indices.contains(selected_program_index) == true
         {
             sprogram = programs[selected_program_index]
         }
         
-        return sprogram ?? PositionsProgram()
+        return sprogram ?? PositionsProgram()*/
+        
+        get
+        {
+            return programs[selected_program_index]
+        }
+        set
+        {
+            programs[selected_program_index] = newValue
+        }
     }
     
     private func number_by_name(name: String) -> Int //Get index number of program by name

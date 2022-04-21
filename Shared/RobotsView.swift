@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import UniformTypeIdentifiers
 
 #if os(macOS)
 let placement_trailing: ToolbarItemPlacement = .automatic
@@ -43,22 +44,6 @@ struct RobotsView: View
         #if os(macOS)
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
-    }
-}
-
-struct RobotsView_Previews: PreviewProvider
-{
-    static var previews: some View
-    {
-        Group
-        {
-            RobotsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-                .environmentObject(Workspace())
-            AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
-                .environmentObject(AppState())
-            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
-            PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
-        }
     }
 }
 
@@ -709,6 +694,7 @@ struct RobotInspectorView: View
     @State var ppv_presented_location = [false, false, false]
     @State var ppv_presented_rotation = [false, false, false]
     @State private var teach_selection = 0
+    @State var dragged_point: SCNNode?
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -730,9 +716,18 @@ struct RobotInspectorView: View
                     {
                         if base_workspace.selected_robot.selected_program.points_count > 0
                         {
-                            ForEach(base_workspace.selected_robot.selected_program.points_info, id: \.self)
+                            ForEach(base_workspace.selected_robot.selected_program.points, id: \.self)
                             { point in
-                                PositionItemListView(document: $document, point_info: point)
+                                PositionItemListView(points: $base_workspace.selected_robot.selected_program.points, document: $document, point_item: point, on_delete: remove_points)
+                                    .onDrag
+                                {
+                                    return NSItemProvider()
+                                }
+                            }
+                            .onMove(perform: point_item_move)
+                            .onChange(of: base_workspace.robots)
+                            { _ in
+                                document.preset.robots = base_workspace.file_data().robots
                             }
                         }
                     }
@@ -996,6 +991,23 @@ struct RobotInspectorView: View
         }
     }
     
+    func point_item_move(from source: IndexSet, to destination: Int)
+    {
+        base_workspace.selected_robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
+        base_workspace.selected_robot.selected_program.visual_build()
+        document.preset.robots = base_workspace.file_data().robots
+    }
+    
+    func remove_points(at offsets: IndexSet) //Remove robot point function
+    {
+        withAnimation
+        {
+            base_workspace.selected_robot.selected_program.points.remove(atOffsets: offsets)
+        }
+        
+        document.preset.robots = base_workspace.file_data().robots
+    }
+    
     func delete_position_program()
     {
         if base_workspace.selected_robot.programs_names.count > 0
@@ -1022,6 +1034,37 @@ struct RobotInspectorView: View
         
         document.preset.robots = base_workspace.file_data().robots
         base_workspace.update_view()
+    }
+}
+
+struct PositionDropDelegate: DropDelegate
+{
+    @Binding var points: [SCNNode]
+    @Binding var dragged_point: SCNNode?
+    
+    let point: SCNNode
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        return true
+    }
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragged_point = self.dragged_point else
+        {
+            return
+        }
+        
+        if dragged_point != point
+        {
+            let from = points.firstIndex(of: dragged_point)!
+            let to = points.firstIndex(of: point)!
+            withAnimation(.default)
+            {
+                self.points.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
+        }
     }
 }
 
@@ -1129,65 +1172,74 @@ struct AddProgramView: View
 //MARK: - Position item view for list
 struct PositionItemListView: View
 {
+    @Binding var points: [SCNNode]
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    @State var point_item: SCNNode
     @State var position_item_view_presented = false
-    @State var point_info: [Double]
+    
+    //@EnvironmentObject var base_workspace: Workspace
+    
+    let on_delete: (IndexSet) -> ()
     
     var body: some View
     {
         HStack
         {
-            Text(String(format: "%.0f", point_info[6]) + ".")
-                .foregroundColor(.accentColor)
-            
             Spacer()
             VStack
             {
-                Text("X: \(String(format: "%.0f", point_info[0])) Y: \(String(format: "%.0f", point_info[1])) Z: \(String(format: "%.0f", point_info[2]))")
+                Text("X: \(String(format: "%.0f", Double(point_item.position.x))) Y: \(String(format: "%.0f", Double(point_item.position.y))) Z: \(String(format: "%.0f", Double(point_item.position.z)))")
                     .font(.caption)
-                Text("R: \(String(format: "%.0f", point_info[3])) P: \(String(format: "%.0f", point_info[4])) W: \(String(format: "%.0f", point_info[5]))")
+                
+                Text("R: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.x)))) P: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.y)))) W: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.z))))")
                     .font(.caption)
             }
             
             Spacer()
-            Button(action: { position_item_view_presented.toggle() })
-            {
-                Label("info", systemImage: "square.and.pencil")
-                    .labelStyle(.iconOnly)
-            }
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.accentColor)
-            #if os(macOS)
-            .popover(isPresented: $position_item_view_presented,
-                     arrowEdge: .leading)
-            {
-                PositionItemView(item_view_pos_location: [point_info[0], point_info[1], point_info[2]], item_view_pos_rotation: [point_info[3], point_info[4], point_info[5]], item_number: Int(point_info[6]) - 1, position_item_view_presented: $position_item_view_presented, document: $document)
-                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-            }
-            #else
-            .popover(isPresented: $position_item_view_presented)
-            {
-                PositionItemView(item_view_pos_location: [point_info[0], point_info[1], point_info[2]], item_view_pos_rotation: [point_info[3], point_info[4], point_info[5]], item_number: Int(point_info[6]) - 1, position_item_view_presented: $position_item_view_presented, document: $document)
-                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-            }
-            #endif
+            Image(systemName: "line.3.horizontal")
         }
+        .onTapGesture
+        {
+            position_item_view_presented.toggle()
+        }
+        #if os(macOS)
+        .popover(isPresented: $position_item_view_presented,
+                 arrowEdge: .leading)
+        {
+            PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [Double(point_item.position.x), Double(point_item.position.y), Double(point_item.position.z)], item_view_pos_rotation: [to_deg(in_angle: Double(point_item.rotation.x)), to_deg(in_angle: Double(point_item.rotation.y)), to_deg(in_angle: Double(point_item.rotation.z))], on_delete: on_delete)
+                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+        }
+        #else
+        .popover(isPresented: $position_item_view_presented)
+        {
+            PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [Double(point_item.position.x), Double(point_item.position.y), Double(point_item.position.z)], item_view_pos_rotation: [to_deg(in_angle: Double(point_item.rotation.x)), to_deg(in_angle: Double(point_item.rotation.y)), to_deg(in_angle: Double(point_item.rotation.z))], on_delete: on_delete)
+                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+        }
+        #endif
+    }
+    
+    func to_deg(in_angle: CGFloat) -> CGFloat
+    {
+        return in_angle * 180 / .pi
     }
 }
 
 //MARK: - Position item edit view
 struct PositionItemView: View
 {
-    @State var item_view_pos_location = [Double]()
-    @State var item_view_pos_rotation = [Double]()
-    @State var item_number = Int()
-    
+    @Binding var points: [SCNNode]
+    @Binding var point_item: SCNNode
     @Binding var position_item_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    //@State var new_point_item_data: SCNNode
+    @State var item_view_pos_location = [Double]()
+    @State var item_view_pos_rotation = [Double]()
+    
     @EnvironmentObject var base_workspace: Workspace
     
+    let on_delete: (IndexSet) -> ()
     let button_padding = 12.0
     
     var body: some View
@@ -1383,7 +1435,7 @@ struct PositionItemView: View
         }
         .onAppear()
         {
-            base_workspace.selected_robot.selected_program.selected_point_index = item_number
+            base_workspace.selected_robot.selected_program.selected_point_index = base_workspace.selected_robot.selected_program.points.firstIndex(of: point_item) ?? -1
         }
         .onDisappear()
         {
@@ -1394,7 +1446,18 @@ struct PositionItemView: View
     //MARK: Point manage functions
     func update_point_in_program()
     {
-        base_workspace.selected_robot.selected_program.update_point(number: item_number, pos_x: item_view_pos_location[0], pos_y: item_view_pos_location[1], pos_z: item_view_pos_location[2], rot_x: item_view_pos_rotation[0], rot_y: item_view_pos_rotation[1], rot_z: item_view_pos_rotation[2])
+        #if os(macOS)
+        point_item.position = SCNVector3(x: item_view_pos_location[0], y: item_view_pos_location[1], z: item_view_pos_location[2])
+        point_item.rotation.x = to_rad(in_angle: item_view_pos_rotation[0])
+        point_item.rotation.y = to_rad(in_angle: item_view_pos_rotation[1])
+        point_item.rotation.z = to_rad(in_angle: item_view_pos_rotation[2])
+        #else
+        point_item.position = SCNVector3(x: Float(item_view_pos_location[0]), y: Float(item_view_pos_location[1]), z: Float(item_view_pos_location[2]))
+        point_item.rotation.x = Float(to_rad(in_angle: item_view_pos_rotation[0]))
+        point_item.rotation.y = Float(to_rad(in_angle: item_view_pos_rotation[1]))
+        point_item.rotation.z = Float(to_rad(in_angle: item_view_pos_rotation[2]))
+        #endif
+        
         base_workspace.update_view()
         position_item_view_presented.toggle()
         
@@ -1404,11 +1467,41 @@ struct PositionItemView: View
     
     func delete_point_from_program()
     {
-        base_workspace.selected_robot.selected_program.delete_point(number: item_number)
+        delete_point()
         base_workspace.update_view()
         position_item_view_presented.toggle()
         
         base_workspace.selected_robot.selected_program.selected_point_index = -1
-        document.preset.robots = base_workspace.file_data().robots
+    }
+    
+    func delete_point()
+    {
+        if let index = base_workspace.selected_robot.selected_program.points.firstIndex(of: point_item)
+        {
+            self.on_delete(IndexSet(integer: index))
+        }
+    }
+    
+    func to_rad(in_angle: CGFloat) -> CGFloat
+    {
+        return in_angle * .pi / 180
+    }
+}
+
+//MARK: - Previews
+struct RobotsView_Previews: PreviewProvider
+{
+    static var previews: some View
+    {
+        Group
+        {
+            RobotsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
+            AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(AppState())
+            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
+            PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
+            PositionItemListView(points: .constant([SCNNode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: SCNNode(), on_delete: { IndexSet in print("None") })
+        }
     }
 }
