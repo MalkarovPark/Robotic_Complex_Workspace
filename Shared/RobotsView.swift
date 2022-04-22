@@ -406,7 +406,7 @@ struct RobotView: View
             #if os(macOS)
             RobotSceneView()
             RobotInspectorView(document: $document)
-                .disabled(base_workspace.selected_robot.moving_started == true)
+                .disabled(base_workspace.selected_robot.is_moving == true)
                 .frame(width: 256)
             #else
             if horizontal_size_class == .compact
@@ -419,7 +419,7 @@ struct RobotView: View
                 else
                 {
                     RobotInspectorView(document: $document)
-                        .disabled(base_workspace.selected_robot.moving_started == true)
+                        .disabled(base_workspace.selected_robot.is_moving == true)
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
             }
@@ -427,7 +427,7 @@ struct RobotView: View
             {
                 RobotSceneView()
                 RobotInspectorView(document: $document)
-                    .disabled(base_workspace.selected_robot.moving_started == true)
+                    .disabled(base_workspace.selected_robot.is_moving == true)
                     .frame(width: 288)
             }
             #endif
@@ -588,8 +588,20 @@ struct CellSceneView_macOS: NSViewRepresentable
         base_workspace.selected_robot.update_robot()
         if base_workspace.selected_robot.moving_completed == true
         {
-            base_workspace.update_view()
-            base_workspace.selected_robot.moving_completed = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                base_workspace.selected_robot.moving_completed = false
+                base_workspace.update_view()
+            }
+            //base_workspace.selected_robot.moving_completed = false
+        }
+        if base_workspace.selected_robot.is_moving == true
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                base_workspace.update_view()
+            }
+            //base_workspace.update_view()
         }
     }
 }
@@ -678,8 +690,20 @@ struct CellSceneView_iOS: UIViewRepresentable
         base_workspace.selected_robot.update_robot()
         if base_workspace.selected_robot.moving_completed == true
         {
-            base_workspace.update_view()
-            base_workspace.selected_robot.moving_completed = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                base_workspace.selected_robot.moving_completed = false
+                base_workspace.update_view()
+            }
+            //base_workspace.selected_robot.moving_completed = false
+        }
+        if base_workspace.selected_robot.is_moving == true
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                base_workspace.update_view()
+            }
+            //base_workspace.update_view()
         }
     }
 }
@@ -1178,7 +1202,7 @@ struct PositionItemListView: View
     @State var point_item: SCNNode
     @State var position_item_view_presented = false
     
-    //@EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var base_workspace: Workspace
     
     let on_delete: (IndexSet) -> ()
     
@@ -1186,6 +1210,8 @@ struct PositionItemListView: View
     {
         HStack
         {
+            Image(systemName: "circle.fill")
+                .foregroundColor(base_workspace.selected_robot.inspector_point_color(point: point_item)) //.gray)
             Spacer()
             VStack
             {
@@ -1195,28 +1221,32 @@ struct PositionItemListView: View
                 Text("R: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.x)))) P: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.y)))) W: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.z))))")
                     .font(.caption)
             }
+            .onTapGesture
+            {
+                position_item_view_presented.toggle()
+            }
+            #if os(macOS)
+            .popover(isPresented: $position_item_view_presented,
+                     arrowEdge: .leading)
+            {
+                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [Double(point_item.position.x), Double(point_item.position.y), Double(point_item.position.z)], item_view_pos_rotation: [to_deg(in_angle: Double(point_item.rotation.x)), to_deg(in_angle: Double(point_item.rotation.y)), to_deg(in_angle: Double(point_item.rotation.z))], on_delete: on_delete)
+                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+            }
+            #else
+            .popover(isPresented: $position_item_view_presented)
+            {
+                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [Double(point_item.position.x), Double(point_item.position.y), Double(point_item.position.z)], item_view_pos_rotation: [to_deg(in_angle: Double(point_item.rotation.x)), to_deg(in_angle: Double(point_item.rotation.y)), to_deg(in_angle: Double(point_item.rotation.z))], on_delete: on_delete)
+                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+            }
+            #endif
             
             Spacer()
-            Image(systemName: "line.3.horizontal")
+            //Image(systemName: "line.3.horizontal")
         }
         .onTapGesture
         {
             position_item_view_presented.toggle()
         }
-        #if os(macOS)
-        .popover(isPresented: $position_item_view_presented,
-                 arrowEdge: .leading)
-        {
-            PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [Double(point_item.position.x), Double(point_item.position.y), Double(point_item.position.z)], item_view_pos_rotation: [to_deg(in_angle: Double(point_item.rotation.x)), to_deg(in_angle: Double(point_item.rotation.y)), to_deg(in_angle: Double(point_item.rotation.z))], on_delete: on_delete)
-                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-        }
-        #else
-        .popover(isPresented: $position_item_view_presented)
-        {
-            PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [Double(point_item.position.x), Double(point_item.position.y), Double(point_item.position.z)], item_view_pos_rotation: [to_deg(in_angle: Double(point_item.rotation.x)), to_deg(in_angle: Double(point_item.rotation.y)), to_deg(in_angle: Double(point_item.rotation.z))], on_delete: on_delete)
-                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-        }
-        #endif
     }
     
     func to_deg(in_angle: CGFloat) -> CGFloat
@@ -1233,7 +1263,6 @@ struct PositionItemView: View
     @Binding var position_item_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    //@State var new_point_item_data: SCNNode
     @State var item_view_pos_location = [Double]()
     @State var item_view_pos_rotation = [Double]()
     
@@ -1501,7 +1530,8 @@ struct RobotsView_Previews: PreviewProvider
                 .environmentObject(AppState())
             RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
-            PositionItemListView(points: .constant([SCNNode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: SCNNode(), on_delete: { IndexSet in print("None") })
+            //PositionItemListView(points: .constant([SCNNode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: SCNNode(), on_delete: { IndexSet in print("None") })
+                //.environmentObject(Workspace())
         }
     }
 }

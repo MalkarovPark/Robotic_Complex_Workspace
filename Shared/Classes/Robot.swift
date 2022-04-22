@@ -67,8 +67,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             //Stop robot moving before program change
             selected_program.visual_clear()
-            moving_started = false
-            moving_completed = true
+            is_moving = false
+            moving_completed = false
             target_point_index = 0
         }
         didSet
@@ -137,14 +137,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public var selected_program: PositionsProgram
     {
-        /*var sprogram: PositionsProgram?
-        if programs.indices.contains(selected_program_index) == true
-        {
-            sprogram = programs[selected_program_index]
-        }
-        
-        return sprogram ?? PositionsProgram()*/
-        
         get
         {
             return programs[selected_program_index]
@@ -181,11 +173,41 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return programs.count
     }
     
+    public func inspector_point_color(point: SCNNode) -> Color //Get point color for inspector view
+    {
+        var color = Color.gray
+        let point_number = self.selected_program.points.firstIndex(of: point)
+        
+        if is_moving == true
+        {
+            if point_number == target_point_index
+            {
+                color = .yellow
+            }
+            else
+            {
+                if point_number ?? 0 < target_point_index
+                {
+                    color = .green
+                }
+            }
+        }
+        else
+        {
+            if moving_completed == true
+            {
+                color = .green
+            }
+        }
+        
+        return color
+    }
+    
     //MARK: - Moving functions
     public var move_time: Double?
     public var trail_draw = false
-    public var moving_started = false
-    public var moving_completed = true
+    public var is_moving = false
+    public var moving_completed = false
     public var target_point_index = 0
     
     public var pointer_location = [0.0, 0.0, 0.0] //x, y, z
@@ -274,7 +296,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             {
                 //Reset target point index if all points passed
                 target_point_index = 0
-                moving_started = false
+                is_moving = false
                 moving_completed = true
                 current_pointer_position_select()
             }
@@ -283,19 +305,25 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func start_pause_moving() //Handling robot moving
     {
-        if moving_started == false
+        if is_moving == false
         {
             //Move to next point if moving was stop
-            moving_started = true
+            is_moving = true
             move_to_next_point()
         }
         else
         {
             //Remove all action if moving was perform
-            moving_started = false
-            pointer_node?.removeAllActions()
-            tool_node?.removeAllActions()
-            
+            is_moving = false
+            if demo_work == true
+            {
+                pointer_node?.removeAllActions()
+                tool_node?.removeAllActions()
+            }
+            else
+            {
+                //Remove actions for real robot
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
             {
                 self.current_pointer_position_select()
@@ -308,11 +336,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         pointer_node?.removeAllActions()
         tool_node?.removeAllActions()
         current_pointer_position_select()
-        moving_started = false
+        is_moving = false
         target_point_index = 0
     }
     
-    //MARK: - Build functions
+    //MARK: - Visual build functions
     private let pointer_node_color = Color.cyan
     
     public var box_node: SCNNode?
