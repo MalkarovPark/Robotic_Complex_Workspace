@@ -207,8 +207,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var move_time: Double?
     public var trail_draw = false
     public var is_moving = false
-    public var moving_completed = false
-    public var target_point_index = 0
+    public var moving_completed = false //The flag is set if the robot has passed all positions. Used for indication in GUI.
+    public var target_point_index = 0 //Index of target point in points array
     
     public var pointer_location = [0.0, 0.0, 0.0] //x, y, z
     {
@@ -343,12 +343,12 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Visual build functions
     private let pointer_node_color = Color.cyan
     
-    public var box_node: SCNNode?
-    public var camera_node: SCNNode?
-    public var pointer_node: SCNNode?
-    public var tool_node: SCNNode?
-    public var points_node: SCNNode?
-    public var robot_node: SCNNode?
+    public var box_node: SCNNode? //Box bordered cell workspace
+    public var camera_node: SCNNode? //Camera
+    public var pointer_node: SCNNode? //Robot teach pointer
+    public var tool_node: SCNNode? //Node for tool element
+    public var points_node: SCNNode? //Teach points
+    public var robot_node: SCNNode? //Current robot
     
     public var poiner_visible = true
     {

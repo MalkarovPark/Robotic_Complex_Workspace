@@ -12,7 +12,19 @@ struct ToolsView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     var body: some View
     {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack
+        {
+            Text("Press «+» to add new tool")
+                .foregroundColor(.gray)
+                .padding(16)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+        }
+        .background(Color.white)
+        #if os(macOS)
+        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
+        #endif
     }
 }
 

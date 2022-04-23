@@ -175,6 +175,13 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         //Begin commands
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         
+        //Connect camera light for follow
+        app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
+        
+        //Add gesture recognizer
+        let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
         return scn_scene(stat: true, context: context)
     }
 
@@ -196,27 +203,47 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func makeCoordinator() -> Coordinator
     {
-        Coordinator(self)
+        Coordinator(self, scene_view)
     }
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate
     {
         var control: WorkspaceSceneView_macOS
         
-        init(_ control: WorkspaceSceneView_macOS)
+        init(_ control: WorkspaceSceneView_macOS, _ scn_view: SCNView)
         {
             self.control = control
+            
+            self.scn_view = scn_view
+            super.init()
         }
-
+        
         func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
         {
             control.scene_check()
         }
+        
+        private let scn_view: SCNView
+        @objc func handle_tap(_ gesture_recognize: NSGestureRecognizer)
+        {
+            let tap_location = gesture_recognize.location(in: scn_view)
+            let hit_results = scn_view.hitTest(tap_location, options: [:])
+            let result: SCNHitTestResult = hit_results[0]
+            
+            print(result.localCoordinates)
+            
+            if hit_results.count > 0
+            {
+                let result: SCNHitTestResult = hit_results[0]
+                
+                print("🍮 tapped – \(result.node.name!)")
+            }
+        }
     }
     
-    func scene_check()
+    func scene_check() //Render functions
     {
-        //Parallel commands
+        app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0) //Follow ligt node the camera
     }
 }
 #else
@@ -241,6 +268,13 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         //Begin commands
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         
+        //Connect camera for follow
+        app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
+        
+        //Add gesture recognizer
+        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
         return scn_scene(stat: true, context: context)
     }
 
@@ -262,27 +296,47 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func makeCoordinator() -> Coordinator
     {
-        Coordinator(self)
+        Coordinator(self, scene_view)
     }
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate
     {
         var control: WorkspaceSceneView_iOS
         
-        init(_ control: WorkspaceSceneView_iOS)
+        init(_ control: WorkspaceSceneView_iOS, _ scn_view: SCNView)
         {
             self.control = control
+            
+            self.scn_view = scn_view
+            super.init()
         }
 
         func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
         {
             control.scene_check()
         }
+        
+        private let scn_view: SCNView
+        @objc func handle_tap(_ gesture_recognize: UIGestureRecognizer)
+        {
+            let tap_location = gesture_recognize.location(in: scn_view)
+            let hit_results = scn_view.hitTest(tap_location, options: [:])
+            let result: SCNHitTestResult = hit_results[0]
+            
+            print(result.localCoordinates)
+            
+            if hit_results.count > 0
+            {
+                let result: SCNHitTestResult = hit_results[0]
+                
+                print("🍮 tapped – \(result.node.name!)")
+            }
+        }
     }
     
-    func scene_check()
+    func scene_check() //Render functions
     {
-        //Parallel commands
+        app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
     }
 }
 #endif
