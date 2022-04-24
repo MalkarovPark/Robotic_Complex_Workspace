@@ -162,7 +162,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     let scene_view = SCNView(frame: .zero)
     let viewed_scene = SCNScene(named: "Components.scnassets/Workspace.scn")!
     
-    func scn_scene(stat: Bool, context: Context) -> SCNView
+    func scn_scene(context: Context) -> SCNView
     {
         app_state.reset_view = false
         scene_view.scene = viewed_scene
@@ -182,7 +182,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
-        return scn_scene(stat: true, context: context)
+        return scn_scene(context: context)
     }
 
     func updateNSView(_ ui_view: SCNView, context: Context)
@@ -228,14 +228,13 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         {
             let tap_location = gesture_recognize.location(in: scn_view)
             let hit_results = scn_view.hitTest(tap_location, options: [:])
-            let result: SCNHitTestResult = hit_results[0]
-            
-            print(result.localCoordinates)
+            var result = SCNHitTestResult()
             
             if hit_results.count > 0
             {
-                let result: SCNHitTestResult = hit_results[0]
+                result = hit_results[0]
                 
+                print(result.localCoordinates)
                 print("🍮 tapped – \(result.node.name!)")
             }
         }
@@ -243,7 +242,15 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func scene_check() //Render functions
     {
-        app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0) //Follow ligt node the camera
+        if app_state.light_follow_completed == true //Follow ligt node the camera
+        {
+            app_state.light_follow_completed.toggle()
+            app_state.camera_light_node.runAction(
+                SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.02)) {
+                    app_state.light_follow_completed = true
+                }
+        }
+        //app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
     }
 }
 #else
@@ -255,7 +262,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     let scene_view = SCNView(frame: .zero)
     let viewed_scene = SCNScene(named: "Components.scnassets/Workspace.scn")!
     
-    func scn_scene(stat: Bool, context: Context) -> SCNView
+    func scn_scene(context: Context) -> SCNView
     {
         app_state.reset_view = false
         scene_view.scene = viewed_scene
@@ -275,7 +282,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
-        return scn_scene(stat: true, context: context)
+        return scn_scene(context: context)
     }
 
     func updateUIView(_ ui_view: SCNView, context: Context)
@@ -321,14 +328,13 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         {
             let tap_location = gesture_recognize.location(in: scn_view)
             let hit_results = scn_view.hitTest(tap_location, options: [:])
-            let result: SCNHitTestResult = hit_results[0]
-            
-            print(result.localCoordinates)
+            var result = SCNHitTestResult()
             
             if hit_results.count > 0
             {
-                let result: SCNHitTestResult = hit_results[0]
+                result = hit_results[0]
                 
+                print(result.localCoordinates)
                 print("🍮 tapped – \(result.node.name!)")
             }
         }
@@ -336,7 +342,14 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func scene_check() //Render functions
     {
-        app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
+        if app_state.light_follow_completed == true //Follow ligt node the camera
+        {
+            app_state.light_follow_completed.toggle()
+            app_state.camera_light_node.runAction(
+                SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.02)) {
+                    app_state.light_follow_completed = true
+                }
+        }
     }
 }
 #endif
