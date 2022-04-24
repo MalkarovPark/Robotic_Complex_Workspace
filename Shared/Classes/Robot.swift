@@ -33,31 +33,33 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Robot init functions
     init()
     {
-        robot_init(name: "None", manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1")
+        robot_init(name: "None", manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1", origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String)
     {
-        robot_init(name: name, manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1")
+        robot_init(name: name, manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1", origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String, manufacturer: String, model: String, ip_address: String)
     {
-        robot_init(name: name, manufacturer: manufacturer, model: model, ip_address: ip_address)
+        robot_init(name: name, manufacturer: manufacturer, model: model, ip_address: ip_address, origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(robot_struct: robot_struct)
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, ip_address: robot_struct.ip_addrerss)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, ip_address: robot_struct.ip_addrerss, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, ip_address: String)
+    func robot_init(name: String, manufacturer: String, model: String, ip_address: String, origin_location: [Float], origin_rotation: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
         self.model = model
         self.ip_address = ip_address
+        self.origin_location = origin_location
+        self.origin_rotation = origin_rotation
     }
     
     //MARK: - Program manage functions
@@ -390,7 +392,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
 
     var theta = [Double](repeating: 0.0, count: 6)
     var lenghts = [Float](repeating: 0, count: 6)
-    var origin_location: [Float] = [32, 0, 0] //x, y, z 32 0 0
+    var origin_location = [Float](repeating: 0, count: 3) // = [32, 0, 0] //x, y, z 32 0 0
+    var origin_rotation = [Float](repeating: 0, count: 3) // = [0, 0, 0] //r, p, w
     
     public func robot_details_connect() //Connect robot instance to manipulator model details
     {
@@ -408,16 +411,14 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func robot_location_place() //Place cell workspace relative to manipulator
     {
-        box_node?.position.y += robot_details[0].position.y
-        
         #if os(macOS)
-        box_node?.position.x += CGFloat(origin_location[1])
-        box_node?.position.y += CGFloat(origin_location[2])
-        box_node?.position.z += CGFloat(origin_location[0])
+        box_node?.position.x = CGFloat(origin_location[1])
+        box_node?.position.y = CGFloat(origin_location[2]) + robot_details[0].position.y
+        box_node?.position.z = CGFloat(origin_location[0])
         #else
-        box_node?.position.x += Float(origin_location[1])
-        box_node?.position.y += Float(origin_location[2])
-        box_node?.position.z += Float(origin_location[0])
+        box_node?.position.x = Float(origin_location[1])
+        box_node?.position.y = Float(origin_location[2]) + robot_details[0].position.y
+        box_node?.position.z = Float(origin_location[0])
         #endif
     }
     
@@ -549,7 +550,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", programs: programs_array)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
@@ -583,5 +584,9 @@ struct robot_struct: Codable
     var manufacturer: String
     var model: String
     var ip_addrerss: String
+    
     var programs: [program_struct]
+    
+    var origin_location: [Float]
+    var origin_rotation: [Float]
 }
