@@ -43,7 +43,6 @@ class AppState : ObservableObject
     @Published var reset_view = false
     
     var camera_light_node = SCNNode()
-    var light_follow_completed = true
     
     @Published var manufacturer_name = "None"
     {
