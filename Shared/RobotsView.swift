@@ -407,66 +407,7 @@ struct RobotView: View
         HStack(spacing: 0)
         {
             #if os(macOS)
-            ZStack
-            {
-                RobotSceneView()
-                
-                VStack
-                {
-                    Spacer()
-                    HStack
-                    {
-                        Button(action: { origin_move_view_presented.toggle() })
-                        {
-                            Image(systemName: "move.3d")
-                                .imageScale(.large)
-                                .padding()
-                                .background(.thinMaterial)
-                        }
-                        .buttonStyle(.borderless)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                        .shadow(radius: 8.0)
-                        .padding()
-                        .popover(isPresented: $origin_move_view_presented)
-                        {
-                            OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
-                                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                                .onChange(of: base_workspace.selected_robot.origin_location)
-                                { _ in
-                                    base_workspace.selected_robot.robot_location_place()
-                                    base_workspace.selected_robot.update_position()
-                                    base_workspace.update_view()
-                                    document.preset.robots = base_workspace.file_data().robots
-                                }
-                        }
-                        
-                        Button(action: { origin_rotate_view_presented.toggle() })
-                        {
-                            Image(systemName: "rotate.3d")
-                                .imageScale(.large)
-                                .padding()
-                                .background(.thinMaterial)
-                        }
-                        .buttonStyle(.borderless)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                        .shadow(radius: 8.0)
-                        .padding([.top, .bottom, .trailing])
-                        .popover(isPresented: $origin_rotate_view_presented)
-                        {
-                            OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
-                                .onChange(of: base_workspace.selected_robot.origin_rotation)
-                                { _ in
-                                    base_workspace.selected_robot.robot_location_place()
-                                    base_workspace.selected_robot.update_position()
-                                    base_workspace.update_view()
-                                    document.preset.robots = base_workspace.file_data().robots
-                                }
-                        }
-                        
-                        Spacer()
-                    }
-                }
-            }
+            RobotSceneView(document: $document)
             RobotInspectorView(document: $document)
                 .disabled(base_workspace.selected_robot.is_moving == true)
                 .frame(width: 256)
@@ -475,66 +416,7 @@ struct RobotView: View
             {
                 if rv_selection == 0
                 {
-                    ZStack
-                    {
-                        RobotSceneView()
-                        
-                        VStack
-                        {
-                            Spacer()
-                            HStack
-                            {
-                                Button(action: { origin_move_view_presented.toggle() })
-                                {
-                                    Image(systemName: "move.3d")
-                                        .imageScale(.large)
-                                        .padding()
-                                        .background(.thinMaterial)
-                                }
-                                .buttonStyle(.borderless)
-                                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                                .shadow(radius: 8.0)
-                                .padding()
-                                .popover(isPresented: $origin_move_view_presented)
-                                {
-                                    OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
-                                        .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                                        .onChange(of: base_workspace.selected_robot.origin_location)
-                                        { _ in
-                                            base_workspace.selected_robot.robot_location_place()
-                                            base_workspace.selected_robot.update_position()
-                                            base_workspace.update_view()
-                                            document.preset.robots = base_workspace.file_data().robots
-                                        }
-                                }
-                                
-                                Button(action: { origin_rotate_view_presented.toggle() })
-                                {
-                                    Image(systemName: "rotate.3d")
-                                        .imageScale(.large)
-                                        .padding()
-                                        .background(.thinMaterial)
-                                }
-                                .buttonStyle(.borderless)
-                                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                                .shadow(radius: 8.0)
-                                .padding([.top, .bottom, .trailing])
-                                .popover(isPresented: $origin_rotate_view_presented)
-                                {
-                                    OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
-                                        .onChange(of: base_workspace.selected_robot.origin_rotation)
-                                        { _ in
-                                            base_workspace.selected_robot.robot_location_place()
-                                            base_workspace.selected_robot.update_position()
-                                            base_workspace.update_view()
-                                            document.preset.robots = base_workspace.file_data().robots
-                                        }
-                                }
-                                
-                                Spacer()
-                            }
-                        }
-                    }
+                    RobotSceneView(document: $document)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
                 else
@@ -546,67 +428,7 @@ struct RobotView: View
             }
             else
             {
-                ZStack
-                {
-                    RobotSceneView()
-                    
-                    VStack
-                    {
-                        Spacer()
-                        HStack
-                        {
-                            Button(action: { origin_move_view_presented.toggle() })
-                            {
-                                Image(systemName: "move.3d")
-                                    .imageScale(.large)
-                                    .padding()
-                                    .background(.thinMaterial)
-                            }
-                            .buttonStyle(.borderless)
-                            .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                            .shadow(radius: 8.0)
-                            .padding()
-                            .popover(isPresented: $origin_move_view_presented)
-                            {
-                                OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
-                                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                                    .onChange(of: base_workspace.selected_robot.origin_location)
-                                    { _ in
-                                        base_workspace.selected_robot.robot_location_place()
-                                        base_workspace.selected_robot.update_position()
-                                        base_workspace.update_view()
-                                        document.preset.robots = base_workspace.file_data().robots
-                                    }
-                            }
-                            
-                            Button(action: { origin_rotate_view_presented.toggle() })
-                            {
-                                Image(systemName: "rotate.3d")
-                                    .imageScale(.large)
-                                    .padding()
-                                    .background(.thinMaterial)
-                            }
-                            .buttonStyle(.borderless)
-                            .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                            .shadow(radius: 8.0)
-                            .padding([.top, .bottom, .trailing])
-                            .popover(isPresented: $origin_rotate_view_presented)
-                            {
-                                OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
-                                    .onChange(of: base_workspace.selected_robot.origin_rotation)
-                                    { _ in
-                                        base_workspace.selected_robot.robot_location_place()
-                                        base_workspace.selected_robot.update_position()
-                                        base_workspace.update_view()
-                                        document.preset.robots = base_workspace.file_data().robots
-                                    }
-                            }
-                            
-                            Spacer()
-                        }
-                    }
-                }
-                
+                RobotSceneView(document: $document)
                 RobotInspectorView(document: $document)
                     .disabled(base_workspace.selected_robot.is_moving == true)
                     .frame(width: 288)
@@ -677,16 +499,89 @@ struct RobotView: View
 //MARK: - Cell scene views
 struct RobotSceneView: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var origin_move_view_presented = false
+    @State var origin_rotate_view_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
     var body: some View
     {
-        #if os(macOS)
-        CellSceneView_macOS()
-        #else
-        CellSceneView_iOS()
-            .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        ZStack
+        {
+            #if os(macOS)
+            CellSceneView_macOS()
+            #else
+            CellSceneView_iOS()
+                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
+                .navigationBarTitleDisplayMode(.inline)
+            #endif
+            
+            HStack
+            {
+                VStack
+                {
+                    Spacer()
+                    Button(action: { origin_move_view_presented.toggle() })
+                    {
+                        Image(systemName: "move.3d")
+                            .imageScale(.large)
+                            .padding()
+                            .background(.thinMaterial)
+                    }
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .foregroundColor(.black)
+                    #endif
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .popover(isPresented: $origin_move_view_presented)
+                    {
+                        OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
+                            .onChange(of: base_workspace.selected_robot.origin_location)
+                        { _ in
+                            base_workspace.selected_robot.robot_location_place()
+                            base_workspace.selected_robot.update_position()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                        }
+                    }
+                    .shadow(radius: 8.0)
+                    .padding()
+                    
+                    Button(action: { origin_rotate_view_presented.toggle() })
+                    {
+                        Image(systemName: "rotate.3d")
+                            .imageScale(.large)
+                            .padding()
+                            .background(.thinMaterial)
+                    }
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .foregroundColor(.black)
+                    #endif
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .popover(isPresented: $origin_rotate_view_presented)
+                    {
+                        OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
+                            .onChange(of: base_workspace.selected_robot.origin_rotation)
+                        { _ in
+                            base_workspace.selected_robot.robot_location_place()
+                            base_workspace.selected_robot.update_position()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                        }
+                    }
+                    .shadow(radius: 8.0)
+                    .padding([.bottom, .leading, .trailing])
+                }
+                Spacer()
+            }
+            #if os(iOS)
             .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
-            .navigationBarTitleDisplayMode(.inline)
-        #endif
+            #endif
+        }
     }
 }
 
@@ -958,13 +853,13 @@ struct OriginMoveView: View
     
     var body: some View
     {
-        Text("Move Origin")
-            .bold()
-            .padding([.top, .leading, .trailing])
-        
         #if os(macOS)
         VStack(spacing: 12)
         {
+            Text("Move Origin")
+                .bold()
+                .padding([.top, .leading, .trailing])
+            
             HStack(spacing: 8)
             {
                 Text("X:")
@@ -995,10 +890,15 @@ struct OriginMoveView: View
                     .labelsHidden()
             }
         }
-        .padding()
+        .padding([.bottom, .leading, .trailing])
+        .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
         #else
         VStack(spacing: 12)
         {
+            Text("Move Origin")
+                .bold()
+                .padding([.top, .leading, .trailing])
+            
             HStack(spacing: 8)
             {
                 Text("X:")
@@ -1032,7 +932,8 @@ struct OriginMoveView: View
                     .labelsHidden()
             }
         }
-        .padding()
+        .padding([.bottom, .leading, .trailing])
+        .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
         #endif
     }
 }
@@ -1045,13 +946,13 @@ struct OriginRotateView: View
     
     var body: some View
     {
-        Text("Rotate Origin")
-            .bold()
-            .padding([.top, .leading, .trailing])
-        
         #if os(macOS)
         VStack(spacing: 12)
         {
+            Text("Rotate Origin")
+                .bold()
+                .padding([.top, .leading, .trailing])
+            
             HStack(spacing: 8)
             {
                 Text("R:")
@@ -1082,10 +983,14 @@ struct OriginRotateView: View
                     .labelsHidden()
             }
         }
-        .padding()
+        .padding([.bottom, .leading, .trailing])
+        .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
         #else
         VStack(spacing: 12)
         {
+            Text("Rotate Origin")
+                .bold()
+            
             HStack(spacing: 8)
             {
                 Text("R:")
@@ -1120,6 +1025,7 @@ struct OriginRotateView: View
             }
         }
         .padding()
+        .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
         #endif
     }
 }
