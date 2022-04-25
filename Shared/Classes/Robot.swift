@@ -415,10 +415,18 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         box_node?.position.x = CGFloat(origin_location[1])
         box_node?.position.y = CGFloat(origin_location[2]) + robot_details[0].position.y
         box_node?.position.z = CGFloat(origin_location[0])
+        
+        box_node?.eulerAngles.x = to_rad(in_angle: CGFloat(origin_rotation[1]))
+        box_node?.eulerAngles.y = to_rad(in_angle: CGFloat(origin_rotation[2]))
+        box_node?.eulerAngles.z = to_rad(in_angle: CGFloat(origin_rotation[0]))
         #else
         box_node?.position.x = Float(origin_location[1])
         box_node?.position.y = Float(origin_location[2]) + robot_details[0].position.y
         box_node?.position.z = Float(origin_location[0])
+        
+        box_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(origin_rotation[1])))
+        box_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(origin_rotation[2])))
+        box_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(origin_rotation[0])))
         #endif
     }
     
@@ -438,13 +446,28 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             
             var M, N, A, B: Float
             
-            px = -(Float(pointer_node?.position.z ?? 0) + origin_location[0])
-            py = Float(pointer_node?.position.x ?? 0) + origin_location[1]
-            pz = Float(pointer_node?.position.y ?? 0) + origin_location[2]
+            if origin_rotation[0] == 0
+            {
+                px = -(Float(pointer_node?.position.z ?? 0) + origin_location[0])
+                py = Float(pointer_node?.position.x ?? 0) + origin_location[1]
+                pz = Float(pointer_node?.position.y ?? 0) + origin_location[2]
+            }
+            else
+            {
+                px = -(Float(pointer_node?.position.z ?? 0) + origin_location[0])
+                py = Float(pointer_node?.position.x ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) + origin_location[1] - Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0]))))
+                pz = Float(pointer_node?.position.y ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) + origin_location[2] + Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0]))))
+            }
             
-            rx = -Float(tool_node?.eulerAngles.z ?? 0)
-            ry = -Float(pointer_node?.eulerAngles.x ?? 0) + (.pi)
-            rz = -Float(pointer_node?.eulerAngles.y ?? 0)
+            #if os(macOS)
+            rx = -Float(tool_node?.eulerAngles.z ?? 0 + CGFloat(origin_rotation[0]))
+            ry = -Float(pointer_node?.eulerAngles.x ?? 0 + CGFloat(origin_rotation[1])) + (.pi)
+            rz = -Float(pointer_node?.eulerAngles.y ?? 0 + CGFloat(origin_rotation[2]))
+            #else
+            rx = -Float(tool_node?.eulerAngles.z ?? 0 + Float(origin_rotation[0]))
+            ry = -Float(pointer_node?.eulerAngles.x ?? 0 + Float(origin_rotation[1])) + (.pi)
+            rz = -Float(pointer_node?.eulerAngles.y ?? 0 + Float(origin_rotation[2]))
+            #endif
             
             bx = cos(rx) * sin(ry) * cos(rz) - sin(rx) * sin(rz)
             by = cos(rx) * sin(ry) * sin(rz) - sin(rx) * cos(rz)

@@ -524,6 +524,36 @@ struct RobotSceneView: View
                 VStack
                 {
                     Spacer()
+                    Button(action: { origin_rotate_view_presented.toggle() })
+                    {
+                        Image(systemName: "rotate.3d")
+                            .imageScale(.large)
+                            .padding()
+                            .background(.thinMaterial)
+                    }
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .foregroundColor(.black)
+                    #endif
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .popover(isPresented: $origin_rotate_view_presented)
+                    {
+                        OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
+                            .onChange(of: base_workspace.selected_robot.origin_rotation)
+                        { _ in
+                            base_workspace.selected_robot.robot_location_place()
+                            base_workspace.selected_robot.update_position()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                        }
+                    }
+                    .onDisappear
+                    {
+                        origin_rotate_view_presented.toggle()
+                    }
+                    .shadow(radius: 8.0)
+                    .padding()
+                    
                     Button(action: { origin_move_view_presented.toggle() })
                     {
                         Image(systemName: "move.3d")
@@ -547,31 +577,9 @@ struct RobotSceneView: View
                             document.preset.robots = base_workspace.file_data().robots
                         }
                     }
-                    .shadow(radius: 8.0)
-                    .padding()
-                    
-                    Button(action: { origin_rotate_view_presented.toggle() })
+                    .onDisappear
                     {
-                        Image(systemName: "rotate.3d")
-                            .imageScale(.large)
-                            .padding()
-                            .background(.thinMaterial)
-                    }
-                    .buttonStyle(.borderless)
-                    #if os(iOS)
-                    .foregroundColor(.black)
-                    #endif
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    .popover(isPresented: $origin_rotate_view_presented)
-                    {
-                        OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
-                            .onChange(of: base_workspace.selected_robot.origin_rotation)
-                        { _ in
-                            base_workspace.selected_robot.robot_location_place()
-                            base_workspace.selected_robot.update_position()
-                            base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
-                        }
+                        origin_move_view_presented.toggle()
                     }
                     .shadow(radius: 8.0)
                     .padding([.bottom, .leading, .trailing])
@@ -959,7 +967,7 @@ struct OriginRotateView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_rotation[0], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_rotation[0], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_rotation[0], in: 0...360)
                     .labelsHidden()
             }
             
@@ -969,7 +977,7 @@ struct OriginRotateView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_rotation[1], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_rotation[1], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_rotation[1], in: 0...360)
                     .labelsHidden()
             }
             
@@ -979,7 +987,7 @@ struct OriginRotateView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_rotation[2], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_rotation[2], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_rotation[2], in: 0...360)
                     .labelsHidden()
             }
         }
@@ -998,7 +1006,7 @@ struct OriginRotateView: View
                 TextField("0", value: $origin_view_pos_rotation[0], format: .number)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_rotation[0], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_rotation[0], in: 0...360)
                     .labelsHidden()
             }
             
@@ -1009,7 +1017,7 @@ struct OriginRotateView: View
                 TextField("0", value: $origin_view_pos_rotation[1], format: .number)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_rotation[1], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_rotation[1], in: 0...360)
                     .labelsHidden()
             }
             
@@ -1020,7 +1028,7 @@ struct OriginRotateView: View
                 TextField("0", value: $origin_view_pos_rotation[2], format: .number)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_rotation[2], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_rotation[2], in: 0...360)
                     .labelsHidden()
             }
         }
