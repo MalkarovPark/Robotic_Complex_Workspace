@@ -470,9 +470,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             ry = -(Float(pointer_node?.eulerAngles.x ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[1])))) + (.pi)
             rz = -(Float(pointer_node?.eulerAngles.y ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[2]))))
             #else
-            rx = -(Float(tool_node?.eulerAngles.z ?? 0) + Float(origin_rotation[0]))
-            ry = -(Float(pointer_node?.eulerAngles.x ?? 0) + Float(origin_rotation[1])) + (.pi)
-            rz = -(Float(pointer_node?.eulerAngles.y ?? 0) + Float(origin_rotation[2]))
+            rx = -(Float(tool_node?.eulerAngles.z ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[0]))))
+            ry = -(Float(pointer_node?.eulerAngles.x ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[1])))) + (.pi)
+            rz = -(Float(pointer_node?.eulerAngles.y ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[2]))))
             #endif
             
             bx = cos(rx) * sin(ry) * cos(rz) - sin(rx) * sin(rz)
