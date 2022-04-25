@@ -654,7 +654,7 @@ struct CellSceneView_macOS: NSViewRepresentable
         {
             app_state.reset_view = false
             
-            scene_view.defaultCameraController.pointOfView?.runAction(
+            ui_view.defaultCameraController.pointOfView?.runAction(
                 SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]))
         }
     }
