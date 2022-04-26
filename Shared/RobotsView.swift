@@ -614,7 +614,7 @@ struct CellSceneView_macOS: NSViewRepresentable
     {
         //Connect workcell box and pointer
         base_workspace.selected_robot.box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
-        base_workspace.selected_robot.camera_node = base_workspace.selected_robot.box_node?.childNode(withName: "camera", recursively: true)
+        base_workspace.selected_robot.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         base_workspace.selected_robot.pointer_node = base_workspace.selected_robot.box_node?.childNode(withName: "pointer", recursively: true)
         base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
         base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)
@@ -743,7 +743,7 @@ struct CellSceneView_iOS: UIViewRepresentable
     {
         //Connect workcell box and pointer
         base_workspace.selected_robot.box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
-        base_workspace.selected_robot.camera_node = base_workspace.selected_robot.box_node?.childNode(withName: "camera", recursively: true)
+        base_workspace.selected_robot.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         base_workspace.selected_robot.pointer_node = base_workspace.selected_robot.box_node?.childNode(withName: "pointer", recursively: true)
         base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
         base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)

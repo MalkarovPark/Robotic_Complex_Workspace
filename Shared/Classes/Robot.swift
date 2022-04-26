@@ -411,6 +411,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func robot_location_place() //Place cell workspace relative to manipulator
     {
+        //MARK: Place workcell box
         #if os(macOS)
         box_node?.position.x = CGFloat(origin_location[1])
         box_node?.position.y = CGFloat(origin_location[2]) + robot_details[0].position.y
@@ -427,6 +428,17 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         box_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(origin_rotation[1])))
         box_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(origin_rotation[2])))
         box_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(origin_rotation[0])))
+        #endif
+        
+        //MARK: Place camera
+        #if os(macOS)
+        camera_node?.position.x += CGFloat(origin_location[1])
+        camera_node?.position.y += CGFloat(origin_location[2]) + robot_details[0].position.y
+        camera_node?.position.z += CGFloat(origin_location[0])
+        #else
+        camera_node?.position.x += Float(origin_location[1])
+        camera_node?.position.y += Float(origin_location[2]) + robot_details[0].position.y
+        camera_node?.position.z += Float(origin_location[0])
         #endif
     }
     
