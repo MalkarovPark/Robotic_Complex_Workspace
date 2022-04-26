@@ -73,7 +73,7 @@ struct RobotsTableView: View
                         { robot_item in
                             ZStack
                             {
-                                RobotCardView(card_color: robot_item.card_info().color, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
+                                RobotCardView(card_color: robot_item.card_info().color, card_image: robot_item.card_info().image, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
                                 RobotDeleteButton(robots: $base_workspace.robots, robot_item: robot_item, on_delete: remove_robots)
                             }
                             .onTapGesture
@@ -139,6 +139,11 @@ struct RobotsTableView: View
 struct RobotCardView: View
 {
     @State var card_color: Color
+    #if os(macOS)
+    @State var card_image: NSImage
+    #else
+    @State var card_image: UIImage
+    #endif
     @State var card_title: String
     @State var card_subtitle: String
     
@@ -148,26 +153,44 @@ struct RobotCardView: View
     {
         ZStack
         {
-            VStack(alignment: .leading, spacing: 8.0)
+            Rectangle()
+                .foregroundColor(card_color)
+                .overlay
             {
-                Rectangle()
-                    .foregroundColor(card_color)
-                
-                VStack(alignment: .leading)
-                {
-                    Text(card_title)
-                        .font(.headline)
-                    
-                    HStack(spacing: 4.0)
-                    {
-                        Text(card_subtitle)
-                    }
-                    .foregroundColor(.gray)
-                    .padding(.bottom, 8)
-                }
-                .padding(.horizontal, 8)
+                #if os(macOS)
+                Image(nsImage: card_image)
+                    .resizable()
+                    .scaledToFill()
+                #else
+                Image(uiImage: card_image)
+                    .resizable()
+                    .scaledToFill()
+                #endif
             }
-            .background(Color.white)
+            
+            VStack
+            {
+                Spacer()
+                HStack
+                {
+                    VStack(alignment: .leading)
+                    {
+                        Text(card_title)
+                            .font(.headline)
+                            .padding(.top, 8)
+                            .padding(.leading, 4)
+                        
+                        Text(card_subtitle)
+                            .foregroundColor(.gray)
+                            .padding(.bottom, 8)
+                            .padding(.leading, 4)
+                    }
+                    .padding(.horizontal, 8)
+                    Spacer()
+                }
+                .background(card_color.opacity(0.2))
+                .background(.thinMaterial)
+            }
         }
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         .frame(height: 160)
@@ -199,7 +222,7 @@ struct RobotDeleteButton: View
                         .labelStyle(.iconOnly)
                         .padding(4.0)
                 }
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .background(.thinMaterial)
                     .clipShape(Circle())
                     .frame(width: 24.0, height: 24.0)
@@ -392,6 +415,7 @@ struct RobotView: View
     @State var origin_rotate_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
     //MARK: Horizontal window size handler
@@ -492,6 +516,7 @@ struct RobotView: View
     func close_robot()
     {
         base_workspace.selected_robot.reset_moving()
+        app_state.get_scene_image = true
         display_rv = false
     }
 }
@@ -656,6 +681,17 @@ struct CellSceneView_macOS: NSViewRepresentable
             
             ui_view.defaultCameraController.pointOfView?.runAction(
                 SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]))
+        }
+        
+        if app_state.get_scene_image == true
+        {
+            app_state.get_scene_image = false
+            
+            base_workspace.selected_robot.image = ui_view.snapshot()
+            
+            //let pb = NSPasteboard.general
+            //pb.clearContents()
+            //pb.writeObjects([ui_view.snapshot()])
         }
     }
     
@@ -1854,10 +1890,15 @@ struct RobotsView_Previews: PreviewProvider
         Group
         {
             RobotsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(AppState())
                 .environmentObject(Workspace())
             AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
-            RobotCardView(card_color: .green, card_title: "Robot Name", card_subtitle: "Fanuc")
+            #if os(macOS)
+            RobotCardView(card_color: .green, card_image: NSImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
+            #else
+            RobotCardView(card_color: .green, card_image: UIImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
+            #endif
             //RobotView(display_rv: .constant(false), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 //.environmentObject(Workspace())
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))

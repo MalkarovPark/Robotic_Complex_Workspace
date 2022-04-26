@@ -41,6 +41,7 @@ struct Robotic_Complex_WorkspaceApp: App
 class AppState : ObservableObject
 {
     @Published var reset_view = false
+    @Published var get_scene_image = false
     
     var camera_light_node = SCNNode()
     
