@@ -908,7 +908,7 @@ struct OriginMoveView: View
         VStack(spacing: 12)
         {
             Text("Move Origin")
-                .bold()
+                .font(.title3)
                 .padding([.top, .leading, .trailing])
             
             HStack(spacing: 8)
@@ -947,7 +947,7 @@ struct OriginMoveView: View
         VStack(spacing: 12)
         {
             Text("Move Origin")
-                .bold()
+                .font(.title3)
                 .padding([.top, .leading, .trailing])
             
             HStack(spacing: 8)
@@ -1001,7 +1001,7 @@ struct OriginRotateView: View
         VStack(spacing: 12)
         {
             Text("Rotate Origin")
-                .bold()
+                .font(.title3)
                 .padding([.top, .leading, .trailing])
             
             HStack(spacing: 8)
@@ -1010,7 +1010,7 @@ struct OriginRotateView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_rotation[0], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_rotation[0], in: 0...360)
+                Stepper("Enter", value: $origin_view_pos_rotation[0], in: -180...180)
                     .labelsHidden()
             }
             
@@ -1020,7 +1020,7 @@ struct OriginRotateView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_rotation[1], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_rotation[1], in: 0...360)
+                Stepper("Enter", value: $origin_view_pos_rotation[1], in: -180...180)
                     .labelsHidden()
             }
             
@@ -1030,7 +1030,7 @@ struct OriginRotateView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_rotation[2], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_rotation[2], in: 0...360)
+                Stepper("Enter", value: $origin_view_pos_rotation[2], in: -180...180)
                     .labelsHidden()
             }
         }
@@ -1040,7 +1040,7 @@ struct OriginRotateView: View
         VStack(spacing: 12)
         {
             Text("Rotate Origin")
-                .bold()
+                .font(.title3)
             
             HStack(spacing: 8)
             {
@@ -1049,7 +1049,7 @@ struct OriginRotateView: View
                 TextField("0", value: $origin_view_pos_rotation[0], format: .number)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_rotation[0], in: 0...360)
+                Stepper("Enter", value: $origin_view_pos_rotation[0], in: -180...180)
                     .labelsHidden()
             }
             
@@ -1071,7 +1071,7 @@ struct OriginRotateView: View
                 TextField("0", value: $origin_view_pos_rotation[2], format: .number)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_rotation[2], in: 0...360)
+                Stepper("Enter", value: $origin_view_pos_rotation[2], in: -180...180)
                     .labelsHidden()
             }
         }

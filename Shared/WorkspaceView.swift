@@ -178,13 +178,14 @@ struct ComplexWorkspaceView: View
                         #endif
                         .popover(isPresented: $add_robot_in_workspace_view_presented)
                         {
-                            AddRobotInWorkspaceView()
+                            AddRobotInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
+                                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
                         .onDisappear
                         {
                             add_robot_in_workspace_view_presented.toggle()
                         }
-                        .disabled(base_workspace.robots.count == 0)
+                        .disabled(base_workspace.avaliable_robots_names.count == 0)
                         
                         Divider()
                         
@@ -200,7 +201,7 @@ struct ComplexWorkspaceView: View
                         #endif
                         .popover(isPresented: $robot_info_view_presented)
                         {
-                            RobotInfoView()
+                            RobotInfoView(robot_info_view_presented: $robot_info_view_presented)
                         }
                         .onDisappear
                         {
@@ -411,18 +412,271 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
 
 struct AddRobotInWorkspaceView: View
 {
+    @State var selected_robot_name = String()
+    
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var add_robot_in_workspace_view_presented: Bool
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
     var body: some View
     {
-        Text("AddRobotInWorkspaceView")
+        VStack(spacing: 0)
+        {
+            VStack
+            {
+                Text("Add robot in workspace")
+                    .font(.title3)
+                
+                #if os(macOS)
+                HStack
+                {
+                    Picker("Robot:", selection: $selected_robot_name) //Select robot for place in workspace
+                    {
+                        ForEach(base_workspace.avaliable_robots_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    .onAppear
+                    {
+                        selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
+                    }
+                    .onChange(of: selected_robot_name)
+                    { _ in
+                        base_workspace.select_robot(name: selected_robot_name)
+                    }
+                }
+                #else
+                VStack
+                {
+                    Text("Robot:")
+                    Picker("Robot:", selection: $selected_robot_name) //Select robot for place in workspace
+                    {
+                        ForEach(base_workspace.avaliable_robots_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    .onAppear
+                    {
+                        selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
+                    }
+                    .pickerStyle(.wheel)
+                }
+                #endif
+            }
             .padding()
+            
+            Divider()
+            
+            #if os(macOS)
+            HStack(spacing: 16)
+            {
+                GroupBox(label: Text("Location")
+                    .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("X:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[0], in: 0...200)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("Y:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[1], in: 0...200)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("Z:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[2], in: 0...200)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+    
+                GroupBox(label: Text("Rotation")
+                    .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("R:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[0], in: 0...200)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("P:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[1], in: 0...200)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("W:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[2], in: 0...200)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+            }
+            .padding()
+            #else
+            VStack(spacing: 12)
+            {
+                GroupBox(label: Text("Location")
+                    .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("X:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[0], in: 0...200)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("Y:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[1], in: 0...200)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("Z:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[2], in: 0...200)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+    
+                GroupBox(label: Text("Rotation")
+                    .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("R:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[0], in: 0...200)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("P:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[1], in: 0...200)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("W:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[2], in: 0...200)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+            }
+            .padding([.top, .leading, .trailing])
+            .padding(.bottom, 8.0)
+
+            Spacer()
+            #endif
+            
+            //MARK: Place and cancel buttons
+            Divider()
+            HStack
+            {
+                Button("Cancel", action: { add_robot_in_workspace_view_presented.toggle() })
+                    .padding()
+                
+                Spacer()
+                
+                Button("Place", action: place_robot)
+                    .keyboardShortcut(.defaultAction)
+                    .padding()
+                #if os(macOS)
+                    .foregroundColor(Color.white)
+                #endif
+            }
+        }
+    }
+    
+    func place_robot()
+    {
+        //base_workspace.select_robot(name: selected_robot_name)
+        base_workspace.selected_robot.is_placed = true
+        document.preset.robots = base_workspace.file_data().robots
+        
+        add_robot_in_workspace_view_presented.toggle()
     }
 }
 
 struct RobotInfoView: View
 {
+    @Binding var robot_info_view_presented: Bool
+    
     var body: some View
     {
-        Text("RobotInfoView")
+        Text("Robot Info View")
             .padding()
     }
 }
@@ -990,10 +1244,6 @@ struct ElementView: View
                         Text(type.localizedName).tag(type)
                     }
                 }
-                /*.onChange(of: new_element_item_data.element_type)
-                { _ in
-                    update_program_element()
-                }*/
                 .pickerStyle(SegmentedPickerStyle())
                 .labelsHidden()
                 .padding(.bottom, 8.0)
@@ -1401,6 +1651,8 @@ struct WorkspaceView_Previews: PreviewProvider
             WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
+            AddRobotInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_robot_in_workspace_view_presented: .constant(true))
+                .environmentObject(Workspace())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())

@@ -91,7 +91,7 @@ class Workspace: ObservableObject
         var names = [String]()
         for robot in robots
         {
-            if robot.name != nil
+            if robot.name != nil && robot.is_placed == false
             {
                 names.append(robot.name!)
             }

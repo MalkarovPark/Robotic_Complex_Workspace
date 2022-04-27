@@ -33,31 +33,36 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Robot init functions
     init()
     {
-        robot_init(name: "None", manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1", robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: "None", manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String)
     {
-        robot_init(name: name, manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1", robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String, manufacturer: String, model: String, ip_address: String)
     {
-        robot_init(name: name, manufacturer: manufacturer, model: model, ip_address: ip_address, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: manufacturer, model: model, ip_address: ip_address, is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(robot_struct: robot_struct)
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, ip_address: robot_struct.ip_addrerss, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, ip_address: robot_struct.ip_addrerss, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, ip_address: String, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
+    func robot_init(name: String, manufacturer: String, model: String, ip_address: String, is_placed: Bool, location: [Float], rotation: [Float], robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
         self.model = model
         self.ip_address = ip_address
+        
+        self.is_placed = is_placed
+        self.location = location
+        self.rotation = rotation
+        
         self.robot_image_data = robot_image_data
         self.origin_location = origin_location
         self.origin_rotation = origin_rotation
@@ -643,7 +648,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", is_placed: self.is_placed, location: self.location, rotation: self.rotation, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
@@ -677,6 +682,10 @@ struct robot_struct: Codable
     var manufacturer: String
     var model: String
     var ip_addrerss: String
+    
+    var is_placed: Bool
+    var location: [Float]
+    var rotation: [Float]
     
     var robot_image_data: Data
     var programs: [program_struct]
