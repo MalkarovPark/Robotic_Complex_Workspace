@@ -415,7 +415,6 @@ struct RobotView: View
     @State var origin_rotate_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
     //MARK: Horizontal window size handler
@@ -516,7 +515,6 @@ struct RobotView: View
     func close_robot()
     {
         base_workspace.selected_robot.reset_moving()
-        app_state.get_scene_image = true
         display_rv = false
     }
 }
@@ -530,6 +528,7 @@ struct RobotSceneView: View
     @State var origin_rotate_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
@@ -570,6 +569,7 @@ struct RobotSceneView: View
                             base_workspace.selected_robot.update_position()
                             base_workspace.update_view()
                             document.preset.robots = base_workspace.file_data().robots
+                            app_state.get_scene_image = true
                         }
                     }
                     .onDisappear
@@ -600,6 +600,7 @@ struct RobotSceneView: View
                             base_workspace.selected_robot.update_position()
                             base_workspace.update_view()
                             document.preset.robots = base_workspace.file_data().robots
+                            app_state.get_scene_image = true
                         }
                     }
                     .onDisappear
@@ -1086,6 +1087,7 @@ struct RobotInspectorView: View
     @State var dragged_point: SCNNode?
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     let button_padding = 12.0
     private let teach_items: [String] = ["Location", "Rotation"]
@@ -1117,6 +1119,7 @@ struct RobotInspectorView: View
                             .onChange(of: base_workspace.robots)
                             { _ in
                                 document.preset.robots = base_workspace.file_data().robots
+                                app_state.get_scene_image = true
                             }
                         }
                     }
@@ -1385,6 +1388,7 @@ struct RobotInspectorView: View
         base_workspace.selected_robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
         base_workspace.selected_robot.selected_program.visual_build()
         document.preset.robots = base_workspace.file_data().robots
+        app_state.get_scene_image = true
     }
     
     func remove_points(at offsets: IndexSet) //Remove robot point function
@@ -1395,6 +1399,7 @@ struct RobotInspectorView: View
         }
         
         document.preset.robots = base_workspace.file_data().robots
+        app_state.get_scene_image = true
     }
     
     func delete_position_program()
@@ -1413,6 +1418,7 @@ struct RobotInspectorView: View
             }
             
             document.preset.robots = base_workspace.file_data().robots
+            app_state.get_scene_image = true
             base_workspace.update_view()
         }
     }
@@ -1422,6 +1428,7 @@ struct RobotInspectorView: View
         base_workspace.selected_robot.selected_program.add_point(pos_x: base_workspace.selected_robot.pointer_location[0], pos_y: base_workspace.selected_robot.pointer_location[1], pos_z: base_workspace.selected_robot.pointer_location[2], rot_x: base_workspace.selected_robot.pointer_rotation[0], rot_y: base_workspace.selected_robot.pointer_rotation[1], rot_z: base_workspace.selected_robot.pointer_rotation[2])
         
         document.preset.robots = base_workspace.file_data().robots
+        app_state.get_scene_image = true
         base_workspace.update_view()
     }
 }
@@ -1511,6 +1518,7 @@ struct AddProgramView: View
     @State var add_text = ""
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
@@ -1548,6 +1556,7 @@ struct AddProgramView: View
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                     
                     document.preset.robots = base_workspace.file_data().robots
+                    app_state.get_scene_image = true
                     add_program_view_presented.toggle()
                 }
                 .fixedSize()
@@ -1632,6 +1641,7 @@ struct PositionItemView: View
     @State var item_view_pos_rotation = [Double]()
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     let on_delete: (IndexSet) -> ()
     let button_padding = 12.0
@@ -1857,6 +1867,7 @@ struct PositionItemView: View
         
         base_workspace.selected_robot.selected_program.selected_point_index = -1
         document.preset.robots = base_workspace.file_data().robots
+        app_state.get_scene_image = true
     }
     
     func delete_point_from_program()
