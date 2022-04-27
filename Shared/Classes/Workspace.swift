@@ -86,6 +86,19 @@ class Workspace: ObservableObject
         }
     }
     
+    public var avaliable_robots_names: [String]
+    {
+        var names = [String]()
+        for robot in robots
+        {
+            if robot.name != nil
+            {
+                names.append(robot.name!)
+            }
+        }
+        return names
+    }
+    
     //MARK: - Control program functions
     public var robots_names: [String] //Get names of robots in workspace
     {

@@ -550,67 +550,68 @@ struct RobotSceneView: View
                 VStack
                 {
                     Spacer()
-                    Button(action: { origin_rotate_view_presented.toggle() })
+                    VStack(spacing: 0)
                     {
-                        Image(systemName: "rotate.3d")
-                            .imageScale(.large)
-                            .padding()
-                            .background(.thinMaterial)
-                    }
-                    .buttonStyle(.borderless)
-                    #if os(iOS)
-                    .foregroundColor(.black)
-                    #endif
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    .popover(isPresented: $origin_rotate_view_presented)
-                    {
-                        OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
-                            .onChange(of: base_workspace.selected_robot.origin_rotation)
-                        { _ in
-                            base_workspace.selected_robot.robot_location_place()
-                            base_workspace.selected_robot.update_position()
-                            base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
-                            app_state.get_scene_image = true
+                        Button(action: { origin_rotate_view_presented.toggle() })
+                        {
+                            Image(systemName: "rotate.3d")
+                                .imageScale(.large)
+                                .padding()
+                        }
+                        .buttonStyle(.borderless)
+                        #if os(iOS)
+                        .foregroundColor(.black)
+                        #endif
+                        .popover(isPresented: $origin_rotate_view_presented)
+                        {
+                            OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
+                                .onChange(of: base_workspace.selected_robot.origin_rotation)
+                            { _ in
+                                base_workspace.selected_robot.robot_location_place()
+                                base_workspace.selected_robot.update_position()
+                                base_workspace.update_view()
+                                document.preset.robots = base_workspace.file_data().robots
+                                app_state.get_scene_image = true
+                            }
+                        }
+                        .onDisappear
+                        {
+                            origin_rotate_view_presented.toggle()
+                        }
+                        Divider()
+                        
+                        Button(action: { origin_move_view_presented.toggle() })
+                        {
+                            Image(systemName: "move.3d")
+                                .imageScale(.large)
+                                .padding()
+                        }
+                        .buttonStyle(.borderless)
+                        #if os(iOS)
+                        .foregroundColor(.black)
+                        #endif
+                        .popover(isPresented: $origin_move_view_presented)
+                        {
+                            OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
+                                .onChange(of: base_workspace.selected_robot.origin_location)
+                            { _ in
+                                base_workspace.selected_robot.robot_location_place()
+                                base_workspace.selected_robot.update_position()
+                                base_workspace.update_view()
+                                document.preset.robots = base_workspace.file_data().robots
+                                app_state.get_scene_image = true
+                            }
+                        }
+                        .onDisappear
+                        {
+                            origin_move_view_presented.toggle()
                         }
                     }
-                    .onDisappear
-                    {
-                        origin_rotate_view_presented.toggle()
-                    }
+                    .background(.thinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                     .shadow(radius: 8.0)
+                    .fixedSize(horizontal: true, vertical: false)
                     .padding()
-                    
-                    Button(action: { origin_move_view_presented.toggle() })
-                    {
-                        Image(systemName: "move.3d")
-                            .imageScale(.large)
-                            .padding()
-                            .background(.thinMaterial)
-                    }
-                    .buttonStyle(.borderless)
-                    #if os(iOS)
-                    .foregroundColor(.black)
-                    #endif
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    .popover(isPresented: $origin_move_view_presented)
-                    {
-                        OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
-                            .onChange(of: base_workspace.selected_robot.origin_location)
-                        { _ in
-                            base_workspace.selected_robot.robot_location_place()
-                            base_workspace.selected_robot.update_position()
-                            base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
-                            app_state.get_scene_image = true
-                        }
-                    }
-                    .onDisappear
-                    {
-                        origin_move_view_presented.toggle()
-                    }
-                    .shadow(radius: 8.0)
-                    .padding([.bottom, .leading, .trailing])
                 }
                 Spacer()
             }

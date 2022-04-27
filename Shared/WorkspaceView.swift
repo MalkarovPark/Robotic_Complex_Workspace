@@ -140,16 +140,85 @@ struct ComplexWorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    @State var add_robot_in_workspace_view_presented = false
+    @State var robot_info_view_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
     var body: some View
     {
-        #if os(macOS)
-        WorkspaceSceneView_macOS()
-        #else
-        WorkspaceSceneView_iOS()
-            .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-            .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8)) //(8.0)
-            .navigationBarTitleDisplayMode(.inline)
-        #endif
+        ZStack
+        {
+            #if os(macOS)
+            WorkspaceSceneView_macOS()
+            #else
+            WorkspaceSceneView_iOS()
+                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
+                .navigationBarTitleDisplayMode(.inline)
+            #endif
+            
+            HStack
+            {
+                VStack
+                {
+                    Spacer()
+                    VStack(spacing: 0)
+                    {
+                        Button(action: { add_robot_in_workspace_view_presented.toggle() })
+                        {
+                            Image(systemName: "plus")
+                                .imageScale(.large)
+                                .padding()
+                        }
+                        .buttonStyle(.borderless)
+                        #if os(iOS)
+                        .foregroundColor(.black)
+                        #endif
+                        .popover(isPresented: $add_robot_in_workspace_view_presented)
+                        {
+                            AddRobotInWorkspaceView()
+                        }
+                        .onDisappear
+                        {
+                            add_robot_in_workspace_view_presented.toggle()
+                        }
+                        .disabled(base_workspace.robots.count == 0)
+                        
+                        Divider()
+                        
+                        Button(action: { robot_info_view_presented.toggle() })
+                        {
+                            Image(systemName: "info.circle")
+                                .imageScale(.large)
+                                .padding()
+                        }
+                        .buttonStyle(.borderless)
+                        #if os(iOS)
+                        .foregroundColor(.black)
+                        #endif
+                        .popover(isPresented: $robot_info_view_presented)
+                        {
+                            RobotInfoView()
+                        }
+                        .onDisappear
+                        {
+                            robot_info_view_presented.toggle()
+                        }
+                    }
+                    .background(.thinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .shadow(radius: 8.0)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .padding()
+                }
+                Spacer()
+            }
+            #if os(iOS)
+            .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
+            #endif
+        }
     }
 }
 
@@ -339,6 +408,24 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     }
 }
 #endif
+
+struct AddRobotInWorkspaceView: View
+{
+    var body: some View
+    {
+        Text("AddRobotInWorkspaceView")
+            .padding()
+    }
+}
+
+struct RobotInfoView: View
+{
+    var body: some View
+    {
+        Text("RobotInfoView")
+            .padding()
+    }
+}
 
 //MARK: - Control program view
 struct ControlProgramView: View

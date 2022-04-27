@@ -48,7 +48,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     init(robot_struct: robot_struct)
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, ip_address: robot_struct.ip_addrerss, robot_image_data: robot_struct.robot_image_data ?? Data(), origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, ip_address: robot_struct.ip_addrerss, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
         read_programs(robot_struct: robot_struct)
     }
     
@@ -391,10 +391,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     var robot_details = [SCNNode]()
 
-    var theta = [Double](repeating: 0.0, count: 6)
-    var lenghts = [Float](repeating: 0, count: 6)
-    var origin_location = [Float](repeating: 0, count: 3) // = [32, 0, 0] //x, y, z 32 0 0
-    var origin_rotation = [Float](repeating: 0, count: 3) // = [0, 0, 0] //r, p, w
+    private var theta = [Double](repeating: 0.0, count: 6)
+    public var lenghts = [Float](repeating: 0, count: 6)
+    public var origin_location = [Float](repeating: 0, count: 3) // [32, 0, 0] //x, y, z
+    public var origin_rotation = [Float](repeating: 0, count: 3) // [0, 0, 0] //r, p, w
     
     public func robot_details_connect() //Connect robot instance to manipulator model details
     {
@@ -559,6 +559,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         robot_details[5].eulerAngles.y = Float(ik_angles[5])
         #endif
     }
+    
+    //MARK: Robot in workspace handling
+    public var is_placed = false
+    public var location = [Float](repeating: 0, count: 3) //[0, 0, 0] //x, y, z
+    public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] //r, p, w
     
     //MARK: - UI functions
     private var robot_image_data = Data()
