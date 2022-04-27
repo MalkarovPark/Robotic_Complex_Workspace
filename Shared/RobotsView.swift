@@ -415,6 +415,7 @@ struct RobotView: View
     @State var origin_rotate_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
     //MARK: Horizontal window size handler
@@ -515,6 +516,7 @@ struct RobotView: View
     func close_robot()
     {
         base_workspace.selected_robot.reset_moving()
+        app_state.get_scene_image = true
         display_rv = false
     }
 }
@@ -689,10 +691,6 @@ struct CellSceneView_macOS: NSViewRepresentable
             app_state.get_scene_image = false
             
             base_workspace.selected_robot.image = ui_view.snapshot()
-            
-            //let pb = NSPasteboard.general
-            //pb.clearContents()
-            //pb.writeObjects([ui_view.snapshot()])
         }
     }
     
@@ -822,6 +820,13 @@ struct CellSceneView_iOS: UIViewRepresentable
             
             scene_view.defaultCameraController.pointOfView?.runAction(
                 SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]))
+        }
+        
+        if app_state.get_scene_image == true
+        {
+            app_state.get_scene_image = false
+            
+            base_workspace.selected_robot.image = ui_view.snapshot()
         }
     }
     
