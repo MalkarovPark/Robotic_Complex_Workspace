@@ -423,47 +423,36 @@ struct AddRobotInWorkspaceView: View
     {
         VStack(spacing: 0)
         {
-            VStack
+            Text("Add robot in workspace")
+                .font(.title3)
+                .padding([.top, .leading, .trailing])
+            
+            HStack
             {
-                Text("Add robot in workspace")
-                    .font(.title3)
+                #if os(iOS)
+                Text("Robot")
+                    .font(.subheadline)
+                #endif
                 
-                #if os(macOS)
-                HStack
+                Picker("Robot", selection: $selected_robot_name) //Select robot for place in workspace
                 {
-                    Picker("Robot:", selection: $selected_robot_name) //Select robot for place in workspace
-                    {
-                        ForEach(base_workspace.avaliable_robots_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    .onAppear
-                    {
-                        selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
-                    }
-                    .onChange(of: selected_robot_name)
-                    { _ in
-                        base_workspace.select_robot(name: selected_robot_name)
+                    ForEach(base_workspace.avaliable_robots_names, id: \.self)
+                    { name in
+                        Text(name)
                     }
                 }
-                #else
-                VStack
+                .onAppear
                 {
-                    Text("Robot:")
-                    Picker("Robot:", selection: $selected_robot_name) //Select robot for place in workspace
-                    {
-                        ForEach(base_workspace.avaliable_robots_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    .onAppear
-                    {
-                        selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
-                    }
-                    .pickerStyle(.wheel)
+                    selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
                 }
+                .onChange(of: selected_robot_name)
+                { _ in
+                    base_workspace.select_robot(name: selected_robot_name)
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity)
+                #if os(iOS)
+                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
                 #endif
             }
             .padding()
@@ -1651,8 +1640,6 @@ struct WorkspaceView_Previews: PreviewProvider
             WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            AddRobotInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_robot_in_workspace_view_presented: .constant(true))
-                .environmentObject(Workspace())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
