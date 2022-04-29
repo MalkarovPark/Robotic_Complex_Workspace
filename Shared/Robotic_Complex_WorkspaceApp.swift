@@ -42,7 +42,6 @@ class AppState : ObservableObject
 {
     @Published var reset_view = false
     @Published var get_scene_image = false
-    @Published var perform_robot_connect = false
     var workspace_scene = SCNScene()
     
     var camera_light_node = SCNNode()

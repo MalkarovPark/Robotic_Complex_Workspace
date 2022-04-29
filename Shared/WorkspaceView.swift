@@ -246,6 +246,9 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
         
+        //Add placed robots in workspace
+        base_workspace.place_robots(scene: viewed_scene)
+        
         //Connect camera light for follow
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
         
@@ -343,6 +346,9 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
         
+        //Add placed robots in workspace
+        base_workspace.place_robots(scene: viewed_scene)
+        
         //Connect camera light for follow
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
         
@@ -361,7 +367,6 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         ui_view.rendersContinuously = true
         
         //Update commands
-        
         if app_state.reset_view == true
         {
             app_state.reset_view = false
@@ -457,7 +462,7 @@ struct AddRobotInWorkspaceView: View
                 }
                 .onChange(of: selected_robot_name)
                 { _ in
-                    base_workspace.select_robot(name: selected_robot_name)
+                    change_selected_robot()
                 }
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity)
@@ -483,7 +488,7 @@ struct AddRobotInWorkspaceView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $base_workspace.selected_robot.location[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $base_workspace.selected_robot.location[0], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[0], in: -1000...1000)
                                 .labelsHidden()
                         }
             
@@ -493,7 +498,7 @@ struct AddRobotInWorkspaceView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $base_workspace.selected_robot.location[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $base_workspace.selected_robot.location[1], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[1], in: -1000...1000)
                                 .labelsHidden()
                         }
             
@@ -503,7 +508,7 @@ struct AddRobotInWorkspaceView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $base_workspace.selected_robot.location[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $base_workspace.selected_robot.location[2], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[2], in: -1000...1000)
                                 .labelsHidden()
                         }
                     }
@@ -568,7 +573,7 @@ struct AddRobotInWorkspaceView: View
                             TextField("0", value: $base_workspace.selected_robot.location[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $base_workspace.selected_robot.location[0], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[0], in: -1000...1000)
                                 .labelsHidden()
                         }
             
@@ -579,7 +584,7 @@ struct AddRobotInWorkspaceView: View
                             TextField("0", value: $base_workspace.selected_robot.location[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $base_workspace.selected_robot.location[1], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[1], in: -1000...1000)
                                 .labelsHidden()
                         }
             
@@ -590,7 +595,7 @@ struct AddRobotInWorkspaceView: View
                             TextField("0", value: $base_workspace.selected_robot.location[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $base_workspace.selected_robot.location[2], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[2], in: -1000...1000)
                                 .labelsHidden()
                         }
                     }
@@ -640,6 +645,10 @@ struct AddRobotInWorkspaceView: View
             }
             .padding([.top, .leading, .trailing])
             .padding(.bottom, 8.0)
+            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+            { _ in
+                update_unit_origin_position()
+            }
 
             Spacer()
             #endif
@@ -678,18 +687,32 @@ struct AddRobotInWorkspaceView: View
         base_workspace.unit_node?.name = selected_robot_name
         base_workspace.selected_robot.robot_workcell_connect(scene: app_state.workspace_scene, name: selected_robot_name)
         base_workspace.selected_robot.update_robot()
-        app_state.perform_robot_connect = true
         
         base_workspace.selected_robot.unit_origin_node?.isHidden = false
     }
     
+    func change_selected_robot()
+    {
+        dismiss_view()
+        base_workspace.select_robot(name: selected_robot_name)
+        view_robot()
+    }
+    
     func update_unit_origin_position()
     {
+        #if os(macOS)
+        base_workspace.unit_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_robot.location[0]), y: CGFloat(base_workspace.selected_robot.location[2]), z: CGFloat(base_workspace.selected_robot.location[1]))
+        
+        base_workspace.unit_node?.eulerAngles.x = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1]))
+        base_workspace.unit_node?.eulerAngles.y = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2]))
+        base_workspace.unit_node?.eulerAngles.z = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0]))
+        #else
         base_workspace.unit_node?.worldPosition = SCNVector3(x: base_workspace.selected_robot.location[0], y: base_workspace.selected_robot.location[2], z: base_workspace.selected_robot.location[1])
         
         base_workspace.unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1])))
         base_workspace.unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2])))
         base_workspace.unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0])))
+        #endif
     }
     
     func dismiss_view()

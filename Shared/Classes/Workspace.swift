@@ -257,6 +257,39 @@ class Workspace: ObservableObject
     public var workcells_node: SCNNode?
     public var unit_node: SCNNode?
     //public var unit_origin_node: SCNNode?
+    
+    public func place_robots(scene: SCNScene)
+    {
+        if self.avaliable_robots_names.count != self.robots.count
+        {
+            for robot in robots
+            {
+                if robot.is_placed == true
+                {
+                    workcells_node?.addChildNode(SCNScene(named: "Components.scnassets/Workcell.scn")!.rootNode.childNode(withName: "unit", recursively: false)!)
+                    unit_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
+                    
+                    unit_node?.name = robot.name
+                    robot.robot_workcell_connect(scene: scene, name: robot.name!)
+                    robot.update_robot()
+                    
+                    #if os(macOS)
+                    unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.location[0]), y: CGFloat(robot.location[2]), z: CGFloat(robot.location[1]))
+                    
+                    unit_node?.eulerAngles.x = to_rad(in_angle: CGFloat(robot.rotation[1]))
+                    unit_node?.eulerAngles.y = to_rad(in_angle: CGFloat(robot.rotation[2]))
+                    unit_node?.eulerAngles.z = to_rad(in_angle: CGFloat(robot.rotation[0]))
+                    #else
+                    unit_node?.worldPosition = SCNVector3(x: robot.location[0], y: robot.location[2], z: robot.location[1])
+
+                    unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(robot.rotation[1])))
+                    unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(robot.rotation[2])))
+                    unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(robot.rotation[0])))
+                    #endif
+                }
+            }
+        }
+    }
 }
 
 //MARK: - Structure for workspace preset document handling
