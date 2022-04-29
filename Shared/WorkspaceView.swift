@@ -181,10 +181,10 @@ struct ComplexWorkspaceView: View
                             AddRobotInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        .onDisappear
+                        /*.onDisappear
                         {
                             add_robot_in_workspace_view_presented.toggle()
-                        }
+                        }*/
                         .disabled(base_workspace.avaliable_robots_names.count == 0)
                         
                         Divider()
@@ -244,6 +244,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     {
         //Begin commands
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
+        base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
         
         //Connect camera light for follow
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
@@ -251,6 +252,8 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         //Add gesture recognizer
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        app_state.workspace_scene = viewed_scene
         
         return scn_scene(context: context)
     }
@@ -305,6 +308,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 result = hit_results[0]
                 
                 print(result.localCoordinates)
+                print("\(result.node.parent?.parent?.name)")
                 print("🍮 tapped – \(result.node.name!)")
             }
         }
@@ -337,13 +341,16 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     {
         //Begin commands
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
+        base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
         
-        //Connect camera for follow
+        //Connect camera light for follow
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
         
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        app_state.workspace_scene = viewed_scene
         
         return scn_scene(context: context)
     }
@@ -418,6 +425,7 @@ struct AddRobotInWorkspaceView: View
     @Binding var add_robot_in_workspace_view_presented: Bool
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
@@ -444,6 +452,8 @@ struct AddRobotInWorkspaceView: View
                 .onAppear
                 {
                     selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
+                    view_robot()
+                    //base_workspace.unit_point_node?.isHidden = false
                 }
                 .onChange(of: selected_robot_name)
                 { _ in
@@ -511,7 +521,7 @@ struct AddRobotInWorkspaceView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $base_workspace.selected_robot.rotation[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[0], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[0], in: -180...180)
                                 .labelsHidden()
                         }
             
@@ -521,7 +531,7 @@ struct AddRobotInWorkspaceView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $base_workspace.selected_robot.rotation[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[1], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[1], in: -180...180)
                                 .labelsHidden()
                         }
             
@@ -531,7 +541,7 @@ struct AddRobotInWorkspaceView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $base_workspace.selected_robot.rotation[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[2], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[2], in: -180...180)
                                 .labelsHidden()
                         }
                     }
@@ -539,6 +549,10 @@ struct AddRobotInWorkspaceView: View
                 }
             }
             .padding()
+            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+            { _ in
+                update_unit_origin_position()
+            }
             #else
             VStack(spacing: 12)
             {
@@ -595,7 +609,7 @@ struct AddRobotInWorkspaceView: View
                             TextField("0", value: $base_workspace.selected_robot.rotation[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[0], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[0], in: -180...180)
                                 .labelsHidden()
                         }
             
@@ -606,7 +620,7 @@ struct AddRobotInWorkspaceView: View
                             TextField("0", value: $base_workspace.selected_robot.rotation[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[1], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[1], in: -180...180)
                                 .labelsHidden()
                         }
             
@@ -617,7 +631,7 @@ struct AddRobotInWorkspaceView: View
                             TextField("0", value: $base_workspace.selected_robot.rotation[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[2], in: 0...200)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[2], in: -180...180)
                                 .labelsHidden()
                         }
                     }
@@ -634,7 +648,8 @@ struct AddRobotInWorkspaceView: View
             Divider()
             HStack
             {
-                Button("Cancel", action: { add_robot_in_workspace_view_presented.toggle() })
+                Button("Cancel", action: { add_robot_in_workspace_view_presented.toggle()
+                    dismiss_view() })
                     .padding()
                 
                 Spacer()
@@ -647,12 +662,54 @@ struct AddRobotInWorkspaceView: View
                 #endif
             }
         }
+        .onDisappear
+        {
+            dismiss_view()
+        }
+    }
+    
+    func view_robot() //Get robot and update position
+    {
+        base_workspace.select_robot(name: selected_robot_name)
+        
+        base_workspace.workcells_node?.addChildNode(SCNScene(named: "Components.scnassets/Workcell.scn")!.rootNode.childNode(withName: "unit", recursively: false)!) //Get workcell from Workcell.scn and add it to Workspace.scn
+        base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
+        
+        base_workspace.unit_node?.name = selected_robot_name
+        base_workspace.selected_robot.robot_workcell_connect(scene: app_state.workspace_scene, name: selected_robot_name)
+        base_workspace.selected_robot.update_robot()
+        app_state.perform_robot_connect = true
+        
+        base_workspace.selected_robot.unit_origin_node?.isHidden = false
+    }
+    
+    func update_unit_origin_position()
+    {
+        base_workspace.unit_node?.worldPosition = SCNVector3(x: base_workspace.selected_robot.location[0], y: base_workspace.selected_robot.location[2], z: base_workspace.selected_robot.location[1])
+        
+        base_workspace.unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1])))
+        base_workspace.unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2])))
+        base_workspace.unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0])))
+    }
+    
+    func dismiss_view()
+    {
+        if base_workspace.selected_robot.is_placed == false
+        {
+            base_workspace.selected_robot.location = [0, 0, 0]
+            base_workspace.selected_robot.rotation = [0, 0, 0]
+            
+            base_workspace.unit_node?.removeFromParentNode()
+        }
     }
     
     func place_robot()
     {
-        //base_workspace.select_robot(name: selected_robot_name)
         base_workspace.selected_robot.is_placed = true
+        
+        base_workspace.selected_robot.unit_origin_node?.isHidden = true
+        base_workspace.workcells_node?.addChildNode(base_workspace.unit_node!)
+        
         document.preset.robots = base_workspace.file_data().robots
         
         add_robot_in_workspace_view_presented.toggle()

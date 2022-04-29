@@ -351,12 +351,36 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Visual build functions
     private let pointer_node_color = Color.cyan
     
+    public var unit_node: SCNNode? //Robot unit node
+    public var unit_origin_node: SCNNode?
+    
     public var box_node: SCNNode? //Box bordered cell workspace
     public var camera_node: SCNNode? //Camera
     public var pointer_node: SCNNode? //Robot teach pointer
     public var tool_node: SCNNode? //Node for tool element
     public var points_node: SCNNode? //Teach points
     public var robot_node: SCNNode? //Current robot
+    
+    public func robot_workcell_connect(scene: SCNScene, name: String)
+    {
+        self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
+        self.unit_origin_node = self.unit_node?.childNode(withName: "unit_pointer", recursively: true)
+        self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
+        self.pointer_node = self.box_node?.childNode(withName: "pointer", recursively: true)
+        self.tool_node = self.pointer_node?.childNode(withName: "tool", recursively: true)
+        self.points_node = self.box_node?.childNode(withName: "points", recursively: true)
+        
+        //Connect robot details
+        self.robot_node = self.unit_node?.childNode(withName: "robot", recursively: true)
+        robot_details_connect()
+        
+        //Connect robot camera
+        self.camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
+        
+        //Place cell box
+        robot_location_place()
+        update_position()
+    }
     
     public var poiner_visible = true
     {
@@ -394,7 +418,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return in_angle * 180 / .pi
     }
     
-    var robot_details = [SCNNode]()
+    private var robot_details = [SCNNode]()
 
     private var theta = [Double](repeating: 0.0, count: 6)
     public var lenghts = [Float](repeating: 0, count: 6)

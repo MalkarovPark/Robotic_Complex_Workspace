@@ -42,6 +42,8 @@ class AppState : ObservableObject
 {
     @Published var reset_view = false
     @Published var get_scene_image = false
+    @Published var perform_robot_connect = false
+    var workspace_scene = SCNScene()
     
     var camera_light_node = SCNNode()
     
@@ -167,4 +169,15 @@ class AppState : ObservableObject
             //print("\(model_parameter) – \(info) 🍪")
         }
     }
+}
+
+//MARK: - Angle convertion functions
+func to_deg(in_angle: CGFloat) -> CGFloat
+{
+    return in_angle * 180 / .pi
+}
+
+func to_rad(in_angle: CGFloat) -> CGFloat
+{
+    return in_angle * .pi / 180
 }

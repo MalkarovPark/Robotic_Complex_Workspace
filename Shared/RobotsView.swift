@@ -642,19 +642,7 @@ struct CellSceneView_macOS: NSViewRepresentable
     func makeNSView(context: Context) -> SCNView
     {
         //Connect workcell box and pointer
-        base_workspace.selected_robot.box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
-        base_workspace.selected_robot.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
-        base_workspace.selected_robot.pointer_node = base_workspace.selected_robot.box_node?.childNode(withName: "pointer", recursively: true)
-        base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
-        base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)
-        
-        //Connect robot details
-        base_workspace.selected_robot.robot_node = viewed_scene.rootNode.childNode(withName: "robot", recursively: true)!
-        base_workspace.selected_robot.robot_details_connect()
-        
-        //Place cell box
-        base_workspace.selected_robot.robot_location_place()
-        base_workspace.selected_robot.update_position()
+        base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit")
         
         //Connect camera light for follow
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
@@ -778,19 +766,7 @@ struct CellSceneView_iOS: UIViewRepresentable
     func makeUIView(context: Context) -> SCNView
     {
         //Connect workcell box and pointer
-        base_workspace.selected_robot.box_node = viewed_scene.rootNode.childNode(withName: "box", recursively: true)
-        base_workspace.selected_robot.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
-        base_workspace.selected_robot.pointer_node = base_workspace.selected_robot.box_node?.childNode(withName: "pointer", recursively: true)
-        base_workspace.selected_robot.tool_node = base_workspace.selected_robot.pointer_node?.childNode(withName: "tool", recursively: true)
-        base_workspace.selected_robot.points_node = base_workspace.selected_robot.box_node?.childNode(withName: "points", recursively: true)
-        
-        //Connect robot details
-        base_workspace.selected_robot.robot_node = viewed_scene.rootNode.childNode(withName: "robot", recursively: true)!
-        base_workspace.selected_robot.robot_details_connect()
-        
-        //Place cell box
-        base_workspace.selected_robot.robot_location_place()
-        base_workspace.selected_robot.update_position()
+        base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit")
         
         //Connect camera light for follow
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
@@ -1628,11 +1604,6 @@ struct PositionItemListView: View
             position_item_view_presented.toggle()
         }
     }
-    
-    func to_deg(in_angle: CGFloat) -> CGFloat
-    {
-        return in_angle * 180 / .pi
-    }
 }
 
 //MARK: - Position item edit view
@@ -1891,11 +1862,6 @@ struct PositionItemView: View
         {
             self.on_delete(IndexSet(integer: index))
         }
-    }
-    
-    func to_rad(in_angle: CGFloat) -> CGFloat
-    {
-        return in_angle * .pi / 180
     }
 }
 

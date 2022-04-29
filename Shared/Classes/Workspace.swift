@@ -254,6 +254,9 @@ class Workspace: ObservableObject
     
     //MARK: - Visual functions
     public var camera_node: SCNNode?
+    public var workcells_node: SCNNode?
+    public var unit_node: SCNNode?
+    //public var unit_origin_node: SCNNode?
 }
 
 //MARK: - Structure for workspace preset document handling
