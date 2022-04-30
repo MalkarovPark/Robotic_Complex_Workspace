@@ -54,7 +54,7 @@ class Workspace: ObservableObject
     }
     
     //MARK: Robot selection functions
-    private var selected_robot_index = 0
+    public var selected_robot_index = -1
     
     private func number_by_name(name: String) -> Int //Get index number of robot by name
     {

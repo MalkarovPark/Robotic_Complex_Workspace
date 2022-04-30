@@ -207,6 +207,7 @@ struct ComplexWorkspaceView: View
                         {
                             robot_info_view_presented.toggle()
                         }
+                        .disabled(base_workspace.selected_robot_index == -1)
                     }
                     .background(.thinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
@@ -253,7 +254,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
         
         //Add gesture recognizer
-        let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         app_state.workspace_scene = viewed_scene
@@ -279,18 +280,20 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func makeCoordinator() -> Coordinator
     {
-        Coordinator(self, scene_view)
+        Coordinator(self, scene_view, workspace: base_workspace)
     }
     
-    final class Coordinator: NSObject, SCNSceneRendererDelegate
+    final class Coordinator: NSObject, SCNSceneRendererDelegate, ObservableObject
     {
         var control: WorkspaceSceneView_macOS
+        var workspace: Workspace
         
-        init(_ control: WorkspaceSceneView_macOS, _ scn_view: SCNView)
+        init(_ control: WorkspaceSceneView_macOS, _ scn_view: SCNView, workspace: Workspace)
         {
             self.control = control
             
             self.scn_view = scn_view
+            self.workspace = workspace
             super.init()
         }
         
@@ -300,9 +303,9 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         }
         
         private let scn_view: SCNView
-        @objc func handle_tap(_ gesture_recognize: NSGestureRecognizer)
+        @objc func handle_tap(sender: NSClickGestureRecognizer)
         {
-            let tap_location = gesture_recognize.location(in: scn_view)
+            let tap_location = sender.location(in: scn_view)
             let hit_results = scn_view.hitTest(tap_location, options: [:])
             var result = SCNHitTestResult()
             
@@ -311,8 +314,49 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 result = hit_results[0]
                 
                 print(result.localCoordinates)
-                print("\(result.node.parent?.parent?.name)")
-                print("🍮 tapped – \(result.node.name!)")
+                //print("🍮 tapped – \(result.node.name!)")
+                var robot_name = ""
+                
+                //Find robot node name
+                if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
+                {
+                    robot_name = (result.node.parent?.parent?.name)!
+                }
+                else
+                {
+                    let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
+                    var cycled_node = result.node.parent
+                    
+                    if detail_number != 0 && result.node.parent?.name?.first == "d"
+                    {
+                        while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
+                        {
+                            cycled_node = cycled_node?.parent
+                        }
+                        
+                        robot_name = (cycled_node?.parent?.parent?.name)!
+                    }
+                }
+                
+                print("🍮 tapped – \(robot_name)")
+                workspace.update_view()
+                
+                if workspace.selected_robot_index > -1
+                {
+                    workspace.selected_robot.unit_origin_node?.isHidden = true
+                }
+                workspace.select_robot(name: robot_name)
+                
+                if workspace.selected_robot_index > -1
+                {
+                    workspace.selected_robot.unit_origin_node?.isHidden = false
+                }
+                //print(workspace.selected_robot.programs_names)
+            }
+            else
+            {
+                workspace.selected_robot.unit_origin_node?.isHidden = true
+                workspace.select_robot(name: "")
             }
         }
     }
@@ -353,7 +397,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
         
         //Add gesture recognizer
-        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         app_state.workspace_scene = viewed_scene
@@ -378,30 +422,32 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func makeCoordinator() -> Coordinator
     {
-        Coordinator(self, scene_view)
+        Coordinator(self, scene_view, workspace: base_workspace)
     }
     
-    final class Coordinator: NSObject, SCNSceneRendererDelegate
+    final class Coordinator: NSObject, SCNSceneRendererDelegate, ObservableObject
     {
         var control: WorkspaceSceneView_iOS
+        var workspace: Workspace
         
-        init(_ control: WorkspaceSceneView_iOS, _ scn_view: SCNView)
+        init(_ control: WorkspaceSceneView_iOS, _ scn_view: SCNView, workspace: Workspace)
         {
             self.control = control
             
             self.scn_view = scn_view
+            self.workspace = workspace
             super.init()
         }
-
+        
         func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
         {
             control.scene_check()
         }
         
         private let scn_view: SCNView
-        @objc func handle_tap(_ gesture_recognize: UIGestureRecognizer)
+        @objc func handle_tap(sender: UITapGestureRecognizer)
         {
-            let tap_location = gesture_recognize.location(in: scn_view)
+            let tap_location = sender.location(in: scn_view)
             let hit_results = scn_view.hitTest(tap_location, options: [:])
             var result = SCNHitTestResult()
             
@@ -410,7 +456,49 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                 result = hit_results[0]
                 
                 print(result.localCoordinates)
-                print("🍮 tapped – \(result.node.name!)")
+                //print("🍮 tapped – \(result.node.name!)")
+                var robot_name = ""
+                
+                //Find robot node name
+                if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
+                {
+                    robot_name = (result.node.parent?.parent?.name)!
+                }
+                else
+                {
+                    let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
+                    var cycled_node = result.node.parent
+                    
+                    if detail_number != 0 && result.node.parent?.name?.first == "d"
+                    {
+                        while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
+                        {
+                            cycled_node = cycled_node?.parent
+                        }
+                        
+                        robot_name = (cycled_node?.parent?.parent?.name)!
+                    }
+                }
+                
+                print("🍮 tapped – \(robot_name)")
+                workspace.update_view()
+                
+                if workspace.selected_robot_index > -1
+                {
+                    workspace.selected_robot.unit_origin_node?.isHidden = true
+                }
+                workspace.select_robot(name: robot_name)
+                
+                if workspace.selected_robot_index > -1
+                {
+                    workspace.selected_robot.unit_origin_node?.isHidden = false
+                }
+                //print(workspace.selected_robot.programs_names)
+            }
+            else
+            {
+                workspace.selected_robot.unit_origin_node?.isHidden = true
+                workspace.select_robot(name: "")
             }
         }
     }
@@ -418,6 +506,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     func scene_check() //Render functions
     {
         app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
+        //app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
     }
 }
 #endif
@@ -425,6 +514,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
 struct AddRobotInWorkspaceView: View
 {
     @State var selected_robot_name = String()
+    @State var selected_robot_program = String()
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var add_robot_in_workspace_view_presented: Bool
