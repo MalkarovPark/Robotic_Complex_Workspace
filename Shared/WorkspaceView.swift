@@ -181,10 +181,6 @@ struct ComplexWorkspaceView: View
                             AddRobotInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        /*.onDisappear
-                        {
-                            add_robot_in_workspace_view_presented.toggle()
-                        }*/
                         .disabled(base_workspace.avaliable_robots_names.count == 0)
                         
                         Divider()

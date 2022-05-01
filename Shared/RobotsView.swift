@@ -893,7 +893,7 @@ struct OriginMoveView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_location[0], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_location[0], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_location[0], in: -50...50)
                     .labelsHidden()
             }
             
@@ -903,7 +903,7 @@ struct OriginMoveView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_location[1], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_location[1], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_location[1], in: -50...50)
                     .labelsHidden()
             }
             
@@ -913,7 +913,7 @@ struct OriginMoveView: View
                     .frame(width: 20.0)
                 TextField("0", value: $origin_view_pos_location[2], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $origin_view_pos_location[2], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_location[2], in: -50...50)
                     .labelsHidden()
             }
         }
@@ -933,7 +933,7 @@ struct OriginMoveView: View
                 TextField("0", value: $origin_view_pos_location[0], format: .number)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_location[0], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_location[0], in: -50...50)
                     .labelsHidden()
             }
             
@@ -944,7 +944,7 @@ struct OriginMoveView: View
                 TextField("0", value: $origin_view_pos_location[1], format: .number)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_location[1], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_location[1], in: -50...50)
                     .labelsHidden()
             }
             
@@ -955,7 +955,7 @@ struct OriginMoveView: View
                 TextField("0", value: $origin_view_pos_location[2], format: .number)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_location[2], in: 0...200)
+                Stepper("Enter", value: $origin_view_pos_location[2], in: -50...50)
                     .labelsHidden()
             }
         }
