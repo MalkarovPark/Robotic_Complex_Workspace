@@ -78,7 +78,14 @@ class Workspace: ObservableObject
     {
         get
         {
-            return robots[selected_robot_index]
+            if selected_robot_index > -1
+            {
+                return robots[selected_robot_index]
+            }
+            else
+            {
+                return Robot()
+            }
         }
         set
         {

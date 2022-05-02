@@ -351,8 +351,12 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
             }
             else
             {
-                workspace.selected_robot.unit_origin_node?.isHidden = true
+                if workspace.selected_robot_index > -1
+                {
+                    workspace.selected_robot.unit_origin_node?.isHidden = true
+                }
                 workspace.select_robot(name: "")
+                workspace.update_view()
             }
         }
     }
@@ -493,8 +497,12 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
             }
             else
             {
-                workspace.selected_robot.unit_origin_node?.isHidden = true
+                if workspace.selected_robot_index > -1
+                {
+                    workspace.selected_robot.unit_origin_node?.isHidden = true
+                }
                 workspace.select_robot(name: "")
+                workspace.update_view()
             }
         }
     }
