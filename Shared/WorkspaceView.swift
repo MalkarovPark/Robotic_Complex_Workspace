@@ -199,10 +199,6 @@ struct ComplexWorkspaceView: View
                         {
                             RobotInfoView(robot_info_view_presented: $robot_info_view_presented)
                         }
-                        .onDisappear
-                        {
-                            robot_info_view_presented.toggle()
-                        }
                         .disabled(base_workspace.selected_robot_index == -1)
                     }
                     .background(.thinMaterial)
@@ -779,7 +775,7 @@ struct AddRobotInWorkspaceView: View
         base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
         
         base_workspace.unit_node?.name = selected_robot_name
-        base_workspace.selected_robot.robot_workcell_connect(scene: app_state.workspace_scene, name: selected_robot_name)
+        base_workspace.selected_robot.robot_workcell_connect(scene: app_state.workspace_scene, name: selected_robot_name, connect_camera: false)
         base_workspace.selected_robot.update_robot()
         
         base_workspace.selected_robot.unit_origin_node?.isHidden = false
@@ -839,8 +835,15 @@ struct RobotInfoView: View
     
     var body: some View
     {
-        Text("Robot Info View")
-            .padding()
+        VStack
+        {
+            Text("Robot Info View")
+                .padding()
+        }
+        .onDisappear
+        {
+            robot_info_view_presented.toggle()
+        }
     }
 }
 

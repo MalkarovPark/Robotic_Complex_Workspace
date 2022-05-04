@@ -361,7 +361,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var points_node: SCNNode? //Teach points
     public var robot_node: SCNNode? //Current robot
     
-    public func robot_workcell_connect(scene: SCNScene, name: String)
+    public func robot_workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         self.unit_origin_node = self.unit_node?.childNode(withName: "unit_pointer", recursively: true)
@@ -375,7 +375,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         robot_details_connect()
         
         //Connect robot camera
-        self.camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
+        if connect_camera == true
+        {
+            self.camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
+        }
         
         //Place cell box
         robot_location_place()

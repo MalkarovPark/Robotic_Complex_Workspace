@@ -642,7 +642,7 @@ struct CellSceneView_macOS: NSViewRepresentable
     func makeNSView(context: Context) -> SCNView
     {
         //Connect workcell box and pointer
-        base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit")
+        base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
         
         //Connect camera light for follow
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
@@ -766,7 +766,7 @@ struct CellSceneView_iOS: UIViewRepresentable
     func makeUIView(context: Context) -> SCNView
     {
         //Connect workcell box and pointer
-        base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit")
+        base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
         
         //Connect camera light for follow
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!

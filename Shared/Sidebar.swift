@@ -65,6 +65,7 @@ struct SidebarContent: View
             NavigationLink(destination: RobotsView(document: $document), tag: navigation_item.RobotsView, selection: $sidebar_selection)
             {
                 Label("Robots", systemImage: "r.square") //image: "factory.robot") //systemImage: "circle")
+                	.badge(document.preset.robots.count)
             }
             .tag(navigation_item.RobotsView)
             
@@ -82,6 +83,7 @@ struct SidebarContent: View
             NavigationLink(destination: RobotsView(document: $document))
             {
                 Label("Robots", systemImage: "r.square") //image: "factory.robot") //systemImage: "circle")
+                	.badge(document.preset.robots.count)
             }
             
             NavigationLink(destination: ToolsView(document: $document))

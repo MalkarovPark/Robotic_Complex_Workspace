@@ -32,6 +32,7 @@ struct TabBar: View
             {
                 Label("Robots", systemImage: "r.square") //image: "factory.robot") //systemImage: "circle")
             }
+            .badge(document.preset.robots.count)
             
             NavigationView
             {

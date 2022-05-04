@@ -263,12 +263,12 @@ class Workspace: ObservableObject
     public var camera_node: SCNNode?
     public var workcells_node: SCNNode?
     public var unit_node: SCNNode?
-    //public var unit_origin_node: SCNNode?
     
     public func place_robots(scene: SCNScene)
     {
-        if self.avaliable_robots_names.count != self.robots.count
+        if self.avaliable_robots_names.count < self.robots.count
         {
+        	var connect_camera = true
             for robot in robots
             {
                 if robot.is_placed == true
@@ -277,8 +277,10 @@ class Workspace: ObservableObject
                     unit_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
                     
                     unit_node?.name = robot.name
-                    robot.robot_workcell_connect(scene: scene, name: robot.name!)
+                    robot.robot_workcell_connect(scene: scene, name: robot.name!, connect_camera: connect_camera)
                     robot.update_robot()
+                    
+                    connect_camera = false
                     
                     #if os(macOS)
                     unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.location[0]), y: CGFloat(robot.location[2]), z: CGFloat(robot.location[1]))
