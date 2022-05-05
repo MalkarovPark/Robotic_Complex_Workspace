@@ -846,6 +846,11 @@ struct AddRobotInWorkspaceView: View
             
             base_workspace.unit_node?.removeFromParentNode()
         }
+        else
+        {
+            base_workspace.selected_robot_index = -1
+            base_workspace.update_view()
+        }
     }
     
     func place_robot()
@@ -872,10 +877,10 @@ struct RobotInfoView: View
             Text("Robot Info View")
                 .padding()
         }
-        .onDisappear
+        /*.onDisappear
         {
             robot_info_view_presented.toggle()
-        }
+        }*/
     }
 }
 
