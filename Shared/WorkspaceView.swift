@@ -245,6 +245,10 @@ struct ComplexWorkspaceView: View
             .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
             #endif
         }
+        .onDisappear
+        { 
+            base_workspace.selected_robot_index = -1
+        }
     }
 }
 
