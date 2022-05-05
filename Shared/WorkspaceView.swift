@@ -849,6 +849,8 @@ struct AddRobotInWorkspaceView: View
         else
         {
             base_workspace.selected_robot_index = -1
+            base_workspace.elements_check()
+            document.preset.elements = base_workspace.file_data().elements
             base_workspace.update_view()
         }
     }
@@ -996,12 +998,14 @@ struct ControlProgramView: View
             switch new_program_element.element_data.performer_type
             {
             case .robot:
-                if base_workspace.robots.count > 0
+                if base_workspace.placed_robots_names.count > 0
                 {
-                    new_program_element.element_data.robot_name = base_workspace.robots[0].name!
-                    if base_workspace.robots[0].programs_count > 0
+                    new_program_element.element_data.robot_name = base_workspace.placed_robots_names.first!
+                    base_workspace.select_robot(name: new_program_element.element_data.robot_name)
+                    
+                    if base_workspace.selected_robot.programs_count > 0
                     {
-                        new_program_element.element_data.robot_program_name = base_workspace.robots[0].programs_names[0]
+                        new_program_element.element_data.robot_program_name = base_workspace.selected_robot.programs_names.first!
                     }
                 }
             case .tool:
@@ -1590,15 +1594,15 @@ struct PerformerElementView: View
             switch performer_type
             {
             case .robot:
-                if base_workspace.robots.count > 0
+                if base_workspace.placed_robots_names.count > 0
                 {
                     //MARK: Robot subview
                     #if os(macOS)
                     Picker("Name", selection: $robot_name) //Robot picker
                     {
-                        if base_workspace.robots_names.count > 0
+                        if base_workspace.placed_robots_names.count > 0
                         {
-                            ForEach(base_workspace.robots_names, id: \.self)
+                            ForEach(base_workspace.placed_robots_names, id: \.self)
                             { name in
                                 Text(name)
                             }
@@ -1656,9 +1660,9 @@ struct PerformerElementView: View
                             {
                                 Picker("Name", selection: $robot_name) //Robot picker
                                 {
-                                    if base_workspace.robots_names.count > 0
+                                    if base_workspace.placed_robots_names.count > 0
                                     {
-                                        ForEach(base_workspace.robots_names, id: \.self)
+                                        ForEach(base_workspace.placed_robots_names, id: \.self)
                                         { name in
                                             Text(name)
                                         }
@@ -1722,7 +1726,7 @@ struct PerformerElementView: View
                 }
                 else
                 {
-                    Text("No robots in this workspace")
+                    Text("No robots placed in this workspace")
                 }
             case .tool:
                 //MARK: Tool subview

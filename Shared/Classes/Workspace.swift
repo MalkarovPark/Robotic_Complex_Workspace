@@ -106,6 +106,19 @@ class Workspace: ObservableObject
         return names
     }
     
+    public var placed_robots_names: [String]
+    {
+        var names = [String]()
+        for robot in robots
+        {
+            if robot.name != nil && robot.is_placed == true
+            {
+                names.append(robot.name!)
+            }
+        }
+        return names
+    }
+    
     //MARK: - Control program functions
     public var robots_names: [String] //Get names of robots in workspace
     {
@@ -143,7 +156,7 @@ class Workspace: ObservableObject
     }
     
     //MARK: Workspace progem elements checking functions
-    public func elements_check() //Selec check by element type
+    public func elements_check() //Select check by element type
     {
         for element in elements
         {
@@ -175,9 +188,9 @@ class Workspace: ObservableObject
     {
         if self.number_by_name(name: element.element_data.robot_name) == -1
         {
-            if self.robots.count > 0
+            if self.placed_robots_names.count > 0
             {
-                element.element_data.robot_name = self.robots_names[0]
+                element.element_data.robot_name = self.placed_robots_names.first!
             }
             else
             {
