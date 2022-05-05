@@ -168,9 +168,25 @@ struct ComplexWorkspaceView: View
                     {
                         Button(action: { add_robot_in_workspace_view_presented.toggle() })
                         {
+                            #if os(macOS)
                             Image(systemName: "plus")
                                 .imageScale(.large)
                                 .padding()
+                            #else
+                            if base_workspace.avaliable_robots_names.count > 0
+                            {
+                                Image(systemName: "plus")
+                                    .imageScale(.large)
+                                    .padding()
+                            }
+                            else
+                            {
+                                Image(systemName: "plus")
+                                    .imageScale(.large)
+                                    .foregroundColor(Color.secondary)
+                                    .padding()
+                            }
+                            #endif
                         }
                         .buttonStyle(.borderless)
                         #if os(iOS)
@@ -187,9 +203,25 @@ struct ComplexWorkspaceView: View
                         
                         Button(action: { robot_info_view_presented.toggle() })
                         {
+                            #if os(macOS)
                             Image(systemName: "info.circle")
                                 .imageScale(.large)
                                 .padding()
+                            #else
+                            if base_workspace.selected_robot_index > -1
+                            {
+                                Image(systemName: "info.circle")
+                                    .imageScale(.large)
+                                    .padding()
+                            }
+                            else
+                            {
+                                Image(systemName: "info.circle")
+                                    .imageScale(.large)
+                                    .foregroundColor(Color.secondary)
+                                    .padding()
+                            }
+                            #endif
                         }
                         .buttonStyle(.borderless)
                         #if os(iOS)
