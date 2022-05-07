@@ -229,7 +229,7 @@ struct ComplexWorkspaceView: View
                         #endif
                         .popover(isPresented: $robot_info_view_presented)
                         {
-                            RobotInfoView(robot_info_view_presented: $robot_info_view_presented)
+                            RobotInfoView(robot_info_view_presented: $robot_info_view_presented, document: $document)
                         }
                         .disabled(base_workspace.selected_robot_index == -1)
                     }
@@ -332,61 +332,66 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: NSClickGestureRecognizer)
         {
-            let tap_location = sender.location(in: scn_view)
-            let hit_results = scn_view.hitTest(tap_location, options: [:])
-            var result = SCNHitTestResult()
-            
-            if hit_results.count > 0
+            if workspace.is_robot_editing == false
             {
-                result = hit_results[0]
+                let tap_location = sender.location(in: scn_view)
+                let hit_results = scn_view.hitTest(tap_location, options: [:])
+                var result = SCNHitTestResult()
                 
-                print(result.localCoordinates)
-                //print("🍮 tapped – \(result.node.name!)")
-                var robot_name = ""
-                
-                //Find robot node name
-                if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
+                if hit_results.count > 0
                 {
-                    robot_name = (result.node.parent?.parent?.name)!
+                    result = hit_results[0]
+                    
+                    print(result.localCoordinates)
+                    //print("🍮 tapped – \(result.node.name!)")
+                    var robot_name = ""
+                    
+                    //Find robot node name
+                    if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
+                    {
+                        robot_name = (result.node.parent?.parent?.name)!
+                    }
+                    else
+                    {
+                        let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
+                        var cycled_node = result.node.parent
+                        
+                        if detail_number != 0 && result.node.parent?.name?.first == "d"
+                        {
+                            while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
+                            {
+                                cycled_node = cycled_node?.parent
+                            }
+                            
+                            robot_name = (cycled_node?.parent?.parent?.name)!
+                        }
+                    }
+                    
+                    print("🍮 tapped – \(robot_name)")
+                    workspace.update_view()
+                    
+                    if workspace.selected_robot_index > -1
+                    {
+                        workspace.selected_robot.unit_origin_node?.isHidden = true
+                    }
+                    workspace.select_robot(name: robot_name)
+                    
+                    if workspace.selected_robot_index > -1
+                    {
+                        workspace.selected_robot.unit_origin_node?.isHidden = false
+                    }
                 }
                 else
                 {
-                    let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
-                    var cycled_node = result.node.parent
-                    
-                    if detail_number != 0 && result.node.parent?.name?.first == "d"
+                    if workspace.selected_robot_index > -1
                     {
-                        while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
-                        {
-                            cycled_node = cycled_node?.parent
-                        }
+                        workspace.selected_robot.unit_origin_node?.isHidden = true
                         
-                        robot_name = (cycled_node?.parent?.parent?.name)!
+                        workspace.selected_robot_index = -1
+                        workspace.update_view()
                     }
+                    //workspace.select_robot(name: "")
                 }
-                
-                print("🍮 tapped – \(robot_name)")
-                workspace.update_view()
-                
-                if workspace.selected_robot_index > -1
-                {
-                    workspace.selected_robot.unit_origin_node?.isHidden = true
-                }
-                workspace.select_robot(name: robot_name)
-                
-                if workspace.selected_robot_index > -1
-                {
-                    workspace.selected_robot.unit_origin_node?.isHidden = false
-                }
-            }
-            else
-            {
-                if workspace.selected_robot_index > -1
-                {
-                    workspace.selected_robot.unit_origin_node?.isHidden = true
-                }
-                workspace.select_robot(name: "")
-                workspace.update_view()
             }
         }
     }
@@ -477,62 +482,65 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: UITapGestureRecognizer)
         {
-            let tap_location = sender.location(in: scn_view)
-            let hit_results = scn_view.hitTest(tap_location, options: [:])
-            var result = SCNHitTestResult()
-            
-            if hit_results.count > 0
+            if base_workspace.is_robot_editing == false
             {
-                result = hit_results[0]
+                let tap_location = sender.location(in: scn_view)
+                let hit_results = scn_view.hitTest(tap_location, options: [:])
+                var result = SCNHitTestResult()
                 
-                print(result.localCoordinates)
-                //print("🍮 tapped – \(result.node.name!)")
-                var robot_name = ""
-                
-                //Find robot node name
-                if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
+                if hit_results.count > 0
                 {
-                    robot_name = (result.node.parent?.parent?.name)!
+                    result = hit_results[0]
+                    
+                    print(result.localCoordinates)
+                    //print("🍮 tapped – \(result.node.name!)")
+                    var robot_name = ""
+                    
+                    //Find robot node name
+                    if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
+                    {
+                        robot_name = (result.node.parent?.parent?.name)!
+                    }
+                    else
+                    {
+                        let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
+                        var cycled_node = result.node.parent
+                        
+                        if detail_number != 0 && result.node.parent?.name?.first == "d"
+                        {
+                            while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
+                            {
+                                cycled_node = cycled_node?.parent
+                            }
+                            
+                            robot_name = (cycled_node?.parent?.parent?.name)!
+                        }
+                    }
+                    
+                    print("🍮 tapped – \(robot_name)")
+                    workspace.update_view()
+                    
+                    if workspace.selected_robot_index > -1
+                    {
+                        workspace.selected_robot.unit_origin_node?.isHidden = true
+                    }
+                    workspace.select_robot(name: robot_name)
+                    
+                    if workspace.selected_robot_index > -1
+                    {
+                        workspace.selected_robot.unit_origin_node?.isHidden = false
+                    }
+                    //print(workspace.selected_robot.programs_names)
                 }
                 else
                 {
-                    let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
-                    var cycled_node = result.node.parent
-                    
-                    if detail_number != 0 && result.node.parent?.name?.first == "d"
+                    if workspace.selected_robot_index > -1
                     {
-                        while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
-                        {
-                            cycled_node = cycled_node?.parent
-                        }
-                        
-                        robot_name = (cycled_node?.parent?.parent?.name)!
+                        workspace.selected_robot.unit_origin_node?.isHidden = true
                     }
+                    workspace.select_robot(name: "")
+                    workspace.update_view()
                 }
-                
-                print("🍮 tapped – \(robot_name)")
-                workspace.update_view()
-                
-                if workspace.selected_robot_index > -1
-                {
-                    workspace.selected_robot.unit_origin_node?.isHidden = true
-                }
-                workspace.select_robot(name: robot_name)
-                
-                if workspace.selected_robot_index > -1
-                {
-                    workspace.selected_robot.unit_origin_node?.isHidden = false
-                }
-                //print(workspace.selected_robot.programs_names)
-            }
-            else
-            {
-                if workspace.selected_robot_index > -1
-                {
-                    workspace.selected_robot.unit_origin_node?.isHidden = true
-                }
-                workspace.select_robot(name: "")
-                workspace.update_view()
             }
         }
     }
@@ -567,11 +575,11 @@ struct AddRobotInWorkspaceView: View
             HStack
             {
                 #if os(iOS)
-                Text("Robot")
+                Text("Name")
                     .font(.subheadline)
                 #endif
                 
-                Picker("Robot", selection: $selected_robot_name) //Select robot for place in workspace
+                Picker("Name", selection: $selected_robot_name) //Select robot for place in workspace
                 {
                     ForEach(base_workspace.avaliable_robots_names, id: \.self)
                     { name in
@@ -869,18 +877,274 @@ struct AddRobotInWorkspaceView: View
 struct RobotInfoView: View
 {
     @Binding var robot_info_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @EnvironmentObject var base_workspace: Workspace
     
     var body: some View
     {
-        VStack
+        VStack(spacing: 0)
         {
-            Text("Robot Info View")
-                .padding()
+            Text("\(base_workspace.selected_robot.name ?? "None")")//("Add robot in workspace")
+                .font(.title3)
+                .padding([.top, .leading, .trailing])
+            
+            #if os(macOS)
+            HStack(spacing: 16)
+            {
+                GroupBox(label: Text("Location")
+                    .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("X:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[0], in: -1000...1000)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("Y:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[1], in: -1000...1000)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("Z:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[2], in: -1000...1000)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+    
+                GroupBox(label: Text("Rotation")
+                    .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("R:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[0], in: -180...180)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("P:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[1], in: -180...180)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("W:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[2], in: -180...180)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+            }
+            .padding([.top, .leading, .trailing])
+            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+            { _ in
+                update_unit_origin_position()
+            }
+            #else
+            VStack(spacing: 12)
+            {
+                GroupBox(label: Text("Location")
+                    .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("X:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[0], in: -1000...1000)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("Y:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[1], in: -1000...1000)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("Z:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.location[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.location[2], in: -1000...1000)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+    
+                GroupBox(label: Text("Rotation")
+                    .font(.headline))
+                {
+                    VStack(spacing: 12)
+                    {
+                        HStack(spacing: 8)
+                        {
+                            Text("R:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[0], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[0], in: -180...180)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("P:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[1], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[1], in: -180...180)
+                                .labelsHidden()
+                        }
+            
+                        HStack(spacing: 8)
+                        {
+                            Text("W:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $base_workspace.selected_robot.rotation[2], format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.decimalPad)
+                            Stepper("Enter", value: $base_workspace.selected_robot.rotation[2], in: -180...180)
+                                .labelsHidden()
+                        }
+                    }
+                    .padding(8.0)
+                }
+            }
+            .padding([.top, .leading, .trailing])
+            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+            { _ in
+                update_unit_origin_position()
+            }
+            #endif
+            
+            HStack
+            {
+                Button(action: remove_robot)
+                {
+                    Text("Remove from workspace")
+                    #if os(macOS)
+                        .frame(maxWidth: .infinity)
+                    #else
+                        .frame(maxWidth: .infinity, minHeight: 32)
+                        .background(Color.accentColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    #endif
+                }
+                    //.keyboardShortcut(.defaultAction)
+                    .padding()
+                    //.foregroundColor(Color.white)
+            }
         }
-        /*.onDisappear
+        .onAppear
         {
-            robot_info_view_presented.toggle()
-        }*/
+            view_robot()
+        }
+        .onDisappear
+        {
+            dismiss_view()
+        }
+    }
+    
+    func view_robot() //Get robot and update position
+    {
+        base_workspace.is_robot_editing = true
+        base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: base_workspace.selected_robot.name!, recursively: false)!
+    }
+    
+    func update_unit_origin_position()
+    {
+        #if os(macOS)
+        base_workspace.unit_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_robot.location[0]), y: CGFloat(base_workspace.selected_robot.location[2]), z: CGFloat(base_workspace.selected_robot.location[1]))
+        
+        base_workspace.unit_node?.eulerAngles.x = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1]))
+        base_workspace.unit_node?.eulerAngles.y = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2]))
+        base_workspace.unit_node?.eulerAngles.z = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0]))
+        #else
+        base_workspace.unit_node?.worldPosition = SCNVector3(x: base_workspace.selected_robot.location[0], y: base_workspace.selected_robot.location[2], z: base_workspace.selected_robot.location[1])
+        
+        base_workspace.unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1])))
+        base_workspace.unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2])))
+        base_workspace.unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0])))
+        #endif
+    }
+    
+    func remove_robot()
+    {
+        base_workspace.selected_robot.is_placed = false
+        //base_workspace.elements_check()
+        //document.preset.elements = base_workspace.file_data().elements
+        robot_info_view_presented.toggle()
+    }
+    
+    func dismiss_view()
+    {
+        if base_workspace.selected_robot.is_placed == false
+        {
+            base_workspace.selected_robot.location = [0, 0, 0]
+            base_workspace.selected_robot.rotation = [0, 0, 0]
+            
+            base_workspace.selected_robot_index = -1
+            base_workspace.elements_check()
+            document.preset.elements = base_workspace.file_data().elements
+            base_workspace.update_view()
+            
+            base_workspace.unit_node?.removeFromParentNode()
+        }
+        else
+        {
+            //base_workspace.elements_check()
+            document.preset.robots = base_workspace.file_data().robots
+            //base_workspace.update_view()
+        }
+        base_workspace.is_robot_editing = false
     }
 }
 

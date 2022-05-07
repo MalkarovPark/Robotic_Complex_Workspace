@@ -89,8 +89,16 @@ class Workspace: ObservableObject
         }
         set
         {
-            robots[selected_robot_index] = newValue
+            if selected_robot_index > -1
+            {
+                robots[selected_robot_index] = newValue
+            }
         }
+    }
+    
+    public func robot_by_name(name: String) -> Robot
+    {
+        return self.robots[number_by_name(name: name)]
     }
     
     public var avaliable_robots_names: [String]
@@ -186,7 +194,7 @@ class Workspace: ObservableObject
     
     private func element_robot_check(element: WorkspaceProgramElement) //Check element by selected robot exists
     {
-        if self.number_by_name(name: element.element_data.robot_name) == -1
+        if self.robot_by_name(name: element.element_data.robot_name).is_placed == false
         {
             if self.placed_robots_names.count > 0
             {
@@ -267,6 +275,8 @@ class Workspace: ObservableObject
     }
     
     //MARK: - UI Functions
+    public var is_robot_editing = false
+    
     func update_view() //Force update SwiftUI view
     {
         self.objectWillChange.send()
