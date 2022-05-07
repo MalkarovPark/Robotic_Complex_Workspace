@@ -296,7 +296,6 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         ui_view.rendersContinuously = true
         
         //Update commands
-        
         if app_state.reset_view == true
         {
             app_state.reset_view = false
@@ -379,7 +378,6 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 {
                     workspace.selected_robot.unit_origin_node?.isHidden = false
                 }
-                //print(workspace.selected_robot.programs_names)
             }
             else
             {
@@ -584,7 +582,6 @@ struct AddRobotInWorkspaceView: View
                 {
                     selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
                     view_robot()
-                    //base_workspace.unit_point_node?.isHidden = false
                 }
                 .onChange(of: selected_robot_name)
                 { _ in
@@ -679,7 +676,7 @@ struct AddRobotInWorkspaceView: View
                     .padding(8.0)
                 }
             }
-            .padding()
+            .padding([.top, .leading, .trailing])
             .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
             { _ in
                 update_unit_origin_position()
@@ -770,31 +767,28 @@ struct AddRobotInWorkspaceView: View
                 }
             }
             .padding([.top, .leading, .trailing])
-            .padding(.bottom, 8.0)
             .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
             { _ in
                 update_unit_origin_position()
             }
-
-            Spacer()
             #endif
             
-            //MARK: Place and cancel buttons
-            Divider()
             HStack
             {
-                Button("Cancel", action: { add_robot_in_workspace_view_presented.toggle()
-                    dismiss_view() })
-                    .padding()
-                
-                Spacer()
-                
-                Button("Place", action: place_robot)
+                Button(action: place_robot)
+                {
+                    Text("Place")
+                    #if os(macOS)
+                        .frame(maxWidth: .infinity)
+                    #else
+                        .frame(maxWidth: .infinity, minHeight: 32)
+                        .background(Color.accentColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    #endif
+                }
                     .keyboardShortcut(.defaultAction)
                     .padding()
-                #if os(macOS)
                     .foregroundColor(Color.white)
-                #endif
             }
         }
         .onDisappear
