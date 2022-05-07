@@ -482,7 +482,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: UITapGestureRecognizer)
         {
-            if base_workspace.is_robot_editing == false
+            if workspace.is_robot_editing == false
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -1074,7 +1074,8 @@ struct RobotInfoView: View
                         .frame(maxWidth: .infinity)
                     #else
                         .frame(maxWidth: .infinity, minHeight: 32)
-                        .background(Color.accentColor)
+                        .background(.thinMaterial)
+                        .foregroundColor(Color.red)
                         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                     #endif
                 }
