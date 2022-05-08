@@ -1079,9 +1079,7 @@ struct RobotInfoView: View
                         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                     #endif
                 }
-                    //.keyboardShortcut(.defaultAction)
-                    .padding()
-                    //.foregroundColor(Color.white)
+                .padding()
             }
         }
         .onAppear

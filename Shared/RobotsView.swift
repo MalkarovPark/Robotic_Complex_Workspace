@@ -1666,6 +1666,10 @@ struct PositionItemView: View
                         }
                     }
                     .padding(8.0)
+                    .onChange(of: item_view_pos_location)
+                    { _ in
+                        update_point_location()
+                    }
                 }
                 
                 GroupBox(label: Text("Rotation")
@@ -1704,9 +1708,13 @@ struct PositionItemView: View
                         }
                     }
                     .padding(8.0)
+                    .onChange(of: item_view_pos_rotation)
+                    { _ in
+                        update_point_rotation()
+                    }
                 }
             }
-            .padding()
+            .padding([.top, .leading, .trailing])
             #else
             VStack(spacing: 12)
             {
@@ -1749,6 +1757,10 @@ struct PositionItemView: View
                         }
                     }
                     .padding(8.0)
+                    .onChange(of: item_view_pos_location)
+                    { _ in
+                        update_point_location()
+                    }
                 }
                 
                 GroupBox(label: Text("Rotation")
@@ -1790,28 +1802,30 @@ struct PositionItemView: View
                         }
                     }
                     .padding(8.0)
+                    .onChange(of: item_view_pos_rotation)
+                    { _ in
+                        update_point_rotation()
+                    }
                 }
             }
             .padding([.top, .leading, .trailing])
-            .padding(.bottom, 8.0)
-            
-            Spacer()
             #endif
             
-            Divider()
             HStack
             {
-                Button("Delete", action: delete_point_from_program)
-                    .padding()
-                
-                Spacer()
-                
-                Button("Save", action: update_point_in_program)
-                    .keyboardShortcut(.defaultAction)
-                    .padding()
-                #if os(macOS)
-                    .foregroundColor(Color.white)
-                #endif
+                Button(action: delete_point_from_program)
+                {
+                    Text("Delete")
+                    #if os(macOS)
+                        .frame(maxWidth: .infinity)
+                    #else
+                        .frame(maxWidth: .infinity, minHeight: 32)
+                        .background(.thinMaterial)
+                        .foregroundColor(Color.red)
+                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    #endif
+                }
+                .padding()
             }
         }
         .onAppear()
@@ -1825,24 +1839,36 @@ struct PositionItemView: View
     }
     
     //MARK: Point manage functions
-    func update_point_in_program()
+    func update_point_location()
     {
         #if os(macOS)
         point_item.position = SCNVector3(x: item_view_pos_location[0], y: item_view_pos_location[1], z: item_view_pos_location[2])
+        #else
+        point_item.position = SCNVector3(x: Float(item_view_pos_location[0]), y: Float(item_view_pos_location[1]), z: Float(item_view_pos_location[2]))
+        #endif
+        
+        update_workspace_data()
+    }
+    
+    func update_point_rotation()
+    {
+        #if os(macOS)
         point_item.rotation.x = to_rad(in_angle: item_view_pos_rotation[0])
         point_item.rotation.y = to_rad(in_angle: item_view_pos_rotation[1])
         point_item.rotation.z = to_rad(in_angle: item_view_pos_rotation[2])
         #else
-        point_item.position = SCNVector3(x: Float(item_view_pos_location[0]), y: Float(item_view_pos_location[1]), z: Float(item_view_pos_location[2]))
         point_item.rotation.x = Float(to_rad(in_angle: item_view_pos_rotation[0]))
         point_item.rotation.y = Float(to_rad(in_angle: item_view_pos_rotation[1]))
         point_item.rotation.z = Float(to_rad(in_angle: item_view_pos_rotation[2]))
         #endif
         
+        update_workspace_data()
+    }
+    
+    func update_workspace_data()
+    {
         base_workspace.update_view()
-        position_item_view_presented.toggle()
-        
-        base_workspace.selected_robot.selected_program.selected_point_index = -1
+        base_workspace.selected_robot.selected_program.visual_build()
         document.preset.robots = base_workspace.file_data().robots
         app_state.get_scene_image = true
     }
