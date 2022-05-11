@@ -80,6 +80,7 @@ struct RobotsTableView: View
                             {
                                 view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
                             }
+                            .transition(AnyTransition.scale)
                         }
                     }
                     .padding(16)

@@ -215,7 +215,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var move_time: Double?
     public var trail_draw = false
     public var is_moving = false
-    public var moving_completed = false //The flag is set if the robot has passed all positions. Used for indication in GUI.
+    public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
     public var target_point_index = 0 //Index of target point in points array
     
     public var pointer_location = [0.0, 0.0, 0.0] //x, y, z

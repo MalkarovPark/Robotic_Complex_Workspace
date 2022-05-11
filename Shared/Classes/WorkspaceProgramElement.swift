@@ -136,6 +136,8 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
         
         return info
     }
+    
+    public var is_selected = false
 }
 
 //MARK: - Models of program element data

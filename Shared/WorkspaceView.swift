@@ -12,8 +12,11 @@ import UniformTypeIdentifiers
 struct WorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    @State var cycle = false
+    
+    //@State var cycle = false
     @State var worked = false
+    
+    @EnvironmentObject var base_workspace: Workspace
     
     #if os(iOS)
     //MARK: Horizontal window size handler
@@ -97,7 +100,7 @@ struct WorkspaceView: View
                 {
                     Button(action: change_cycle)
                     {
-                        if cycle == false
+                        if base_workspace.cycled == false
                         {
                             Label("One", systemImage: "repeat.1")
                         }
@@ -106,11 +109,11 @@ struct WorkspaceView: View
                             Label("Repeat", systemImage: "repeat")
                         }
                     }
-                    Button(action: add_robot)
+                    Button(action: stop_perform)
                     {
                         Label("Reset", systemImage: "stop")
                     }
-                    Button(action: change_work)
+                    Button(action: toggle_perform)
                     {
                         Label("PlayPause", systemImage: "playpause")
                     }
@@ -119,19 +122,19 @@ struct WorkspaceView: View
         }
     }
     
-    func add_robot()
+    func stop_perform()
     {
-        print("🪄")
+        base_workspace.reset_perform()
     }
     
-    func change_work()
+    func toggle_perform()
     {
-        print("🪄")
+        base_workspace.start_pause_perform()
     }
     
     func change_cycle()
     {
-        cycle.toggle()
+        base_workspace.cycled.toggle()
     }
 }
 
@@ -1444,6 +1447,26 @@ struct ElementCardView: View
                  arrowEdge: .trailing)
         {
             ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, document: $document, new_element_item_data: element_item.element_data, on_delete: on_delete)
+        }
+        .overlay
+        {
+            if element_item.is_selected == true
+            {
+                VStack
+                {
+                    HStack
+                    {
+                        Spacer()
+                        Circle()
+                            .foregroundColor(Color.yellow)
+                            .frame(width: 16, height: 16)
+                            .padding()
+                            .shadow(radius: 8.0)
+                            .transition(AnyTransition.scale)
+                    }
+                    Spacer()
+                }
+            }
         }
     }
     

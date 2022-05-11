@@ -237,6 +237,62 @@ class Workspace: ObservableObject
         }
     }
     
+    @Published var cycled = false
+    
+    public var is_performing = false
+    public var selected_element_index = 0
+    
+    public func start_pause_perform()
+    {
+        if is_performing == false
+        {
+            //Move to next point if moving was stop
+            is_performing = true
+            perfom_next_element()
+        }
+        else
+        {
+            //Remove all action if moving was perform
+            is_performing = false
+        }
+    }
+    
+    public func perfom_next_element()
+    {
+        if selected_element_index < elements.count
+        {
+            update_view()
+            elements[selected_element_index].is_selected = true
+            print(elements[selected_element_index].subtype + "🔮")
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2)
+            {
+                self.update_view()
+                self.elements[self.selected_element_index].is_selected = false
+                self.selected_element_index += 1
+                self.perfom_next_element()
+            }
+        }
+        else
+        {
+            selected_element_index = 0
+            if cycled == true
+            {
+                perfom_next_element()
+            }
+            else
+            {
+                is_performing = false
+            }
+            print("Finished")
+        }
+    }
+    
+    public func reset_perform()
+    {
+        selected_element_index = 0
+    }
+    
     //MARK: - Work with file system
     public func file_data() -> (robots: [robot_struct], elements: [workspace_program_element_struct])
     {
