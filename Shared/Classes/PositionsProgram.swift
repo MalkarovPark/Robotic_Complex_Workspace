@@ -6,7 +6,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
 {
     static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
-        return lhs.id == rhs.id
+        return lhs.name == rhs.name //lhs.id == rhs.id
     }
     
     public var name: String?

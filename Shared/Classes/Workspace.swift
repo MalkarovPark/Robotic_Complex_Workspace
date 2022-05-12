@@ -241,6 +241,7 @@ class Workspace: ObservableObject
     
     public var is_performing = false
     public var selected_element_index = 0
+    public var workspace_scene = SCNScene()
     
     public func start_pause_perform()
     {
@@ -248,7 +249,13 @@ class Workspace: ObservableObject
         {
             //Move to next point if moving was stop
             is_performing = true
-            perfom_next_element()
+            
+            let queue = DispatchQueue.global(qos: .utility)
+            queue.async
+            {
+                self.perfom_next_element()
+            }
+            //perfom_next_element()
         }
         else
         {
@@ -262,16 +269,56 @@ class Workspace: ObservableObject
         if selected_element_index < elements.count
         {
             update_view()
-            elements[selected_element_index].is_selected = true
-            print(elements[selected_element_index].subtype + "🔮")
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2)
+            let element = elements[selected_element_index]
+            
+            element.is_selected = true
+            
+            switch element.element_data.element_type
+            {
+            case .perofrmer:
+                switch element.element_data.performer_type
+                {
+                case .robot:
+                    select_robot(name: element.element_data.robot_name)
+                    if selected_robot.programs_names.count > 0
+                    {
+                        selected_robot.robot_workcell_connect(scene: workspace_scene, name: selected_robot.name!, connect_camera: false)
+                        selected_robot.select_program(name: element.element_data.robot_program_name)
+                        selected_robot.start_pause_moving()
+                        while selected_robot.moving_completed == false
+                        {
+                            
+                        }
+                    }
+                    break
+                case .tool:
+                    break
+                }
+            case .modificator:
+                break
+            case .logic:
+                switch element.element_data.logic_type
+                {
+                case .jump:
+                    break
+                default:
+                    break
+                }
+            }
+            
+            /*DispatchQueue.main.asyncAfter(deadline: .now() + 2)
             {
                 self.update_view()
                 self.elements[self.selected_element_index].is_selected = false
                 self.selected_element_index += 1
                 self.perfom_next_element()
-            }
+            }*/
+            
+            update_view()
+            elements[selected_element_index].is_selected = false
+            selected_element_index += 1
+            perfom_next_element()
         }
         else
         {

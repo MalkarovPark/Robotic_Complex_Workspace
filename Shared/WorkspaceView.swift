@@ -289,6 +289,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         app_state.workspace_scene = viewed_scene
+        base_workspace.workspace_scene = viewed_scene
         
         return scn_scene(context: context)
     }
@@ -401,6 +402,27 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func scene_check() //Render functions
     {
+        if base_workspace.selected_robot_index != -1
+        {
+            base_workspace.selected_robot.update_robot()
+            
+            if base_workspace.selected_robot.moving_completed == true
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                {
+                    base_workspace.selected_robot.moving_completed = false
+                    base_workspace.update_view()
+                }
+            }
+            if base_workspace.selected_robot.is_moving == true
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                {
+                    base_workspace.update_view()
+                }
+            }
+        }
+        
         app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
         //app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
     }
@@ -550,6 +572,27 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func scene_check() //Render functions
     {
+        if base_workspace.selected_robot_index != -1
+        {
+            base_workspace.selected_robot.update_robot()
+            
+            if base_workspace.selected_robot.moving_completed == true
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                {
+                    base_workspace.selected_robot.moving_completed = false
+                    base_workspace.update_view()
+                }
+            }
+            if base_workspace.selected_robot.is_moving == true
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                {
+                    base_workspace.update_view()
+                }
+            }
+        }
+        
         app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
         //app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
     }
