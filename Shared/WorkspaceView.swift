@@ -402,7 +402,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func scene_check() //Render functions
     {
-        if base_workspace.selected_robot_index != -1
+        if base_workspace.selected_robot_index != -1 && base_workspace.is_performing == true
         {
             base_workspace.selected_robot.update_robot()
             
@@ -556,16 +556,16 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                     {
                         workspace.selected_robot.unit_origin_node?.isHidden = false
                     }
-                    //print(workspace.selected_robot.programs_names)
                 }
                 else
                 {
                     if workspace.selected_robot_index > -1
                     {
                         workspace.selected_robot.unit_origin_node?.isHidden = true
+                        
+                        workspace.selected_robot_index = -1
+                        workspace.update_view()
                     }
-                    workspace.select_robot(name: "")
-                    workspace.update_view()
                 }
             }
         }
@@ -573,7 +573,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func scene_check() //Render functions
     {
-        if base_workspace.selected_robot_index != -1
+        if base_workspace.selected_robot_index != -1 && base_workspace.is_performing == true
         {
             base_workspace.selected_robot.update_robot()
             
