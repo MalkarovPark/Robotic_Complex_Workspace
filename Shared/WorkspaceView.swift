@@ -461,6 +461,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         app_state.workspace_scene = viewed_scene
+        base_workspace.workspace_scene = viewed_scene
         
         return scn_scene(context: context)
     }
