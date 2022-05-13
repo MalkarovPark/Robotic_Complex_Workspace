@@ -249,18 +249,21 @@ class Workspace: ObservableObject
         {
             //Move to next point if moving was stop
             is_performing = true
+            selected_robot.unit_origin_node?.isHidden = true
+            selected_robot_index = -1
             
             let queue = DispatchQueue.global(qos: .utility)
             queue.async
             {
                 self.perfom_next_element()
             }
-            //perfom_next_element()
         }
         else
         {
             //Remove all action if moving was perform
             is_performing = false
+            selected_robot.start_pause_moving()
+            selected_robot_index = -1
         }
     }
     
@@ -286,7 +289,7 @@ class Workspace: ObservableObject
                         selected_robot.robot_workcell_connect(scene: workspace_scene, name: selected_robot.name!, connect_camera: false)
                         selected_robot.select_program(name: element.element_data.robot_program_name)
                         selected_robot.start_pause_moving()
-                        while selected_robot.moving_completed == false
+                        while selected_robot.moving_completed == false && self.is_performing == true
                         {
                             
                         }
@@ -307,22 +310,19 @@ class Workspace: ObservableObject
                 }
             }
             
-            /*DispatchQueue.main.asyncAfter(deadline: .now() + 2)
+            if is_performing == true
             {
-                self.update_view()
-                self.elements[self.selected_element_index].is_selected = false
-                self.selected_element_index += 1
-                self.perfom_next_element()
-            }*/
-            
-            update_view()
-            elements[selected_element_index].is_selected = false
-            selected_element_index += 1
-            perfom_next_element()
+                update_view()
+                elements[selected_element_index].is_selected = false
+                selected_element_index += 1
+                perfom_next_element()
+            }
         }
         else
         {
             selected_element_index = 0
+            selected_robot_index = -1
+            
             if cycled == true
             {
                 perfom_next_element()
@@ -337,7 +337,13 @@ class Workspace: ObservableObject
     
     public func reset_perform()
     {
+        elements[selected_element_index].is_selected = false
+        selected_robot.reset_moving()
         selected_element_index = 0
+        selected_robot_index = -1
+        
+        is_performing = false
+        print("Finished")
     }
     
     //MARK: - Work with file system
