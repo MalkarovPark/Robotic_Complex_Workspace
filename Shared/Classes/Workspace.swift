@@ -252,6 +252,8 @@ class Workspace: ObservableObject
             selected_robot.unit_origin_node?.isHidden = true
             selected_robot_index = -1
             
+            defining_elements_indexes()
+            
             let queue = DispatchQueue.global(qos: .utility)
             queue.async
             {
@@ -267,6 +269,40 @@ class Workspace: ObservableObject
         }
     }
     
+    private func defining_elements_indexes()
+    {
+        //Find mark elements indexes
+        var marks_associations = [(String, Int)]()
+        var element_data = workspace_program_element_struct()
+        for i in 0..<elements.count
+        {
+            element_data = elements[i].element_data
+            if element_data.element_type == .logic && element_data.logic_type == .mark
+            {
+                marks_associations.append((element_data.mark_name, i))
+            }
+        }
+        print(marks_associations)
+        
+        //Set target element indexes of marks to jump elements.
+        var target_mark_name: String
+        for element in elements
+        {
+            if element.element_data.element_type == .logic && element.element_data.logic_type == .jump
+            {
+                target_mark_name = element.element_data.target_mark_name
+                for marks_association in marks_associations
+                {
+                    if marks_association.0 == target_mark_name
+                    {
+                        element.target_element_index = marks_association.1
+                        break
+                    }
+                }
+            }
+        }
+    }
+    
     public func perfom_next_element()
     {
         if selected_element_index < elements.count
@@ -274,6 +310,7 @@ class Workspace: ObservableObject
             update_view()
             
             let element = elements[selected_element_index]
+            var jumped = false
             
             element.is_selected = true
             
@@ -284,7 +321,7 @@ class Workspace: ObservableObject
                 {
                 case .robot:
                     select_robot(name: element.element_data.robot_name)
-                    if selected_robot.programs_names.count > 0
+                    if selected_robot.programs_names.count > 0 && element.element_data.robot_program_name != ""
                     {
                         selected_robot.robot_workcell_connect(scene: workspace_scene, name: selected_robot.name!, connect_camera: false)
                         selected_robot.select_program(name: element.element_data.robot_program_name)
@@ -304,7 +341,7 @@ class Workspace: ObservableObject
                 switch element.element_data.logic_type
                 {
                 case .jump:
-                    break
+                    jumped = true
                 default:
                     break
                 }
@@ -314,7 +351,16 @@ class Workspace: ObservableObject
             {
                 update_view()
                 elements[selected_element_index].is_selected = false
-                selected_element_index += 1
+                
+                if jumped == false
+                {
+                    selected_element_index += 1
+                }
+                else
+                {
+                    selected_element_index = element.target_element_index
+                }
+                
                 perfom_next_element()
             }
         }

@@ -1154,6 +1154,7 @@ struct RobotInfoView: View
             base_workspace.selected_robot_index = -1
             base_workspace.elements_check()
             document.preset.elements = base_workspace.file_data().elements
+            document.preset.robots = base_workspace.file_data().robots
             base_workspace.update_view()
             
             base_workspace.unit_node?.removeFromParentNode()

@@ -138,6 +138,7 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
     }
     
     public var is_selected = false
+    public var target_element_index = 0 //The index of the target mark element for the jump element.
 }
 
 //MARK: - Models of program element data
