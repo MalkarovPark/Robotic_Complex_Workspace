@@ -249,6 +249,8 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     func makeNSView(context: Context) -> SCNView
     {
         //Begin commands
+        base_workspace.selected_robot_index = -1
+        
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
         
@@ -256,6 +258,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         base_workspace.place_robots(scene: viewed_scene)
         
         //Connect camera light for follow
+        app_state.camera_light_node = SCNNode()
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
         
         //Add gesture recognizer
@@ -421,6 +424,8 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     func makeUIView(context: Context) -> SCNView
     {
         //Begin commands
+        base_workspace.selected_robot_index = -1
+        
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
         
@@ -428,6 +433,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         base_workspace.place_robots(scene: viewed_scene)
         
         //Connect camera light for follow
+        app_state.camera_light_node = SCNNode()
         app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
         
         //Add gesture recognizer
@@ -1890,6 +1896,8 @@ struct PerformerElementView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
+    @State var viewed_robot = Robot()
+    
     var body: some View
     {
         VStack
@@ -1917,10 +1925,10 @@ struct PerformerElementView: View
                     }
                     .onChange(of: robot_name)
                     { _ in
-                        base_workspace.select_robot(name: robot_name)
-                        if base_workspace.selected_robot.programs_names.count > 0
+                        viewed_robot = base_workspace.robot_by_name(name: robot_name)
+                        if viewed_robot.programs_names.count > 0
                         {
-                            robot_program_name = base_workspace.selected_robot.programs_names[0]
+                            robot_program_name = viewed_robot.programs_names.first ?? ""
                         }
                         base_workspace.update_view()
                     }
@@ -1932,7 +1940,7 @@ struct PerformerElementView: View
                         }
                         else
                         {
-                            base_workspace.select_robot(name: robot_name)
+                            viewed_robot = base_workspace.robot_by_name(name: robot_name)
                             base_workspace.update_view()
                         }
                     }
@@ -1941,9 +1949,9 @@ struct PerformerElementView: View
                     
                     Picker("Program", selection: $robot_program_name) //Robot program picker
                     {
-                        if base_workspace.selected_robot.programs_names.count > 0
+                        if viewed_robot.programs_names.count > 0
                         {
-                            ForEach(base_workspace.selected_robot.programs_names, id: \.self)
+                            ForEach(viewed_robot.programs_names, id: \.self)
                             { name in
                                 Text(name)
                             }
@@ -1953,7 +1961,7 @@ struct PerformerElementView: View
                             Text("None")
                         }
                     }
-                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                    .disabled(viewed_robot.programs_names.count == 0)
                     #else
                     VStack
                     {
@@ -1977,10 +1985,10 @@ struct PerformerElementView: View
                                 }
                                 .onChange(of: robot_name)
                                 { _ in
-                                    base_workspace.select_robot(name: robot_name)
-                                    if base_workspace.selected_robot.programs_names.count > 0
+                                    viewed_robot = base_workspace.robot_by_name(name: robot_name)
+                                    if viewed_robot.programs_names.count > 0
                                     {
-                                        robot_program_name = base_workspace.selected_robot.programs_names[0]
+                                        robot_program_name = viewed_robot.programs_names.first ?? ""
                                     }
                                     base_workspace.update_view()
                                 }
@@ -1992,7 +2000,7 @@ struct PerformerElementView: View
                                     }
                                     else
                                     {
-                                        base_workspace.select_robot(name: robot_name)
+                                        viewed_robot = base_workspace.robot_by_name(name: robot_name)
                                         base_workspace.update_view()
                                     }
                                 }
@@ -2004,9 +2012,9 @@ struct PerformerElementView: View
                                 
                                 Picker("Program", selection: $robot_program_name) //Robot program picker
                                 {
-                                    if base_workspace.selected_robot.programs_names.count > 0
+                                    if viewed_robot.programs_names.count > 0
                                     {
-                                        ForEach(base_workspace.selected_robot.programs_names, id: \.self)
+                                        ForEach(viewed_robot.programs_names, id: \.self)
                                         { name in
                                             Text(name)
                                         }
@@ -2016,7 +2024,7 @@ struct PerformerElementView: View
                                         Text("None")
                                     }
                                 }
-                                .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                                .disabled(viewed_robot.programs_names.count == 0)
                                 .pickerStyle(.wheel)
                                 .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                                 .compositingGroup()

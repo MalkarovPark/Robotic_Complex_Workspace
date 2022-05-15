@@ -199,6 +199,11 @@ class Workspace: ObservableObject
             if self.placed_robots_names.count > 0
             {
                 element.element_data.robot_name = self.placed_robots_names.first!
+                
+                if robot_by_name(name: element.element_data.robot_name).programs_count > 0
+                {
+                    element.element_data.robot_program_name = robot_by_name(name: element.element_data.robot_name).programs_names.first!
+                }
             }
             else
             {
