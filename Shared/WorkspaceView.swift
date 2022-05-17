@@ -100,13 +100,13 @@ struct WorkspaceView: View
                 {
                     Button(action: change_cycle)
                     {
-                        if base_workspace.cycled == false
+                        if base_workspace.cycled
                         {
-                            Label("One", systemImage: "repeat.1")
+                            Label("Repeat", systemImage: "repeat")
                         }
                         else
                         {
-                            Label("Repeat", systemImage: "repeat")
+                            Label("One", systemImage: "repeat.1")
                         }
                     }
                     Button(action: stop_perform)
@@ -175,7 +175,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(base_workspace.avaliable_robots_names.count == 0 || base_workspace.is_performing == true ? Color.secondary : Color.black)
+                                .foregroundColor(base_workspace.avaliable_robots_names.count == 0 || base_workspace.is_performing ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -197,7 +197,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(base_workspace.selected_robot_index == -1 || base_workspace.is_performing == true ? Color.secondary : Color.black)
+                                .foregroundColor(!base_workspace.is_selected || base_workspace.is_performing ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -208,7 +208,7 @@ struct ComplexWorkspaceView: View
                         {
                             RobotInfoView(robot_info_view_presented: $robot_info_view_presented, document: $document)
                         }
-                        .disabled(base_workspace.selected_robot_index == -1 || base_workspace.is_performing == true)
+                        .disabled(!base_workspace.is_selected || base_workspace.is_performing)
                     }
                     .background(.thinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
@@ -224,7 +224,7 @@ struct ComplexWorkspaceView: View
         }
         .onDisappear
         { 
-            base_workspace.selected_robot_index = -1
+            base_workspace.deselect_robot()
         }
     }
 }
@@ -249,7 +249,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     func makeNSView(context: Context) -> SCNView
     {
         //Begin commands
-        base_workspace.selected_robot_index = -1
+        base_workspace.deselect_robot()
         
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
@@ -277,7 +277,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         ui_view.rendersContinuously = true
         
         //Update commands
-        if app_state.reset_view == true
+        if app_state.reset_view
         {
             app_state.reset_view = false
             
@@ -313,7 +313,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: NSClickGestureRecognizer)
         {
-            if workspace.is_robot_editing == false
+            if !workspace.is_robot_editing
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -351,27 +351,26 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                     print("🍮 tapped – \(robot_name)")
                     workspace.update_view()
                     
-                    if workspace.selected_robot_index > -1
+                    if workspace.is_selected
                     {
                         workspace.selected_robot.unit_origin_node?.isHidden = true
                     }
                     workspace.select_robot(name: robot_name)
                     
-                    if workspace.selected_robot_index > -1
+                    if workspace.is_selected
                     {
                         workspace.selected_robot.unit_origin_node?.isHidden = false
                     }
                 }
                 else
                 {
-                    if workspace.selected_robot_index > -1
+                    if workspace.is_selected
                     {
                         workspace.selected_robot.unit_origin_node?.isHidden = true
                         
-                        workspace.selected_robot_index = -1
+                        workspace.deselect_robot()
                         workspace.update_view()
                     }
-                    //workspace.select_robot(name: "")
                 }
             }
         }
@@ -379,11 +378,11 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func scene_check() //Render functions
     {
-        if base_workspace.selected_robot_index != -1 && base_workspace.is_performing == true
+        if base_workspace.is_selected && base_workspace.is_performing
         {
             base_workspace.selected_robot.update_robot()
             
-            if base_workspace.selected_robot.moving_completed == true
+            if base_workspace.selected_robot.moving_completed
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
                 {
@@ -391,7 +390,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                     base_workspace.update_view()
                 }
             }
-            if base_workspace.selected_robot.is_moving == true
+            if base_workspace.selected_robot.is_moving
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
                 {
@@ -424,7 +423,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     func makeUIView(context: Context) -> SCNView
     {
         //Begin commands
-        base_workspace.selected_robot_index = -1
+        base_workspace.deselect_robot()
         
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
@@ -452,7 +451,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         ui_view.rendersContinuously = true
         
         //Update commands
-        if app_state.reset_view == true
+        if app_state.reset_view
         {
             app_state.reset_view = false
             
@@ -488,7 +487,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: UITapGestureRecognizer)
         {
-            if workspace.is_robot_editing == false
+            if !workspace.is_robot_editing
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -526,24 +525,24 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                     print("🍮 tapped – \(robot_name)")
                     workspace.update_view()
                     
-                    if workspace.selected_robot_index > -1
+                    if workspace.is_selected
                     {
                         workspace.selected_robot.unit_origin_node?.isHidden = true
                     }
                     workspace.select_robot(name: robot_name)
                     
-                    if workspace.selected_robot_index > -1
+                    if workspace.is_selected
                     {
                         workspace.selected_robot.unit_origin_node?.isHidden = false
                     }
                 }
                 else
                 {
-                    if workspace.selected_robot_index > -1
+                    if workspace.is_selected
                     {
                         workspace.selected_robot.unit_origin_node?.isHidden = true
                         
-                        workspace.selected_robot_index = -1
+                        workspace.deselect_robot()
                         workspace.update_view()
                     }
                 }
@@ -553,11 +552,11 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func scene_check() //Render functions
     {
-        if base_workspace.selected_robot_index != -1 && base_workspace.is_performing == true
+        if base_workspace.is_selected && base_workspace.is_performing
         {
             base_workspace.selected_robot.update_robot()
             
-            if base_workspace.selected_robot.moving_completed == true
+            if base_workspace.selected_robot.moving_completed
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
                 {
@@ -565,7 +564,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                     base_workspace.update_view()
                 }
             }
-            if base_workspace.selected_robot.is_moving == true
+            if base_workspace.selected_robot.is_moving
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
                 {
@@ -872,19 +871,19 @@ struct AddRobotInWorkspaceView: View
     
     func dismiss_view()
     {
-        if base_workspace.selected_robot.is_placed == false
+        if base_workspace.selected_robot.is_placed
+        {
+            base_workspace.deselect_robot()
+            base_workspace.elements_check()
+            document.preset.elements = base_workspace.file_data().elements
+            base_workspace.update_view()
+        }
+        else
         {
             base_workspace.selected_robot.location = [0, 0, 0]
             base_workspace.selected_robot.rotation = [0, 0, 0]
             
             base_workspace.unit_node?.removeFromParentNode()
-        }
-        else
-        {
-            base_workspace.selected_robot_index = -1
-            base_workspace.elements_check()
-            document.preset.elements = base_workspace.file_data().elements
-            base_workspace.update_view()
         }
     }
     
@@ -1145,31 +1144,27 @@ struct RobotInfoView: View
     func remove_robot()
     {
         base_workspace.selected_robot.is_placed = false
-        //base_workspace.elements_check()
-        //document.preset.elements = base_workspace.file_data().elements
         robot_info_view_presented.toggle()
     }
     
     func dismiss_view()
     {
-        if base_workspace.selected_robot.is_placed == false
+        if base_workspace.selected_robot.is_placed
+        {
+            document.preset.robots = base_workspace.file_data().robots
+        }
+        else
         {
             base_workspace.selected_robot.location = [0, 0, 0]
             base_workspace.selected_robot.rotation = [0, 0, 0]
             
-            base_workspace.selected_robot_index = -1
+            base_workspace.deselect_robot()
             base_workspace.elements_check()
             document.preset.elements = base_workspace.file_data().elements
             document.preset.robots = base_workspace.file_data().robots
             base_workspace.update_view()
             
             base_workspace.unit_node?.removeFromParentNode()
-        }
-        else
-        {
-            //base_workspace.elements_check()
-            document.preset.robots = base_workspace.file_data().robots
-            //base_workspace.update_view()
         }
         base_workspace.is_robot_editing = false
     }
@@ -1475,7 +1470,7 @@ struct ElementCardView: View
         }
         .overlay
         {
-            if element_item.is_selected == true
+            if element_item.is_selected
             {
                 VStack
                 {

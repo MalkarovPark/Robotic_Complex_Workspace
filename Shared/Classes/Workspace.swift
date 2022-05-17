@@ -54,7 +54,7 @@ class Workspace: ObservableObject
     }
     
     //MARK: Robot selection functions
-    public var selected_robot_index = -1
+    private var selected_robot_index = -1
     
     private func number_by_name(name: String) -> Int //Get index number of robot by name
     {
@@ -72,6 +72,23 @@ class Workspace: ObservableObject
     public func select_robot(name: String)
     {
         selected_robot_index = number_by_name(name: name)
+    }
+    
+    public func deselect_robot()
+    {
+        selected_robot_index = -1
+    }
+    
+    public var is_selected: Bool
+    {
+        if selected_robot_index == -1
+        {
+            return false
+        }
+        else
+        {
+            return true
+        }
     }
     
     public var selected_robot: Robot //Return robot by selected index
