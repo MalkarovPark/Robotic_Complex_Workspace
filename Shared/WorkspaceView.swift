@@ -911,7 +911,7 @@ struct RobotInfoView: View
     {
         VStack(spacing: 0)
         {
-            Text("\(base_workspace.selected_robot.name ?? "None")")//("Add robot in workspace")
+            Text("\(base_workspace.selected_robot.name ?? "None")") //("Add robot in workspace")
                 .font(.title3)
                 .padding([.top, .leading, .trailing])
             
@@ -1139,21 +1139,20 @@ struct RobotInfoView: View
         base_workspace.unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2])))
         base_workspace.unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0])))
         #endif
+        
+        document.preset.robots = base_workspace.file_data().robots
     }
     
     func remove_robot()
     {
         base_workspace.selected_robot.is_placed = false
+        document.preset.robots = base_workspace.file_data().robots
         robot_info_view_presented.toggle()
     }
     
     func dismiss_view()
     {
-        if base_workspace.selected_robot.is_placed
-        {
-            document.preset.robots = base_workspace.file_data().robots
-        }
-        else
+        if !base_workspace.selected_robot.is_placed
         {
             base_workspace.selected_robot.location = [0, 0, 0]
             base_workspace.selected_robot.rotation = [0, 0, 0]
