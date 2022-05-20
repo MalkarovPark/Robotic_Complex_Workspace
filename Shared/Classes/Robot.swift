@@ -411,16 +411,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         tool_node?.eulerAngles.z = get_pointer_position().rot_x
     }
     
-    private func to_rad(in_angle: CGFloat) -> CGFloat //Convert angles to radians
-    {
-        return in_angle * .pi / 180
-    }
-    
-    private func to_deg(in_angle: CGFloat) -> CGFloat //Convert radians to angles
-    {
-        return in_angle * 180 / .pi
-    }
-    
     private var robot_details = [SCNNode]()
 
     private var theta = [Double](repeating: 0.0, count: 6)
@@ -719,4 +709,15 @@ struct robot_struct: Codable
     
     var origin_location: [Float]
     var origin_rotation: [Float]
+}
+
+//MARK: - Angle convertion functions
+func to_deg(in_angle: CGFloat) -> CGFloat //Convert radians to angles
+{
+    return in_angle * 180 / .pi
+}
+
+func to_rad(in_angle: CGFloat) -> CGFloat //Convert angles to radians
+{
+    return in_angle * .pi / 180
 }

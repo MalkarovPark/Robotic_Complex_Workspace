@@ -69,16 +69,6 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         }
     }
     
-    private func to_rad(in_angle: CGFloat) -> CGFloat
-    {
-        return in_angle * .pi / 180
-    }
-    
-    private func to_deg(in_angle: CGFloat) -> CGFloat
-    {
-        return in_angle * 180 / .pi
-    }
-    
     public func delete_point(number: Int)
     {
         if points.indices.contains(number) == true

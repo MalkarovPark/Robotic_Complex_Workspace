@@ -26,7 +26,10 @@
 			<key>UTTypeDescription</key>
 			<string>Data set of robotic complex</string>
 			<key>UTTypeIcons</key>
-			<dict/>
+			<dict>
+				<key>UTTypeIconText</key>
+				<string>preset</string>
+			</dict>
 			<key>UTTypeIdentifier</key>
 			<string>mv-park.RoboticComplexWorkspace.preset</string>
 			<key>UTTypeTagSpecification</key>
