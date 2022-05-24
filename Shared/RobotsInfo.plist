@@ -10,8 +10,19 @@
 			<dict>
 				<key>Name</key>
 				<string>ABB Model</string>
-				<key>Test Item</key>
-				<string></string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 		</dict>
 	</dict>
@@ -23,31 +34,109 @@
 			<dict>
 				<key>Name</key>
 				<string>CR-4iA</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 			<key>7iA</key>
 			<dict>
 				<key>Name</key>
 				<string>CR-7iA</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 			<key>7iA/L</key>
 			<dict>
 				<key>Name</key>
 				<string>CR-7iA/L</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 			<key>14iA/L</key>
 			<dict>
 				<key>Name</key>
 				<string>CR-14iA/L</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 			<key>15iA</key>
 			<dict>
 				<key>Name</key>
 				<string>CR-15iA</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 			<key>35iA</key>
 			<dict>
 				<key>Name</key>
 				<string>CR-35iA</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 		</dict>
 		<key>LR Mate</key>
@@ -56,21 +145,73 @@
 			<dict>
 				<key>Name</key>
 				<string>LR Mate 200iD</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 			<key>200iD/4S</key>
 			<dict>
 				<key>Name</key>
 				<string>LR Mate 200iD/4S</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 			<key>200iD/7C</key>
 			<dict>
 				<key>Name</key>
 				<string>LR Mate 200iD/7C</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 			<key>200iD/14L</key>
 			<dict>
 				<key>Name</key>
 				<string>LR Mate 200iD/14L</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 		</dict>
 	</dict>
@@ -82,6 +223,19 @@
 			<dict>
 				<key>Name</key>
 				<string>KUKA Model</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
 			</dict>
 		</dict>
 	</dict>
