@@ -181,7 +181,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return programs.count
     }
     
-    public func inspector_point_color(point: SCNNode) -> Color //Get point color for inspector view
+    public func inspector_point_color(point: PositionPoint) -> Color //Get point color for inspector view
     {
         var color = Color.gray
         let point_number = self.selected_program.points.firstIndex(of: point)
@@ -680,14 +680,15 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             for program_struct in robot_struct.programs
             {
                 viewed_program = PositionsProgram(name: program_struct.name)
+                viewed_program?.points = program_struct.points
                 
-                if program_struct.points.count > 0
+                /*if program_struct.points.count > 0
                 {
                     for point_struct in program_struct.points
                     {
                         viewed_program?.add_point(pos_x: point_struct[0], pos_y: point_struct[1], pos_z: point_struct[2], rot_x: point_struct[3], rot_y: point_struct[4], rot_z: point_struct[5])
                     }
-                }
+                }*/
                 
                 programs.append(viewed_program!)
             }

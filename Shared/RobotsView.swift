@@ -1556,10 +1556,10 @@ struct AddProgramView: View
 //MARK: - Position item view for list
 struct PositionItemListView: View
 {
-    @Binding var points: [SCNNode]
+    @Binding var points: [PositionPoint]
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var point_item: SCNNode
+    @State var point_item: PositionPoint
     @State var position_item_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -1575,10 +1575,10 @@ struct PositionItemListView: View
             Spacer()
             VStack
             {
-                Text("X: \(String(format: "%.0f", Double(point_item.position.x))) Y: \(String(format: "%.0f", Double(point_item.position.y))) Z: \(String(format: "%.0f", Double(point_item.position.z)))")
+                Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
                     .font(.caption)
                 
-                Text("R: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.x)))) P: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.y)))) W: \(String(format: "%.0f", to_deg(in_angle: Double(point_item.rotation.z))))")
+                Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.z))")
                     .font(.caption)
             }
             .onTapGesture
@@ -1589,13 +1589,13 @@ struct PositionItemListView: View
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .leading)
             {
-                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [Double(point_item.position.x), Double(point_item.position.y), Double(point_item.position.z)], item_view_pos_rotation: [to_deg(in_angle: Double(point_item.rotation.x)), to_deg(in_angle: Double(point_item.rotation.y)), to_deg(in_angle: Double(point_item.rotation.z))], on_delete: on_delete)
+                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
             }
             #else
             .popover(isPresented: $position_item_view_presented)
             {
-                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [Double(point_item.position.x), Double(point_item.position.y), Double(point_item.position.z)], item_view_pos_rotation: [to_deg(in_angle: Double(point_item.rotation.x)), to_deg(in_angle: Double(point_item.rotation.y)), to_deg(in_angle: Double(point_item.rotation.z))], on_delete: on_delete)
+                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
             }
             #endif
@@ -1613,8 +1613,8 @@ struct PositionItemListView: View
 //MARK: - Position item edit view
 struct PositionItemView: View
 {
-    @Binding var points: [SCNNode]
-    @Binding var point_item: SCNNode
+    @Binding var points: [PositionPoint]
+    @Binding var point_item: PositionPoint
     @Binding var position_item_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
@@ -1845,18 +1845,22 @@ struct PositionItemView: View
     //MARK: Point manage functions
     func update_point_location()
     {
-        #if os(macOS)
+        /*#if os(macOS)
         point_item.position = SCNVector3(x: item_view_pos_location[0], y: item_view_pos_location[1], z: item_view_pos_location[2])
         #else
         point_item.position = SCNVector3(x: Float(item_view_pos_location[0]), y: Float(item_view_pos_location[1]), z: Float(item_view_pos_location[2]))
-        #endif
+        #endif*/
+        
+        point_item.x = item_view_pos_location[0]
+        point_item.y = item_view_pos_location[1]
+        point_item.z = item_view_pos_location[2]
         
         update_workspace_data()
     }
     
     func update_point_rotation()
     {
-        #if os(macOS)
+        /*#if os(macOS)
         point_item.rotation.x = to_rad(in_angle: item_view_pos_rotation[0])
         point_item.rotation.y = to_rad(in_angle: item_view_pos_rotation[1])
         point_item.rotation.z = to_rad(in_angle: item_view_pos_rotation[2])
@@ -1864,7 +1868,11 @@ struct PositionItemView: View
         point_item.rotation.x = Float(to_rad(in_angle: item_view_pos_rotation[0]))
         point_item.rotation.y = Float(to_rad(in_angle: item_view_pos_rotation[1]))
         point_item.rotation.z = Float(to_rad(in_angle: item_view_pos_rotation[2]))
-        #endif
+        #endif*/
+        
+        point_item.r = item_view_pos_rotation[0]
+        point_item.p = item_view_pos_rotation[1]
+        point_item.w = item_view_pos_rotation[2]
         
         update_workspace_data()
     }

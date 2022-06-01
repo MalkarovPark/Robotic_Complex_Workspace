@@ -10,7 +10,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     }
     
     public var name: String?
-    public var points = [SCNNode]()
+    public var points = [PositionPoint]()
     
     //MARK: - Positions program init functions
     init()
@@ -24,46 +24,21 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     }
     
     //MARK: - Point manage functions
-    public func add_point(pos_x: CGFloat, pos_y: CGFloat, pos_z: CGFloat, rot_x: CGFloat, rot_y: CGFloat, rot_z: CGFloat)
+    public func add_point(pos_x: Double, pos_y: Double, pos_z: Double, rot_x: Double, rot_y: Double, rot_z: Double)
     {
-        var point_node = SCNNode()
-        
-        #if os(macOS)
-        point_node.position = SCNVector3(x: pos_x, y: pos_y, z: pos_z)
-        point_node.rotation.x = to_rad(in_angle: rot_x)
-        point_node.rotation.y = to_rad(in_angle: rot_y)
-        point_node.rotation.z = to_rad(in_angle: rot_z)
-        #else
-        point_node.position = SCNVector3(x: Float(pos_x), y: Float(pos_y), z: Float(pos_z))
-        point_node.rotation.x = Float(to_rad(in_angle: rot_x))
-        point_node.rotation.y = Float(to_rad(in_angle: rot_y))
-        point_node.rotation.z = Float(to_rad(in_angle: rot_z))
-        #endif
-        
-        points.append(point_node)
+        points.append(PositionPoint(x: pos_x, y: pos_y, z: pos_z, r: rot_x, p: rot_y, w: rot_z, move_type: .linear))
         
         visual_build()
     }
     
-    public func update_point(number: Int, pos_x: CGFloat, pos_y: CGFloat, pos_z: CGFloat, rot_x: CGFloat, rot_y: CGFloat, rot_z: CGFloat)
+    public func update_point(number: Int, pos_x: Double, pos_y: Double, pos_z: Double, rot_x: Double, rot_y: Double, rot_z: Double)
     {
-        var point_node = SCNNode()
+        //var point_node = SCNNode()
         
         if points.indices.contains(number) == true
         {
-            #if os(macOS)
-            point_node.position = SCNVector3(x: pos_x, y: pos_y, z: pos_z)
-            point_node.rotation.x = to_rad(in_angle: rot_x)
-            point_node.rotation.y = to_rad(in_angle: rot_y)
-            point_node.rotation.z = to_rad(in_angle: rot_z)
-            #else
-            point_node.position = SCNVector3(x: Float(pos_x), y: Float(pos_y), z: Float(pos_z))
-            point_node.rotation.x = Float(to_rad(in_angle: rot_x))
-            point_node.rotation.y = Float(to_rad(in_angle: rot_y))
-            point_node.rotation.z = Float(to_rad(in_angle: rot_z))
-            #endif
             
-            points[number] = point_node
+            points[number] = PositionPoint(x: pos_x, y: pos_y, z: pos_z, r: rot_x, p: rot_y, w: rot_z, move_type: .linear)
             
             visual_build()
         }
@@ -86,7 +61,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
             var pindex = 1.0
             for point in points
             {
-                pinfo.append([Double(point.position.x), Double(point.position.y), Double(point.position.z), to_deg(in_angle: Double(point.rotation.x)), to_deg(in_angle: Double(point.rotation.y)), to_deg(in_angle: Double(point.rotation.z)), pindex])
+                pinfo.append([point.x, point.y, point.z, point.r, point.p, point.w, pindex])
                 pindex += 1
             }
         }
@@ -160,7 +135,11 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                     let visual_point = SCNNode()
                     visual_point.geometry = SCNSphere(radius: 0.4)
                     
-                    point_location = SCNVector3(x: point.position.y / 10 - 10, y: point.position.z / 10 - 10, z: point.position.x / 10 - 10)
+                    #if os(macOS)
+                    point_location = SCNVector3(x: point.y / 10 - 10, y: point.z / 10 - 10, z: point.x / 10 - 10)
+                    #else
+                    point_location = SCNVector3(x: Float(point.y) / 10 - 10, y: Float(point.z) / 10 - 10, z: Float(point.x) / 10 - 10)
+                    #endif
                     
                     visual_point.position = point_location
                     
@@ -180,10 +159,21 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                         pivot_points[0] = pivot_points[1]
                     }
                     
-                    internal_cone_node.eulerAngles.z = point.rotation.x
+                    #if os(macOS)
+                    internal_cone_node.eulerAngles.z = to_rad(in_angle: point.r)
+                    #else
+                    internal_cone_node.eulerAngles.z = Float(to_rad(in_angle: point.r))
+                    #endif
+                    
                     visual_point.addChildNode(internal_cone_node)
-                    visual_point.eulerAngles.x = point.rotation.y
-                    visual_point.eulerAngles.y = point.rotation.z
+                    
+                    #if os(macOS)
+                    visual_point.eulerAngles.x = to_rad(in_angle: point.p)
+                    visual_point.eulerAngles.y = to_rad(in_angle: point.w)
+                    #else
+                    visual_point.eulerAngles.x = Float(to_rad(in_angle: point.p))
+                    visual_point.eulerAngles.y = Float(to_rad(in_angle: point.w))
+                    #endif
                     
                     if point_index == selected_point_index
                     {
@@ -203,15 +193,31 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 let visual_point = SCNNode()
                 visual_point.geometry = SCNSphere(radius: 0.4)
                 
-                let point = points.first ?? SCNNode()
+                let point = points.first ?? PositionPoint()
                 
-                let point_location = SCNVector3(x: point.position.y / 10 - 10, y: point.position.z / 10 - 10, z: point.position.x / 10 - 10)
+                #if os(macOS)
+                let point_location = SCNVector3(x: point.y / 10 - 10, y: point.z / 10 - 10, z: point.x / 10 - 10)
+                #else
+                let point_location = SCNVector3(x: Float(point.y) / 10 - 10, y: Float(point.z) / 10 - 10, z: Float(point.x) / 10 - 10)
+                #endif
                 
                 visual_point.position = point_location
-                cone_node.eulerAngles.z = point.rotation.x
+                
+                #if os(macOS)
+                cone_node.eulerAngles.z = to_rad(in_angle: point.r)
+                #else
+                cone_node.eulerAngles.z = Float(to_rad(in_angle: point.r))
+                #endif
+                
                 visual_point.addChildNode(cone_node)
-                visual_point.eulerAngles.x = point.rotation.y
-                visual_point.eulerAngles.y = point.rotation.z
+                
+                #if os(macOS)
+                visual_point.eulerAngles.x = to_rad(in_angle: point.p)
+                visual_point.eulerAngles.y = to_rad(in_angle: point.w)
+                #else
+                visual_point.eulerAngles.x = Float(to_rad(in_angle: point.p))
+                visual_point.eulerAngles.y = Float(to_rad(in_angle: point.w))
+                #endif
                 
                 if selected_point_index == 0
                 {
@@ -269,20 +275,13 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         
         if points.count > 0
         {
-            
             for point in points
             {
-                moving_position = SCNVector3(point.position.y / 10, point.position.z / 10, point.position.x / 10)
+                moving_position = SCNVector3(point.y / 10, point.z / 10, point.x / 10)
                 
-                #if os(macOS)
-                moving_rotation = [point.rotation.y, point.rotation.z, 0]
+                moving_rotation = [to_rad(in_angle: point.p), to_rad(in_angle: point.w), 0]
                 movings_array.append(SCNAction.group([SCNAction.move(to: moving_position, duration: move_time), SCNAction.rotateTo(x: moving_rotation[0], y: moving_rotation[1], z: moving_rotation[2], duration: move_time)]))
-                movings_array2.append(SCNAction.rotateTo(x: 0, y: 0, z: point.rotation.x, duration: move_time))
-                #else
-                moving_rotation = [CGFloat(point.rotation.y), CGFloat(point.rotation.z), 0]
-                movings_array.append(SCNAction.group([SCNAction.move(to: moving_position, duration: move_time), SCNAction.rotateTo(x: CGFloat(moving_rotation[0]), y: CGFloat(moving_rotation[1]), z: CGFloat(moving_rotation[2]), duration: move_time)]))
-                movings_array2.append(SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(point.rotation.x), duration: move_time))
-                #endif
+                movings_array2.append(SCNAction.rotateTo(x: 0, y: 0, z: to_rad(in_angle: point.r), duration: move_time))
             }
         }
         
@@ -292,21 +291,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     //MARK: - Work with file system
     public var program_info: program_struct
     {
-        var points_array = [[Double]]()
-        
-        if points.count > 0
-        {
-            for point in points
-            {
-                #if os(macOS)
-                points_array.append([point.position.x, point.position.y, point.position.z, to_deg(in_angle: point.rotation.x), to_deg(in_angle: point.rotation.y), to_deg(in_angle: point.rotation.z)])
-                #else
-                points_array.append([CGFloat(point.position.x), CGFloat(point.position.y), CGFloat(point.position.z), to_deg(in_angle: CGFloat(point.rotation.x)), to_deg(in_angle: CGFloat(point.rotation.y)), to_deg(in_angle: CGFloat(point.rotation.z))])
-                #endif
-            }
-        }
-        
-        return program_struct(name: name ?? "None", points: points_array)
+        return program_struct(name: name ?? "None", points: self.points)
     }
 }
 
@@ -314,5 +299,5 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
 struct program_struct: Codable
 {
     var name: String
-    var points = [[Double](repeating: 0.0, count: 6)] //x y z| r p w
+    var points = [PositionPoint()] //[[Double](repeating: 0.0, count: 6)] //x y z| r p w
 }

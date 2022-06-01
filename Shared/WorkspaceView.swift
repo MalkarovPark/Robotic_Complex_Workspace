@@ -127,8 +127,11 @@ struct WorkspaceView: View
     
     func stop_perform()
     {
-        base_workspace.reset_perform()
-        base_workspace.update_view()
+        if base_workspace.is_performing
+        {
+            base_workspace.reset_perform()
+            base_workspace.update_view()
+        }
     }
     
     func toggle_perform()
@@ -317,7 +320,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: NSClickGestureRecognizer)
         {
-            if !workspace.is_robot_editing
+            if !workspace.is_robot_editing && !workspace.is_performing
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -491,7 +494,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: UITapGestureRecognizer)
         {
-            if !workspace.is_robot_editing
+            if !workspace.is_robot_editing && !workspace.is_performing
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -886,7 +889,6 @@ struct AddRobotInWorkspaceView: View
     
     func dismiss_view()
     {
-        base_workspace.deselect_robot()
         base_workspace.update_view()
         
         if base_workspace.selected_robot.is_placed
@@ -901,6 +903,8 @@ struct AddRobotInWorkspaceView: View
             
             base_workspace.unit_node?.removeFromParentNode()
         }
+        
+        base_workspace.deselect_robot()
     }
     
     func place_robot()
