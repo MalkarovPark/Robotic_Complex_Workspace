@@ -13,9 +13,9 @@ class AppState : ObservableObject
 {
     @Published var reset_view = false
     @Published var get_scene_image = false
-    var workspace_scene = SCNScene()
     
-    var camera_light_node = SCNNode()
+    public var workspace_scene = SCNScene()
+    public var camera_light_node = SCNNode()
     
     @Published var manufacturer_name = "None"
     {
@@ -70,7 +70,7 @@ class AppState : ObservableObject
     public var models = [String]()
     
     private var robots_data: Data //Data store from robots property list
-    private var did_updated = false //Robots data updated state
+    private var did_updated = false //Robots data from .plist updated state
     
     //MARK: - App State class init function
     init()

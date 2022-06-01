@@ -433,6 +433,7 @@ struct RobotView: View
         {
             #if os(macOS)
             RobotSceneView(document: $document)
+                .onDisappear(perform: close_robot)
             RobotInspectorView(document: $document)
                 .disabled(base_workspace.selected_robot.is_moving == true)
                 .frame(width: 256)
@@ -442,6 +443,7 @@ struct RobotView: View
                 if rv_selection == 0
                 {
                     RobotSceneView(document: $document)
+                        .onDisappear(perform: close_robot)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
                 else
@@ -454,6 +456,7 @@ struct RobotView: View
             else
             {
                 RobotSceneView(document: $document)
+                    .onDisappear(perform: close_robot)
                 RobotInspectorView(document: $document)
                     .disabled(base_workspace.selected_robot.is_moving == true)
                     .frame(width: 288)

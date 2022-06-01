@@ -40,6 +40,7 @@ struct WorkspaceView: View
             #if os(macOS)
             ComplexWorkspaceView(document: $document)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                .onDisappear(perform: stop_perform)
             ControlProgramView(document: $document)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 .frame(width: 256)
@@ -50,6 +51,7 @@ struct WorkspaceView: View
                 {
                     ComplexWorkspaceView(document: $document)
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                        .onDisappear(perform: stop_perform)
                 }
                 else
                 {
@@ -61,6 +63,7 @@ struct WorkspaceView: View
             {
                 ComplexWorkspaceView(document: $document)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    .onDisappear(perform: stop_perform)
                 ControlProgramView(document: $document)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     .frame(width: 288)
@@ -125,6 +128,7 @@ struct WorkspaceView: View
     func stop_perform()
     {
         base_workspace.reset_perform()
+        base_workspace.update_view()
     }
     
     func toggle_perform()
@@ -187,7 +191,7 @@ struct ComplexWorkspaceView: View
                             AddRobotInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        .disabled(base_workspace.avaliable_robots_names.count == 0)
+                        .disabled(base_workspace.avaliable_robots_names.count == 0 || base_workspace.is_selected)
                         
                         Divider()
                         
@@ -590,6 +594,8 @@ struct AddRobotInWorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    @State var first_select = true //This flag that specifies that the robot was not selected and disables the dismiss() function
+    
     var body: some View
     {
         VStack(spacing: 0)
@@ -614,8 +620,8 @@ struct AddRobotInWorkspaceView: View
                 }
                 .onAppear
                 {
+                    base_workspace.is_robot_editing = true
                     selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
-                    view_robot()
                 }
                 .onChange(of: selected_robot_name)
                 { _ in
@@ -828,6 +834,7 @@ struct AddRobotInWorkspaceView: View
         .onDisappear
         {
             dismiss_view()
+            base_workspace.is_robot_editing = false
         }
     }
     
@@ -847,7 +854,15 @@ struct AddRobotInWorkspaceView: View
     
     func change_selected_robot()
     {
-        dismiss_view()
+        if !first_select
+        {
+            dismiss_view()
+        }
+        else
+        {
+            first_select = false
+        }
+        
         base_workspace.select_robot(name: selected_robot_name)
         view_robot()
     }
@@ -871,12 +886,13 @@ struct AddRobotInWorkspaceView: View
     
     func dismiss_view()
     {
+        base_workspace.deselect_robot()
+        base_workspace.update_view()
+        
         if base_workspace.selected_robot.is_placed
         {
-            base_workspace.deselect_robot()
             base_workspace.elements_check()
             document.preset.elements = base_workspace.file_data().elements
-            base_workspace.update_view()
         }
         else
         {

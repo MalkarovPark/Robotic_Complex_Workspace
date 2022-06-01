@@ -65,5 +65,6 @@ struct ContentView_Previews: PreviewProvider
     {
         ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
             .environmentObject(AppState())
+            .frame(width: 800, height: 600)
     }
 }

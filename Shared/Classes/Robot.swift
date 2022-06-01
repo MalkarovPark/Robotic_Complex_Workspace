@@ -565,21 +565,24 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func update_robot() //Set manipulator details rotation angles
     {
-        #if os(macOS)
-        robot_details[0].eulerAngles.y = CGFloat(ik_angles[0])
-        robot_details[1].eulerAngles.z = CGFloat(ik_angles[1])
-        robot_details[2].eulerAngles.z = CGFloat(ik_angles[2])
-        robot_details[3].eulerAngles.y = CGFloat(ik_angles[3])
-        robot_details[4].eulerAngles.z = CGFloat(ik_angles[4])
-        robot_details[5].eulerAngles.y = CGFloat(ik_angles[5])
-        #else
-        robot_details[0].eulerAngles.y = Float(ik_angles[0])
-        robot_details[1].eulerAngles.z = Float(ik_angles[1])
-        robot_details[2].eulerAngles.z = Float(ik_angles[2])
-        robot_details[3].eulerAngles.y = Float(ik_angles[3])
-        robot_details[4].eulerAngles.z = Float(ik_angles[4])
-        robot_details[5].eulerAngles.y = Float(ik_angles[5])
-        #endif
+        if robot_details.count > 0
+        {
+            #if os(macOS)
+            robot_details[0].eulerAngles.y = CGFloat(ik_angles[0])
+            robot_details[1].eulerAngles.z = CGFloat(ik_angles[1])
+            robot_details[2].eulerAngles.z = CGFloat(ik_angles[2])
+            robot_details[3].eulerAngles.y = CGFloat(ik_angles[3])
+            robot_details[4].eulerAngles.z = CGFloat(ik_angles[4])
+            robot_details[5].eulerAngles.y = CGFloat(ik_angles[5])
+            #else
+            robot_details[0].eulerAngles.y = Float(ik_angles[0])
+            robot_details[1].eulerAngles.z = Float(ik_angles[1])
+            robot_details[2].eulerAngles.z = Float(ik_angles[2])
+            robot_details[3].eulerAngles.y = Float(ik_angles[3])
+            robot_details[4].eulerAngles.z = Float(ik_angles[4])
+            robot_details[5].eulerAngles.y = Float(ik_angles[5])
+            #endif
+        }
     }
     
     //MARK: Robot in workspace handling
