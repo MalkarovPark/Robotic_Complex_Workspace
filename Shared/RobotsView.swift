@@ -463,6 +463,13 @@ struct RobotView: View
             }
             #endif
         }
+        .onAppear()
+        {
+            if base_workspace.selected_robot.programs_count > 0
+            {
+                base_workspace.selected_robot.select_program(number: 0)
+            }
+        }
         
         .toolbar
         {
