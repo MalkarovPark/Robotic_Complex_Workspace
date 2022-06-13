@@ -211,20 +211,34 @@ class Workspace: ObservableObject
     
     private func element_robot_check(element: WorkspaceProgramElement) //Check element by selected robot exists
     {
-        if self.robot_by_name(name: element.element_data.robot_name).is_placed == false
+        if element.element_data.robot_name != ""
+        {
+            if self.robot_by_name(name: element.element_data.robot_name).is_placed == false
+            {
+                if self.placed_robots_names.count > 0
+                {
+                    element.element_data.robot_name = self.placed_robots_names.first!
+                    
+                    if robot_by_name(name: element.element_data.robot_name).programs_count > 0
+                    {
+                        element.element_data.robot_program_name = robot_by_name(name: element.element_data.robot_name).programs_names.first!
+                    }
+                }
+                else
+                {
+                    element.element_data.robot_name = ""
+                }
+            }
+        }
+        else
         {
             if self.placed_robots_names.count > 0
             {
-                element.element_data.robot_name = self.placed_robots_names.first!
-                
-                if robot_by_name(name: element.element_data.robot_name).programs_count > 0
+                element.element_data.robot_name = robots.first?.name ?? "None"
+                if robots.first?.programs_count ?? 0 > 0
                 {
                     element.element_data.robot_program_name = robot_by_name(name: element.element_data.robot_name).programs_names.first!
                 }
-            }
-            else
-            {
-                element.element_data.robot_name = ""
             }
         }
     }
@@ -263,7 +277,7 @@ class Workspace: ObservableObject
     
     public var is_performing = false
     public var selected_element_index = 0
-    public var workspace_scene = SCNScene()
+    public var workspace_scene = SCNScene(named: "Components.scnassets/Workspace.scn")! // = SCNScene()
     
     public func start_pause_perform()
     {

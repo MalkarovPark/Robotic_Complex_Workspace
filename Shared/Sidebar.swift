@@ -50,13 +50,14 @@ struct SidebarContent: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @State var sidebar_selection: navigation_item? = .WorkspaceView
+    @State var first_loaded = true
     
     var body: some View
     {
         List(selection: $sidebar_selection)
         {
             #if os(macOS)
-            NavigationLink(destination: WorkspaceView(document: $document), tag: navigation_item.WorkspaceView, selection: $sidebar_selection)
+            NavigationLink(destination: WorkspaceView(document: $document, first_loaded: $first_loaded), tag: navigation_item.WorkspaceView, selection: $sidebar_selection)
             {
                 Label("Workspace", systemImage: "cube.transparent")
             }

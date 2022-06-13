@@ -12,6 +12,7 @@ import UniformTypeIdentifiers
 struct WorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var first_loaded: Bool
     
     //@State var cycle = false
     @State var worked = false
@@ -38,9 +39,12 @@ struct WorkspaceView: View
         HStack(spacing: 0)
         {
             #if os(macOS)
-            ComplexWorkspaceView(document: $document)
-                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                .onDisappear(perform: stop_perform)
+            if !first_loaded
+            {
+                ComplexWorkspaceView(document: $document)
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    .onDisappear(perform: stop_perform)
+            }
             ControlProgramView(document: $document)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 .frame(width: 256)
@@ -75,6 +79,16 @@ struct WorkspaceView: View
         #else
             .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
+            .onAppear()
+        {
+            if first_loaded
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                {
+                    first_loaded.toggle()
+                }
+            }
+        }
         
         //MARK: Toolbar
         .toolbar
@@ -849,7 +863,7 @@ struct AddRobotInWorkspaceView: View
         base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
         
         base_workspace.unit_node?.name = selected_robot_name
-        base_workspace.selected_robot.robot_workcell_connect(scene: app_state.workspace_scene, name: selected_robot_name, connect_camera: false)
+        base_workspace.selected_robot.robot_workcell_connect(scene: base_workspace.workspace_scene, name: selected_robot_name, connect_camera: false)
         base_workspace.selected_robot.update_robot()
         
         base_workspace.selected_robot.unit_origin_node?.isHidden = false
@@ -1219,16 +1233,11 @@ struct ControlProgramView: View
                         }, preview: {
                             ElementCardViewPreview(element_item: element)
                         })
-                        .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, element: element))
+                        .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, document: $document, workspace_elements: base_workspace.file_data().elements, element: element))
                     }
                     .padding(4)
                 }
                 .padding()
-                .onChange(of: base_workspace.elements)
-                { _ in
-                    //Update file after elements reordering
-                    document.preset.elements = base_workspace.file_data().elements
-                }
             }
             .animation(.spring(), value: base_workspace.elements)
             
@@ -1399,11 +1408,15 @@ struct WorkspaceDropDelegate : DropDelegate
 {
     @Binding var elements : [WorkspaceProgramElement]
     @Binding var dragged_element : WorkspaceProgramElement?
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var workspace_elements: [workspace_program_element_struct]
     
     let element: WorkspaceProgramElement
     
     func performDrop(info: DropInfo) -> Bool
     {
+        document.preset.elements = workspace_elements //Update file after elements reordering
         return true
     }
     
@@ -2180,7 +2193,7 @@ struct WorkspaceView_Previews: PreviewProvider
     {
         Group
         {
-            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(true))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
