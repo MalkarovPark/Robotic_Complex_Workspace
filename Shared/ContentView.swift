@@ -9,9 +9,15 @@ import SwiftUI
 
 struct ContentView: View
 {
-    @State var file_name = "" //Visible file name
-    @StateObject private var base_workspace = Workspace() //Workspace object in app
     @Binding var document: Robotic_Complex_WorkspaceDocument //Opened document
+    
+    #if os(iOS)
+    @State var file_name = "" //Visible file name
+    @State var file_url: URL
+    #endif
+    @State var first_loaded = true
+    
+    @StateObject private var base_workspace = Workspace() //Workspace object in app
     
     #if os(iOS)
     //MARK: Horizontal window size handler
@@ -25,7 +31,7 @@ struct ContentView: View
         if horizontal_size_class == .compact
         {
             //Show tab bar for thin window size
-            TabBar(document: $document)
+            TabBar(document: $document, first_loaded: $first_loaded)
                 .environmentObject(base_workspace)
                 .onAppear
                 {
@@ -35,7 +41,7 @@ struct ContentView: View
         else
         {
             //Show sidebar for wide window size
-            Sidebar(document: $document, file_name: file_name)
+            Sidebar(document: $document, first_loaded: $first_loaded, file_url: $file_url, file_name: $file_name)
                 .environmentObject(base_workspace)
                 .onAppear
                 {
@@ -43,7 +49,7 @@ struct ContentView: View
                 }
         }
         #else
-        Sidebar(document: $document, file_name: file_name)
+        Sidebar(document: $document, first_loaded: $first_loaded)
             .environmentObject(base_workspace)
             .onAppear
             {
@@ -63,8 +69,14 @@ struct ContentView_Previews: PreviewProvider
 {
     static var previews: some View
     {
+        #if os(macOS)
         ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
             .environmentObject(AppState())
             .frame(width: 800, height: 600)
+        #else
+        ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()), file_url: URL(fileURLWithPath: ""))
+            .environmentObject(AppState())
+            .frame(width: 800, height: 600)
+        #endif
     }
 }

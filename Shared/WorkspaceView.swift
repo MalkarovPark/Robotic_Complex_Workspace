@@ -13,9 +13,14 @@ struct WorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var first_loaded: Bool
+    #if os(iOS)
+    @Binding var file_name: String
+    @Binding var file_url: URL
+    #endif
     
     //@State var cycle = false
     @State var worked = false
+    @State var some_text = "Text"
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -53,9 +58,12 @@ struct WorkspaceView: View
             {
                 if wv_selection == 0
                 {
-                    ComplexWorkspaceView(document: $document)
-                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                        .onDisappear(perform: stop_perform)
+                    if !first_loaded
+                    {
+                        ComplexWorkspaceView(document: $document)
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                            .onDisappear(perform: stop_perform)
+                    }
                 }
                 else
                 {
@@ -65,9 +73,12 @@ struct WorkspaceView: View
             }
             else
             {
-                ComplexWorkspaceView(document: $document)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                    .onDisappear(perform: stop_perform)
+                if !first_loaded
+                {
+                    ComplexWorkspaceView(document: $document)
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                        .onDisappear(perform: stop_perform)
+                }
                 ControlProgramView(document: $document)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     .frame(width: 288)
@@ -85,7 +96,7 @@ struct WorkspaceView: View
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
                 {
-                    first_loaded.toggle()
+                    first_loaded = false
                 }
             }
         }
@@ -137,6 +148,16 @@ struct WorkspaceView: View
                 }
             }
         }
+        #if os(iOS)
+        .navigationTitle($some_text)
+        {
+            RenameButton()
+            .onChange(of: some_text) { _ in
+                print(some_text)
+            }
+        }
+        .navigationDocument(file_url)
+        #endif
     }
     
     func stop_perform()
@@ -594,7 +615,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
             }
         }
         
-        app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
+        //app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
         //app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
     }
 }
@@ -2193,9 +2214,15 @@ struct WorkspaceView_Previews: PreviewProvider
     {
         Group
         {
-            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(true))
+            #if os(macOS)
+            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
+            #else
+            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false), file_name: .constant("None"), file_url: .constant(URL(fileURLWithPath: "")))
+                .environmentObject(Workspace())
+                .environmentObject(AppState())
+            #endif
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())

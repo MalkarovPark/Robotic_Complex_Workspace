@@ -10,6 +10,7 @@ import SwiftUI
 struct TabBar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var first_loaded: Bool
     
     var body: some View
     {
@@ -17,7 +18,7 @@ struct TabBar: View
         {
             NavigationView
             {
-                WorkspaceView(document: $document)
+                WorkspaceView(document: $document, first_loaded: $first_loaded, file_name: .constant("None"), file_url: .constant(URL(fileURLWithPath: "")))
             }
             .tabItem
             {
@@ -50,6 +51,6 @@ struct TabBar_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        TabBar(document: .constant(Robotic_Complex_WorkspaceDocument()))
+        TabBar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(true))
     }
 }

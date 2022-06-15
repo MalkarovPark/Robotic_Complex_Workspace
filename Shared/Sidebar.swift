@@ -7,31 +7,55 @@
 
 import SwiftUI
 
-enum navigation_item
+enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 {
     case WorkspaceView
     case RobotsView
     case ToolsView
+    
+    var id: Int { rawValue }
+    var localizedName: LocalizedStringKey
+    {
+        switch self
+        {
+        case .WorkspaceView:
+            return "Workspace"
+        case .RobotsView:
+            return "Robots"
+        case .ToolsView:
+            return "Tools"
+        }
+    }
+    
+    var image_name: String
+    {
+        switch self
+        {
+        case .WorkspaceView:
+            return "cube.transparent"
+        case .RobotsView:
+            return "r.square"
+        case .ToolsView:
+            return "hammer"
+        }
+    }
 }
 
 struct Sidebar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    @State var file_name = ""
+    @Binding var first_loaded: Bool
+    #if os(iOS)
+    @Binding var file_url: URL
+    @Binding var file_name: String
+    #endif
     
     var body: some View
     {
-        NavigationView
-        {
-            #if os(macOS)
-            SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250)
-            #else
-            SidebarContent(document: $document).navigationTitle(file_name)
-            WorkspaceView(document: $document)
-            #endif
-        }
-        .navigationViewStyle(DoubleColumnNavigationViewStyle())
-        #if os(iOS)
+        #if os(macOS)
+        SidebarContent(document: $document, first_loaded: $first_loaded).frame(minWidth: 200, idealWidth: 250)
+        #else
+        SidebarContent(document: $document, first_loaded: $first_loaded, file_url: $file_url, file_name: $file_name).frame(minWidth: 200, idealWidth: 250)
         .navigationBarHidden(true)
         .modifier(DismissModifier())
         #endif
@@ -42,70 +66,59 @@ struct Sidebar_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()))
+        #if os(macOS)
+        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false))
+        #else
+        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
+        #endif
     }
 }
 
 struct SidebarContent: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var first_loaded: Bool
+    #if os(iOS)
+    @Binding var file_url: URL
+    @Binding var file_name: String
+    #endif
+    
     @State var sidebar_selection: navigation_item? = .WorkspaceView
-    @State var first_loaded = true
     
     var body: some View
     {
-        List(selection: $sidebar_selection)
+        NavigationSplitView
         {
-            #if os(macOS)
-            NavigationLink(destination: WorkspaceView(document: $document, first_loaded: $first_loaded), tag: navigation_item.WorkspaceView, selection: $sidebar_selection)
-            {
-                Label("Workspace", systemImage: "cube.transparent")
-            }
-            .tag(navigation_item.WorkspaceView)
-            
-            NavigationLink(destination: RobotsView(document: $document), tag: navigation_item.RobotsView, selection: $sidebar_selection)
-            {
-                Label("Robots", systemImage: "r.square") //image: "factory.robot") //systemImage: "circle")
-                	.badge(document.preset.robots.count)
-            }
-            .tag(navigation_item.RobotsView)
-            
-            NavigationLink(destination: ToolsView(document: $document), tag: navigation_item.ToolsView, selection: $sidebar_selection)
-            {
-                Label("Tools", systemImage: "hammer")
-            }
-            .tag(navigation_item.ToolsView)
-            #else
-            NavigationLink(destination: WorkspaceView(document: $document))
-            {
-                Label("Workspace", systemImage: "cube.transparent")
-            }
-            
-            NavigationLink(destination: RobotsView(document: $document))
-            {
-                Label("Robots", systemImage: "r.square") //image: "factory.robot") //systemImage: "circle")
-                	.badge(document.preset.robots.count)
-            }
-            
-            NavigationLink(destination: ToolsView(document: $document))
-            {
-                Label("Tools", systemImage: "hammer")
-            }
-            #endif
-        }
-        .listStyle(SidebarListStyle())
-        
-        .toolbar
-        {
-            #if os(macOS)
-            ToolbarItem
-            {
-                Button(action: toggle_sidebar)
+            List(navigation_item.allCases, selection: $sidebar_selection)
+            { selection in
+                NavigationLink(value: selection)
                 {
-                    Label("Toggle Sidebar", systemImage: "sidebar.left")
+                    Label(selection.localizedName, systemImage: selection.image_name)
                 }
             }
-            #else
+        } detail: {
+            ZStack
+            {
+                switch sidebar_selection
+                {
+                case .WorkspaceView:
+                    #if os(macOS)
+                    WorkspaceView(document: $document, first_loaded: $first_loaded)
+                    #else
+                    WorkspaceView(document: $document, first_loaded: $first_loaded, file_name: $file_name, file_url: $file_url)
+                    #endif
+                case .RobotsView:
+                    RobotsView(document: $document)
+                case .ToolsView:
+                    ToolsView(document: $document)
+                default:
+                    Text("None")
+                }
+            }
+        }
+        .toolbar
+        {
+            #if os(iOS)
             ToolbarItem(placement: .cancellationAction)
             {
                 dismiss_document_button()

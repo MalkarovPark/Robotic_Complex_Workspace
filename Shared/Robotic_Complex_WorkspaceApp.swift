@@ -14,9 +14,10 @@ struct Robotic_Complex_WorkspaceApp: App
     @StateObject var app_state = AppState()
     var body: some Scene
     {
+        #if os(macOS)
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
         {
-            file in ContentView(file_name: "\(file.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled")", document: file.$document)
+            file in ContentView(document: file.$document)
                 .environmentObject(app_state)
         }
         .commands
@@ -34,5 +35,27 @@ struct Robotic_Complex_WorkspaceApp: App
                 Divider()
             }
         }
+        #else
+        DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
+        {
+            file in ContentView(document: file.$document, file_name: "\(file.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled")", file_url: file.fileURL!)
+                .environmentObject(app_state)
+        }
+        .commands
+        {
+            SidebarCommands()
+            
+            CommandGroup(after: CommandGroupPlacement.sidebar)
+            {
+                Divider()
+                Button("Reset Camera")
+                {
+                    app_state.reset_view = true
+                }
+                .keyboardShortcut("r", modifiers: .command)
+                Divider()
+            }
+        }
+        #endif
     }
 }

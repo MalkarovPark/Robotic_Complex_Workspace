@@ -147,7 +147,14 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         get
         {
-            return programs[selected_program_index]
+            if programs.count > 0
+            {
+                return programs[selected_program_index]
+            }
+            else
+            {
+                return PositionsProgram()
+            }
         }
         set
         {
