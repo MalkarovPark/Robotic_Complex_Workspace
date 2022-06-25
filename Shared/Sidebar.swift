@@ -110,7 +110,7 @@ struct SidebarContent: View
                     }
                 }
             }
-            .navigationTitle("Workspace")
+            .navigationTitle("View")
             .toolbar
             {
                 #if os(iOS)

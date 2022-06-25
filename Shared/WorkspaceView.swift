@@ -119,9 +119,9 @@ struct WorkspaceView: View
         .toolbar
         {
             #if os(iOS)
-            ToolbarItem(placement: .cancellationAction)
+            if horizontal_size_class == .compact
             {
-                if horizontal_size_class == .compact
+                ToolbarItem(placement: .cancellationAction)
                 {
                     dismiss_document_button()
                 }
