@@ -68,6 +68,8 @@ struct Sidebar_Previews: PreviewProvider
     {
         #if os(macOS)
         Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false))
+            .environmentObject(Workspace())
+            .environmentObject(AppState())
         #else
         Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
         #endif
@@ -83,6 +85,11 @@ struct SidebarContent: View
     @Binding var file_name: String
     #endif
     
+    #if os(iOS)
+    //MARK: Horizontal window size handler
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    #endif
+    
     @State var sidebar_selection: navigation_item? = .WorkspaceView
     
     var body: some View
@@ -93,8 +100,28 @@ struct SidebarContent: View
             { selection in
                 NavigationLink(value: selection)
                 {
-                    Label(selection.localizedName, systemImage: selection.image_name)
+                    switch selection.localizedName
+                    {
+                    case "Robots":
+                        Label(selection.localizedName, systemImage: selection.image_name)
+                            .badge(document.preset.robots.count)
+                    default:
+                        Label(selection.localizedName, systemImage: selection.image_name)
+                    }
                 }
+            }
+            .navigationTitle("Workspace")
+            .toolbar
+            {
+                #if os(iOS)
+                if horizontal_size_class != .compact
+                {
+                    ToolbarItem(placement: .cancellationAction)
+                    {
+                        dismiss_document_button()
+                    }
+                }
+                #endif
             }
         } detail: {
             ZStack
@@ -115,15 +142,6 @@ struct SidebarContent: View
                     Text("None")
                 }
             }
-        }
-        .toolbar
-        {
-            #if os(iOS)
-            ToolbarItem(placement: .cancellationAction)
-            {
-                dismiss_document_button()
-            }
-            #endif
         }
     }
     

@@ -28,26 +28,12 @@ struct ContentView: View
     @ViewBuilder var body: some View
     {
         #if os(iOS)
-        if horizontal_size_class == .compact
-        {
-            //Show tab bar for thin window size
-            TabBar(document: $document, first_loaded: $first_loaded)
-                .environmentObject(base_workspace)
-                .onAppear
-                {
-                    get_file_data()
-                }
-        }
-        else
-        {
-            //Show sidebar for wide window size
-            Sidebar(document: $document, first_loaded: $first_loaded, file_url: $file_url, file_name: $file_name)
-                .environmentObject(base_workspace)
-                .onAppear
-                {
-                    get_file_data()
-                }
-        }
+        Sidebar(document: $document, first_loaded: $first_loaded, file_url: $file_url, file_name: $file_name)
+            .environmentObject(base_workspace)
+            .onAppear
+            {
+                get_file_data()
+            }
         #else
         Sidebar(document: $document, first_loaded: $first_loaded)
             .environmentObject(base_workspace)

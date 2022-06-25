@@ -56,19 +56,33 @@ struct WorkspaceView: View
             #else
             if horizontal_size_class == .compact
             {
-                if wv_selection == 0
+                VStack(spacing: 0)
                 {
-                    if !first_loaded
+                    Picker("Workspace", selection: $wv_selection)
                     {
-                        ComplexWorkspaceView(document: $document)
-                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                            .onDisappear(perform: stop_perform)
+                        ForEach(0..<wv_items.count, id: \.self)
+                        { index in
+                            Text(self.wv_items[index]).tag(index)
+                        }
                     }
-                }
-                else
-                {
-                    ControlProgramView(document: $document)
-                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    .pickerStyle(SegmentedPickerStyle())
+                    .labelsHidden()
+                    .padding()
+                    
+                    if wv_selection == 0
+                    {
+                        if !first_loaded
+                        {
+                            ComplexWorkspaceView(document: $document)
+                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                .onDisappear(perform: stop_perform)
+                        }
+                    }
+                    else
+                    {
+                        ControlProgramView(document: $document)
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    }
                 }
             }
             else
@@ -109,15 +123,7 @@ struct WorkspaceView: View
             {
                 if horizontal_size_class == .compact
                 {
-                    Picker("Workspace", selection: $wv_selection)
-                    {
-                        ForEach(0..<wv_items.count, id: \.self)
-                        { index in
-                            Text(self.wv_items[index]).tag(index)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .labelsHidden()
+                    dismiss_document_button()
                 }
             }
             #endif

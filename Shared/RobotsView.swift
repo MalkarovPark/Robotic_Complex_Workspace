@@ -440,18 +440,32 @@ struct RobotView: View
             #else
             if horizontal_size_class == .compact
             {
-                if rv_selection == 0
+                VStack(spacing: 0)
                 {
-                    RobotSceneView(document: $document)
-                        .onDisappear(perform: close_robot)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    Picker("Workspace", selection: $rv_selection)
+                    {
+                        ForEach(0..<rv_items.count, id: \.self)
+                        { index in
+                            Text(self.rv_items[index]).tag(index)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .labelsHidden()
+                    .padding()
+                    
+                    if rv_selection == 0
+                    {
+                        RobotSceneView(document: $document)
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    }
+                    else
+                    {
+                        RobotInspectorView(document: $document)
+                            .disabled(base_workspace.selected_robot.is_moving == true)
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    }
                 }
-                else
-                {
-                    RobotInspectorView(document: $document)
-                        .disabled(base_workspace.selected_robot.is_moving == true)
-                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                }
+                .onDisappear(perform: close_robot)
             }
             else
             {
@@ -481,24 +495,6 @@ struct RobotView: View
                     Label("Close", systemImage: "xmark")
                 }
             }
-            
-            #if os(iOS)
-            ToolbarItem(placement: .automatic)
-            {
-                if horizontal_size_class == .compact
-                {
-                    Picker("Workspace", selection: $rv_selection)
-                    {
-                        ForEach(0..<rv_items.count, id: \.self)
-                        { index in
-                            Text(self.rv_items[index]).tag(index)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .labelsHidden()
-                }
-            }
-            #endif
             
             ToolbarItem(placement: placement_trailing)
             {

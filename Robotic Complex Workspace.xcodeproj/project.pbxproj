@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		62253FD42746211D00F76A51 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 62253FD32746211D00F76A51 /* Components.scnassets */; };
 		62253FD52746211D00F76A51 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 62253FD32746211D00F76A51 /* Components.scnassets */; };
-		62253FD72746611900F76A51 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62253FD62746611900F76A51 /* TabBar.swift */; };
 		624432EC2847C83D00E7BE85 /* PositionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624432EB2847C83D00E7BE85 /* PositionPoint.swift */; };
 		624432ED2847C83D00E7BE85 /* PositionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624432EB2847C83D00E7BE85 /* PositionPoint.swift */; };
 		624432EF2847C8A200E7BE85 /* Tool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624432EE2847C8A200E7BE85 /* Tool.swift */; };
@@ -47,7 +46,6 @@
 
 /* Begin PBXFileReference section */
 		62253FD32746211D00F76A51 /* Components.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Components.scnassets; sourceTree = "<group>"; };
-		62253FD62746611900F76A51 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		624432EB2847C83D00E7BE85 /* PositionPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionPoint.swift; sourceTree = "<group>"; };
 		624432EE2847C8A200E7BE85 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
 		624CFA632838211A00CC1D57 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -127,7 +125,6 @@
 				62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */,
 				62E0D3522719C6FC009D58D2 /* ContentView.swift */,
 				62A23C4A271C70D0008FC0CC /* Sidebar.swift */,
-				62253FD62746611900F76A51 /* TabBar.swift */,
 				6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */,
 				6279ED702721A5B400EEA986 /* RobotsView.swift */,
 				62DFC8E827E3841B00ABCE1E /* ToolsView.swift */,
@@ -269,7 +266,6 @@
 				62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
 				624432EF2847C8A200E7BE85 /* Tool.swift in Sources */,
 				626E88E52727073F00631945 /* DismissModifier.swift in Sources */,
-				62253FD72746611900F76A51 /* TabBar.swift in Sources */,
 				62A23C4B271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				624432EC2847C83D00E7BE85 /* PositionPoint.swift in Sources */,
 				624DA0C8275D3AA600918A9E /* PositionsProgram.swift in Sources */,
@@ -358,8 +354,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -413,8 +409,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -442,8 +438,8 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -479,8 +475,8 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -516,7 +512,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
 				PRODUCT_NAME = "Robotic Complex Workspace";
@@ -545,7 +541,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
 				PRODUCT_NAME = "Robotic Complex Workspace";
