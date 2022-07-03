@@ -323,6 +323,12 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         if is_moving == false
         {
             //Move to next point if moving was stop
+            if get_statistics
+            {
+                angles_chart_data = [AnglesInfo]()
+                angles_index = 0
+            }
+            
             is_moving = true
             move_to_next_point()
         }
@@ -566,6 +572,15 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             angles.append(-(theta[3] + .pi))
             angles.append(theta[4])
             angles.append(-theta[5])
+            
+            if get_statistics
+            {
+                for i in 0...angles.count - 1
+                {
+                    angles_chart_data.append(AnglesInfo(index: angles_index, value: angles[i], type: "\(i + 1)"))
+                }
+                angles_index += 1
+            }
         }
         return angles
     }
@@ -596,6 +611,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var is_placed = false
     public var location = [Float](repeating: 0, count: 3) //[0, 0, 0] //x, y, z
     public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] //r, p, w
+    
+    //MARK: Robot chart functions
+    public var get_statistics = false
+    public var angles_chart_data = [AnglesInfo]()
+    private var angles_index = 0
     
     //MARK: - UI functions
     private var robot_image_data = Data()
@@ -720,6 +740,15 @@ struct robot_struct: Codable
     
     var origin_location: [Float]
     var origin_rotation: [Float]
+}
+
+//MARK: - Charts structures
+struct AnglesInfo: Identifiable
+{
+    var id = UUID()
+    var index: Int
+    var value: Double
+    var type: String
 }
 
 //MARK: - Angle convertion functions

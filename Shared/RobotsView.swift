@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import Charts
 import UniformTypeIdentifiers
 
 #if os(macOS)
@@ -414,6 +415,7 @@ struct RobotView: View
     
     @State var origin_move_view_presented = false
     @State var origin_rotate_view_presented = false
+    @State var chart_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -500,6 +502,16 @@ struct RobotView: View
             {
                 HStack(alignment: .center)
                 {
+                    Button(action: { chart_view_presented.toggle()
+                    })
+                    {
+                        Label("Chart", systemImage: "chart.xyaxis.line")
+                    }
+                    .sheet(isPresented: $chart_view_presented)
+                    {
+                        ChartView(chart_view_presented: $chart_view_presented)
+                    }
+                    
                     Button(action: { base_workspace.selected_robot.reset_moving()
                         base_workspace.update_view()
                     })
@@ -525,6 +537,110 @@ struct RobotView: View
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         display_rv = false
+    }
+}
+
+struct ChartView: View
+{
+    @Binding var chart_view_presented: Bool
+    
+    //Picker data for chart view
+    @State private var sd_selection = 0
+    private let sd_items: [String] = ["Angles", "Position"]
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            HStack
+            {
+                Text("Statistics")
+                    .font(.title2)
+                Spacer()
+                
+                Toggle(isOn: $base_workspace.selected_robot.get_statistics)
+                {
+                    Text("Enabe collection")
+                }
+                .toggleStyle(.switch)
+            }
+            .padding()
+            //Text("Statistics")
+                //.font(.title2)
+                //.padding([.top, .leading, .trailing])
+            
+            Picker("Statistics", selection: $sd_selection)
+            {
+                ForEach(0..<sd_items.count, id: \.self)
+                { index in
+                    Text(self.sd_items[index]).tag(index)
+                }
+            }
+            .controlSize(.regular)
+            .pickerStyle(SegmentedPickerStyle())
+            .labelsHidden()
+            .padding()
+            
+            if base_workspace.selected_robot.get_statistics
+            {
+                switch sd_selection
+                {
+                case 0:
+                    Chart
+                    {
+                        ForEach(base_workspace.selected_robot.angles_chart_data)
+                        {
+                            LineMark(
+                                x: .value("Mount", $0.index),
+                                y: .value("Value", $0.value)
+                            )
+                            .foregroundStyle(by: .value("Type", "J\($0.type)"))
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                case 1:
+                    Spacer()
+                    Text("Position")
+                    Spacer()
+                default:
+                    Spacer()
+                    Text("None")
+                    Spacer()
+                }
+            }
+            else
+            {
+                Spacer()
+                Text("None")
+                Spacer()
+            }
+            
+            HStack
+            {
+                Button(action: { chart_view_presented.toggle() })
+                {
+                    Text("Close")
+                    #if os(macOS)
+                        .frame(maxWidth: .infinity)
+                    #else
+                        .frame(maxWidth: .infinity, minHeight: 32)
+                        .background(Color.accentColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    #endif
+                }
+                    .keyboardShortcut(.defaultAction)
+                    .padding()
+                    .foregroundColor(Color.white)
+            }
+        }
+        #if os(macOS)
+        .frame(minWidth: 448, idealWidth: 480, maxWidth: 512, minHeight: 448, idealHeight: 480, maxHeight: 512)
+        #else
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #endif
     }
 }
 
@@ -1918,6 +2034,8 @@ struct RobotsView_Previews: PreviewProvider
                 .environmentObject(Workspace())
             AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
+            ChartView(chart_view_presented: .constant(true))
+                .environmentObject(Workspace())
             #if os(macOS)
             RobotCardView(card_color: .green, card_image: NSImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
             #else
