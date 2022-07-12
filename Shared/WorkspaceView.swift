@@ -18,9 +18,7 @@ struct WorkspaceView: View
     @Binding var file_url: URL
     #endif
     
-    //@State var cycle = false
     @State var worked = false
-    @State var some_text = "Text"
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -155,12 +153,10 @@ struct WorkspaceView: View
             }
         }
         #if os(iOS)
-        .navigationTitle($some_text)
-        {
-            RenameButton()
-            .onChange(of: some_text) { _ in
-                print(some_text)
-            }
+        .navigationTitle($file_name)
+        .onChange(of: file_name)
+        { _ in
+            print(file_name)
         }
         .navigationDocument(file_url)
         #endif

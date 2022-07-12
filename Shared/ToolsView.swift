@@ -15,7 +15,8 @@ struct ToolsView: View
         HStack
         {
             Text("Press «+» to add new tool")
-                .foregroundColor(.gray)
+                .font(.largeTitle)
+                .foregroundColor(quaternary_label_color)
                 .padding(16)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

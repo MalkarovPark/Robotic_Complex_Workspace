@@ -12,8 +12,10 @@ import UniformTypeIdentifiers
 
 #if os(macOS)
 let placement_trailing: ToolbarItemPlacement = .automatic
+let quaternary_label_color: Color = Color(NSColor.quaternaryLabelColor)
 #else
 let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
+let quaternary_label_color: Color = Color(UIColor.quaternaryLabel)
 #endif
 
 struct RobotsView: View
@@ -92,7 +94,8 @@ struct RobotsTableView: View
             else
             {
                 Text("Press «+» to add new robot")
-                    .foregroundColor(.gray)
+                    .font(.largeTitle)
+                    .foregroundColor(quaternary_label_color)
                     .padding(16)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
             }
@@ -505,7 +508,7 @@ struct RobotView: View
                     Button(action: { chart_view_presented.toggle()
                     })
                     {
-                        Label("Chart", systemImage: "chart.xyaxis.line")
+                        Label("Chart", systemImage: "chart.bar")
                     }
                     .sheet(isPresented: $chart_view_presented)
                     {
@@ -554,37 +557,24 @@ struct ChartView: View
     {
         VStack(spacing: 0)
         {
-            HStack
-            {
-                Text("Statistics")
-                    .font(.title2)
-                Spacer()
-                
-                Toggle(isOn: $base_workspace.selected_robot.get_statistics)
-                {
-                    Text("Enabe collection")
-                }
-                .toggleStyle(.switch)
-            }
-            .padding()
-            //Text("Statistics")
-                //.font(.title2)
-                //.padding([.top, .leading, .trailing])
-            
-            Picker("Statistics", selection: $sd_selection)
-            {
-                ForEach(0..<sd_items.count, id: \.self)
-                { index in
-                    Text(self.sd_items[index]).tag(index)
-                }
-            }
-            .controlSize(.regular)
-            .pickerStyle(SegmentedPickerStyle())
-            .labelsHidden()
-            .padding()
+            Text("Statistics")
+                .font(.title2)
+                .padding([.top, .leading, .trailing])
             
             if base_workspace.selected_robot.get_statistics
             {
+                Picker("Statistics", selection: $sd_selection)
+                {
+                    ForEach(0..<sd_items.count, id: \.self)
+                    { index in
+                        Text(self.sd_items[index]).tag(index)
+                    }
+                }
+                .controlSize(.regular)
+                .pickerStyle(SegmentedPickerStyle())
+                .labelsHidden()
+                .padding()
+                
                 switch sd_selection
                 {
                 case 0:
@@ -615,8 +605,17 @@ struct ChartView: View
             {
                 Spacer()
                 Text("None")
+                    .font(.largeTitle)
+                    .foregroundColor(quaternary_label_color)
                 Spacer()
             }
+            
+            Toggle(isOn: $base_workspace.selected_robot.get_statistics)
+            {
+                Text("Enabe collection")
+            }
+            .toggleStyle(.switch)
+            .padding([.leading, .trailing])
             
             HStack
             {
