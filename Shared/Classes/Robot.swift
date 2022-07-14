@@ -322,13 +322,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         if is_moving == false
         {
-            //Move to next point if moving was stop
-            if get_statistics
-            {
-                angles_chart_data = [AnglesInfo]()
-                angles_index = 0
-            }
+            clear_chart_data()
             
+            //Move to next point if moving was stop
             is_moving = true
             move_to_next_point()
         }
@@ -376,6 +372,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func robot_workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
+        //Find scene elements by names and connect
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         self.unit_origin_node = self.unit_node?.childNode(withName: "unit_pointer", recursively: true)
         self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
@@ -572,15 +569,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             angles.append(-(theta[3] + .pi))
             angles.append(theta[4])
             angles.append(-theta[5])
-            
-            if get_statistics
-            {
-                for i in 0...angles.count - 1
-                {
-                    angles_chart_data.append(AnglesInfo(index: angles_index, value: angles[i], type: "\(i + 1)"))
-                }
-                angles_index += 1
-            }
         }
         return angles
     }
@@ -604,18 +592,58 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             robot_details[4].eulerAngles.z = Float(ik_angles[4])
             robot_details[5].eulerAngles.y = Float(ik_angles[5])
             #endif
+            
+            update_chart_data()
         }
     }
     
     //MARK: Robot in workspace handling
     public var is_placed = false
-    public var location = [Float](repeating: 0, count: 3) //[0, 0, 0] //x, y, z
-    public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] //r, p, w
+    public var location = [Float](repeating: 0, count: 3) //[0, 0, 0] x, y, z
+    public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] r, p, w
     
     //MARK: Robot chart functions
     public var get_statistics = false
-    public var angles_chart_data = [AnglesInfo]()
-    private var angles_index = 0
+    public var chart_data = (robot_details_angles: [PositionChartInfo](), tool_location: [PositionChartInfo](), tool_rotation: [PositionChartInfo]())
+    
+    private var chart_element_index = 0
+    private var axis_names = ["X", "Y", "Z"]
+    private var rotation_axis_names = ["R", "P", "W"]
+    
+    func update_chart_data()
+    {
+        if get_statistics && is_moving
+        {
+            for i in 0...ik_angles.count - 1
+            {
+                chart_data.robot_details_angles.append(PositionChartInfo(index: chart_element_index, value: ik_angles[i], type: "J\(i + 1)"))
+            }
+            
+            //current_pointer_position_select()
+            let pointer_location_chart = [Double(((pointer_node?.position.z ?? 0)) * 10), Double(((pointer_node?.position.x ?? 0)) * 10), Double(((pointer_node?.position.y ?? 0)) * 10)]
+            for i in 0...axis_names.count - 1
+            {
+                chart_data.tool_location.append(PositionChartInfo(index: chart_element_index, value: pointer_location_chart[i], type: axis_names[i]))
+            }
+            
+            let pointer_rotation_chart = [to_deg(in_angle: Double(tool_node?.eulerAngles.z ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.x ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.y ?? 0))]
+            for i in 0...rotation_axis_names.count - 1
+            {
+                chart_data.tool_rotation.append(PositionChartInfo(index: chart_element_index, value: pointer_rotation_chart[i], type: rotation_axis_names[i]))
+            }
+            
+            chart_element_index += 1
+        }
+    }
+    
+    func clear_chart_data()
+    {
+        if get_statistics
+        {
+            chart_data = (robot_details_angles: [PositionChartInfo](), tool_location: [PositionChartInfo](), tool_rotation: [PositionChartInfo]())
+            chart_element_index = 0
+        }
+    }
     
     //MARK: - UI functions
     private var robot_image_data = Data()
@@ -743,7 +771,7 @@ struct robot_struct: Codable
 }
 
 //MARK: - Charts structures
-struct AnglesInfo: Identifiable
+struct PositionChartInfo: Identifiable
 {
     var id = UUID()
     var index: Int

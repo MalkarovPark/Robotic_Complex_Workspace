@@ -497,7 +497,7 @@ struct RobotView: View
             {
                 Button(action: close_robot)
                 {
-                    Label("Close", systemImage: "xmark")
+                    Label("Close", systemImage: "chevron.backward")
                 }
             }
             
@@ -549,7 +549,7 @@ struct ChartView: View
     
     //Picker data for chart view
     @State private var sd_selection = 0
-    private let sd_items: [String] = ["Angles", "Position"]
+    private let sd_items: [String] = ["Details Angles", "Tool Position", "Tool Rotation"]
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -580,21 +580,45 @@ struct ChartView: View
                 case 0:
                     Chart
                     {
-                        ForEach(base_workspace.selected_robot.angles_chart_data)
+                        ForEach(base_workspace.selected_robot.chart_data.robot_details_angles)
                         {
                             LineMark(
                                 x: .value("Mount", $0.index),
                                 y: .value("Value", $0.value)
                             )
-                            .foregroundStyle(by: .value("Type", "J\($0.type)"))
+                            .foregroundStyle(by: .value("Type", $0.type))
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding()
                 case 1:
-                    Spacer()
-                    Text("Position")
-                    Spacer()
+                    Chart
+                    {
+                        ForEach(base_workspace.selected_robot.chart_data.tool_location)
+                        {
+                            LineMark(
+                                x: .value("Mount", $0.index),
+                                y: .value("Value", $0.value)
+                            )
+                            .foregroundStyle(by: .value("Type", $0.type))
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                case 2:
+                    Chart
+                    {
+                        ForEach(base_workspace.selected_robot.chart_data.tool_rotation)
+                        {
+                            LineMark(
+                                x: .value("Mount", $0.index),
+                                y: .value("Value", $0.value)
+                            )
+                            .foregroundStyle(by: .value("Type", $0.type))
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
                 default:
                     Spacer()
                     Text("None")
@@ -1696,7 +1720,7 @@ struct PositionItemListView: View
                 Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
                     .font(.caption)
                 
-                Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.z))")
+                Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
                     .font(.caption)
             }
             .onTapGesture
@@ -1963,12 +1987,6 @@ struct PositionItemView: View
     //MARK: Point manage functions
     func update_point_location()
     {
-        /*#if os(macOS)
-        point_item.position = SCNVector3(x: item_view_pos_location[0], y: item_view_pos_location[1], z: item_view_pos_location[2])
-        #else
-        point_item.position = SCNVector3(x: Float(item_view_pos_location[0]), y: Float(item_view_pos_location[1]), z: Float(item_view_pos_location[2]))
-        #endif*/
-        
         point_item.x = item_view_pos_location[0]
         point_item.y = item_view_pos_location[1]
         point_item.z = item_view_pos_location[2]
@@ -1978,16 +1996,6 @@ struct PositionItemView: View
     
     func update_point_rotation()
     {
-        /*#if os(macOS)
-        point_item.rotation.x = to_rad(in_angle: item_view_pos_rotation[0])
-        point_item.rotation.y = to_rad(in_angle: item_view_pos_rotation[1])
-        point_item.rotation.z = to_rad(in_angle: item_view_pos_rotation[2])
-        #else
-        point_item.rotation.x = Float(to_rad(in_angle: item_view_pos_rotation[0]))
-        point_item.rotation.y = Float(to_rad(in_angle: item_view_pos_rotation[1]))
-        point_item.rotation.z = Float(to_rad(in_angle: item_view_pos_rotation[2]))
-        #endif*/
-        
         point_item.r = item_view_pos_rotation[0]
         point_item.p = item_view_pos_rotation[1]
         point_item.w = item_view_pos_rotation[2]
