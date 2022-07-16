@@ -27,6 +27,8 @@
 			<string>Data set of robotic complex</string>
 			<key>UTTypeIcons</key>
 			<dict>
+				<key>UTTypeIconBadgeName</key>
+				<string>preset_image</string>
 				<key>UTTypeIconText</key>
 				<string>preset</string>
 			</dict>
@@ -61,7 +63,5 @@
 			</dict>
 		</dict>
 	</array>
-	<key>UISupportsDocumentBrowser</key>
-	<true/>
 </dict>
 </plist>

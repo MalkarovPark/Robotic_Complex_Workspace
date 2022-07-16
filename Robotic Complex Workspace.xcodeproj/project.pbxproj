@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6204438D2882DDC500EEB206 /* preset_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 6204438C2882DDC500EEB206 /* preset_icon.png */; };
 		62253FD42746211D00F76A51 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 62253FD32746211D00F76A51 /* Components.scnassets */; };
 		62253FD52746211D00F76A51 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 62253FD32746211D00F76A51 /* Components.scnassets */; };
 		624432EC2847C83D00E7BE85 /* PositionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624432EB2847C83D00E7BE85 /* PositionPoint.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6204438C2882DDC500EEB206 /* preset_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = preset_icon.png; sourceTree = "<group>"; };
 		62253FD32746211D00F76A51 /* Components.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Components.scnassets; sourceTree = "<group>"; };
 		624432EB2847C83D00E7BE85 /* PositionPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionPoint.swift; sourceTree = "<group>"; };
 		624432EE2847C8A200E7BE85 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 		62E0D35A2719C700009D58D2 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				6204438C2882DDC500EEB206 /* preset_icon.png */,
 				62E0D35B2719C700009D58D2 /* Info.plist */,
 			);
 			path = iOS;
@@ -238,6 +241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6204438D2882DDC500EEB206 /* preset_icon.png in Resources */,
 				62E0D36A2719C700009D58D2 /* Assets.xcassets in Resources */,
 				62C05D0427971FBB003A2F0B /* RobotsInfo.plist in Resources */,
 				62253FD42746211D00F76A51 /* Components.scnassets in Resources */,
@@ -508,6 +512,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -537,6 +542,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

@@ -31,7 +31,7 @@ struct Robotic_Complex_WorkspaceApp: App
                 {
                     app_state.reset_view = true
                 }
-                .keyboardShortcut("r", modifiers: .command)
+                .keyboardShortcut("0", modifiers: .command)
                 Divider()
             }
         }
@@ -52,7 +52,7 @@ struct Robotic_Complex_WorkspaceApp: App
                 {
                     app_state.reset_view = true
                 }
-                .keyboardShortcut("r", modifiers: .command)
+                .keyboardShortcut("0", modifiers: .command)
                 Divider()
             }
         }

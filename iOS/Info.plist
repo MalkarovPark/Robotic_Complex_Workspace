@@ -24,7 +24,9 @@
 			<key>UTTypeDescription</key>
 			<string>Data set of robotic complex</string>
 			<key>UTTypeIconFiles</key>
-			<array/>
+			<array>
+				<string>preset_icon</string>
+			</array>
 			<key>UTTypeIdentifier</key>
 			<string>mv-park.RoboticComplexWorkspace.preset</string>
 			<key>UTTypeTagSpecification</key>
