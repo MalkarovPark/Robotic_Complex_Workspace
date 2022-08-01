@@ -116,7 +116,7 @@ struct WorkspaceView: View
         //MARK: Toolbar
         .toolbar
         {
-            #if os(iOS)
+            /*#if os(iOS)
             if horizontal_size_class == .compact
             {
                 ToolbarItem(placement: .cancellationAction)
@@ -124,7 +124,7 @@ struct WorkspaceView: View
                     dismiss_document_button()
                 }
             }
-            #endif
+            #endif*/
             ToolbarItem(placement: placement_trailing)
             {
                 //MARK: Workspace performing elements

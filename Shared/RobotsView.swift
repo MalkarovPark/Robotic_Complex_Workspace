@@ -493,18 +493,24 @@ struct RobotView: View
         .toolbar
         {
             //MARK: Toolbar items
-            ToolbarItem(placement: .navigation)
+            /*ToolbarItem(placement: .navigation)
             {
                 Button(action: close_robot)
                 {
                     Label("Close", systemImage: "chevron.backward")
                 }
-            }
+            }*/
             
             ToolbarItem(placement: placement_trailing)
             {
                 HStack(alignment: .center)
                 {
+                    Button(action: close_robot)
+                    {
+                        Label("Close", systemImage: "rectangle.grid.2x2")
+                    }
+                    Divider()
+                    
                     Button(action: { chart_view_presented.toggle()
                     })
                     {
@@ -512,7 +518,7 @@ struct RobotView: View
                     }
                     .sheet(isPresented: $chart_view_presented)
                     {
-                        ChartView(chart_view_presented: $chart_view_presented)
+                        ChartView(chart_view_presented: $chart_view_presented, document: $document)
                     }
                     
                     Button(action: { base_workspace.selected_robot.reset_moving()
@@ -546,6 +552,7 @@ struct RobotView: View
 struct ChartView: View
 {
     @Binding var chart_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     //Picker data for chart view
     @State private var sd_selection = 0
@@ -640,6 +647,10 @@ struct ChartView: View
             }
             .toggleStyle(.switch)
             .padding([.leading, .trailing])
+            .onChange(of: base_workspace.selected_robot.get_statistics)
+            { _ in
+                document.preset.robots = base_workspace.file_data().robots
+            }
             
             HStack
             {
@@ -2041,7 +2052,7 @@ struct RobotsView_Previews: PreviewProvider
                 .environmentObject(Workspace())
             AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
-            ChartView(chart_view_presented: .constant(true))
+            ChartView(chart_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
             #if os(macOS)
             RobotCardView(card_color: .green, card_image: NSImage(), card_title: "Robot Name", card_subtitle: "Fanuc")

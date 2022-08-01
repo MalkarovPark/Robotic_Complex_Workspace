@@ -111,7 +111,7 @@ struct SidebarContent: View
                 }
             }
             .navigationTitle("View")
-            .toolbar
+            /*.toolbar
             {
                 #if os(iOS)
                 if horizontal_size_class != .compact
@@ -122,7 +122,7 @@ struct SidebarContent: View
                     }
                 }
                 #endif
-            }
+            }*/
         } detail: {
             ZStack
             {
