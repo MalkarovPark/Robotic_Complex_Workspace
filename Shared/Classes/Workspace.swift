@@ -281,6 +281,11 @@ class Workspace: ObservableObject
     
     public func start_pause_perform()
     {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+        {
+            self.update_view()
+        }
+        
         if is_performing == false
         {
             //Move to next point if moving was stop

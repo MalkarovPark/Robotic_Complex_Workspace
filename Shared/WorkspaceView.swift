@@ -231,7 +231,7 @@ struct ComplexWorkspaceView: View
                             AddRobotInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        .disabled(base_workspace.avaliable_robots_names.count == 0 || (base_workspace.is_selected && base_workspace.selected_robot.is_placed))
+                        .disabled(base_workspace.avaliable_robots_names.count == 0 || (base_workspace.is_selected && base_workspace.selected_robot.is_placed)  || base_workspace.is_performing)
                         
                         Divider()
                         
@@ -434,13 +434,13 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                     base_workspace.update_view()
                 }
             }
-            if base_workspace.selected_robot.is_moving
+            /*if base_workspace.selected_robot.is_moving
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
                 {
                     base_workspace.update_view()
                 }
-            }
+            }*/
         }
         
         app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera

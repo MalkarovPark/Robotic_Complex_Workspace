@@ -2,6 +2,65 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Default</key>
+	<dict>
+		<key>6DOF Series</key>
+		<dict>
+			<key>Model 1</key>
+			<dict>
+				<key>Name</key>
+				<string>Model Without Scene</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
+			</dict>
+			<key>Model 2</key>
+			<dict>
+				<key>Name</key>
+				<string>Model With Scene</string>
+				<key>Kinematic</key>
+				<string>6DOF</string>
+				<key>Scene</key>
+				<string>None</string>
+			</dict>
+		</dict>
+		<key>Portal Series</key>
+		<dict>
+			<key>Model 1</key>
+			<dict>
+				<key>Name</key>
+				<string>Model Without Scene</string>
+				<key>Kinematic</key>
+				<string>Portal</string>
+				<key>Details Lengths</key>
+				<array>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+					<integer>0</integer>
+				</array>
+			</dict>
+			<key>Model 2</key>
+			<dict>
+				<key>Name</key>
+				<string>Model With Scene</string>
+				<key>Kinematic</key>
+				<string>Portal</string>
+				<key>Scene</key>
+				<string>None</string>
+			</dict>
+		</dict>
+	</dict>
 	<key>ABB</key>
 	<dict>
 		<key>Series</key>

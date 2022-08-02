@@ -668,6 +668,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         let color: Color
         switch self.manufacturer
         {
+        case "Default":
+            color = Color.green
         case "ABB":
             color = Color.red
         case "FANUC":
@@ -698,6 +700,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         let color: Color
         switch self.manufacturer
         {
+        case "Default":
+            color = Color.green
         case "ABB":
             color = Color.red
         case "FANUC":

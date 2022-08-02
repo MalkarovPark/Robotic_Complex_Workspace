@@ -528,7 +528,7 @@ struct RobotView: View
                         Label("Stop", systemImage: "stop")
                     }
                     Button(action: { base_workspace.selected_robot.start_pause_moving()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
                         {
                             base_workspace.update_view()
                         }
