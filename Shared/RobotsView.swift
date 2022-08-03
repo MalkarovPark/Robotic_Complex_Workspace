@@ -401,7 +401,7 @@ struct AddRobotView: View
     
     func add_robot_in_workspace()
     {
-        base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: app_state.model_name, ip_address: "127.0.0.1"))
+        base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, model: app_state.model_name))
         document.preset.robots = base_workspace.file_data().robots
         
         base_workspace.elements_check()

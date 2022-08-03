@@ -26,38 +26,38 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var name: String?
     private var manufacturer: String?
     private var model: String?
-    private var ip_address: String?
+    
+    private var kinematic: Kinematic?
     
     @Published private var programs = [PositionsProgram]()
     
     //MARK: - Robot init functions
     init()
     {
-        robot_init(name: "None", manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: "None", manufacturer: "Default", model: "Model", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String)
     {
-        robot_init(name: name, manufacturer: "Fanuc", model: "LR-Mate", ip_address: "127.0.0.1", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: "Default", model: "Model", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
-    init(name: String, manufacturer: String, model: String, ip_address: String)
+    init(name: String, manufacturer: String, model: String)
     {
-        robot_init(name: name, manufacturer: manufacturer, model: model, ip_address: ip_address, is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: manufacturer, model: model, is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(robot_struct: robot_struct)
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, ip_address: robot_struct.ip_addrerss, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, ip_address: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
+    func robot_init(name: String, manufacturer: String, model: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
         self.model = model
-        self.ip_address = ip_address
         
         self.is_placed = is_placed
         self.location = location
@@ -427,8 +427,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
 
     private var theta = [Double](repeating: 0.0, count: 6)
     public var lenghts = [Float](repeating: 0, count: 6)
-    public var origin_location = [Float](repeating: 0, count: 3) // [32, 0, 0] //x, y, z
-    public var origin_rotation = [Float](repeating: 0, count: 3) // [0, 0, 0] //r, p, w
+    public var origin_location = [Float](repeating: 0, count: 3) //x, y, z
+    public var origin_rotation = [Float](repeating: 0, count: 3) //r, p, w
     
     public func robot_details_connect() //Connect robot instance to manipulator model details
     {
@@ -729,7 +729,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", ip_addrerss: ip_address ?? "127.0.0.1", is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
@@ -743,14 +743,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 viewed_program = PositionsProgram(name: program_struct.name)
                 viewed_program?.points = program_struct.points
                 
-                /*if program_struct.points.count > 0
-                {
-                    for point_struct in program_struct.points
-                    {
-                        viewed_program?.add_point(pos_x: point_struct[0], pos_y: point_struct[1], pos_z: point_struct[2], rot_x: point_struct[3], rot_y: point_struct[4], rot_z: point_struct[5])
-                    }
-                }*/
-                
                 programs.append(viewed_program!)
             }
         }
@@ -763,7 +755,6 @@ struct robot_struct: Codable
     var name: String
     var manufacturer: String
     var model: String
-    var ip_addrerss: String
     
     var is_placed: Bool
     var location: [Float]
@@ -785,6 +776,13 @@ struct PositionChartInfo: Identifiable
     var index: Int
     var value: Double
     var type: String
+}
+
+//MARK: - Kinematic enums
+enum Kinematic: String, Codable, Equatable, CaseIterable
+{
+    case vi_dof = "6DOF"
+    case portal = "Portal"
 }
 
 //MARK: - Angle convertion functions

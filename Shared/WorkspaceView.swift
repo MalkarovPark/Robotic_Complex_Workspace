@@ -1719,7 +1719,7 @@ struct AddElementView: View
                 {
                     ForEach(ProgramElementType.allCases, id: \.self)
                     { type in
-                        Text(type.localizedName).tag(type)
+                        Text(type.rawValue).tag(type)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -1741,7 +1741,7 @@ struct AddElementView: View
                         {
                             ForEach(PerformerType.allCases, id: \.self)
                             { type in
-                                Text(type.localizedName).tag(type)
+                                Text(type.rawValue).tag(type)
                             }
                         }
                         .pickerStyle(.menu)
@@ -1754,7 +1754,7 @@ struct AddElementView: View
                         {
                             ForEach(ModificatorType.allCases, id: \.self)
                             { type in
-                                Text(type.localizedName).tag(type)
+                                Text(type.rawValue).tag(type)
                             }
                         }
                         .pickerStyle(.menu)
@@ -1767,7 +1767,7 @@ struct AddElementView: View
                         {
                             ForEach(LogicType.allCases, id: \.self)
                             { type in
-                                Text(type.localizedName).tag(type)
+                                Text(type.rawValue).tag(type)
                             }
                         }
                         .pickerStyle(.menu)
@@ -1807,7 +1807,7 @@ struct ElementView: View
                 {
                     ForEach(ProgramElementType.allCases, id: \.self)
                     { type in
-                        Text(type.localizedName).tag(type)
+                        Text(type.rawValue).tag(type)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -1829,7 +1829,7 @@ struct ElementView: View
                         {
                             ForEach(PerformerType.allCases, id: \.self)
                             { type in
-                                Text(type.localizedName).tag(type)
+                                Text(type.rawValue).tag(type)
                             }
                         }
                         .pickerStyle(.menu)
@@ -1842,7 +1842,7 @@ struct ElementView: View
                         {
                             ForEach(ModificatorType.allCases, id: \.self)
                             { type in
-                                Text(type.localizedName).tag(type)
+                                Text(type.rawValue).tag(type)
                             }
                         }
                         .pickerStyle(.menu)
@@ -1855,7 +1855,7 @@ struct ElementView: View
                         {
                             ForEach(LogicType.allCases, id: \.self)
                             { type in
-                                Text(type.localizedName).tag(type)
+                                Text(type.rawValue).tag(type)
                             }
                         }
                         .pickerStyle(.menu)

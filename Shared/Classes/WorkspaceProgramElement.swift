@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 class WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
@@ -170,24 +169,18 @@ enum ProgramElementType: String, Codable, Equatable, CaseIterable
     case perofrmer = "Performer"
     case modificator = "Modificator"
     case logic = "Logic"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }
 
 enum PerformerType: String, Codable, Equatable, CaseIterable
 {
     case robot = "Robot"
     case tool = "Tool"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }
 
 enum ModificatorType: String, Codable, Equatable, CaseIterable
 {
     case observer = "Observer"
     case changer = "Changer"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }
 
 enum LogicType: String, Codable, Equatable, CaseIterable
@@ -196,6 +189,4 @@ enum LogicType: String, Codable, Equatable, CaseIterable
     case mark = "Mark"
     case equal = "Equal"
     case unequal = "Unequal"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }
