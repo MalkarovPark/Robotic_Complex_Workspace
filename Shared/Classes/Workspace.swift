@@ -277,7 +277,7 @@ class Workspace: ObservableObject
     
     public var is_performing = false
     public var selected_element_index = 0
-    public var workspace_scene = SCNScene(named: "Components.scnassets/Workspace.scn")! // = SCNScene()
+    public var workspace_scene = SCNScene() // SCNScene(named: "Components.scnassets/Workspace.scn")!
     
     public func start_pause_perform()
     {

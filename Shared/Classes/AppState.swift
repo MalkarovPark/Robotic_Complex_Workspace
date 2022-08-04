@@ -62,7 +62,7 @@ class AppState : ObservableObject
     private var robots_dictionary: [String: [String: [String: [String: Any]]]]
     private var series_dictionary = [String: [String: [String: Any]]]()
     private var models_dictionary = [String: [String: Any]]()
-    private var robot_model_dictionary = [String: Any]()
+    public var robot_model_dictionary = [String: Any]()
     
     //MARK: Names of manufacturers, series and models
     public var manufacturers: [String]
@@ -97,11 +97,11 @@ class AppState : ObservableObject
         
         robot_model_dictionary = models_dictionary[model_name]!
         
-        for model_parameter in robot_model_dictionary.keys
+        /*for model_parameter in robot_model_dictionary.keys
         {
             let info = robot_model_dictionary[model_parameter] ?? "None"
-            //print("\(model_parameter) – \(info) 🍪")
-        }
+            print("\(model_parameter) – \(info) 🍪")
+        }*/
         
         did_updated = true
     }
@@ -113,8 +113,6 @@ class AppState : ObservableObject
         series = Array(series_dictionary.keys).sorted(by: <)
         series_name = series.first ?? "None"
         
-        print(series_dictionary.keys)
-        
         update_models_info()
     }
     
@@ -124,8 +122,6 @@ class AppState : ObservableObject
         models = Array(models_dictionary.keys).sorted(by: <)
         model_name = models.first ?? "None"
         
-        //print(models_dictionary.keys)
-        
         update_robot_info()
     }
     
@@ -133,10 +129,11 @@ class AppState : ObservableObject
     {
         robot_model_dictionary = models_dictionary[model_name]!
         
-        for model_parameter in robot_model_dictionary.keys
+        //print(robot_model_dictionary.keys)
+        /*for model_parameter in robot_model_dictionary.keys
         {
             let info = robot_model_dictionary[model_parameter] ?? "None"
-            //print("\(model_parameter) – \(info) 🍪")
-        }
+            print("\(model_parameter) – \(info) 🍪")
+        }*/
     }
 }

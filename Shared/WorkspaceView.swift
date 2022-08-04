@@ -434,13 +434,6 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                     base_workspace.update_view()
                 }
             }
-            /*if base_workspace.selected_robot.is_moving
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-                {
-                    base_workspace.update_view()
-                }
-            }*/
         }
         
         app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
@@ -605,13 +598,6 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
                 {
                     base_workspace.selected_robot.moving_completed = false
-                    base_workspace.update_view()
-                }
-            }
-            if base_workspace.selected_robot.is_moving
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-                {
                     base_workspace.update_view()
                 }
             }

@@ -34,30 +34,68 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Robot init functions
     init()
     {
-        robot_init(name: "None", manufacturer: "Default", model: "Model", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: "None", manufacturer: "Default", model: "Model", kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String)
     {
-        robot_init(name: name, manufacturer: "Default", model: "Model", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: "Default", model: "Model", kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
-    init(name: String, manufacturer: String, model: String)
+    init(name: String, kinematic: Kinematic)
     {
-        robot_init(name: name, manufacturer: manufacturer, model: model, is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: "Default", model: "Model", kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+    }
+    
+    init(name: String, manufacturer: String, dictionary: [String: Any])
+    {
+        var kinematic: Kinematic
+        switch dictionary["Kinematic"] as? String ?? ""
+        {
+        case "Portal":
+            kinematic = .portal
+        case "6DOF":
+            kinematic = .vi_dof
+        default:
+            kinematic = .vi_dof
+        }
+        
+        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(robot_struct: robot_struct)
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
+    func robot_init(name: String, manufacturer: String, model: String, kinematic: Kinematic, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
         self.model = model
+        
+        self.kinematic = kinematic
+        self.robot_scene_address = scene
+        
+        //If robot dictionary contains list, then addres changed from default models to special model by key.
+        print(self.robot_scene_address)
+        if self.robot_scene_address == "" || self.robot_scene_address == "None"
+        {
+            switch self.kinematic
+            {
+            case .portal:
+                robot_model_node = SCNScene(named: "Components.scnassets/Robots/Default/Portal.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
+            case .vi_dof:
+                robot_model_node = SCNScene(named: "Components.scnassets/Robots/Default/6DOF.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
+            default:
+                robot_model_node = SCNScene(named: "Components.scnassets/Robots/Default/6DOF.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
+            }
+        }
+        else
+        {
+            robot_model_node = SCNScene(named: robot_scene_address)!.rootNode.childNode(withName: "robot", recursively: false)!
+        }
         
         self.is_placed = is_placed
         self.location = location
@@ -371,6 +409,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var tool_node: SCNNode? //Node for tool element
     public var points_node: SCNNode? //Teach points
     public var robot_node: SCNNode? //Current robot
+    
+    private var robot_model_node: SCNNode? //Model of this robot
+    
+    public var robot_scene_address = "" //Adders of robot scene. If empty – this robot used defult model.
     
     public func robot_workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
@@ -729,7 +771,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
@@ -755,6 +797,9 @@ struct robot_struct: Codable
     var name: String
     var manufacturer: String
     var model: String
+    
+    var kinematic: Kinematic
+    var scene: String
     
     var is_placed: Bool
     var location: [Float]
