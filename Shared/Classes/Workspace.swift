@@ -502,13 +502,13 @@ class Workspace: ObservableObject
                     connect_camera = false
                     
                     #if os(macOS)
-                    unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.location[0]), y: CGFloat(robot.location[2]), z: CGFloat(robot.location[1]))
+                    unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.location[1]), y: CGFloat(robot.location[2]), z: CGFloat(robot.location[0]))
                     
                     unit_node?.eulerAngles.x = to_rad(in_angle: CGFloat(robot.rotation[1]))
                     unit_node?.eulerAngles.y = to_rad(in_angle: CGFloat(robot.rotation[2]))
                     unit_node?.eulerAngles.z = to_rad(in_angle: CGFloat(robot.rotation[0]))
                     #else
-                    unit_node?.worldPosition = SCNVector3(x: robot.location[0], y: robot.location[2], z: robot.location[1])
+                    unit_node?.worldPosition = SCNVector3(x: robot.location[1], y: robot.location[2], z: robot.location[0])
 
                     unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(robot.rotation[1])))
                     unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(robot.rotation[2])))

@@ -34,17 +34,17 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Robot init functions
     init()
     {
-        robot_init(name: "None", manufacturer: "Default", model: "Model", kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: "None", manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String)
     {
-        robot_init(name: name, manufacturer: "Default", model: "Model", kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String, kinematic: Kinematic)
     {
-        robot_init(name: name, manufacturer: "Default", model: "Model", kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(name: String, manufacturer: String, dictionary: [String: Any])
@@ -60,16 +60,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             kinematic = .vi_dof
         }
         
-        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lenghts: dictionary["Details Lengths"] as? [Float] ?? [Float](), kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(robot_struct: robot_struct)
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lenghts: robot_struct.lenghts, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, kinematic: Kinematic, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
+    func robot_init(name: String, manufacturer: String, model: String, lenghts: [Float], kinematic: Kinematic, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
@@ -85,16 +85,33 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             switch self.kinematic
             {
             case .portal:
-                robot_model_node = SCNScene(named: "Components.scnassets/Robots/Default/Portal.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
+                robot_scene_address = "Components.scnassets/Robots/Default/Portal.scn"
             case .vi_dof:
-                robot_model_node = SCNScene(named: "Components.scnassets/Robots/Default/6DOF.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
+                robot_scene_address = "Components.scnassets/Robots/Default/6DOF.scn"
             default:
-                robot_model_node = SCNScene(named: "Components.scnassets/Robots/Default/6DOF.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
+                robot_scene_address = "Components.scnassets/Robots/Default/6DOF.scn"
             }
+        }
+        robot_model_node = SCNScene(named: robot_scene_address)!.rootNode.childNode(withName: "robot", recursively: false)!
+        
+        if lenghts.count > 0
+        {
+            self.with_lenghts = true
+            self.lenghts = lenghts
         }
         else
         {
-            robot_model_node = SCNScene(named: robot_scene_address)!.rootNode.childNode(withName: "robot", recursively: false)!
+            var lenghts_count = 1
+            switch self.kinematic
+            {
+            case .portal:
+                lenghts_count = 4
+            case .vi_dof:
+                lenghts_count = 6
+            default:
+                break
+            }
+            self.lenghts = [Float](repeating: 0, count: lenghts_count)
         }
         
         self.is_placed = is_placed
@@ -414,6 +431,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public var robot_scene_address = "" //Adders of robot scene. If empty – this robot used defult model.
     
+    private var with_lenghts = false //Flag that determines the presence of a lenghts array for a robot
+    
     public func robot_workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
         //Find scene elements by names and connect
@@ -424,12 +443,14 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         self.tool_node = self.pointer_node?.childNode(withName: "tool", recursively: true)
         self.points_node = self.box_node?.childNode(withName: "points", recursively: true)
         
+        self.unit_node?.addChildNode(robot_model_node ?? SCNNode())
+        
         //Connect robot details
         self.robot_node = self.unit_node?.childNode(withName: "robot", recursively: true)
         robot_details_connect()
         
         //Connect robot camera
-        if connect_camera == true
+        if connect_camera
         {
             self.camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
         }
@@ -468,21 +489,25 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var robot_details = [SCNNode]()
 
     private var theta = [Double](repeating: 0.0, count: 6)
-    public var lenghts = [Float](repeating: 0, count: 6)
+    private var lenghts = [Float]() //(repeating: 0, count: 6)
     public var origin_location = [Float](repeating: 0, count: 3) //x, y, z
     public var origin_rotation = [Float](repeating: 0, count: 3) //r, p, w
     
     public func robot_details_connect() //Connect robot instance to manipulator model details
     {
-        robot_details.removeAll()
-        for i in 0...6
+        if !with_lenghts //If robot without defined lenghts, clear this array.
         {
-            robot_details.append(robot_node!.childNode(withName: "d\(i)", recursively: true)!)
-            
-            if i > 0
-            {
-                lenghts[i - 1] = Float(robot_details[i].position.y)
-            }
+            robot_details.removeAll()
+        }
+        
+        switch kinematic
+        {
+        case .portal:
+            portal_connect()
+        case .vi_dof:
+            vi_dof_connect()
+        default:
+            break
         }
     }
     
@@ -517,6 +542,54 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         camera_node?.position.y += Float(origin_location[2]) + robot_details[0].position.y
         camera_node?.position.z += Float(origin_location[0])
         #endif
+    }
+    
+    private func portal_connect()
+    {
+        for i in 0...2
+        {
+            robot_details.append(robot_node!.childNode(withName: "d\(i)", recursively: true)!)
+            if !with_lenghts
+            {
+                
+            }
+        }
+        
+        if with_lenghts
+        {
+            update_robot_lengths_portal()
+        }
+    }
+    
+    private func vi_dof_connect()
+    {
+        for i in 0...6
+        {
+            robot_details.append(robot_node!.childNode(withName: "d\(i)", recursively: true)!)
+            
+            if !with_lenghts //Get lengths from the model if they are not in the array.
+            {
+                if i > 0
+                {
+                    lenghts[i - 1] = Float(robot_details[i].position.y)
+                }
+            }
+        }
+        
+        if with_lenghts
+        {
+            update_robot_lengths_vi_dof()
+        }
+    }
+    
+    private func update_robot_lengths_portal()
+    {
+        print("🍏")
+    }
+    
+    private func update_robot_lengths_vi_dof()
+    {
+        print("🍎")
     }
     
     //MARK: Inverse kinematic calculations
@@ -771,7 +844,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lenghts: with_lenghts ? self.lenghts : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
@@ -800,6 +873,7 @@ struct robot_struct: Codable
     
     var kinematic: Kinematic
     var scene: String
+    var lenghts: [Float]
     
     var is_placed: Bool
     var location: [Float]
