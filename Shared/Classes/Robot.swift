@@ -99,20 +99,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             self.with_lenghts = true
             self.lenghts = lenghts
         }
-        else
-        {
-            var lenghts_count = 1
-            switch self.kinematic
-            {
-            case .portal:
-                lenghts_count = 4
-            case .vi_dof:
-                lenghts_count = 6
-            default:
-                break
-            }
-            self.lenghts = [Float](repeating: 0, count: lenghts_count)
-        }
         
         self.is_placed = is_placed
         self.location = location
@@ -489,7 +475,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var robot_details = [SCNNode]()
 
     private var theta = [Double](repeating: 0.0, count: 6)
-    private var lenghts = [Float]() //(repeating: 0, count: 6)
+    private var lenghts = [Float]()
     public var origin_location = [Float](repeating: 0, count: 3) //x, y, z
     public var origin_rotation = [Float](repeating: 0, count: 3) //r, p, w
     
@@ -546,13 +532,23 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     private func portal_connect()
     {
+        if !with_lenghts
+        {
+            lenghts = [Float]()
+            
+            lenghts.append(Float(robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x))
+            lenghts.append(Float(robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z))
+            lenghts.append(Float(robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y))
+            
+            lenghts.append(Float(robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x))
+            lenghts.append(Float(robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z) - Float(robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y) * 2)
+            lenghts.append(Float(robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y))
+        }
+        
+        robot_details.append(robot_node!.childNode(withName: "frame", recursively: true)!)
         for i in 0...2
         {
             robot_details.append(robot_node!.childNode(withName: "d\(i)", recursively: true)!)
-            if !with_lenghts
-            {
-                
-            }
         }
         
         if with_lenghts
@@ -563,11 +559,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     private func vi_dof_connect()
     {
+        if !with_lenghts //Create array if lenghts not defined
+        {
+            lenghts = [Float](repeating: 0, count: 6)
+        }
+        
         for i in 0...6
         {
             robot_details.append(robot_node!.childNode(withName: "d\(i)", recursively: true)!)
             
-            if !with_lenghts //Get lengths from the model if they are not in the array.
+            if !with_lenghts //Get lengths from the model if they are not in the array
             {
                 if i > 0
                 {
@@ -593,7 +594,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: Inverse kinematic calculations
-    public var ik_angles: [Double] //Calculate manipulator details rotation angles
+    private var ik_angles: [Double] //Calculate manipulator details rotation angles
     {
         var angles = [Double]()
         var C3 = Float()
@@ -690,27 +691,72 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return angles
     }
     
-    public func update_robot() //Set manipulator details rotation angles
+    private var ik_lenghts: [Double]
     {
-        if robot_details.count > 0
+        var lenghts = [Double]()
+        
+        var px, py, pz: Float
+        
+        if origin_rotation == [0, 0, 0]
         {
-            #if os(macOS)
-            robot_details[0].eulerAngles.y = CGFloat(ik_angles[0])
-            robot_details[1].eulerAngles.z = CGFloat(ik_angles[1])
-            robot_details[2].eulerAngles.z = CGFloat(ik_angles[2])
-            robot_details[3].eulerAngles.y = CGFloat(ik_angles[3])
-            robot_details[4].eulerAngles.z = CGFloat(ik_angles[4])
-            robot_details[5].eulerAngles.y = CGFloat(ik_angles[5])
-            #else
-            robot_details[0].eulerAngles.y = Float(ik_angles[0])
-            robot_details[1].eulerAngles.z = Float(ik_angles[1])
-            robot_details[2].eulerAngles.z = Float(ik_angles[2])
-            robot_details[3].eulerAngles.y = Float(ik_angles[3])
-            robot_details[4].eulerAngles.z = Float(ik_angles[4])
-            robot_details[5].eulerAngles.y = Float(ik_angles[5])
-            #endif
+            px = Float(pointer_node?.position.z ?? 0) + origin_location[0] - self.lenghts[3]
+            py = Float(pointer_node?.position.x ?? 0) + origin_location[1] - self.lenghts[4]
+            pz = Float(pointer_node?.position.y ?? 0) + origin_location[2] + self.lenghts[2] + self.lenghts[5]
+            //pz = Float(pointer_node?.position.y ?? 0) - origin_location[2] + self.lenghts[5]
+        }
+        else
+        {
+            //Changes by rotation
+            px = Float(pointer_node?.position.z ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) + Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1])))) - Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
+            py = Float(pointer_node?.position.x ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) - Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) + Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
+            pz = Float(pointer_node?.position.y ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) + Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) - Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1]))))
             
-            update_chart_data()
+            //Add origin location components
+            px = px + origin_location[0] - self.lenghts[3] //-(px + origin_location[0])
+            py += origin_location[1] - self.lenghts[4]
+            pz += origin_location[2] + self.lenghts[2] + self.lenghts[5]
+        }
+        
+        lenghts = [Double(px), Double(py), Double(pz)]
+        
+        return lenghts
+    }
+    
+    public func update_robot()
+    {
+        switch kinematic
+        {
+        case .portal:
+            if robot_details.count > 0
+            {
+                robot_details[1].position.x = ik_lenghts[1]
+                robot_details[2].position.z = ik_lenghts[0]
+                robot_details[3].position.y = ik_lenghts[2]
+            }
+        case .vi_dof:
+            //Set manipulator details rotation angles
+            if robot_details.count > 0
+            {
+                #if os(macOS)
+                robot_details[0].eulerAngles.y = CGFloat(ik_angles[0])
+                robot_details[1].eulerAngles.z = CGFloat(ik_angles[1])
+                robot_details[2].eulerAngles.z = CGFloat(ik_angles[2])
+                robot_details[3].eulerAngles.y = CGFloat(ik_angles[3])
+                robot_details[4].eulerAngles.z = CGFloat(ik_angles[4])
+                robot_details[5].eulerAngles.y = CGFloat(ik_angles[5])
+                #else
+                robot_details[0].eulerAngles.y = Float(ik_angles[0])
+                robot_details[1].eulerAngles.z = Float(ik_angles[1])
+                robot_details[2].eulerAngles.z = Float(ik_angles[2])
+                robot_details[3].eulerAngles.y = Float(ik_angles[3])
+                robot_details[4].eulerAngles.z = Float(ik_angles[4])
+                robot_details[5].eulerAngles.y = Float(ik_angles[5])
+                #endif
+                
+                update_chart_data()
+            }
+        default:
+            break
         }
     }
     
