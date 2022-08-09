@@ -729,9 +729,15 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         case .portal:
             if robot_details.count > 0
             {
+                #if os(macOS)
                 robot_details[1].position.x = ik_lenghts[1]
                 robot_details[2].position.z = ik_lenghts[0]
                 robot_details[3].position.y = ik_lenghts[2]
+                #else
+                robot_details[1].position.x = Float(ik_lenghts[1])
+                robot_details[2].position.z = Float(ik_lenghts[0])
+                robot_details[3].position.y = Float(ik_lenghts[2])
+                #endif
             }
         case .vi_dof:
             //Set manipulator details rotation angles
