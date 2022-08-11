@@ -6,7 +6,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
 {
     static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
-        return lhs.name == rhs.name //lhs.id == rhs.id
+        return lhs.name == rhs.name //Identity condition by names
     }
     
     public var name: String?
@@ -27,26 +27,21 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     public func add_point(pos_x: Double, pos_y: Double, pos_z: Double, rot_x: Double, rot_y: Double, rot_z: Double)
     {
         points.append(PositionPoint(x: pos_x, y: pos_y, z: pos_z, r: rot_x, p: rot_y, w: rot_z, move_type: .linear))
-        
         visual_build()
     }
     
     public func update_point(number: Int, pos_x: Double, pos_y: Double, pos_z: Double, rot_x: Double, rot_y: Double, rot_z: Double)
     {
-        //var point_node = SCNNode()
-        
-        if points.indices.contains(number) == true
+        if points.indices.contains(number) //Checking for the presence of a point with a given number to update
         {
-            
             points[number] = PositionPoint(x: pos_x, y: pos_y, z: pos_z, r: rot_x, p: rot_y, w: rot_z, move_type: .linear)
-            
             visual_build()
         }
     }
     
-    public func delete_point(number: Int)
+    public func delete_point(number: Int) //Checking for the presence of a point with a given number to delete
     {
-        if points.indices.contains(number) == true
+        if points.indices.contains(number)
         {
             points.remove(at: number)
             visual_build()
@@ -83,6 +78,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         }
     }
     
+    //Define colors for path and points of program
     #if os(macOS)
     private let target_point_color = NSColor.systemPurple
     private let target_point_cone_colors = [NSColor.systemBlue, NSColor.systemPink, NSColor.systemTeal]
@@ -99,7 +95,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     private let cylinder_color = UIColor.white
     #endif
     
-    //MARK: Build points view model
+    //MARK: Build points visual model
     public func visual_build()
     {
         visual_clear()
@@ -109,7 +105,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
             //MARK: Building cones showing tool rotation at point
             let cone_node = SCNNode()
             
-            for i in 0..<3
+            for i in 0..<3 //Set point conical arrows for points
             {
                 let cone = SCNNode()
                 cone.geometry = SCNCone(topRadius: 0, bottomRadius: 0.2, height: 0.4)

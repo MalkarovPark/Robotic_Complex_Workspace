@@ -17,41 +17,37 @@ class AppState : ObservableObject
     public var workspace_scene = SCNScene()
     public var camera_light_node = SCNNode()
     
-    @Published var manufacturer_name = "None"
+    @Published var manufacturer_name = "None" //Manufacturer's display string for the menu
     {
         didSet
         {
-            if did_updated == true
+            if did_updated
             {
                 did_updated = false
-                
                 update_series_info()
-                
                 did_updated = true
             }
         }
     }
     
-    @Published var series_name = "None"
+    @Published var series_name = "None" //Series display string for the menu
     {
         didSet
         {
-            if did_updated == true
+            if did_updated
             {
                 did_updated = false
-                
                 update_models_info()
-                
                 did_updated = true
             }
         }
     }
     
-    @Published var model_name = "None"
+    @Published var model_name = "None" //Display model value for menu
     {
         didSet
         {
-            if did_updated == true
+            if did_updated
             {
                 update_robot_info()
             }
@@ -97,12 +93,6 @@ class AppState : ObservableObject
         
         robot_model_dictionary = models_dictionary[model_name]!
         
-        /*for model_parameter in robot_model_dictionary.keys
-        {
-            let info = robot_model_dictionary[model_parameter] ?? "None"
-            print("\(model_parameter) – \(info) 🍪")
-        }*/
-        
         did_updated = true
     }
     
@@ -128,12 +118,5 @@ class AppState : ObservableObject
     private func update_robot_info() //Convert dictionary of models to array
     {
         robot_model_dictionary = models_dictionary[model_name]!
-        
-        //print(robot_model_dictionary.keys)
-        /*for model_parameter in robot_model_dictionary.keys
-        {
-            let info = robot_model_dictionary[model_parameter] ?? "None"
-            print("\(model_parameter) – \(info) 🍪")
-        }*/
     }
 }

@@ -13,7 +13,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
 {
     static func == (lhs: Robot, rhs: Robot) -> Bool
     {
-        return lhs.name == rhs.name //Identity condition
+        return lhs.name == rhs.name //Identity condition by names
     }
     
     func hash(into hasher: inout Hasher)
@@ -89,7 +89,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             case .vi_dof:
                 robot_scene_address = "Components.scnassets/Robots/Default/6DOF.scn"
             default:
-                robot_scene_address = "Components.scnassets/Robots/Default/6DOF.scn"
+                break
             }
         }
         robot_model_node = SCNScene(named: robot_scene_address)!.rootNode.childNode(withName: "robot", recursively: false)!
@@ -130,65 +130,65 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func add_program(prog: PositionsProgram)
     {
-        var name_count = 1
+        var name_count = 1 //Count of same program names
         for viewed_program in programs
         {
-            if viewed_program.name == prog.name
+            if viewed_program.name == prog.name //Find same program names
             {
                 name_count += 1
             }
         }
         
-        if name_count > 1
+        if name_count > 1 //Change new program name by count of program with same names
         {
             prog.name! += " \(name_count)"
         }
-        programs.append(prog)
         
+        programs.append(prog)
         selected_program.visual_clear()
     }
     
-    public func update_program(number: Int, prog: PositionsProgram)
+    public func update_program(number: Int, prog: PositionsProgram) //Update program by number
     {
-        if programs.indices.contains(number) == true
+        if programs.indices.contains(number) //Checking for the presence of a position program with a given number to update
         {
             programs[number] = prog
             selected_program.visual_clear()
         }
     }
     
-    public func update_program(name: String, prog: PositionsProgram)
+    public func update_program(name: String, prog: PositionsProgram) //Update program by name
     {
         update_program(number: number_by_name(name: name), prog: prog)
     }
     
-    public func delete_program(number: Int)
+    public func delete_program(number: Int) //Delete program by number
     {
-        if programs.indices.contains(number) == true
+        if programs.indices.contains(number) //Checking for the presence of a position program with a given number to delete
         {
             selected_program.visual_clear()
             programs.remove(at: number)
         }
     }
     
-    public func delete_program(name: String)
+    public func delete_program(name: String) //Delete program by name
     {
         delete_program(number: number_by_name(name: name))
     }
     
-    public func select_program(number: Int)
+    public func select_program(number: Int) //Delete program by number
     {
         selected_program_index = number
     }
     
-    public func select_program(name: String)
+    public func select_program(name: String) //Select program by name
     {
         select_program(number: number_by_name(name: name))
     }
     
     public var selected_program: PositionsProgram
     {
-        get
+        get //Return positions program by selected index
         {
             if programs.count > 0
             {
@@ -213,7 +213,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return prog_number ?? -1
     }
     
-    public var programs_names: [String] //Get names of programs in robot
+    public var programs_names: [String] //Get all names of programs in robot
     {
         var prog_names = [String]()
         if programs.count > 0
@@ -233,18 +233,18 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func inspector_point_color(point: PositionPoint) -> Color //Get point color for inspector view
     {
-        var color = Color.gray
-        let point_number = self.selected_program.points.firstIndex(of: point)
+        var color = Color.gray //Gray point color if the robot is not reching the point
+        let point_number = self.selected_program.points.firstIndex(of: point) //Number of selected point
         
-        if is_moving == true
+        if is_moving
         {
-            if point_number == target_point_index
+            if point_number == target_point_index //Yellow color, if the robot is in the process of moving to the point
             {
                 color = .yellow
             }
             else
             {
-                if point_number ?? 0 < target_point_index
+                if point_number ?? 0 < target_point_index //Green color, if the robot has reached this point
                 {
                     color = .green
                 }
@@ -252,7 +252,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
         else
         {
-            if moving_completed == true
+            if moving_completed //Green color, if the robot has passed all points
             {
                 color = .green
             }
@@ -263,8 +263,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     //MARK: - Moving functions
     public var move_time: Double?
-    public var trail_draw = false
-    public var is_moving = false
+    public var draw_path = false //Draw path of the robot tool point
+    public var is_moving = false //Moving state of robot
     public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
     public var target_point_index = 0 //Index of target point in points array
     
@@ -404,7 +404,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private let pointer_node_color = Color.cyan
     
     public var unit_node: SCNNode? //Robot unit node
-    public var unit_origin_node: SCNNode?
+    public var unit_origin_node: SCNNode? //Node of robot workcell origin
     
     public var box_node: SCNNode? //Box bordered cell workspace
     public var camera_node: SCNNode? //Camera
@@ -421,7 +421,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func robot_workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
-        //Find scene elements by names and connect
+        //Find scene elements from scene by names and connect to class
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         self.unit_origin_node = self.unit_node?.childNode(withName: "unit_pointer", recursively: true)
         self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
@@ -476,8 +476,21 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
 
     private var theta = [Double](repeating: 0.0, count: 6)
     private var lenghts = [Float]()
+    
     public var origin_location = [Float](repeating: 0, count: 3) //x, y, z
     public var origin_rotation = [Float](repeating: 0, count: 3) //r, p, w
+    
+    private var origin_rotated: Bool
+    {
+        if origin_rotation.reduce(0, +) > 0
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
     
     public func robot_details_connect() //Connect robot instance to manipulator model details
     {
@@ -502,7 +515,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         //MARK: Place workcell box
         #if os(macOS)
         box_node?.position.x = CGFloat(origin_location[1])
-        box_node?.position.y = CGFloat(origin_location[2]) + robot_details[0].position.y
+        box_node?.position.y = CGFloat(origin_location[2]) + robot_details[0].position.y //Add vertical base lenght
         box_node?.position.z = CGFloat(origin_location[0])
         
         box_node?.eulerAngles.x = to_rad(in_angle: CGFloat(origin_rotation[1]))
@@ -609,7 +622,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             
             var M, N, A, B: Float
             
-            if origin_rotation == [0, 0, 0]
+            if !origin_rotated
             {
                 px = -(Float(pointer_node?.position.z ?? 0) + origin_location[0])
                 py = Float(pointer_node?.position.x ?? 0) + origin_location[1]
@@ -617,10 +630,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
             else
             {
-                //Changes by rotation
-                px = Float(pointer_node?.position.z ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) + Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1])))) - Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
-                py = Float(pointer_node?.position.x ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) - Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) + Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
-                pz = Float(pointer_node?.position.y ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) + Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) - Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1]))))
+                let new_pos = transform_by_origin()
+                px = new_pos.x
+                py = new_pos.y
+                pz = new_pos.z
                 
                 //Add origin location components
                 px = -(px + origin_location[0])
@@ -694,25 +707,23 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var ik_lenghts: [Double]
     {
         var lenghts = [Double]()
-        
         var px, py, pz: Float
         
-        if origin_rotation == [0, 0, 0]
+        if !origin_rotated
         {
             px = Float(pointer_node?.position.z ?? 0) + origin_location[0] - self.lenghts[3]
             py = Float(pointer_node?.position.x ?? 0) + origin_location[1] - self.lenghts[4]
             pz = Float(pointer_node?.position.y ?? 0) + origin_location[2] + self.lenghts[2] + self.lenghts[5]
-            //pz = Float(pointer_node?.position.y ?? 0) - origin_location[2] + self.lenghts[5]
         }
         else
         {
-            //Changes by rotation
-            px = Float(pointer_node?.position.z ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) + Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1])))) - Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
-            py = Float(pointer_node?.position.x ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) - Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) + Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
-            pz = Float(pointer_node?.position.y ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) + Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) - Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1]))))
+            let new_pos = transform_by_origin()
+            px = new_pos.x
+            py = new_pos.y
+            pz = new_pos.z
             
             //Add origin location components
-            px = px + origin_location[0] - self.lenghts[3] //-(px + origin_location[0])
+            px += origin_location[0] - self.lenghts[3]
             py += origin_location[1] - self.lenghts[4]
             pz += origin_location[2] + self.lenghts[2] + self.lenghts[5]
         }
@@ -722,6 +733,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         return lenghts
     }
     
+    private func transform_by_origin() -> ((x: Float, y: Float, z: Float))
+    {
+        //New values for coordinates components
+        let new_x = Float(pointer_node?.position.z ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) + Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1])))) - Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
+        let new_y = Float(pointer_node?.position.x ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) - Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) + Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
+        let new_z = Float(pointer_node?.position.y ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) + Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) - Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1]))))
+        
+        return((x: new_x, y: new_y, z: new_z))
+    }
+    
     public func update_robot()
     {
         switch kinematic
@@ -729,6 +750,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         case .portal:
             if robot_details.count > 0
             {
+                //Set manipulator portal details displacement
                 #if os(macOS)
                 robot_details[1].position.x = ik_lenghts[1]
                 robot_details[2].position.z = ik_lenghts[0]
@@ -740,9 +762,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 #endif
             }
         case .vi_dof:
-            //Set manipulator details rotation angles
             if robot_details.count > 0
             {
+                //Set manipulator details rotation angles
                 #if os(macOS)
                 robot_details[0].eulerAngles.y = CGFloat(ik_angles[0])
                 robot_details[1].eulerAngles.z = CGFloat(ik_angles[1])
@@ -781,14 +803,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     func update_chart_data()
     {
-        if get_statistics && is_moving
+        if get_statistics && is_moving //Get data if robot is moving and statistic collection enabled
         {
             for i in 0...ik_angles.count - 1
             {
                 chart_data.robot_details_angles.append(PositionChartInfo(index: chart_element_index, value: ik_angles[i], type: "J\(i + 1)"))
             }
             
-            //current_pointer_position_select()
             let pointer_location_chart = [Double(((pointer_node?.position.z ?? 0)) * 10), Double(((pointer_node?.position.x ?? 0)) * 10), Double(((pointer_node?.position.y ?? 0)) * 10)]
             for i in 0...axis_names.count - 1
             {
@@ -830,7 +851,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    public func card_info() -> (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
+    public func card_info() -> (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view (in RobotsView)
     {
         let color: Color
         switch self.manufacturer
@@ -886,7 +907,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Work with file system
     public var robot_info: robot_struct //Convert robot data to robot_struct
     {
-        //Robot programs set to program_struct array
+        //Convert robot programs set to program_struct array
         var programs_array = [program_struct]()
         if programs_count > 0
         {
@@ -949,7 +970,7 @@ struct PositionChartInfo: Identifiable
     var type: String
 }
 
-//MARK: - Kinematic enums
+//MARK: - Kinematic types enums
 enum Kinematic: String, Codable, Equatable, CaseIterable
 {
     case vi_dof = "6DOF"

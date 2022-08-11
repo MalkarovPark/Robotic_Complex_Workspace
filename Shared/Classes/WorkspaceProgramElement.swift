@@ -11,7 +11,7 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
     static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
-        return lhs.id.uuidString + lhs.element_data.element_type.rawValue == rhs.id.uuidString + rhs.element_data.element_type.rawValue //Identity condition
+        return lhs.id.uuidString + lhs.element_data.element_type.rawValue == rhs.id.uuidString + rhs.element_data.element_type.rawValue //Identity condition by id plus element type
     }
     
     func hash(into hasher: inout Hasher)
@@ -46,13 +46,13 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
         self.element_data.logic_type = logic_type
     }
     
-    init(element_struct: workspace_program_element_struct)
+    init(element_struct: workspace_program_element_struct) //Init by element struct
     {
         self.element_data = element_struct
     }
     
     //MARK: - Visual data output
-    var subtype: String
+    var subtype: String //Subtype string for a specific type
     {
         var subtype = String()
         
@@ -69,7 +69,7 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
         return subtype
     }
     
-    var info: String
+    var info: String //String for the text in program element card
     {
         var info = String()
         
@@ -136,7 +136,7 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
         return info
     }
     
-    public var is_selected = false
+    public var is_selected = false //Flag that determines the selection of the program element card during performing
     public var target_element_index = 0 //The index of the target mark element for the jump element.
 }
 

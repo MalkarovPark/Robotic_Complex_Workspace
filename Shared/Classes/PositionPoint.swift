@@ -12,7 +12,7 @@ class PositionPoint: Identifiable, Codable, Hashable
 {
     static func == (lhs: PositionPoint, rhs: PositionPoint) -> Bool
     {
-        lhs.id == rhs.id
+        lhs.id == rhs.id //Identity condition by id
     }
     
     func hash(into hasher: inout Hasher)

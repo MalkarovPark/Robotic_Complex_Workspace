@@ -64,12 +64,12 @@ class Workspace: ObservableObject
         return robot_number ?? -1
     }
     
-    public func select_robot(number: Int)
+    public func select_robot(number: Int) //Select robot by number
     {
         selected_robot_index = number
     }
     
-    public func select_robot(name: String)
+    public func select_robot(name: String) //Select robot by name
     {
         selected_robot_index = number_by_name(name: name)
     }
@@ -113,17 +113,17 @@ class Workspace: ObservableObject
         }
     }
     
-    public func robot_by_name(name: String) -> Robot
+    public func robot_by_name(name: String) -> Robot //Get index number of robot by name
     {
         return self.robots[number_by_name(name: name)]
     }
     
-    public var avaliable_robots_names: [String]
+    public var avaliable_robots_names: [String] //Array of robots names not added to workspace
     {
         var names = [String]()
         for robot in robots
         {
-            if robot.name != nil && robot.is_placed == false
+            if robot.name != nil && !robot.is_placed
             {
                 names.append(robot.name!)
             }
@@ -131,12 +131,12 @@ class Workspace: ObservableObject
         return names
     }
     
-    public var placed_robots_names: [String]
+    public var placed_robots_names: [String] //Array of robots names added to workspace
     {
         var names = [String]()
         for robot in robots
         {
-            if robot.name != nil && robot.is_placed == true
+            if robot.name != nil && robot.is_placed
             {
                 names.append(robot.name!)
             }
@@ -172,9 +172,9 @@ class Workspace: ObservableObject
         return marks_names
     }
     
-    public func delete_element(number: Int)
+    public func delete_element(number: Int) //Delete program element by number
     {
-        if elements.indices.contains(number) == true
+        if elements.indices.contains(number)
         {
             elements.remove(at: number)
         }
@@ -273,15 +273,15 @@ class Workspace: ObservableObject
         }
     }
     
-    @Published var cycled = false
+    @Published var cycled = false //Cyclic program performance flag
     
     public var is_performing = false
     public var selected_element_index = 0
-    public var workspace_scene = SCNScene() // SCNScene(named: "Components.scnassets/Workspace.scn")!
+    public var workspace_scene = SCNScene()
     
     public func start_pause_perform()
     {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) //Delayed update view
         {
             self.update_view()
         }
@@ -418,7 +418,6 @@ class Workspace: ObservableObject
             {
                 is_performing = false
             }
-            print("Finished")
         }
     }
     
@@ -428,9 +427,7 @@ class Workspace: ObservableObject
         selected_robot.reset_moving()
         selected_element_index = 0
         selected_robot_index = -1
-        
         is_performing = false
-        print("Finished")
     }
     
     //MARK: - Work with file system

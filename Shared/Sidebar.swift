@@ -139,7 +139,11 @@ struct SidebarContent: View
                 case .ToolsView:
                     ToolsView(document: $document)
                 default:
-                    Text("None")
+                    VStack
+                    {
+                        //Text("None")
+                    }
+                    .onAppear(perform: { sidebar_selection = .WorkspaceView }) //???
                 }
             }
         }

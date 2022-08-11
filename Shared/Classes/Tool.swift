@@ -6,3 +6,18 @@
 //
 
 import Foundation
+
+class Tool: Identifiable, Equatable, Hashable, ObservableObject
+{
+    static func == (lhs: Tool, rhs: Tool) -> Bool
+    {
+        return lhs.name == rhs.name //Identity condition by names
+    }
+    
+    func hash(into hasher: inout Hasher)
+    {
+        hasher.combine(name)
+    }
+    
+    public var name: String?
+}
