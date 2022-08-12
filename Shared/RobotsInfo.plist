@@ -14,12 +14,13 @@
 				<string>6DOF</string>
 				<key>Details Lengths</key>
 				<array>
-					<integer>0</integer>
-					<integer>0</integer>
-					<integer>0</integer>
-					<integer>0</integer>
-					<integer>0</integer>
-					<integer>0</integer>
+					<integer>16</integer>
+					<integer>16</integer>
+					<integer>8</integer>
+					<integer>16</integer>
+					<integer>4</integer>
+					<integer>3</integer>
+					<integer>16</integer>
 				</array>
 			</dict>
 			<key>Model 2</key>
@@ -42,12 +43,13 @@
 				<string>Portal</string>
 				<key>Details Lengths</key>
 				<array>
-					<integer>0</integer>
-					<integer>0</integer>
-					<integer>0</integer>
-					<integer>0</integer>
-					<integer>0</integer>
-					<integer>0</integer>
+					<integer>32</integer>
+					<integer>32</integer>
+					<integer>32</integer>
+					<integer>8</integer>
+					<integer>16</integer>
+					<integer>4</integer>
+					<string>8</string>
 				</array>
 			</dict>
 			<key>Model 2</key>

@@ -60,7 +60,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             kinematic = .vi_dof
         }
         
-        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lenghts: dictionary["Details Lengths"] as? [Float] ?? [Float](), kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        let elements = dictionary["Details Lengths"] as! NSArray
+        //print(elements)
+        var lenghts = [Float]()
+        
+        for element in elements
+        {
+            lenghts.append((element as? Float) ?? 0)
+        }
+        
+        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lenghts: lenghts, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
     }
     
     init(robot_struct: robot_struct)
@@ -494,10 +503,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func robot_details_connect() //Connect robot instance to manipulator model details
     {
-        if !with_lenghts //If robot without defined lenghts, clear this array.
-        {
-            robot_details.removeAll()
-        }
+        robot_details.removeAll()
         
         switch kinematic
         {
@@ -515,7 +521,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         //MARK: Place workcell box
         #if os(macOS)
         box_node?.position.x = CGFloat(origin_location[1])
-        box_node?.position.y = CGFloat(origin_location[2]) + robot_details[0].position.y //Add vertical base lenght
+        box_node?.position.y = CGFloat(origin_location[2] + lenghts[6]) //Add vertical base lenght
         box_node?.position.z = CGFloat(origin_location[0])
         
         box_node?.eulerAngles.x = to_rad(in_angle: CGFloat(origin_rotation[1]))
@@ -523,7 +529,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         box_node?.eulerAngles.z = to_rad(in_angle: CGFloat(origin_rotation[0]))
         #else
         box_node?.position.x = Float(origin_location[1])
-        box_node?.position.y = Float(origin_location[2]) + robot_details[0].position.y
+        box_node?.position.y = Float(origin_location[2] + lenghts[6])
         box_node?.position.z = Float(origin_location[0])
         
         box_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(origin_rotation[1])))
@@ -534,11 +540,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         //MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_location[1])
-        camera_node?.position.y += CGFloat(origin_location[2]) + robot_details[0].position.y
+        camera_node?.position.y += CGFloat(origin_location[2] + lenghts[6])
         camera_node?.position.z += CGFloat(origin_location[0])
         #else
         camera_node?.position.x += Float(origin_location[1])
-        camera_node?.position.y += Float(origin_location[2]) + robot_details[0].position.y
+        camera_node?.position.y += Float(origin_location[2] + lenghts[6])
         camera_node?.position.z += Float(origin_location[0])
         #endif
     }
@@ -551,11 +557,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             
             lenghts.append(Float(robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x))
             lenghts.append(Float(robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z))
-            lenghts.append(Float(robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y))
+            lenghts.append(-Float(robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y))
             
             lenghts.append(Float(robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x))
-            lenghts.append(Float(robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z) - Float(robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y) * 2)
-            lenghts.append(Float(robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y))
+            lenghts.append(Float(robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z - robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y * 2))
+            lenghts.append(-Float(robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y))
         }
         
         robot_details.append(robot_node!.childNode(withName: "frame", recursively: true)!)
@@ -567,6 +573,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         if with_lenghts
         {
             update_robot_lengths_portal()
+        }
+        else
+        {
+            lenghts.append(Float(robot_details[0].position.y))
         }
     }
     
@@ -594,16 +604,90 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             update_robot_lengths_vi_dof()
         }
+        else
+        {
+            lenghts.append(Float(robot_details[0].position.y))
+        }
     }
     
     private func update_robot_lengths_portal()
     {
-        print("🍏")
+        print("🍏 \(lenghts)")
+        
+        /*for robot_detail in robot_details
+        {
+            <#body#>
+        }*/
     }
     
     private func update_robot_lengths_vi_dof()
     {
-        print("🍎")
+        var modified_node = SCNNode()
+        var saved_material = SCNMaterial()
+        
+        //Change robot base
+        modified_node = robot_node!.childNode(withName: "base", recursively: true)! //Select node to modifty
+        saved_material = (modified_node.geometry?.firstMaterial)! //Save original material from node geometry
+        modified_node.geometry = SCNCylinder(radius: 8, height: CGFloat(lenghts[6])) //Update geometry
+        modified_node.geometry?.firstMaterial = saved_material //Apply saved original material
+        
+        //Change position of base model
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lenghts[6] / 2)
+        robot_details[0].position.y = CGFloat(lenghts[6])
+        #else
+        modified_node.position.y = Float(lenghts[6] / 2)
+        robot_details[0].position.y = Float(lenghts[6])
+        #endif
+        
+        saved_material = (robot_details[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial)! //Save material from detail box
+        
+        for i in 0..<robot_details.count - 1
+        {
+            //Get lenght 0 if first robot detail selected and get previous lenght for all next details
+            #if os(macOS)
+            robot_details[i].position.y = CGFloat(i > 0 ? lenghts[i - 1] : lenghts[i])
+            #else
+            robot_details[i].position.y = Float(i > 0 ? lenghts[i - 1] : lenghts[i])
+            #endif
+            
+            if i < 5
+            {
+                //Change box model size and move that node vertical for details 0-4
+                modified_node = robot_details[i].childNode(withName: "box", recursively: false)!
+                if i < 3
+                {
+                    modified_node.geometry = SCNBox(width: 6, height: CGFloat(lenghts[i]), length: 6, chamferRadius: 1) //Set geometry for 0-2 details with width 6 and chamfer
+                }
+                else
+                {
+                    if i < 4
+                    {
+                        modified_node.geometry = SCNBox(width: 5, height: CGFloat(lenghts[i]), length: 5, chamferRadius: 1) //Set geometry for 3th detail with width 5 and chamfer
+                    }
+                    else
+                    {
+                        modified_node.geometry = SCNBox(width: 4, height: CGFloat(lenghts[i]), length: 4, chamferRadius: 0) //Set geometry for 4th detail with width 4 and without chamfer
+                    }
+                }
+                modified_node.geometry?.firstMaterial = saved_material //Apply saved material
+                
+                #if os(macOS)
+                modified_node.position.y = CGFloat(lenghts[i] / 2)
+                #else
+                modified_node.position.y = Float(lenghts[i] / 2)
+                #endif
+            }
+            else
+            {
+                //Set tool target (d6) position for 5th detail
+                #if os(macOS)
+                robot_details[6].position.y = CGFloat(lenghts[i])
+                #else
+                robot_details[6].position.y = Float(lenghts[i])
+                #endif
+            }
+        }
     }
     
     //MARK: Inverse kinematic calculations
@@ -713,7 +797,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             px = Float(pointer_node?.position.z ?? 0) + origin_location[0] - self.lenghts[3]
             py = Float(pointer_node?.position.x ?? 0) + origin_location[1] - self.lenghts[4]
-            pz = Float(pointer_node?.position.y ?? 0) + origin_location[2] + self.lenghts[2] + self.lenghts[5]
+            pz = Float(pointer_node?.position.y ?? 0) + origin_location[2] - self.lenghts[2] - self.lenghts[5]
         }
         else
         {
@@ -725,7 +809,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             //Add origin location components
             px += origin_location[0] - self.lenghts[3]
             py += origin_location[1] - self.lenghts[4]
-            pz += origin_location[2] + self.lenghts[2] + self.lenghts[5]
+            pz += origin_location[2] - self.lenghts[2] - self.lenghts[5]
         }
         
         lenghts = [Double(px), Double(py), Double(pz)]
