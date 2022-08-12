@@ -50,7 +50,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     init(name: String, manufacturer: String, dictionary: [String: Any])
     {
         var kinematic: Kinematic
-        switch dictionary["Kinematic"] as? String ?? ""
+        switch dictionary["Kinematic"] as? String ?? "" //Determination of the type of kinematics by string in the property
         {
         case "Portal":
             kinematic = .portal
@@ -60,13 +60,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             kinematic = .vi_dof
         }
         
-        let elements = dictionary["Details Lengths"] as! NSArray
-        //print(elements)
         var lenghts = [Float]()
         
-        for element in elements
+        if dictionary.keys.contains("Details Lengths") //Checking for the availability of lengths data property
         {
-            lenghts.append((element as? Float) ?? 0)
+            let elements = dictionary["Details Lengths"] as! NSArray
+            
+            for element in elements //Add elements from NSArray to floats array
+            {
+                lenghts.append((element as? Float) ?? 0)
+            }
         }
         
         robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lenghts: lenghts, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
@@ -489,6 +492,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var origin_location = [Float](repeating: 0, count: 3) //x, y, z
     public var origin_rotation = [Float](repeating: 0, count: 3) //r, p, w
     
+    private var modified_node = SCNNode()
+    private var saved_material = SCNMaterial()
+    
     private var origin_rotated: Bool
     {
         if origin_rotation.reduce(0, +) > 0
@@ -622,9 +628,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     private func update_robot_lengths_vi_dof()
     {
-        var modified_node = SCNNode()
-        var saved_material = SCNMaterial()
-        
         //Change robot base
         modified_node = robot_node!.childNode(withName: "base", recursively: true)! //Select node to modifty
         saved_material = (modified_node.geometry?.firstMaterial)! //Save original material from node geometry
