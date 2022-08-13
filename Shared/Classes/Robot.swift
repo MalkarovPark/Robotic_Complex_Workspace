@@ -91,7 +91,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         self.robot_scene_address = scene
         
         //If robot dictionary contains list, then addres changed from default models to special model by key.
-        print(self.robot_scene_address)
         if self.robot_scene_address == "" || self.robot_scene_address == "None"
         {
             switch self.kinematic
@@ -524,10 +523,12 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func robot_location_place() //Place cell workspace relative to manipulator
     {
+        let vertical_lenght = lenghts[lenghts.count - 1]
+        
         //MARK: Place workcell box
         #if os(macOS)
         box_node?.position.x = CGFloat(origin_location[1])
-        box_node?.position.y = CGFloat(origin_location[2] + lenghts[6]) //Add vertical base lenght
+        box_node?.position.y = CGFloat(origin_location[2] + vertical_lenght) //Add vertical base lenght
         box_node?.position.z = CGFloat(origin_location[0])
         
         box_node?.eulerAngles.x = to_rad(in_angle: CGFloat(origin_rotation[1]))
@@ -535,7 +536,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         box_node?.eulerAngles.z = to_rad(in_angle: CGFloat(origin_rotation[0]))
         #else
         box_node?.position.x = Float(origin_location[1])
-        box_node?.position.y = Float(origin_location[2] + lenghts[6])
+        box_node?.position.y = Float(origin_location[2] + vertical_lenght)
         box_node?.position.z = Float(origin_location[0])
         
         box_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(origin_rotation[1])))
@@ -546,11 +547,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         //MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_location[1])
-        camera_node?.position.y += CGFloat(origin_location[2] + lenghts[6])
+        camera_node?.position.y += CGFloat(origin_location[2] + vertical_lenght)
         camera_node?.position.z += CGFloat(origin_location[0])
         #else
         camera_node?.position.x += Float(origin_location[1])
-        camera_node?.position.y += Float(origin_location[2] + lenghts[6])
+        camera_node?.position.y += Float(origin_location[2] + vertical_lenght)
         camera_node?.position.z += Float(origin_location[0])
         #endif
     }
@@ -561,16 +562,14 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             lenghts = [Float]()
             
-            lenghts.append(Float(robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x))
-            lenghts.append(Float(robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z))
-            lenghts.append(-Float(robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y))
+            lenghts.append(Float(robot_node!.childNode(withName: "frame2", recursively: true)!.position.y)) //Portal frame height
             
-            lenghts.append(Float(robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x))
-            lenghts.append(Float(robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z - robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y * 2))
-            lenghts.append(-Float(robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y))
+            lenghts.append(Float(robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z)) //Position X shift
+            lenghts.append(Float(robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x + robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.x)) //Position Y shift
+            lenghts.append(Float(robot_node!.childNode(withName: "target", recursively: true)!.position.y - robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y)) //Position Z shift – tool length + (-vertical frame shift)
         }
         
-        robot_details.append(robot_node!.childNode(withName: "frame", recursively: true)!)
+        robot_details.append(robot_node!.childNode(withName: "frame", recursively: true)!) //Base position
         for i in 0...2
         {
             robot_details.append(robot_node!.childNode(withName: "d\(i)", recursively: true)!)
@@ -582,7 +581,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
         else
         {
-            lenghts.append(Float(robot_details[0].position.y))
+            lenghts.append(Float(robot_details[0].position.y)) //Append base height
         }
     }
     
@@ -619,6 +618,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private func update_robot_lengths_portal()
     {
         print("🍏 \(lenghts)")
+        update_robot_base_height()
         
         /*for robot_detail in robot_details
         {
@@ -628,20 +628,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     private func update_robot_lengths_vi_dof()
     {
-        //Change robot base
-        modified_node = robot_node!.childNode(withName: "base", recursively: true)! //Select node to modifty
-        saved_material = (modified_node.geometry?.firstMaterial)! //Save original material from node geometry
-        modified_node.geometry = SCNCylinder(radius: 8, height: CGFloat(lenghts[6])) //Update geometry
-        modified_node.geometry?.firstMaterial = saved_material //Apply saved original material
-        
-        //Change position of base model
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lenghts[6] / 2)
-        robot_details[0].position.y = CGFloat(lenghts[6])
-        #else
-        modified_node.position.y = Float(lenghts[6] / 2)
-        robot_details[0].position.y = Float(lenghts[6])
-        #endif
+        update_robot_base_height()
         
         saved_material = (robot_details[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial)! //Save material from detail box
         
@@ -649,9 +636,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             //Get lenght 0 if first robot detail selected and get previous lenght for all next details
             #if os(macOS)
-            robot_details[i].position.y = CGFloat(i > 0 ? lenghts[i - 1] : lenghts[i])
+            robot_details[i].position.y = CGFloat(i > 0 ? lenghts[i - 1] : lenghts[lenghts.count - 1])
             #else
-            robot_details[i].position.y = Float(i > 0 ? lenghts[i - 1] : lenghts[i])
+            robot_details[i].position.y = Float(i > 0 ? lenghts[i - 1] : lenghts[lenghts.count - 1])
             #endif
             
             if i < 5
@@ -693,7 +680,54 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
+    private func update_robot_base_height()
+    {
+        //Change robot base
+        modified_node = robot_node!.childNode(withName: "base", recursively: true)! //Select node to modifty
+        saved_material = (modified_node.geometry?.firstMaterial)! //Save original material from node geometry
+        modified_node.geometry = SCNCylinder(radius: 8, height: CGFloat(lenghts[lenghts.count - 1])) //Update geometry //(lenghts[6]))
+        modified_node.geometry?.firstMaterial = saved_material //Apply saved original material
+        
+        //Change position of base model
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lenghts[6] / 2)
+        robot_details[0].position.y = CGFloat(lenghts[6])
+        #else
+        modified_node.position.y = Float(lenghts[6] / 2)
+        robot_details[0].position.y = Float(lenghts[6])
+        #endif
+    }
+    
     //MARK: Inverse kinematic calculations
+    private var ik_lenghts: [Double]
+    {
+        var lenghts = [Double]()
+        var px, py, pz: Float
+        
+        if !origin_rotated
+        {
+            px = Float(pointer_node?.position.z ?? 0) + origin_location[0] - self.lenghts[1]
+            py = Float(pointer_node?.position.x ?? 0) + origin_location[1] - self.lenghts[2]
+            pz = Float(pointer_node?.position.y ?? 0) + origin_location[2] - self.lenghts[0] + self.lenghts[3]
+        }
+        else
+        {
+            let new_pos = transform_by_origin()
+            px = new_pos.x
+            py = new_pos.y
+            pz = new_pos.z
+            
+            //Add origin location components
+            px += origin_location[0] - self.lenghts[1]
+            py += origin_location[1] - self.lenghts[2]
+            pz += origin_location[2] - self.lenghts[0] + self.lenghts[3]
+        }
+        
+        lenghts = [Double(px), Double(py), Double(pz)]
+        
+        return lenghts
+    }
+    
     private var ik_angles: [Double] //Calculate manipulator details rotation angles
     {
         var angles = [Double]()
@@ -789,35 +823,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             angles.append(-theta[5])
         }
         return angles
-    }
-    
-    private var ik_lenghts: [Double]
-    {
-        var lenghts = [Double]()
-        var px, py, pz: Float
-        
-        if !origin_rotated
-        {
-            px = Float(pointer_node?.position.z ?? 0) + origin_location[0] - self.lenghts[3]
-            py = Float(pointer_node?.position.x ?? 0) + origin_location[1] - self.lenghts[4]
-            pz = Float(pointer_node?.position.y ?? 0) + origin_location[2] - self.lenghts[2] - self.lenghts[5]
-        }
-        else
-        {
-            let new_pos = transform_by_origin()
-            px = new_pos.x
-            py = new_pos.y
-            pz = new_pos.z
-            
-            //Add origin location components
-            px += origin_location[0] - self.lenghts[3]
-            py += origin_location[1] - self.lenghts[4]
-            pz += origin_location[2] - self.lenghts[2] - self.lenghts[5]
-        }
-        
-        lenghts = [Double(px), Double(py), Double(pz)]
-        
-        return lenghts
     }
     
     private func transform_by_origin() -> ((x: Float, y: Float, z: Float))
