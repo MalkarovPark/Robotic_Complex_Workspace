@@ -625,7 +625,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         print("🍏 \(lenghts)")
         update_robot_base_height()
         
+        #if os(macOS)
         robot_node!.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lenghts[0]) //Set vertical position for frame portal
+        #else
+        robot_node!.childNode(withName: "frame2", recursively: true)!.position.y = lenghts[0] //Set vertical position for frame portal
+        #endif
         
         modified_node = robot_node!.childNode(withName: "detail_v", recursively: true)!
         if lenghts[0] - 4 > 0
@@ -634,7 +638,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             
             modified_node.geometry = SCNBox(width: 8, height: CGFloat(lenghts[0]) - 4, length: 8, chamferRadius: 1)
             modified_node.geometry?.firstMaterial = saved_material
+            #if os(macOS)
             modified_node.position.y = CGFloat(lenghts[0] - 4) / 2
+            #else
+            modified_node.position.y = (lenghts[0] - 4) / 2
+            #endif
         }
         else
         {
@@ -644,37 +652,67 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         var frame_element_length: CGFloat
         
         //X shift
+        #if os(macOS)
         robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lenghts[1])
         robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lenghts[5])
         frame_element_length = CGFloat(lenghts[5] - lenghts[1]) + 8 //Calculate frame X length
+        #else
+        robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z = lenghts[1]
+        robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z = lenghts[5]
+        frame_element_length = CGFloat(lenghts[5] - lenghts[1] + 8) //Calculate frame X length
+        #endif
         
         modified_node = robot_node!.childNode(withName: "detail_x", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNBox(width: 6, height: 6, length: frame_element_length, chamferRadius: 1) //Update frame X geometry
         modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
         modified_node.position.z = (frame_element_length + 8) / 2 //Frame X reposition
+        #else
+        modified_node.position.z = Float(frame_element_length + 8) / 2
+        #endif
         
         //Y shift
+        #if os(macOS)
         robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lenghts[2]) / 2
         robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lenghts[6])
         frame_element_length = CGFloat(lenghts[6] - lenghts[2]) + 8 //Calculate frame Y length
+        #else
+        robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x = lenghts[2] / 2
+        robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x = lenghts[6]
+        frame_element_length = CGFloat(lenghts[6] - lenghts[2] + 8) //Calculate frame Y length
+        #endif
         
         modified_node = robot_node!.childNode(withName: "detail_y", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNBox(width: 6, height: 6, length: frame_element_length, chamferRadius: 1) //Update frame Y geometry
         modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
         modified_node.position.x = (frame_element_length + 8) / 2 //Frame Y reposition
+        #else
+        modified_node.position.x = Float(frame_element_length + 8) / 2
+        #endif
         
         //Z shift
+        #if os(macOS)
         robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y = CGFloat(-lenghts[3])
         robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y = CGFloat(lenghts[7])
         frame_element_length = CGFloat(lenghts[7])
+        #else
+        robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y = -lenghts[3]
+        robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y = lenghts[7]
+        frame_element_length = CGFloat(lenghts[7])
+        #endif
         
         modified_node = robot_node!.childNode(withName: "detail_z", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNBox(width: 6, height: frame_element_length, length: 6, chamferRadius: 1) //Update frame Z geometry
         modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
         modified_node.position.y = (frame_element_length) / 2 //Frame Z reposition
+        #else
+        modified_node.position.y = Float(frame_element_length) / 2
+        #endif
     }
     
     private func update_robot_lengths_vi_dof()
