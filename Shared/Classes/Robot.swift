@@ -654,11 +654,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         #if os(macOS)
         robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lenghts[1])
         robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lenghts[5])
-        frame_element_length = CGFloat(lenghts[5] - lenghts[1]) + 8 //Calculate frame X length
+        frame_element_length = CGFloat(lenghts[5] - lenghts[1]) + 16 //Calculate frame X length
         #else
         robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z = lenghts[1]
         robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z = lenghts[5]
-        frame_element_length = CGFloat(lenghts[5] - lenghts[1] + 8) //Calculate frame X length
+        frame_element_length = CGFloat(lenghts[5] - lenghts[1] + 16) //Calculate frame X length
         #endif
         
         modified_node = robot_node!.childNode(withName: "detail_x", recursively: true)!
@@ -675,11 +675,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         #if os(macOS)
         robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lenghts[2]) / 2
         robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lenghts[6])
-        frame_element_length = CGFloat(lenghts[6] - lenghts[2]) + 8 //Calculate frame Y length
+        frame_element_length = CGFloat(lenghts[6] - lenghts[2]) + 16 //Calculate frame Y length
         #else
         robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x = lenghts[2] / 2
         robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x = lenghts[6]
-        frame_element_length = CGFloat(lenghts[6] - lenghts[2] + 8) //Calculate frame Y length
+        frame_element_length = CGFloat(lenghts[6] - lenghts[2] + 16) //Calculate frame Y length
         #endif
         
         modified_node = robot_node!.childNode(withName: "detail_y", recursively: true)!
@@ -811,9 +811,46 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             pz += origin_location[2] - self.lenghts[0] + self.lenghts[3] + self.lenghts[4]
         }
         
-        lenghts = [py + origin_location[0] < 0 ? 0 : px > self.lenghts[5] ? Double(self.lenghts[5]) : Double(px),
-                   py + origin_location[1] < 0 ? 0 : py > self.lenghts[6] - self.lenghts[2] / 2 ? Double(self.lenghts[6] - self.lenghts[2] / 2) : Double(py),
-                   pz > 0 ? 0 : pz < -self.lenghts[7] ? Double(-self.lenghts[7]) : Double(pz)] //Return details positions with limit checking.
+        //Checking X detail limit
+        if px < 0
+        {
+            px = 0
+        }
+        else
+        {
+            if px > self.lenghts[5]
+            {
+                px = self.lenghts[5]
+            }
+        }
+        
+        //Checking Y detail limit
+        if py < 0
+        {
+            py = 0
+        }
+        else
+        {
+            if py > self.lenghts[6] - self.lenghts[2] / 2
+            {
+                py = self.lenghts[6] - self.lenghts[2] / 2
+            }
+        }
+        
+        //Checking Z detail limit
+        if pz > 0
+        {
+            pz = 0
+        }
+        else
+        {
+            if pz < -self.lenghts[7]
+            {
+                pz = -self.lenghts[7]
+            }
+        }
+
+        lenghts = [Double(px), Double(py), Double(pz)]
         
         return lenghts
     }
