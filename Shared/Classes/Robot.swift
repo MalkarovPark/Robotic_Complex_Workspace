@@ -622,7 +622,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     private func update_robot_lengths_portal()
     {
-        print("🍏 \(lenghts)")
         update_robot_base_height()
         
         #if os(macOS)
@@ -812,7 +811,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             pz += origin_location[2] - self.lenghts[0] + self.lenghts[3] + self.lenghts[4]
         }
         
-        lenghts = [Double(px), Double(py), Double(pz)]
+        lenghts = [py + origin_location[0] < 0 ? 0 : px > self.lenghts[5] ? Double(self.lenghts[5]) : Double(px),
+                   py + origin_location[1] < 0 ? 0 : py > self.lenghts[6] - self.lenghts[2] / 2 ? Double(self.lenghts[6] - self.lenghts[2] / 2) : Double(py),
+                   pz > 0 ? 0 : pz < -self.lenghts[7] ? Double(-self.lenghts[7]) : Double(pz)] //Return details positions with limit checking.
         
         return lenghts
     }
@@ -934,12 +935,12 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 //Set manipulator portal details displacement
                 #if os(macOS)
                 robot_details[1].position.x = ik_lenghts[1]
-                robot_details[2].position.z = ik_lenghts[0]
                 robot_details[3].position.y = ik_lenghts[2]
+                robot_details[2].position.z = ik_lenghts[0]
                 #else
                 robot_details[1].position.x = Float(ik_lenghts[1])
-                robot_details[2].position.z = Float(ik_lenghts[0])
                 robot_details[3].position.y = Float(ik_lenghts[2])
+                robot_details[2].position.z = Float(ik_lenghts[0])
                 #endif
             }
         case .vi_dof:
