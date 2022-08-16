@@ -12,6 +12,7 @@ import SceneKit
 class AppState : ObservableObject
 {
     @Published var reset_view = false
+    @Published var reset_view_enabled = true
     @Published var get_scene_image = false
     
     public var workspace_scene = SCNScene()

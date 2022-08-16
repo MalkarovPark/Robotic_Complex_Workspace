@@ -32,6 +32,7 @@ struct Robotic_Complex_WorkspaceApp: App
                     app_state.reset_view = true
                 }
                 .keyboardShortcut("0", modifiers: .command)
+                .disabled(!app_state.reset_view_enabled)
                 Divider()
             }
         }
@@ -53,6 +54,7 @@ struct Robotic_Complex_WorkspaceApp: App
                     app_state.reset_view = true
                 }
                 .keyboardShortcut("0", modifiers: .command)
+                .disabled(!app_state.reset_view_enabled)
                 Divider()
             }
         }

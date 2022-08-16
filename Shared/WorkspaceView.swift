@@ -285,6 +285,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     func scn_scene(context: Context) -> SCNView
     {
         app_state.reset_view = false
+        app_state.reset_view_enabled = true
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
         return scene_view
@@ -321,12 +322,13 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         ui_view.rendersContinuously = true
         
         //Update commands
-        if app_state.reset_view
+        if app_state.reset_view && app_state.reset_view_enabled
         {
             app_state.reset_view = false
+            app_state.reset_view_enabled = false
             
             ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.camera_node!.rotation, duration: 0.5)]))
+                SCNAction.group([SCNAction.move(to: base_workspace.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
         }
     }
     
@@ -488,12 +490,13 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         ui_view.rendersContinuously = true
         
         //Update commands
-        if app_state.reset_view
+        if app_state.reset_view && app_state.reset_view_enabled
         {
             app_state.reset_view = false
+            app_state.reset_view_enabled = false
             
             ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.camera_node!.rotation, duration: 0.5)]))
+                SCNAction.group([SCNAction.move(to: base_workspace.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
         }
     }
     
@@ -1310,7 +1313,7 @@ struct ControlProgramView: View
     func add_new_program_element()
     {
         base_workspace.update_view()
-        var new_program_element = WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type)
+        let new_program_element = WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type)
         
         //Checking for existing workspace components for element selection
         switch new_program_element.element_data.element_type
