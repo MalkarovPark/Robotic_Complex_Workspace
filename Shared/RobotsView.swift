@@ -1461,9 +1461,9 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_location[0])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_value: $base_workspace.selected_robot.pointer_location[0])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_value: $base_workspace.selected_robot.pointer_location[0], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[0])
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_location[0], in: 0.0...200.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_location[0], in: 0.0...Double(base_workspace.selected_robot.space_scale[0]))
                                 .padding(.trailing)
                         }
                         
@@ -1479,9 +1479,9 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_location[1])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_value: $base_workspace.selected_robot.pointer_location[1])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_value: $base_workspace.selected_robot.pointer_location[1], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[1])
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_location[1], in: 0.0...200.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_location[1], in: 0.0...Double(base_workspace.selected_robot.space_scale[1]))
                                 .padding(.trailing)
                         }
                         
@@ -1497,9 +1497,9 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_location[2])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_value: $base_workspace.selected_robot.pointer_location[2])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_value: $base_workspace.selected_robot.pointer_location[2], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[2])
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_location[2], in: 0.0...200.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_location[2], in: 0.0...Double(base_workspace.selected_robot.space_scale[2]))
                                 .padding(.trailing)
                         }
                         #if os(macOS)
@@ -1522,7 +1522,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_rotation[0])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_value: $base_workspace.selected_robot.pointer_rotation[0])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_value: $base_workspace.selected_robot.pointer_rotation[0], limit_min: .constant(-180), limit_max: .constant(180))
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[0], in: -180.0...180.0)
                                 .padding(.trailing)
@@ -1540,7 +1540,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_rotation[1])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_value: $base_workspace.selected_robot.pointer_rotation[1])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_value: $base_workspace.selected_robot.pointer_rotation[1], limit_min: .constant(-180), limit_max: .constant(180))
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[1], in: -180.0...180.0)
                                 .padding(.trailing)
@@ -1558,7 +1558,7 @@ struct RobotInspectorView: View
                             .frame(width: 64.0)
                             .popover(isPresented: $ppv_presented_rotation[2])
                             {
-                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_value: $base_workspace.selected_robot.pointer_rotation[2])
+                                PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_value: $base_workspace.selected_robot.pointer_rotation[2], limit_min: .constant(-180), limit_max: .constant(180))
                             }
                             Slider(value: $base_workspace.selected_robot.pointer_rotation[2], in: -180.0...180.0)
                                 .padding(.trailing)
@@ -1728,6 +1728,8 @@ struct PositionParameterView: View
 {
     @Binding var position_parameter_view_presented: Bool
     @Binding var parameter_value: Double
+    @Binding var limit_min: Float
+    @Binding var limit_max: Float
     
     var body: some View
     {
@@ -1757,7 +1759,7 @@ struct PositionParameterView: View
                 .frame(width: 128.0)
             #endif
             
-            Stepper("Enter", value: $parameter_value, in: 0...200)
+            Stepper("Enter", value: $parameter_value, in: Double(limit_min)...Double(limit_max))
                 .labelsHidden()
             #if os(iOS)
                 .padding(.trailing, 8.0)
@@ -1918,7 +1920,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_location[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_location[0], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_location[0], in: 0...Double(base_workspace.selected_robot.space_scale[0]))
                                 .labelsHidden()
                         }
                         
@@ -1928,7 +1930,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_location[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_location[1], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_location[1], in: 0...Double(base_workspace.selected_robot.space_scale[1]))
                                 .labelsHidden()
                         }
                         
@@ -1938,7 +1940,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_location[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_location[2], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_location[2], in: 0...Double(base_workspace.selected_robot.space_scale[2]))
                                 .labelsHidden()
                         }
                     }
@@ -1960,7 +1962,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_rotation[0], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_rotation[0], in: -180...180)
                                 .labelsHidden()
                         }
                         
@@ -1970,7 +1972,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_rotation[1], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_rotation[1], in: -180...180)
                                 .labelsHidden()
                         }
                         
@@ -1980,7 +1982,7 @@ struct PositionItemView: View
                                 .frame(width: 20.0)
                             TextField("0", value: $item_view_pos_rotation[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_rotation[2], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_rotation[2], in: -180...180)
                                 .labelsHidden()
                         }
                     }
@@ -2007,7 +2009,7 @@ struct PositionItemView: View
                             TextField("0", value: $item_view_pos_location[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_location[0], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_location[0], in: 0...Double(base_workspace.selected_robot.space_scale[0]))
                                 .labelsHidden()
                         }
                         
@@ -2018,7 +2020,7 @@ struct PositionItemView: View
                             TextField("0", value: $item_view_pos_location[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_location[1], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_location[1], in: 0...Double(base_workspace.selected_robot.space_scale[1]))
                                 .labelsHidden()
                         }
                         
@@ -2029,7 +2031,7 @@ struct PositionItemView: View
                             TextField("0", value: $item_view_pos_location[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_location[2], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_location[2], in: 0...Double(base_workspace.selected_robot.space_scale[2]))
                                 .labelsHidden()
                         }
                     }
@@ -2052,7 +2054,7 @@ struct PositionItemView: View
                             TextField("0", value: $item_view_pos_rotation[0], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_rotation[0], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_rotation[0], in: -180...180)
                                 .labelsHidden()
                         }
                         
@@ -2063,7 +2065,7 @@ struct PositionItemView: View
                             TextField("0", value: $item_view_pos_rotation[1], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_rotation[1], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_rotation[1], in: -180...180)
                                 .labelsHidden()
                         }
                         
@@ -2074,7 +2076,7 @@ struct PositionItemView: View
                             TextField("0", value: $item_view_pos_rotation[2], format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_rotation[2], in: 0...200)
+                            Stepper("Enter", value: $item_view_pos_rotation[2], in: -180...180)
                                 .labelsHidden()
                         }
                     }
@@ -2182,7 +2184,7 @@ struct RobotsView_Previews: PreviewProvider
             OriginRotateView(origin_rotate_view_presented: .constant(true), origin_view_pos_rotation: .constant([0.0, 0.0, 0.0]))
             OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0.0, 0.0, 0.0]))
             SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2.0, 2.0, 2.0]))
-            PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
+            PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0), limit_min: .constant(0), limit_max: .constant(200))
         }
     }
 }

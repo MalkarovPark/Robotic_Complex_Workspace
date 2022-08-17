@@ -564,6 +564,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func update_space_scale()
     {
+        //XY planes
         modified_node = space_node!.childNode(withName: "w0", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[0]) / 10)
@@ -582,6 +583,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         modified_node.position.y = space_scale[2] / 20
         #endif
         
+        //YZ plane
         modified_node = space_node!.childNode(withName: "w2", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[2]) / 10)
@@ -600,6 +602,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         modified_node.position.z = space_scale[0] / 20
         #endif
         
+        //XZ plane
         modified_node = space_node!.childNode(withName: "w4", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]) / 10, height: CGFloat(space_scale[2]) / 10)
@@ -618,7 +621,45 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         modified_node.position.x = -space_scale[1] / 20
         #endif
         
+        #if os(macOS)
         space_node?.position = SCNVector3(x: CGFloat(space_scale[1]) / 20, y: CGFloat(space_scale[2]) / 20, z: CGFloat(space_scale[0]) / 20)
+        #else
+        space_node?.position = SCNVector3(x: space_scale[1] / 20, y: space_scale[2] / 20, z: space_scale[0] / 20)
+        #endif
+        
+        position_points_spacing()
+    }
+    
+    private func position_points_spacing()
+    {
+        if programs_count > 0
+        {
+            for program in programs
+            {
+                if program.points_count > 0
+                {
+                    for position_point in program.points
+                    {
+                        if position_point.x > Double(space_scale[0])
+                        {
+                            position_point.x = Double(space_scale[0])
+                        }
+                        
+                        if position_point.y > Double(space_scale[1])
+                        {
+                            position_point.y = Double(space_scale[1])
+                        }
+                        
+                        if position_point.z > Double(space_scale[2])
+                        {
+                            position_point.z = Double(space_scale[2])
+                        }
+                    }
+                    
+                    program.visual_build()
+                }
+            }
+        }
     }
     
     private func portal_connect()
