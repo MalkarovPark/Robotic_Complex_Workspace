@@ -36,6 +36,10 @@ struct Robotic_Complex_WorkspaceApp: App
                 Divider()
             }
         }
+        Settings
+        {
+            //SettingsView()
+        }
         #else
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
         {

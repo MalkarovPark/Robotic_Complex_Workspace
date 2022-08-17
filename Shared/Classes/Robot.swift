@@ -34,17 +34,17 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Robot init functions
     init()
     {
-        robot_init(name: "None", manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: "None", manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     init(name: String)
     {
-        robot_init(name: name, manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     init(name: String, kinematic: Kinematic)
     {
-        robot_init(name: name, manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     init(name: String, manufacturer: String, dictionary: [String: Any])
@@ -72,16 +72,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lenghts: lenghts, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0])
+        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lenghts: lenghts, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     init(robot_struct: robot_struct)
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lenghts: robot_struct.lenghts, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lenghts: robot_struct.lenghts, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, lenghts: [Float], kinematic: Kinematic, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float])
+    func robot_init(name: String, manufacturer: String, model: String, lenghts: [Float], kinematic: Kinematic, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
@@ -120,6 +120,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         self.robot_image_data = robot_image_data
         self.origin_location = origin_location
         self.origin_rotation = origin_rotation
+        self.space_scale = space_scale
     }
     
     //MARK: - Program manage functions
@@ -423,6 +424,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var tool_node: SCNNode? //Node for tool element
     public var points_node: SCNNode? //Teach points
     public var robot_node: SCNNode? //Current robot
+    public var space_node:SCNNode? //Robot space
     
     private var robot_model_node: SCNNode? //Model of this robot
     
@@ -436,6 +438,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         self.unit_origin_node = self.unit_node?.childNode(withName: "unit_pointer", recursively: true)
         self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
+        self.space_node = self.box_node?.childNode(withName: "space", recursively: true)
         self.pointer_node = self.box_node?.childNode(withName: "pointer", recursively: true)
         self.tool_node = self.pointer_node?.childNode(withName: "tool", recursively: true)
         self.points_node = self.box_node?.childNode(withName: "points", recursively: true)
@@ -452,8 +455,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             self.camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
         }
         
-        //Place cell box
+        //Place and scale cell box
         robot_location_place()
+        update_space_scale()
         update_position()
     }
     
@@ -490,6 +494,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public var origin_location = [Float](repeating: 0, count: 3) //x, y, z
     public var origin_rotation = [Float](repeating: 0, count: 3) //r, p, w
+    
+    public var space_scale = [Float](repeating: 200, count: 3) //x, y, z
     
     private var modified_node = SCNNode()
     private var saved_material = SCNMaterial()
@@ -554,6 +560,65 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         camera_node?.position.y += Float(origin_location[2] + vertical_lenght)
         camera_node?.position.z += Float(origin_location[0])
         #endif
+    }
+    
+    public func update_space_scale()
+    {
+        modified_node = space_node!.childNode(withName: "w0", recursively: true)!
+        saved_material = (modified_node.geometry?.firstMaterial)!
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[0]) / 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.y = -CGFloat(space_scale[2]) / 20
+        #else
+        modified_node.position.y = -space_scale[2] / 20
+        #endif
+        modified_node = space_node!.childNode(withName: "w1", recursively: true)!
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[0]) / 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.y = CGFloat(space_scale[2]) / 20
+        #else
+        modified_node.position.y = space_scale[2] / 20
+        #endif
+        
+        modified_node = space_node!.childNode(withName: "w2", recursively: true)!
+        saved_material = (modified_node.geometry?.firstMaterial)!
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[2]) / 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.z = -CGFloat(space_scale[0]) / 20
+        #else
+        modified_node.position.z = -space_scale[0] / 20
+        #endif
+        modified_node = space_node!.childNode(withName: "w3", recursively: true)!
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[2]) / 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.z = CGFloat(space_scale[0]) / 20
+        #else
+        modified_node.position.z = space_scale[0] / 20
+        #endif
+        
+        modified_node = space_node!.childNode(withName: "w4", recursively: true)!
+        saved_material = (modified_node.geometry?.firstMaterial)!
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]) / 10, height: CGFloat(space_scale[2]) / 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.x = -CGFloat(space_scale[1]) / 20
+        #else
+        modified_node.position.x = -space_scale[1] / 20
+        #endif
+        modified_node = space_node!.childNode(withName: "w5", recursively: true)!
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]) / 10, height: CGFloat(space_scale[2]) / 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.x = -CGFloat(space_scale[1]) / 20
+        #else
+        modified_node.position.x = -space_scale[1] / 20
+        #endif
+        
+        space_node?.position = SCNVector3(x: CGFloat(space_scale[1]) / 20, y: CGFloat(space_scale[2]) / 20, z: CGFloat(space_scale[0]) / 20)
     }
     
     private func portal_connect()
@@ -1136,7 +1201,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lenghts: with_lenghts ? self.lenghts : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lenghts: with_lenghts ? self.lenghts : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
@@ -1178,6 +1243,7 @@ struct robot_struct: Codable
     
     var origin_location: [Float]
     var origin_rotation: [Float]
+    var space_scale: [Float]
 }
 
 //MARK: - Charts structures

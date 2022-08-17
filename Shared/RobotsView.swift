@@ -265,7 +265,7 @@ struct AddRobotView: View
     @Binding var add_robot_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var new_robot_name = ""
+    @State private var new_robot_name = ""
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -416,9 +416,7 @@ struct RobotView: View
     @Binding var display_rv: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var origin_move_view_presented = false
-    @State var origin_rotate_view_presented = false
-    @State var chart_view_presented = false
+    @State private var chart_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -683,8 +681,9 @@ struct RobotSceneView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var origin_move_view_presented = false
-    @State var origin_rotate_view_presented = false
+    @State private var origin_move_view_presented = false
+    @State private var origin_rotate_view_presented = false
+    @State private var space_scale_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -725,7 +724,7 @@ struct RobotSceneView: View
                                 .onChange(of: base_workspace.selected_robot.origin_rotation)
                             { _ in
                                 base_workspace.selected_robot.robot_location_place()
-                                base_workspace.selected_robot.update_position()
+                                //base_workspace.selected_robot.update_position()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
                                 app_state.get_scene_image = true
@@ -753,7 +752,7 @@ struct RobotSceneView: View
                                 .onChange(of: base_workspace.selected_robot.origin_location)
                             { _ in
                                 base_workspace.selected_robot.robot_location_place()
-                                base_workspace.selected_robot.update_position()
+                                //base_workspace.selected_robot.update_position()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
                                 app_state.get_scene_image = true
@@ -763,6 +762,31 @@ struct RobotSceneView: View
                         {
                             origin_move_view_presented.toggle()
                         }
+                        Divider()
+                        
+                        Button(action: { space_scale_view_presented.toggle() })
+                        {
+                            Image(systemName: "scale.3d")
+                                .imageScale(.large)
+                                .padding()
+                        }
+                        .popover(isPresented: $space_scale_view_presented)
+                        {
+                            SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
+                                .onChange(of: base_workspace.selected_robot.space_scale)
+                            { _ in
+                                //base_workspace.selected_robot.robot_location_place()
+                                base_workspace.selected_robot.update_space_scale()
+                                base_workspace.update_view()
+                                document.preset.robots = base_workspace.file_data().robots
+                                app_state.get_scene_image = true
+                            }
+                        }
+                        .onDisappear
+                        {
+                            space_scale_view_presented.toggle()
+                        }
+                        .buttonStyle(.borderless)
                     }
                     .background(.thinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
@@ -1031,6 +1055,99 @@ struct CellSceneView_iOS: UIViewRepresentable
     }
 }
 #endif
+
+//MARK: Scale elements
+struct SpaceScaleView: View
+{
+    @Binding var space_scale_view_presented: Bool
+    @Binding var space_scale: [Float]
+    
+    var body: some View
+    {
+        #if os(macOS)
+        VStack(spacing: 12)
+        {
+            Text("Space Scale")
+                .font(.title3)
+                .padding([.top, .leading, .trailing])
+            
+            HStack(spacing: 8)
+            {
+                Text("X:")
+                    .frame(width: 20.0)
+                TextField("0", value: $space_scale[0], format: .number)
+                    .textFieldStyle(.roundedBorder)
+                Stepper("Enter", value: $space_scale[0], in: 2...400)
+                    .labelsHidden()
+            }
+            
+            HStack(spacing: 8)
+            {
+                Text("Y:")
+                    .frame(width: 20.0)
+                TextField("0", value: $space_scale[1], format: .number)
+                    .textFieldStyle(.roundedBorder)
+                Stepper("Enter", value: $space_scale[1], in: 2...400)
+                    .labelsHidden()
+            }
+            
+            HStack(spacing: 8)
+            {
+                Text("Z:")
+                    .frame(width: 20.0)
+                TextField("0", value: $space_scale[2], format: .number)
+                    .textFieldStyle(.roundedBorder)
+                Stepper("Enter", value: $space_scale[2], in: 2...400)
+                    .labelsHidden()
+            }
+        }
+        .padding([.bottom, .leading, .trailing])
+        .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
+        #else
+        VStack(spacing: 12)
+        {
+            Text("Space Scale")
+                .font(.title3)
+                .padding([.top, .leading, .trailing])
+            
+            HStack(spacing: 8)
+            {
+                Text("X:")
+                    .frame(width: 20.0)
+                TextField("0", value: $space_scale[0], format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .keyboardType(.decimalPad)
+                Stepper("Enter", value: $space_scale[0], in: 2...400)
+                    .labelsHidden()
+            }
+            
+            HStack(spacing: 8)
+            {
+                Text("Y:")
+                    .frame(width: 20.0)
+                TextField("0", value: $space_scale[1], format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .keyboardType(.decimalPad)
+                Stepper("Enter", value: $space_scale[1], in: 2...400)
+                    .labelsHidden()
+            }
+            
+            HStack(spacing: 8)
+            {
+                Text("Z:")
+                    .frame(width: 20.0)
+                TextField("0", value: $space_scale[2], format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .keyboardType(.decimalPad)
+                Stepper("Enter", value: $space_scale[2], in: 2...400)
+                    .labelsHidden()
+            }
+        }
+        .padding([.bottom, .leading, .trailing])
+        .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
+        #endif
+    }
+}
 
 //MARK: Move elements
 struct OriginMoveView: View
@@ -2062,11 +2179,10 @@ struct RobotsView_Previews: PreviewProvider
             #else
             RobotCardView(card_color: .green, card_image: UIImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
             #endif
-            //RobotView(display_rv: .constant(false), document: .constant(Robotic_Complex_WorkspaceDocument()))
-                //.environmentObject(Workspace())
+            OriginRotateView(origin_rotate_view_presented: .constant(true), origin_view_pos_rotation: .constant([0.0, 0.0, 0.0]))
+            OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0.0, 0.0, 0.0]))
+            SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2.0, 2.0, 2.0]))
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0))
-            //PositionItemListView(points: .constant([SCNNode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: SCNNode(), on_delete: { IndexSet in print("None") })
-                //.environmentObject(Workspace())
         }
     }
 }
