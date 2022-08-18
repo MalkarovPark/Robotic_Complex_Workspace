@@ -770,6 +770,9 @@ struct RobotSceneView: View
                                 .imageScale(.large)
                                 .padding()
                         }
+                        #if os(iOS)
+                        .foregroundColor(.black)
+                        #endif
                         .popover(isPresented: $space_scale_view_presented)
                         {
                             SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
@@ -1736,7 +1739,11 @@ struct PositionParameterView: View
         HStack(spacing: 8)
         {
             Button(action: {
-                parameter_value = 0
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                {
+                    parameter_value = 0
+                }
+                //parameter_value = 0
                 position_parameter_view_presented.toggle()
             })
             {
@@ -2146,7 +2153,12 @@ struct PositionItemView: View
     
     func delete_point_from_program()
     {
-        delete_point()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
+        {
+            delete_point()
+        }
+        //delete_point()
+        
         base_workspace.update_view()
         position_item_view_presented.toggle()
         
