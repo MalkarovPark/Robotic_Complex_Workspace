@@ -2186,13 +2186,17 @@ struct RobotsView_Previews: PreviewProvider
                 .environmentObject(Workspace())
             AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
-            ChartView(chart_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
-                .environmentObject(Workspace())
             #if os(macOS)
             RobotCardView(card_color: .green, card_image: NSImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
             #else
             RobotCardView(card_color: .green, card_image: UIImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
             #endif
+            
+            RobotView(display_rv: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
+                .environmentObject(AppState())
+            ChartView(chart_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
             OriginRotateView(origin_rotate_view_presented: .constant(true), origin_view_pos_rotation: .constant([0.0, 0.0, 0.0]))
             OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0.0, 0.0, 0.0]))
             SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2.0, 2.0, 2.0]))

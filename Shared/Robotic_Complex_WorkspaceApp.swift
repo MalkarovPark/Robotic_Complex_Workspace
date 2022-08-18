@@ -38,7 +38,7 @@ struct Robotic_Complex_WorkspaceApp: App
         }
         Settings
         {
-            //SettingsView()
+            SettingsView()
         }
         #else
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())

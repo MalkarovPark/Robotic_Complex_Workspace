@@ -9,6 +9,14 @@ import SwiftUI
 
 struct ContentView: View
 {
+    @AppStorage("DefaultLocation_X") private var location_x: Double = 0
+    @AppStorage("DefaultLocation_Y") private var location_y: Double = 20
+    @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
+    
+    @AppStorage("DefaultScale_X") private var scale_x: Double = 200
+    @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
+    @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
+    
     @Binding var document: Robotic_Complex_WorkspaceDocument //Opened document
     
     #if os(iOS)
@@ -33,6 +41,7 @@ struct ContentView: View
             .onAppear
             {
                 get_file_data()
+                update_preferences()
             }
         #else
         Sidebar(document: $document, first_loaded: $first_loaded)
@@ -40,6 +49,7 @@ struct ContentView: View
             .onAppear
             {
                 get_file_data()
+                update_preferences()
             }
         #endif
     }
@@ -47,6 +57,17 @@ struct ContentView: View
     func get_file_data() //Store preset file data into workspace
     {
         base_workspace.file_view(preset: document.preset)
+    }
+    
+    func update_preferences()
+    {
+        Robot.default_origin_location[0] = Float(location_x)
+        Robot.default_origin_location[1] = Float(location_y)
+        Robot.default_origin_location[2] = Float(location_z)
+        
+        Robot.default_space_scale[0] = Float(scale_x)
+        Robot.default_space_scale[1] = Float(scale_y)
+        Robot.default_space_scale[2] = Float(scale_z)
     }
 }
 
