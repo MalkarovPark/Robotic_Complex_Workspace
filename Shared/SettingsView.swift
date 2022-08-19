@@ -11,7 +11,7 @@ struct SettingsView: View
 {
     private enum Tabs: Hashable
     {
-        case general, advanced
+        case general, properties, advanced
     }
     
     var body: some View
@@ -24,6 +24,12 @@ struct SettingsView: View
                 Label("General", systemImage: "gear")
             }
             .tag(Tabs.general)
+            
+            PropertiesSettingsView()
+                .tabItem
+            {
+                Label("Properties", systemImage: "doc.text")
+            }
             
             AdvancedSettingsView()
                 .tabItem
@@ -53,11 +59,14 @@ struct GeneralSettingsView: View
         {
             Form
             {
-                GroupBox(label: Text("Default location")
+                GroupBox(label: Text("Default Values")
                             .font(.headline))
                 {
-                    VStack
+                    VStack(alignment: .leading)
                     {
+                        Text("Origin location")
+                            .foregroundColor(Color.gray)
+                        
                         HStack(spacing: 8)
                         {
                             Text("X:")
@@ -104,13 +113,12 @@ struct GeneralSettingsView: View
                         }
                     }
                     .padding(8)
-                }
-                
-                GroupBox(label: Text("Default space scale")
-                            .font(.headline))
-                {
-                    VStack
+                    
+                    VStack(alignment: .leading)
                     {
+                        Text("Space scale")
+                            .foregroundColor(Color.gray)
+                        
                         HStack(spacing: 8)
                         {
                             Text("X:")
@@ -158,10 +166,62 @@ struct GeneralSettingsView: View
                     }
                     .padding(8)
                 }
+                .frame(width: 192)
             }
-            .frame(width: 192, height: 256)
-            //.padding()
         }
+    }
+}
+
+struct PropertiesSettingsView: View
+{
+    @AppStorage("RobotsPlistURL") private var plist_url: URL?
+    
+    var body: some View
+    {
+        Form
+        {
+            VStack(alignment: .leading)
+            {
+                Text("Plist File")
+                HStack
+                {
+                    Text(plist_url?.deletingPathExtension().lastPathComponent ?? "None")
+                        .foregroundColor(Color.gray)
+                    Spacer()
+                    
+                    Button("Save", action: show_save_panel)
+                    Button("Open", action: show_open_panel)
+                }
+            }
+        }
+        .frame(width: 256)
+    }
+    
+    func show_open_panel()
+    {
+        let openPanel = NSOpenPanel()
+        openPanel.allowedFileTypes = ["plist"]
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = false
+        openPanel.canChooseFiles = true
+        let response = openPanel.runModal()
+        
+        plist_url = response == .OK ? openPanel.url : nil
+    }
+    
+    func show_save_panel()
+    {
+        let savePanel = NSSavePanel()
+        savePanel.allowedFileTypes = ["plist"]
+        savePanel.canCreateDirectories = true
+        savePanel.isExtensionHidden = false
+        savePanel.allowsOtherFileTypes = false
+        savePanel.title = "Save your text"
+        savePanel.message = "Choose a folder and a name to store your text."
+        savePanel.nameFieldLabel = "File name:"
+        
+        let response = savePanel.runModal()
+        print(response == .OK ? savePanel.url : nil)
     }
 }
 
@@ -182,6 +242,12 @@ struct SettingsView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        SettingsView()
+        Group
+        {
+            SettingsView()
+            GeneralSettingsView()
+            PropertiesSettingsView()
+            AdvancedSettingsView()
+        }
     }
 }
