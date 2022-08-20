@@ -7,16 +7,22 @@
 
 import Foundation
 import SceneKit
+import SwiftUI
 
 //MARK: - Class for work with various application data
 class AppState : ObservableObject
 {
+    @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
+    
     @Published var reset_view = false
     @Published var reset_view_enabled = true
     @Published var get_scene_image = false
     
     public var workspace_scene = SCNScene()
     public var camera_light_node = SCNNode()
+    
+    //public static var plist_url: URL?
+    //public static var additive_robots_data: Data?
     
     @Published var manufacturer_name = "None" //Manufacturer's display string for the menu
     {
@@ -50,7 +56,9 @@ class AppState : ObservableObject
         {
             if did_updated
             {
+                did_updated = false
                 update_robot_info()
+                did_updated = true
             }
         }
     }
@@ -60,6 +68,8 @@ class AppState : ObservableObject
     private var series_dictionary = [String: [String: [String: Any]]]()
     private var models_dictionary = [String: [String: Any]]()
     public var robot_model_dictionary = [String: Any]()
+    
+    private var additive_robots_dictionary = [String: [String: [String: [String: Any]]]]()
     
     //MARK: Names of manufacturers, series and models
     public var manufacturers: [String]
@@ -72,9 +82,8 @@ class AppState : ObservableObject
     //MARK: - App State class init function
     init()
     {
-        //Get data from robots propery list file
-        let url = Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")!
-        robots_data = try! Data(contentsOf: url)
+        //Get data about robots from internal propery list file
+        robots_data = try! Data(contentsOf: Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")!)
         
         robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
         
@@ -82,7 +91,7 @@ class AppState : ObservableObject
         manufacturers = Array(robots_dictionary.keys).sorted(by: <)
         manufacturer_name = manufacturers.first ?? "None"
         
-        //Convert dictionary of series to array by first element
+        /*//Convert dictionary of series to array by first element
         series_dictionary = robots_dictionary[manufacturer_name]!
         series = Array(series_dictionary.keys).sorted(by: <)
         series_name = series.first ?? "None"
@@ -94,6 +103,31 @@ class AppState : ObservableObject
         
         robot_model_dictionary = models_dictionary[model_name]!
         
+        did_updated = true*/
+    }
+    
+    //MARK: - Get additive robots data from external property list
+    public func get_additive_data()
+    {
+        do
+        {
+            additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_robots_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
+            print("\(additive_robots_dictionary) 🧁")
+            
+            let new_manufacturers = Array(additive_robots_dictionary.keys).sorted(by: <)
+            manufacturers.append(contentsOf: new_manufacturers)
+            
+            for i in 0..<new_manufacturers.count
+            {
+                robots_dictionary.updateValue(additive_robots_dictionary[new_manufacturers[i]]!, forKey: new_manufacturers[i])
+            }
+        }
+        catch
+        {
+            print (error.localizedDescription)
+        }
+        
+        update_series_info()
         did_updated = true
     }
     

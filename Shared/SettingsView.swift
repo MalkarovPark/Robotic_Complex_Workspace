@@ -175,6 +175,8 @@ struct GeneralSettingsView: View
 struct PropertiesSettingsView: View
 {
     @AppStorage("RobotsPlistURL") private var plist_url: URL?
+    @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
+    //@State var plist_url: URL?
     
     var body: some View
     {
@@ -207,6 +209,19 @@ struct PropertiesSettingsView: View
         let response = openPanel.runModal()
         
         plist_url = response == .OK ? openPanel.url : nil
+        do
+        {
+            if ((plist_url?.startAccessingSecurityScopedResource()) != nil)
+            {
+                additive_robots_data = try Data(contentsOf: plist_url!)
+            }
+        }
+        catch
+        {
+            print ("error reading")
+            print (error.localizedDescription)
+        }
+        //AppState.plist_url = plist_url
     }
     
     func show_save_panel()
