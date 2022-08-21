@@ -149,4 +149,28 @@ class AppState : ObservableObject
     {
         robot_model_dictionary = models_dictionary[model_name]!
     }
+    
+    //MARK: - Info for settings view
+    public var property_file_info: (Brands: String, Series: String, Models: String)
+    {
+        var brands = 0
+        var series = 0
+        var models = 0
+        
+        if additive_robots_data != nil
+        {
+            brands = additive_robots_dictionary.keys.count
+            for key_name in additive_robots_dictionary.keys
+            {
+                series += additive_robots_dictionary[key_name]?.keys.count ?? 0
+                
+                for key_name2 in additive_robots_dictionary[key_name]!.keys
+                {
+                    models += additive_robots_dictionary[key_name]?[key_name2]?.keys.count ?? 0
+                }
+            }
+        }
+        
+        return (Brands: String(brands), Series: String(series), Models: String(models))
+    }
 }

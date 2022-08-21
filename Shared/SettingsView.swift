@@ -185,21 +185,58 @@ struct PropertiesSettingsView: View
         {
             VStack(alignment: .leading)
             {
-                Text("Plist File")
                 HStack
                 {
-                    Text(plist_url?.deletingPathExtension().lastPathComponent ?? "None")
-                        .foregroundColor(Color.gray)
+                    Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                     Spacer()
                     
                     Button("Save", action: show_save_panel)
-                    Button("Open", action: show_open_panel)
+                    Button("Load", action: show_load_panel)
                 }
+                
+                GroupBox
+                {
+                    VStack
+                    {
+                        HStack
+                        {
+                            VStack
+                            {
+                                Text(app_state.property_file_info.Brands)
+                                    .foregroundColor(Color.gray)
+                                Text("Brands")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .padding(.leading)
+                            Spacer()
+                            
+                            VStack
+                            {
+                                Text(app_state.property_file_info.Series)
+                                    .foregroundColor(Color.gray)
+                                Text("Series")
+                                    .foregroundColor(Color.gray)
+                            }
+                            Spacer()
+                            
+                            VStack
+                            {
+                                Text(app_state.property_file_info.Models)
+                                    .foregroundColor(Color.gray)
+                                Text("Models")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .padding(.trailing)
+                        }
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                }
+                .padding(.vertical, 8.0)
                 
                 HStack
                 {
                     Spacer()
-                    Button("Clear")
+                    Button("Clear Data")
                     {
                         app_state.clear_additive_data()
                         plist_url = nil
@@ -211,7 +248,7 @@ struct PropertiesSettingsView: View
         .frame(width: 256)
     }
     
-    func show_open_panel()
+    func show_load_panel()
     {
         let openPanel = NSOpenPanel()
         openPanel.allowedFileTypes = ["plist"]
@@ -274,6 +311,7 @@ struct SettingsView_Previews: PreviewProvider
             SettingsView()
             GeneralSettingsView()
             PropertiesSettingsView()
+                .environmentObject(AppState())
             AdvancedSettingsView()
         }
     }
