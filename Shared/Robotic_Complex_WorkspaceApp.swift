@@ -46,6 +46,7 @@ struct Robotic_Complex_WorkspaceApp: App
         Settings
         {
             SettingsView()
+                .environmentObject(app_state)
         }
         #else
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())

@@ -21,9 +21,6 @@ class AppState : ObservableObject
     public var workspace_scene = SCNScene()
     public var camera_light_node = SCNNode()
     
-    //public static var plist_url: URL?
-    //public static var additive_robots_data: Data?
-    
     @Published var manufacturer_name = "None" //Manufacturer's display string for the menu
     {
         didSet
@@ -90,20 +87,6 @@ class AppState : ObservableObject
         //Convert dictionary of robots to array by first element
         manufacturers = Array(robots_dictionary.keys).sorted(by: <)
         manufacturer_name = manufacturers.first ?? "None"
-        
-        /*//Convert dictionary of series to array by first element
-        series_dictionary = robots_dictionary[manufacturer_name]!
-        series = Array(series_dictionary.keys).sorted(by: <)
-        series_name = series.first ?? "None"
-        
-        //Convert dictionary of models to array by first element
-        models_dictionary = series_dictionary[series_name]!
-        models = Array(models_dictionary.keys).sorted(by: <)
-        model_name = models.first ?? "None"
-        
-        robot_model_dictionary = models_dictionary[model_name]!
-        
-        did_updated = true*/
     }
     
     //MARK: - Get additive robots data from external property list
@@ -112,7 +95,6 @@ class AppState : ObservableObject
         do
         {
             additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_robots_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
-            print("\(additive_robots_dictionary) 🧁")
             
             let new_manufacturers = Array(additive_robots_dictionary.keys).sorted(by: <)
             manufacturers.append(contentsOf: new_manufacturers)
@@ -129,6 +111,19 @@ class AppState : ObservableObject
         
         update_series_info()
         did_updated = true
+    }
+    
+    public func update_additive_data()
+    {
+        clear_additive_data()
+        get_additive_data()
+    }
+    
+    public func clear_additive_data()
+    {
+        robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
+        manufacturers = Array(robots_dictionary.keys).sorted(by: <)
+        manufacturer_name = manufacturers.first ?? "None"
     }
     
     //MARK: - Get robots info from dictionaries

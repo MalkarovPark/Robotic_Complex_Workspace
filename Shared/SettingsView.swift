@@ -176,7 +176,8 @@ struct PropertiesSettingsView: View
 {
     @AppStorage("RobotsPlistURL") private var plist_url: URL?
     @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
-    //@State var plist_url: URL?
+    
+    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
@@ -193,6 +194,17 @@ struct PropertiesSettingsView: View
                     
                     Button("Save", action: show_save_panel)
                     Button("Open", action: show_open_panel)
+                }
+                
+                HStack
+                {
+                    Spacer()
+                    Button("Clear")
+                    {
+                        app_state.clear_additive_data()
+                        plist_url = nil
+                        additive_robots_data = nil
+                    }
                 }
             }
         }
@@ -214,6 +226,7 @@ struct PropertiesSettingsView: View
             if ((plist_url?.startAccessingSecurityScopedResource()) != nil)
             {
                 additive_robots_data = try Data(contentsOf: plist_url!)
+                app_state.update_additive_data()
             }
         }
         catch
@@ -221,7 +234,6 @@ struct PropertiesSettingsView: View
             print ("error reading")
             print (error.localizedDescription)
         }
-        //AppState.plist_url = plist_url
     }
     
     func show_save_panel()
