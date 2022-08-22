@@ -81,8 +81,12 @@ struct SidebarContent: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var first_loaded: Bool
     #if os(iOS)
+    @EnvironmentObject var app_state: AppState
+    
     @Binding var file_url: URL
     @Binding var file_name: String
+    
+    @State var settings_view_presented = false
     #endif
     
     #if os(iOS)
@@ -111,18 +115,37 @@ struct SidebarContent: View
                 }
             }
             .navigationTitle("View")
-            /*.toolbar
+            #if os(iOS)
+            .toolbar
             {
-                #if os(iOS)
-                if horizontal_size_class != .compact
+                ToolbarItem(placement: placement_trailing)
+                {
+                    HStack(alignment: .center)
+                    {
+                        Button (action: { app_state.settings_view_presented = true })
+                        {
+                            Label("Settings", systemImage: "gear")
+                        }
+                    }
+                }
+                /*if horizontal_size_class != .compact
                 {
                     ToolbarItem(placement: .cancellationAction)
                     {
                         dismiss_document_button()
                     }
+                }*/
+            }
+            .sheet(isPresented: $app_state.settings_view_presented)
+            {
+                SettingsView(setting_view_presented: $app_state.settings_view_presented)
+                    .environmentObject(app_state)
+                    .onDisappear
+                {
+                    app_state.settings_view_presented = false
                 }
-                #endif
-            }*/
+            }
+            #endif
         } detail: {
             ZStack
             {
@@ -143,7 +166,9 @@ struct SidebarContent: View
                     {
                         //Text("None")
                     }
+                    #if os(macOS)
                     .onAppear(perform: { sidebar_selection = .WorkspaceView }) //???
+                    #endif
                 }
             }
         }

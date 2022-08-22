@@ -53,6 +53,10 @@ struct Robotic_Complex_WorkspaceApp: App
         {
             file in ContentView(document: file.$document, file_name: "\(file.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled")", file_url: file.fileURL!)
                 .environmentObject(app_state)
+                .onAppear
+            {
+                app_state.get_additive_data()
+            }
         }
         .commands
         {
@@ -68,6 +72,15 @@ struct Robotic_Complex_WorkspaceApp: App
                 .keyboardShortcut("0", modifiers: .command)
                 .disabled(!app_state.reset_view_enabled)
                 Divider()
+            }
+            
+            CommandGroup(after: CommandGroupPlacement.appSettings)
+            {
+                Button("Settings...")
+                {
+                    app_state.settings_view_presented = true
+                }
+                .keyboardShortcut(",", modifiers: .command)
             }
         }
         #endif

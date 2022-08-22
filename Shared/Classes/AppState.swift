@@ -17,6 +17,9 @@ class AppState : ObservableObject
     @Published var reset_view = false
     @Published var reset_view_enabled = true
     @Published var get_scene_image = false
+    #if os(iOS)
+    @Published var settings_view_presented = false
+    #endif
     
     public var workspace_scene = SCNScene()
     public var camera_light_node = SCNNode()
