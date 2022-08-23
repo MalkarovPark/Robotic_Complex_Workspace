@@ -56,6 +56,7 @@ struct RobotsTableView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var add_robot_view_presented = false
+    @State var dragged_robot: Robot?
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -83,6 +84,13 @@ struct RobotsTableView: View
                             {
                                 view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
                             }
+                            .onDrag({
+                                self.dragged_robot = robot_item
+                                return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
+                            }, preview: {
+                                RobotCardViewPreview(card_color: robot_item.card_info().color, card_image: robot_item.card_info().image, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
+                            })
+                            .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, document: $document, workspace_robots: base_workspace.file_data().robots, robot: robot_item))
                             .transition(AnyTransition.scale)
                         }
                     }
@@ -136,6 +144,42 @@ struct RobotsTableView: View
         {
             base_workspace.robots.remove(atOffsets: offsets)
             document.preset.robots = base_workspace.file_data().robots
+        }
+    }
+}
+
+//MARK: - Drag and Drop delegate
+struct RobotDropDelegate : DropDelegate
+{
+    @Binding var robots : [Robot]
+    @Binding var dragged_robot : Robot?
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var workspace_robots: [robot_struct]
+    
+    let robot: Robot
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        document.preset.robots = workspace_robots //Update file after elements reordering
+        return true
+    }
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragged_robot = self.dragged_robot else
+        {
+            return
+        }
+        
+        if dragged_robot != robot
+        {
+            let from = robots.firstIndex(of: dragged_robot)!
+            let to = robots.firstIndex(of: robot)!
+            withAnimation(.default)
+            {
+                self.robots.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
         }
     }
 }
@@ -256,6 +300,66 @@ struct RobotDeleteButton: View
             self.on_delete(IndexSet(integer: index))
             base_workspace.elements_check()
         }
+    }
+}
+
+//MARK: - Robot card preview for drag
+struct RobotCardViewPreview: View
+{
+    @State var card_color: Color
+    #if os(macOS)
+    @State var card_image: NSImage
+    #else
+    @State var card_image: UIImage
+    #endif
+    @State var card_title: String
+    @State var card_subtitle: String
+    
+    var body: some View
+    {
+        ZStack
+        {
+            Rectangle()
+                .foregroundColor(card_color)
+                .overlay
+            {
+                #if os(macOS)
+                Image(nsImage: card_image)
+                    .resizable()
+                    .scaledToFill()
+                #else
+                Image(uiImage: card_image)
+                    .resizable()
+                    .scaledToFill()
+                #endif
+            }
+            
+            VStack
+            {
+                Spacer()
+                HStack
+                {
+                    VStack(alignment: .leading)
+                    {
+                        Text(card_title)
+                            .font(.headline)
+                            .padding(.top, 8)
+                            .padding(.leading, 4)
+                        
+                        Text(card_subtitle)
+                            .foregroundColor(.gray)
+                            .padding(.bottom, 8)
+                            .padding(.leading, 4)
+                    }
+                    .padding(.horizontal, 8)
+                    Spacer()
+                }
+                .background(card_color.opacity(0.2))
+                .background(.thinMaterial)
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .frame(height: 160)
     }
 }
 
@@ -1750,7 +1854,6 @@ struct PositionParameterView: View
                 Label("Reset", systemImage: "arrow.counterclockwise")
                     .labelStyle(.iconOnly)
             }
-            .keyboardShortcut(.defaultAction)
             .buttonStyle(.borderedProminent)
             #if os(macOS)
             .foregroundColor(Color.white)

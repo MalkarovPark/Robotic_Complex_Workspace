@@ -1250,6 +1250,7 @@ struct ControlProgramView: View
                     .padding(4)
                 }
                 .padding()
+                .disabled(base_workspace.is_performing)
             }
             .animation(.spring(), value: base_workspace.elements)
             

@@ -543,6 +543,7 @@ struct SettingsView_Previews: PreviewProvider
         {
             #if os(macOS)
             SettingsView()
+                .environmentObject(AppState())
             #else
             SettingsView(setting_view_presented: .constant(true))
                 .environmentObject(AppState())
