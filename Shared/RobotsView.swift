@@ -60,7 +60,7 @@ struct RobotsTableView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
-    var columns: [GridItem] = [.init(.adaptive(minimum: 160, maximum: .infinity), spacing: 24)]
+    var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
     
     var body: some View
     {
@@ -94,10 +94,9 @@ struct RobotsTableView: View
                             .transition(AnyTransition.scale)
                         }
                     }
-                    .padding(16)
+                    .padding(20)
                 }
                 .animation(.spring(), value: base_workspace.robots)
-                .padding([.leading, .trailing], 4)
             }
             else
             {
@@ -242,7 +241,7 @@ struct RobotCardView: View
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .frame(height: 160)
+        .frame(height: 192)
         .shadow(radius: 8.0)
     }
 }
@@ -359,7 +358,7 @@ struct RobotCardViewPreview: View
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .frame(height: 160)
+        .frame(height: 192)
     }
 }
 
