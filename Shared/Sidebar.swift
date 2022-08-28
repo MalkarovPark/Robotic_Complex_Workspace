@@ -9,9 +9,7 @@ import SwiftUI
 
 enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 {
-    case WorkspaceView
-    case RobotsView
-    case ToolsView
+    case WorkspaceView, RobotsView, ToolsView, DetailsView
     
     var id: Int { rawValue }
     var localizedName: LocalizedStringKey
@@ -24,6 +22,8 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
             return "Robots"
         case .ToolsView:
             return "Tools"
+        case .DetailsView:
+            return "Details"
         }
     }
     
@@ -37,6 +37,8 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
             return "r.square"
         case .ToolsView:
             return "hammer"
+        case .DetailsView:
+            return "shippingbox"
         }
     }
 }
@@ -161,6 +163,8 @@ struct SidebarContent: View
                     RobotsView(document: $document)
                 case .ToolsView:
                     ToolsView(document: $document)
+                case .DetailsView:
+                    DetailsView(document: $document)
                 default:
                     VStack
                     {
