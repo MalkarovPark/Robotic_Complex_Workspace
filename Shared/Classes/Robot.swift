@@ -64,7 +64,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
         
         var lenghts = [Float]()
-        
         if dictionary.keys.contains("Details Lengths") //Checking for the availability of lengths data property
         {
             let elements = dictionary["Details Lengths"] as! NSArray

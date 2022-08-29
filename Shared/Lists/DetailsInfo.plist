@@ -14,7 +14,11 @@
 		<key>Figure</key>
 		<string>Box</string>
 		<key>Color</key>
-		<string></string>
+		<array>
+			<integer>0</integer>
+			<integer>0</integer>
+			<integer>0</integer>
+		</array>
 		<key>Material</key>
 		<string></string>
 		<key>Lengths</key>
@@ -23,6 +27,35 @@
 			<integer>0</integer>
 			<integer>0</integer>
 		</array>
+		<key>Physics</key>
+		<string>dynamic</string>
+		<key>Gripable</key>
+		<false/>
+	</dict>
+	<key>Figure Detail And Scene</key>
+	<dict>
+		<key>Scene</key>
+		<string>None</string>
+		<key>Figure</key>
+		<string>Box</string>
+		<key>Color</key>
+		<array>
+			<integer>0</integer>
+			<integer>0</integer>
+			<integer>0</integer>
+		</array>
+		<key>Material</key>
+		<string></string>
+		<key>Lengths</key>
+		<array>
+			<integer>0</integer>
+			<integer>0</integer>
+			<integer>0</integer>
+		</array>
+		<key>Physics</key>
+		<string>None</string>
+		<key>Gripable</key>
+		<false/>
 	</dict>
 </dict>
 </plist>
