@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SceneKit
 
 class Tool: Identifiable, Equatable, Hashable, ObservableObject
 {
@@ -20,4 +21,5 @@ class Tool: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     public var name: String?
+    public var node: SCNNode?
 }

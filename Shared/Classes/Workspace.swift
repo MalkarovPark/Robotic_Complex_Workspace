@@ -13,13 +13,8 @@ class Workspace: ObservableObject
 {
     @Published public var robots = [Robot]()
     @Published public var elements = [WorkspaceProgramElement]()
-    @Published private var objects = [SCNNode]()
-    
-    //MARK: - Initialization
-    init()
-    {
-        
-    }
+    @Published public var tools = [Tool]()
+    @Published public var details = [Detail]()
     
     //MARK: - Robot manage functions
     public func add_robot(robot: Robot)

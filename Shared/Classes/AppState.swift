@@ -154,7 +154,8 @@ class AppState : ObservableObject
     }
     
     //MARK: - Info for settings view
-    public var property_file_info: (Brands: String, Series: String, Models: String)
+    //MARK: Robot info
+    public var robots_property_file_info: (Brands: String, Series: String, Models: String)
     {
         var brands = 0
         var series = 0

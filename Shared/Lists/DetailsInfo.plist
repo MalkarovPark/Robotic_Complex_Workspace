@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Detail 1</key>
+	<dict>
+		<key>Scene</key>
+		<string>None</string>
+		<key>Gripable</key>
+		<false/>
+	</dict>
+	<key>Figure Detail</key>
+	<dict>
+		<key>Figure</key>
+		<string>Box</string>
+		<key>Color</key>
+		<string></string>
+		<key>Material</key>
+		<string></string>
+		<key>Lengths</key>
+		<array>
+			<integer>0</integer>
+			<integer>0</integer>
+			<integer>0</integer>
+		</array>
+	</dict>
+</dict>
+</plist>

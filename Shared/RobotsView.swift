@@ -56,7 +56,7 @@ struct RobotsTableView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var add_robot_view_presented = false
-    @State var dragged_robot: Robot?
+    @State private var dragged_robot: Robot?
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -119,7 +119,7 @@ struct RobotsTableView: View
                 {
                     Button (action: { add_robot_view_presented.toggle() })
                     {
-                        Label("Robots", systemImage: "plus")
+                        Label("Add Robot", systemImage: "plus")
                     }
                     .sheet(isPresented: $add_robot_view_presented)
                     {

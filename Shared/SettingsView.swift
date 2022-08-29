@@ -307,7 +307,7 @@ struct PropertiesSettingsView: View
                         {
                             VStack
                             {
-                                Text(app_state.property_file_info.Brands)
+                                Text(app_state.robots_property_file_info.Brands)
                                     .foregroundColor(Color.gray)
                                 Text("Brands")
                                     .foregroundColor(Color.gray)
@@ -317,7 +317,7 @@ struct PropertiesSettingsView: View
                             
                             VStack
                             {
-                                Text(app_state.property_file_info.Series)
+                                Text(app_state.robots_property_file_info.Series)
                                     .foregroundColor(Color.gray)
                                 Text("Series")
                                     .foregroundColor(Color.gray)
@@ -326,7 +326,7 @@ struct PropertiesSettingsView: View
                             
                             VStack
                             {
-                                Text(app_state.property_file_info.Models)
+                                Text(app_state.robots_property_file_info.Models)
                                     .foregroundColor(Color.gray)
                                 Text("Models")
                                     .foregroundColor(Color.gray)
@@ -368,7 +368,7 @@ struct PropertiesSettingsView: View
                 {
                     VStack
                     {
-                        Text(app_state.property_file_info.Brands)
+                        Text(app_state.robots_property_file_info.Brands)
                             .foregroundColor(Color.gray)
                         Text("Brands")
                             .foregroundColor(Color.gray)
@@ -378,7 +378,7 @@ struct PropertiesSettingsView: View
                     
                     VStack
                     {
-                        Text(app_state.property_file_info.Series)
+                        Text(app_state.robots_property_file_info.Series)
                             .foregroundColor(Color.gray)
                         Text("Series")
                             .foregroundColor(Color.gray)
@@ -387,7 +387,7 @@ struct PropertiesSettingsView: View
                     
                     VStack
                     {
-                        Text(app_state.property_file_info.Models)
+                        Text(app_state.robots_property_file_info.Models)
                             .foregroundColor(Color.gray)
                         Text("Models")
                             .foregroundColor(Color.gray)
