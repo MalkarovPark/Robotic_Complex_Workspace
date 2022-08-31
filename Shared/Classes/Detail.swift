@@ -127,9 +127,9 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         node = SCNNode()
         
         #if os(macOS)
-        var lenghts = self.lenghts as! [CGFloat]
+        let lenghts = self.lenghts as! [CGFloat]
         #else
-        var lenghts = self.lenghts as! [Float]
+        let lenghts = self.lenghts as! [Float]
         #endif
         
         //Set geometry

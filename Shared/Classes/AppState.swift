@@ -63,6 +63,32 @@ class AppState : ObservableObject
         }
     }
     
+    @Published var tool_name = "None" //Display model value for menu
+    {
+        didSet
+        {
+            if did_updated
+            {
+                did_updated = false
+                update_tool_info()
+                did_updated = true
+            }
+        }
+    }
+    
+    @Published var detail_name = "None" //Display model value for menu
+    {
+        didSet
+        {
+            if did_updated
+            {
+                did_updated = false
+                update_detail_info()
+                did_updated = true
+            }
+        }
+    }
+    
     //MARK: Robots models dictionaries
     private var robots_dictionary: [String: [String: [String: [String: Any]]]]
     private var series_dictionary = [String: [String: [String: Any]]]()
@@ -79,6 +105,15 @@ class AppState : ObservableObject
     private var robots_data: Data //Data store from robots property list
     private var did_updated = false //Robots data from .plist updated state
     
+    //MARK: Tools and details dictionaries, names
+    public var tools_dictionary = [String: [String: Any]]()
+    public var tool_dictionary = [String: Any]()
+    public var tools = [String]()
+    
+    public var details_dictionary = [String: [String: Any]]()
+    public var detail_dictionary = [String: Any]()
+    public var details = [String]()
+    
     //MARK: - App State class init function
     init()
     {
@@ -90,6 +125,12 @@ class AppState : ObservableObject
         //Convert dictionary of robots to array by first element
         manufacturers = Array(robots_dictionary.keys).sorted(by: <)
         manufacturer_name = manufacturers.first ?? "None"
+        
+        //Get data about details from internal propery list file
+        tools_dictionary = try! PropertyListSerialization.propertyList(from: Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!), options: .mutableContainers, format: nil) as! [String: [String: Any]]
+        
+        //Get data about tools from internal propery list file
+        details_dictionary = try! PropertyListSerialization.propertyList(from: Data(contentsOf: Bundle.main.url(forResource: "DetailsInfo", withExtension: "plist")!), options: .mutableContainers, format: nil) as! [String: [String: Any]]
     }
     
     //MARK: - Get additive robots data from external property list
@@ -97,6 +138,7 @@ class AppState : ObservableObject
     {
         do
         {
+            //MARK: Manufacturers data
             additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_robots_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
             
             let new_manufacturers = Array(additive_robots_dictionary.keys).sorted(by: <)
@@ -106,6 +148,10 @@ class AppState : ObservableObject
             {
                 robots_dictionary.updateValue(additive_robots_dictionary[new_manufacturers[i]]!, forKey: new_manufacturers[i])
             }
+            
+            //MARK: Tools data
+            
+            //MARK: Details data
         }
         catch
         {
@@ -129,7 +175,8 @@ class AppState : ObservableObject
         manufacturer_name = manufacturers.first ?? "None"
     }
     
-    //MARK: - Get robots info from dictionaries
+    //MARK: - Get info from dictionaries
+    //MARK: Get robots
     private func update_series_info() //Convert dictionary of robots to array
     {
         series_dictionary = robots_dictionary[manufacturer_name]!
@@ -153,8 +200,20 @@ class AppState : ObservableObject
         robot_model_dictionary = models_dictionary[model_name]!
     }
     
+    //MARK: Get tools
+    private func update_tool_info()
+    {
+        tool_dictionary = tools_dictionary[tool_name]!
+    }
+    
+    //MARK: Get details
+    private func update_detail_info()
+    {
+        detail_dictionary = details_dictionary[detail_name]!
+    }
+    
     //MARK: - Info for settings view
-    //MARK: Robot info
+    //MARK: Robots info
     public var robots_property_file_info: (Brands: String, Series: String, Models: String)
     {
         var brands = 0
