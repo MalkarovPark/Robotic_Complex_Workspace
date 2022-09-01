@@ -126,11 +126,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     {
         node = SCNNode()
         
-        #if os(macOS)
         let lenghts = self.lenghts as! [CGFloat]
-        #else
-        let lenghts = self.lenghts as! [Float]
-        #endif
         
         //Set geometry
         var geometry: SCNGeometry?
@@ -226,7 +222,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         #if os(macOS)
         node?.geometry?.firstMaterial?.diffuse.contents = NSColor(red: CGFloat(figure_color?[0] ?? 0), green: CGFloat(figure_color?[1] ?? 0), blue: CGFloat(figure_color?[2] ?? 0), alpha: 255)
         #else
-        node?.geometry.firstMaterial?.diffuse.contents = UIColor(red: figure_color?[0] ?? 0, green: figure_color?[1] ?? 0, blue: figure_color?[2] ?? 0, alpha: 255)
+        node?.geometry?.firstMaterial?.diffuse.contents = UIColor(red: CGFloat(figure_color?[0] ?? 0), green: CGFloat(figure_color?[1] ?? 0), blue: CGFloat(figure_color?[2] ?? 0), alpha: 255)
         #endif
         
         //Set shading type

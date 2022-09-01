@@ -128,9 +128,13 @@ class AppState : ObservableObject
         
         //Get data about details from internal propery list file
         tools_dictionary = try! PropertyListSerialization.propertyList(from: Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!), options: .mutableContainers, format: nil) as! [String: [String: Any]]
+        tools = Array(tools_dictionary.keys).sorted(by: <)
+        tool_name = tools.first ?? "None"
         
         //Get data about tools from internal propery list file
         details_dictionary = try! PropertyListSerialization.propertyList(from: Data(contentsOf: Bundle.main.url(forResource: "DetailsInfo", withExtension: "plist")!), options: .mutableContainers, format: nil) as! [String: [String: Any]]
+        details = Array(details_dictionary.keys).sorted(by: <)
+        detail_name = details.first ?? "None"
     }
     
     //MARK: - Get additive robots data from external property list

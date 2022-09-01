@@ -36,7 +36,7 @@ struct RobotsView: View
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     .background(Color.white)
             }
-            if display_rv == true
+            else
             {
                 //Display robot view when selected
                 RobotView(display_rv: $display_rv, document: $document)
@@ -124,6 +124,9 @@ struct RobotsTableView: View
                     .sheet(isPresented: $add_robot_view_presented)
                     {
                         AddRobotView(add_robot_view_presented: $add_robot_view_presented, document: $document)
+                        #if os(iOS)
+                            .presentationDetents([.medium])
+                        #endif
                     }
                 }
             }
@@ -376,9 +379,7 @@ struct AddRobotView: View
     var body: some View
     {
         #if os(macOS)
-        let button_padding = 12.0
-        
-        VStack
+        VStack(spacing: 0)
         {
             Text("Add Robot")
                 .font(.title2)
@@ -426,6 +427,7 @@ struct AddRobotView: View
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, 4.0)
             }
+            .padding(.vertical, 8.0)
             .padding(.horizontal)
             
             Spacer()
@@ -438,15 +440,11 @@ struct AddRobotView: View
                 
                 Button("Cancel", action: { add_robot_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
-                    .padding(.top, button_padding - 8.0)
-                    .padding(.bottom, button_padding)
-                    .padding(.trailing, button_padding - 8.0)
+                    .padding([.top, .leading, .bottom])
                 
                 Button("Save", action: { add_robot_in_workspace() })
                     .keyboardShortcut(.defaultAction)
-                    .padding(.top, button_padding - 8.0)
-                    .padding(.bottom, button_padding)
-                    .padding(.trailing, button_padding)
+                    .padding()
             }
         }
         .controlSize(.regular)
@@ -1170,7 +1168,6 @@ struct SpaceScaleView: View
     
     var body: some View
     {
-        #if os(macOS)
         VStack(spacing: 12)
         {
             Text("Space Scale")
@@ -1208,48 +1205,9 @@ struct SpaceScaleView: View
             }
         }
         .padding([.bottom, .leading, .trailing])
+        #if os(macOS)
         .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
         #else
-        VStack(spacing: 12)
-        {
-            Text("Space Scale")
-                .font(.title3)
-                .padding([.top, .leading, .trailing])
-            
-            HStack(spacing: 8)
-            {
-                Text("X:")
-                    .frame(width: 20.0)
-                TextField("0", value: $space_scale[0], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $space_scale[0], in: 2...400)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("Y:")
-                    .frame(width: 20.0)
-                TextField("0", value: $space_scale[1], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $space_scale[1], in: 2...400)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("Z:")
-                    .frame(width: 20.0)
-                TextField("0", value: $space_scale[2], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $space_scale[2], in: 2...400)
-                    .labelsHidden()
-            }
-        }
-        .padding([.bottom, .leading, .trailing])
         .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
         #endif
     }
@@ -1263,7 +1221,6 @@ struct OriginMoveView: View
     
     var body: some View
     {
-        #if os(macOS)
         VStack(spacing: 12)
         {
             Text("Move Origin")
@@ -1301,48 +1258,9 @@ struct OriginMoveView: View
             }
         }
         .padding([.bottom, .leading, .trailing])
+        #if os(macOS)
         .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
         #else
-        VStack(spacing: 12)
-        {
-            Text("Move Origin")
-                .font(.title3)
-                .padding([.top, .leading, .trailing])
-            
-            HStack(spacing: 8)
-            {
-                Text("X:")
-                    .frame(width: 20.0)
-                TextField("0", value: $origin_view_pos_location[0], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_location[0], in: -50...50)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("Y:")
-                    .frame(width: 20.0)
-                TextField("0", value: $origin_view_pos_location[1], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_location[1], in: -50...50)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("Z:")
-                    .frame(width: 20.0)
-                TextField("0", value: $origin_view_pos_location[2], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_location[2], in: -50...50)
-                    .labelsHidden()
-            }
-        }
-        .padding([.bottom, .leading, .trailing])
         .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
         #endif
     }
@@ -1356,7 +1274,6 @@ struct OriginRotateView: View
     
     var body: some View
     {
-        #if os(macOS)
         VStack(spacing: 12)
         {
             Text("Rotate Origin")
@@ -1394,47 +1311,9 @@ struct OriginRotateView: View
             }
         }
         .padding([.bottom, .leading, .trailing])
+        #if os(macOS)
         .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
         #else
-        VStack(spacing: 12)
-        {
-            Text("Rotate Origin")
-                .font(.title3)
-            
-            HStack(spacing: 8)
-            {
-                Text("R:")
-                    .frame(width: 20.0)
-                TextField("0", value: $origin_view_pos_rotation[0], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_rotation[0], in: -180...180)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("P:")
-                    .frame(width: 20.0)
-                TextField("0", value: $origin_view_pos_rotation[1], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_rotation[1], in: 0...360)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("W:")
-                    .frame(width: 20.0)
-                TextField("0", value: $origin_view_pos_rotation[2], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                Stepper("Enter", value: $origin_view_pos_rotation[2], in: -180...180)
-                    .labelsHidden()
-            }
-        }
-        .padding()
         .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
         #endif
     }
@@ -1895,6 +1774,7 @@ struct AddProgramView: View
         VStack
         {
             Text("New position program")
+                .font(.title3)
             #if os(macOS)
                 .padding(.top, 12.0)
             #else
