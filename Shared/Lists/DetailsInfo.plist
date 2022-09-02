@@ -12,20 +12,20 @@
 	<key>Figure Detail</key>
 	<dict>
 		<key>Figure</key>
-		<string>Box</string>
+		<string>box</string>
 		<key>Color</key>
 		<array>
-			<integer>0</integer>
-			<integer>0</integer>
-			<integer>0</integer>
+			<integer>41</integer>
+			<integer>199</integer>
+			<integer>50</integer>
 		</array>
 		<key>Material</key>
 		<string></string>
 		<key>Lengths</key>
 		<array>
-			<integer>0</integer>
-			<integer>0</integer>
-			<integer>0</integer>
+			<integer>8</integer>
+			<integer>8</integer>
+			<integer>8</integer>
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
@@ -37,7 +37,7 @@
 		<key>Scene</key>
 		<string>None</string>
 		<key>Figure</key>
-		<string>Box</string>
+		<string>box</string>
 		<key>Color</key>
 		<array>
 			<integer>0</integer>

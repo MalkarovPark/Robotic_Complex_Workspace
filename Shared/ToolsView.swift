@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SceneKit
 
 struct ToolsView: View
 {
@@ -83,10 +84,22 @@ struct AddToolView:View
                 .font(.title2)
                 .padding([.top, .leading, .trailing])
             
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .foregroundColor(.accentColor)
+            #if os(macOS)
+            DetailSceneView_macOS()
+                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                 .padding(.vertical, 8.0)
                 .padding(.horizontal)
+            #else
+            DetailSceneView_iOS()
+                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                .padding(.vertical, 8.0)
+                .padding(.horizontal)
+            #endif
+
+            /*RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .foregroundColor(.accentColor)
+                .padding(.vertical, 8.0)
+                .padding(.horizontal)*/
             
             Picker(selection: $app_state.tool_name, label: Text("Model")
                     .bold())
@@ -126,6 +139,246 @@ struct AddToolView:View
         
     }
 }
+
+#if os(macOS)
+struct ToolSceneView_macOS: NSViewRepresentable
+{
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    let scene_view = SCNView(frame: .zero)
+    let viewed_scene = SCNScene(named: "Components.scnassets/View.scn")!
+    
+    func scn_scene(context: Context) -> SCNView
+    {
+        app_state.reset_view = false
+        app_state.reset_view_enabled = true
+        scene_view.scene = viewed_scene
+        scene_view.delegate = context.coordinator
+        scene_view.scene?.background.contents = NSColor.clear
+        return scene_view
+    }
+    
+    func makeNSView(context: Context) -> SCNView
+    {
+        //Add gesture recognizer
+        let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        scene_view.allowsCameraControl = true
+        scene_view.rendersContinuously = true
+        scene_view.autoenablesDefaultLighting = true
+        
+        scene_view.backgroundColor = NSColor.clear
+        
+        return scn_scene(context: context)
+    }
+
+    func updateNSView(_ ui_view: SCNView, context: Context)
+    {
+        if base_workspace.selected_robot.programs_count > 0
+        {
+            if base_workspace.selected_robot.selected_program.points_count > 0
+            {
+                base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
+            }
+        }
+        
+        if app_state.reset_view && app_state.reset_view_enabled
+        {
+            app_state.reset_view = false
+            app_state.reset_view_enabled = false
+            
+            ui_view.defaultCameraController.pointOfView?.runAction(
+                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
+        }
+        
+        if app_state.get_scene_image == true
+        {
+            app_state.get_scene_image = false
+            
+            base_workspace.selected_robot.image = ui_view.snapshot()
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator
+    {
+        Coordinator(self, scene_view)
+    }
+    
+    final class Coordinator: NSObject, SCNSceneRendererDelegate
+    {
+        var control: ToolSceneView_macOS
+        
+        init(_ control: ToolSceneView_macOS, _ scn_view: SCNView)
+        {
+            self.control = control
+            
+            self.scn_view = scn_view
+            super.init()
+        }
+        
+        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
+        {
+            control.scene_check()
+        }
+        
+        private let scn_view: SCNView
+        @objc func handle_tap(_ gesture_recognize: NSGestureRecognizer)
+        {
+            let tap_location = gesture_recognize.location(in: scn_view)
+            let hit_results = scn_view.hitTest(tap_location, options: [:])
+            var result = SCNHitTestResult()
+            
+            if hit_results.count > 0
+            {
+                result = hit_results[0]
+                
+                print(result.localCoordinates)
+                print("🍮 tapped – \(result.node.name!)")
+            }
+        }
+    }
+    
+    func scene_check() //Render functions
+    {
+        base_workspace.selected_robot.update_robot()
+        if base_workspace.selected_robot.moving_completed == true
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                base_workspace.selected_robot.moving_completed = false
+                base_workspace.update_view()
+            }
+        }
+        if base_workspace.selected_robot.is_moving == true
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                base_workspace.update_view()
+            }
+        }
+    }
+}
+#else
+struct ToolSceneView_iOS: UIViewRepresentable
+{
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    let scene_view = SCNView(frame: .zero)
+    let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
+    
+    func scn_scene(context: Context) -> SCNView
+    {
+        app_state.reset_view = false
+        scene_view.scene = viewed_scene
+        scene_view.delegate = context.coordinator
+        return scene_view
+    }
+    
+    func makeUIView(context: Context) -> SCNView
+    {
+        //Connect workcell box and pointer
+        base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
+        
+        //Add gesture recognizer
+        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        scene_view.allowsCameraControl = true
+        scene_view.rendersContinuously = true
+        
+        return scn_scene(context: context)
+    }
+
+    func updateUIView(_ ui_view: SCNView, context: Context)
+    {
+        if base_workspace.selected_robot.programs_count > 0
+        {
+            if base_workspace.selected_robot.selected_program.points_count > 0
+            {
+                base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
+            }
+        }
+        
+        if app_state.reset_view && app_state.reset_view_enabled
+        {
+            app_state.reset_view = false
+            app_state.reset_view_enabled = false
+            
+            ui_view.defaultCameraController.pointOfView?.runAction(
+                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
+        }
+        
+        if app_state.get_scene_image == true
+        {
+            app_state.get_scene_image = false
+            
+            base_workspace.selected_robot.image = ui_view.snapshot()
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator
+    {
+        Coordinator(self, scene_view)
+    }
+    
+    final class Coordinator: NSObject, SCNSceneRendererDelegate
+    {
+        var control: ToolSceneView_iOS
+        
+        init(_ control: ToolSceneView_iOS, _ scn_view: SCNView)
+        {
+            self.control = control
+            
+            self.scn_view = scn_view
+            super.init()
+        }
+
+        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
+        {
+            control.scene_check()
+        }
+        
+        private let scn_view: SCNView
+        @objc func handle_tap(_ gesture_recognize: UIGestureRecognizer)
+        {
+            let tap_location = gesture_recognize.location(in: scn_view)
+            let hit_results = scn_view.hitTest(tap_location, options: [:])
+            var result = SCNHitTestResult()
+            
+            if hit_results.count > 0
+            {
+                result = hit_results[0]
+                
+                print(result.localCoordinates)
+                print("🍮 tapped – \(result.node.name!)")
+            }
+        }
+    }
+    
+    func scene_check()
+    {
+        base_workspace.selected_robot.update_robot()
+        if base_workspace.selected_robot.moving_completed == true
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                base_workspace.selected_robot.moving_completed = false
+                base_workspace.update_view()
+            }
+        }
+        if base_workspace.selected_robot.is_moving == true
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                base_workspace.update_view()
+            }
+        }
+    }
+}
+#endif
 
 struct ToolsView_Previews: PreviewProvider
 {

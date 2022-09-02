@@ -442,7 +442,7 @@ struct AddRobotView: View
                     .keyboardShortcut(.cancelAction)
                     .padding([.top, .leading, .bottom])
                 
-                Button("Save", action: { add_robot_in_workspace() })
+                Button("Save", action: add_robot_in_workspace)
                     .keyboardShortcut(.defaultAction)
                     .padding()
             }
@@ -930,20 +930,21 @@ struct CellSceneView_macOS: NSViewRepresentable
         //Connect workcell box and pointer
         base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
         
-        //Connect camera light for follow
-        app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
-        
         //Add gesture recognizer
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        scene_view.allowsCameraControl = true
+        scene_view.rendersContinuously = true
+        scene_view.autoenablesDefaultLighting = true
         
         return scn_scene(context: context)
     }
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        ui_view.allowsCameraControl = true
-        ui_view.rendersContinuously = true
+        //ui_view.allowsCameraControl = true
+        //ui_view.rendersContinuously = true
         
         if base_workspace.selected_robot.programs_count > 0
         {
@@ -1029,8 +1030,6 @@ struct CellSceneView_macOS: NSViewRepresentable
             }
             //base_workspace.update_view()
         }
-        
-        app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
     }
 }
 #else
@@ -1055,20 +1054,21 @@ struct CellSceneView_iOS: UIViewRepresentable
         //Connect workcell box and pointer
         base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
         
-        //Connect camera light for follow
-        app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
-        
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        scene_view.allowsCameraControl = true
+        scene_view.rendersContinuously = true
+        scene_view.autoenablesDefaultLighting = true
         
         return scn_scene(context: context)
     }
 
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
-        ui_view.allowsCameraControl = true
-        ui_view.rendersContinuously = true
+        //ui_view.allowsCameraControl = true
+        //ui_view.rendersContinuously = true
         
         if base_workspace.selected_robot.programs_count > 0
         {
@@ -1154,8 +1154,6 @@ struct CellSceneView_iOS: UIViewRepresentable
             }
             //base_workspace.update_view()
         }
-        
-        app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
     }
 }
 #endif
@@ -1618,6 +1616,7 @@ struct RobotInspectorView: View
                     .popover(isPresented: $add_program_view_presented)
                     {
                         AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
+                            .presentationDetents([.height(96.0)])
                     }
                     #endif
                 }
@@ -1861,11 +1860,11 @@ struct PositionItemListView: View
             {
                 PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                    .presentationDetents([.height(512.0)])
             }
             #endif
             
             Spacer()
-            //Image(systemName: "line.3.horizontal")
         }
         .onTapGesture
         {
@@ -2077,6 +2076,8 @@ struct PositionItemView: View
                 }
             }
             .padding([.top, .leading, .trailing])
+            
+            Spacer()
             #endif
             
             HStack

@@ -22,7 +22,8 @@ class AppState : ObservableObject
     #endif
     
     public var workspace_scene = SCNScene()
-    public var camera_light_node = SCNNode()
+    public var previewed_detail: Detail?
+    public var preview_update_scene = false
     
     @Published var manufacturer_name = "None" //Manufacturer's display string for the menu
     {
@@ -214,6 +215,8 @@ class AppState : ObservableObject
     private func update_detail_info()
     {
         detail_dictionary = details_dictionary[detail_name]!
+        previewed_detail = Detail(name: "None", dictionary: detail_dictionary)
+        preview_update_scene = true
     }
     
     //MARK: - Info for settings view

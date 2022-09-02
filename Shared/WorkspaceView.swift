@@ -219,7 +219,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(base_workspace.avaliable_robots_names.count == 0 || base_workspace.is_performing ? Color.secondary : Color.black)
+                                .foregroundColor(base_workspace.avaliable_robots_names.count == 0 || (base_workspace.is_selected && base_workspace.selected_robot.is_placed)  || base_workspace.is_performing ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -228,7 +228,7 @@ struct ComplexWorkspaceView: View
                         #endif
                         .popover(isPresented: $add_robot_in_workspace_view_presented)
                         {
-                            AddRobotInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
+                            AddInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
                         .disabled(base_workspace.avaliable_robots_names.count == 0 || (base_workspace.is_selected && base_workspace.selected_robot.is_placed)  || base_workspace.is_performing)
@@ -251,6 +251,7 @@ struct ComplexWorkspaceView: View
                         .popover(isPresented: $robot_info_view_presented)
                         {
                             RobotInfoView(robot_info_view_presented: $robot_info_view_presented, document: $document)
+                                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
                         .disabled(!base_workspace.is_selected || base_workspace.is_performing)
                     }
@@ -302,10 +303,6 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         //Add placed robots in workspace
         base_workspace.place_robots(scene: viewed_scene)
         
-        //Connect camera light for follow
-        app_state.camera_light_node = SCNNode()
-        app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
-        
         //Add gesture recognizer
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
@@ -313,13 +310,17 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         app_state.workspace_scene = viewed_scene
         base_workspace.workspace_scene = viewed_scene
         
+        scene_view.allowsCameraControl = true
+        scene_view.rendersContinuously = true
+        scene_view.autoenablesDefaultLighting = true
+        
         return scn_scene(context: context)
     }
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        ui_view.allowsCameraControl = true
-        ui_view.rendersContinuously = true
+        //ui_view.allowsCameraControl = true
+        //ui_view.rendersContinuously = true
         
         //Update commands
         if app_state.reset_view && app_state.reset_view_enabled
@@ -437,9 +438,6 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 }
             }
         }
-        
-        app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
-        //app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
     }
 }
 #else
@@ -470,10 +468,6 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         //Add placed robots in workspace
         base_workspace.place_robots(scene: viewed_scene)
         
-        //Connect camera light for follow
-        app_state.camera_light_node = SCNNode()
-        app_state.camera_light_node = viewed_scene.rootNode.childNode(withName: "camera_light", recursively: true)!
-        
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
@@ -481,14 +475,15 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         app_state.workspace_scene = viewed_scene
         base_workspace.workspace_scene = viewed_scene
         
+        scene_view.allowsCameraControl = true
+        scene_view.rendersContinuously = true
+        scene_view.autoenablesDefaultLighting = true
+        
         return scn_scene(context: context)
     }
 
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
-        ui_view.allowsCameraControl = true
-        ui_view.rendersContinuously = true
-        
         //Update commands
         if app_state.reset_view && app_state.reset_view_enabled
         {
@@ -612,7 +607,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
 }
 #endif
 
-struct AddRobotInWorkspaceView: View
+struct AddInWorkspaceView: View
 {
     @State var selected_robot_name = String()
     @State var selected_robot_program = String()
@@ -624,14 +619,23 @@ struct AddRobotInWorkspaceView: View
     @EnvironmentObject var app_state: AppState
     
     @State var first_select = true //This flag that specifies that the robot was not selected and disables the dismiss() function
+    @State private var add_selection = 0
+    private let add_items: [String] = ["Add Robot", "Add Tool", "Add Detail"]
     
     var body: some View
     {
         VStack(spacing: 0)
         {
-            Text("Add robot in workspace")
-                .font(.title3)
-                .padding([.top, .leading, .trailing])
+            Picker("Workspace", selection: $add_selection)
+            {
+                ForEach(0..<add_items.count, id: \.self)
+                { index in
+                    Text(self.add_items[index]).tag(index)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .labelsHidden()
+            .padding([.top, .leading, .trailing])
             
             HStack
             {
@@ -840,6 +844,8 @@ struct AddRobotInWorkspaceView: View
             { _ in
                 update_unit_origin_position()
             }
+            
+            Spacer()
             #endif
             
             HStack
@@ -957,7 +963,7 @@ struct RobotInfoView: View
     {
         VStack(spacing: 0)
         {
-            Text("\(base_workspace.selected_robot.name ?? "None")") //("Add robot in workspace")
+            Text("\(base_workspace.selected_robot.name ?? "None")")
                 .font(.title3)
                 .padding([.top, .leading, .trailing])
             
@@ -1135,6 +1141,8 @@ struct RobotInfoView: View
             { _ in
                 update_unit_origin_position()
             }
+            
+            Spacer()
             #endif
             
             HStack
@@ -1479,7 +1487,6 @@ struct ElementCardView: View
                             .foregroundColor(.white)
                             .imageScale(.large)
                             .animation(.easeInOut(duration: 0.2), value: badge_image())
-                        //.font(.system(size: 32))
                     }
                     .frame(width: 48, height: 48)
                     .background(badge_color())
@@ -2215,11 +2222,13 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             #endif
+            /*AddRobotInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_robot_in_workspace_view_presented: .constant(true))
+                .environmentObject(Workspace())*/
+            RobotInfoView(robot_info_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
-            //PerformerElementView(performer_type: .constant(.robot), robot_name: .constant("Robot"), robot_program_name: .constant("Robot Program"), tool_name: .constant("Tool"))
-                //.environmentObject(Workspace())
             LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))
         }
     }

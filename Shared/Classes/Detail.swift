@@ -7,6 +7,7 @@
 
 import Foundation
 import SceneKit
+import SwiftUI
 
 class Detail: Identifiable, Equatable, Hashable, ObservableObject
 {
@@ -87,7 +88,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         
         if dictionary.keys.contains("Material")
         {
-            self.figure = dictionary["Material"] as? String ?? ""
+            self.material_name = dictionary["Material"] as? String ?? ""
         }
         
         if dictionary.keys.contains("Lengths")
@@ -113,7 +114,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
             self.detail_scene_address = dictionary["Scene"] as? String ?? ""
             if self.detail_scene_address != ""
             {
-                self.node = SCNScene(named: self.detail_scene_address)!.rootNode.childNode(withName: "detail", recursively: false)!
+                self.node = SCNScene(named: self.detail_scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
             }
         }
         else
@@ -126,7 +127,12 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     {
         node = SCNNode()
         
-        let lenghts = self.lenghts as! [CGFloat]
+        var lenghts = [CGFloat]()
+        for lenght in self.lenghts ?? []
+        {
+            lenghts.append(CGFloat(lenght))
+        }
+        //let lenghts = self.lenghts as! [CGFloat]
         
         //Set geometry
         var geometry: SCNGeometry?
@@ -217,12 +223,13 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
             geometry = SCNBox(width: 4, height: 4, length: 4, chamferRadius: 1)
         }
         node?.geometry = geometry
+        node?.name = "Figure"
         
         //Set color by components
         #if os(macOS)
-        node?.geometry?.firstMaterial?.diffuse.contents = NSColor(red: CGFloat(figure_color?[0] ?? 0), green: CGFloat(figure_color?[1] ?? 0), blue: CGFloat(figure_color?[2] ?? 0), alpha: 255)
+        node?.geometry?.firstMaterial?.diffuse.contents = NSColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
         #else
-        node?.geometry?.firstMaterial?.diffuse.contents = UIColor(red: CGFloat(figure_color?[0] ?? 0), green: CGFloat(figure_color?[1] ?? 0), blue: CGFloat(figure_color?[2] ?? 0), alpha: 255)
+        node?.geometry?.firstMaterial?.diffuse.contents = UIColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
         #endif
         
         //Set shading type
@@ -241,7 +248,8 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         case "shadow only":
             node?.geometry?.firstMaterial?.lightingModel = .shadowOnly
         default:
-            break
+            node?.geometry?.firstMaterial?.lightingModel = .blinn
+            //break
         }
         
         //Set physics type
@@ -258,4 +266,43 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         }
         //node?.physicsBody = physics
     }
+    
+    //MARK: - UI functions
+    private var detail_image_data = Data()
+    
+    #if os(macOS)
+    public var image: NSImage
+    {
+        get
+        {
+            return NSImage(data: detail_image_data) ?? NSImage()
+        }
+        set
+        {
+            detail_image_data = newValue.tiffRepresentation ?? Data()
+        }
+    }
+    
+    public func card_info() -> (title: String, color: Color, image: NSImage) //Get info for robot card view (in RobotsView)
+    {
+        return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0), green: Double(figure_color?[1] ?? 0), blue: Double(figure_color?[2] ?? 0)), self.image)
+    }
+    #else
+    public var image: UIImage
+    {
+        get
+        {
+            return UIImage(data: robot_image_data) ?? UIImage()
+        }
+        set
+        {
+            robot_image_data = newValue.pngData() ?? Data()
+        }
+    }
+    
+    public func card_info() -> (title: String, color: Color, image: UIImage) //Get info for robot card view
+    {
+        return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0), green: Double(figure_color?[1] ?? 0), blue: Double(figure_color?[2] ?? 0)), self.image)
+    }
+    #endif
 }
