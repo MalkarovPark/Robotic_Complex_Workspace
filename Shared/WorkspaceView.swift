@@ -610,9 +610,6 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                 }
             }
         }
-        
-        //app_state.camera_light_node.runAction(SCNAction.move(to: scene_view.defaultCameraController.pointOfView!.worldPosition, duration: 0.2)) //Follow ligt node the camera
-        //app_state.camera_light_node.worldPosition = scene_view.defaultCameraController.pointOfView?.worldPosition ?? SCNVector3(0, 0, 0)
     }
 }
 #endif

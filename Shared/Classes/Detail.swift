@@ -35,7 +35,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     private var material_name: String? //Material for detail without scene figure
     
     private var physics: SCNPhysicsBody?
-    private var physics_name: String? //Physic body type
+    public var physics_type: PhysicsType = .ph_none //Physic body type
     
     public var enable_physics = false
     {
@@ -108,7 +108,17 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         
         if dictionary.keys.contains("Physics")
         {
-            self.physics_name = dictionary["Physics"] as? String ?? ""
+            switch dictionary["Physics"] as? String ?? ""
+            {
+            case "static":
+                physics_type = .ph_static
+            case "dynamic":
+                physics_type = .ph_dynamic
+            case "kinematic":
+                physics_type = .ph_kinematic
+            default:
+                physics_type = .ph_none
+            }
         }
         
         if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
@@ -129,12 +139,12 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     {
         node = SCNNode()
         
+        //Convert Float array to GFloat array
         var lenghts = [CGFloat]()
         for lenght in self.lenghts ?? []
         {
             lenghts.append(CGFloat(lenght))
         }
-        //let lenghts = self.lenghts as! [CGFloat]
         
         //Set geometry
         var geometry: SCNGeometry?
@@ -255,13 +265,13 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         }
         
         //Set physics type
-        switch physics_name
+        switch physics_type
         {
-        case "static":
+        case .ph_static:
             physics = .static()
-        case "dynamic":
+        case .ph_dynamic:
             physics = .dynamic()
-        case "kinematic":
+        case .ph_kinematic:
             physics = .kinematic()
         default:
             physics = .none
@@ -307,4 +317,12 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0) / 255, green: Double(figure_color?[1] ?? 0) / 255, blue: Double(figure_color?[2] ?? 0) / 255), self.image)
     }
     #endif
+}
+
+enum PhysicsType: String, Codable, Equatable, CaseIterable
+{
+    case ph_static = "Static"
+    case ph_dynamic = "Dynamic"
+    case ph_kinematic = "Kinematic"
+    case ph_none = "None"
 }

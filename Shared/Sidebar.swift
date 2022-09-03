@@ -111,6 +111,9 @@ struct SidebarContent: View
                     case "Robots":
                         Label(selection.localizedName, systemImage: selection.image_name)
                             .badge(document.preset.robots.count)
+                    /*case "Details":
+                        Label(selection.localizedName, systemImage: selection.image_name)
+                            .badge(document.preset.robots.count)*/
                     default:
                         Label(selection.localizedName, systemImage: selection.image_name)
                     }

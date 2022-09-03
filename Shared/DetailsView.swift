@@ -36,7 +36,7 @@ struct DetailsView: View
                         { detail_item in
                             ZStack
                             {
-                                DetailCardView(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
+                                DetailCardView(document: $document, detail_item: detail_item, card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
                                 DetailDeleteButton(details: $base_workspace.details, detail_item: detail_item, on_delete: remove_details)
                             }
                             .onTapGesture
@@ -192,6 +192,69 @@ struct AddDetailView: View
         //base_workspace.elements_check()
         
         add_detail_view_presented.toggle()
+    }
+}
+
+struct DetailView: View
+{
+    //@Binding var detail_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var detail_item: Detail
+    
+    //@State private var new_detail_name = ""
+    @State var new_physics: PhysicsType = .ph_none
+    @State var new_gripable = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            #if os(macOS)
+            DetailSceneView_macOS()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            #else
+            DetailSceneView_iOS()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            #endif
+            
+            Divider()
+            
+            HStack(spacing: 0)
+            {
+                Picker(selection: $new_physics, label: Text("Physics")
+                        .bold())
+                {
+                    ForEach(PhysicsType.allCases, id: \.self)
+                    { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.horizontal)
+                
+                Toggle("Gripable", isOn: $new_gripable)
+                    .toggleStyle(SwitchToggleStyle())
+                    .padding(.trailing)
+            }
+            .padding(.vertical)
+        }
+        .controlSize(.regular)
+        .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
+        .onAppear()
+        {
+            app_state.previewed_detail = detail_item
+            app_state.preview_update_scene = true
+            new_physics = detail_item.physics_type
+            new_gripable = detail_item.gripable ?? false
+        }
+        .onDisappear()
+        {
+            detail_item.physics_type = new_physics
+            detail_item.gripable = new_gripable
+        }
     }
 }
 
@@ -417,6 +480,11 @@ struct DetailSceneView_iOS: UIViewRepresentable
 //MARK: - Details card view
 struct DetailCardView: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var detail_item: Detail
+    @State private var detail_view_presented = false
+    
     @State var card_color: Color
     #if os(macOS)
     @State var card_image: NSImage
@@ -465,6 +533,18 @@ struct DetailCardView: View
         }
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         .shadow(radius: 8.0)
+        .onTapGesture
+        {
+            detail_view_presented = true
+        }
+        .popover(isPresented: $detail_view_presented)
+        {
+            DetailView(document: $document, detail_item: $detail_item)
+                .onDisappear()
+            {
+                detail_view_presented = false
+            }
+        }
     }
 }
 
@@ -625,10 +705,13 @@ struct DetailsView_Previews: PreviewProvider
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
             #if os(macOS)
-            DetailCardView(card_color: Color.green, card_image: NSImage(), card_title: "Detail")
+            DetailCardView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: Detail(name: "None", dictionary: ["String" : "Any"]), card_color: Color.green, card_image: NSImage(), card_title: "Detail")
             #else
-            DetailCardView(card_color: Color.green, card_image: UIImage(), card_title: "Detail")
+            DetailCardView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: Detail(name: "None", dictionary: ["String" : "Any"]), card_color: Color.green, card_image: UIImage(), card_title: "Detail")
             #endif
+            DetailView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: .constant(Detail(name: "None", dictionary: ["String" : "Any"])), new_physics: .ph_none)
+                .environmentObject(AppState())
+                .environmentObject(Workspace())
         }
     }
 }
