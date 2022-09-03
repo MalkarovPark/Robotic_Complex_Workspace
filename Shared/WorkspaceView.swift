@@ -27,8 +27,7 @@ struct WorkspaceView: View
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     
     //Picker data for thin window size
-    @State private var wv_selection = 0
-    private let wv_items: [String] = ["View", "Control"]
+    @State private var program_view_presented = false
     #endif
     
     var body: some View
@@ -56,30 +55,41 @@ struct WorkspaceView: View
             {
                 VStack(spacing: 0)
                 {
-                    Picker("Workspace", selection: $wv_selection)
+                    if !first_loaded
                     {
-                        ForEach(0..<wv_items.count, id: \.self)
-                        { index in
-                            Text(self.wv_items[index]).tag(index)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .labelsHidden()
-                    .padding()
-                    
-                    if wv_selection == 0
-                    {
-                        if !first_loaded
-                        {
-                            ComplexWorkspaceView(document: $document)
-                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                                .onDisappear(perform: stop_perform)
-                        }
-                    }
-                    else
-                    {
-                        ControlProgramView(document: $document)
+                        ComplexWorkspaceView(document: $document)
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                            .onDisappear(perform: stop_perform)
+                    }
+                    
+                    HStack
+                    {
+                        Button(action: { program_view_presented.toggle() })
+                        {
+                            Text("Inspector")
+                            #if os(macOS)
+                                .frame(maxWidth: .infinity)
+                            #else
+                                .frame(maxWidth: .infinity, minHeight: 32)
+                                .background(Color.accentColor)
+                                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                            #endif
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        .padding()
+                        .foregroundColor(Color.white)
+                        .popover(isPresented: $program_view_presented)
+                        {
+                            VStack
+                            {
+                                ControlProgramView(document: $document)
+                                    .presentationDetents([.medium, .large])
+                            }
+                            .onDisappear()
+                            {
+                                program_view_presented = false
+                            }
+                        }
                     }
                 }
             }

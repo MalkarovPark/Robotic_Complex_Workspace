@@ -292,11 +292,11 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     {
         get
         {
-            return UIImage(data: robot_image_data) ?? UIImage()
+            return UIImage(data: detail_image_data) ?? UIImage()
         }
         set
         {
-            robot_image_data = newValue.pngData() ?? Data()
+            detail_image_data = newValue.pngData() ?? Data()
         }
     }
     

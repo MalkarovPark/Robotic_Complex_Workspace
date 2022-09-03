@@ -527,8 +527,7 @@ struct RobotView: View
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     
     //Picker data for thin window size
-    @State private var rv_selection = 0
-    private let rv_items: [String] = ["View", "Control"]
+    @State private var program_view_presented = false
     #endif
     
     var body: some View
@@ -546,27 +545,38 @@ struct RobotView: View
             {
                 VStack(spacing: 0)
                 {
-                    Picker("Workspace", selection: $rv_selection)
-                    {
-                        ForEach(0..<rv_items.count, id: \.self)
-                        { index in
-                            Text(self.rv_items[index]).tag(index)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .labelsHidden()
-                    .padding()
+                    RobotSceneView(document: $document)
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     
-                    if rv_selection == 0
+                    HStack
                     {
-                        RobotSceneView(document: $document)
-                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                    }
-                    else
-                    {
-                        RobotInspectorView(document: $document)
-                            .disabled(base_workspace.selected_robot.is_moving == true)
-                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                        Button(action: { program_view_presented.toggle() })
+                        {
+                            Text("Inspector")
+                            #if os(macOS)
+                                .frame(maxWidth: .infinity)
+                            #else
+                                .frame(maxWidth: .infinity, minHeight: 32)
+                                .background(Color.accentColor)
+                                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                            #endif
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        .padding()
+                        .foregroundColor(Color.white)
+                        .popover(isPresented: $program_view_presented)
+                        {
+                            VStack
+                            {
+                                RobotInspectorView(document: $document)
+                                    .disabled(base_workspace.selected_robot.is_moving == true)
+                                    .presentationDetents([.medium, .large])
+                            }
+                            .onDisappear()
+                            {
+                                program_view_presented = false
+                            }
+                        }
                     }
                 }
                 .onDisappear(perform: close_robot)
