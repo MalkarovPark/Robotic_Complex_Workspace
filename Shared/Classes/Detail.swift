@@ -21,6 +21,8 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         hasher.combine(name)
     }
     
+    var id = UUID()
+    
     public var name: String? //Detail name
     public var node: SCNNode? //Detail scene node
     public var detail_scene_address = "" //Adders of detail scene. If empty – this detail used defult model.
@@ -285,7 +287,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     
     public func card_info() -> (title: String, color: Color, image: NSImage) //Get info for robot card view (in RobotsView)
     {
-        return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0), green: Double(figure_color?[1] ?? 0), blue: Double(figure_color?[2] ?? 0)), self.image)
+        return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0) / 255, green: Double(figure_color?[1] ?? 0) / 255, blue: Double(figure_color?[2] ?? 0) / 255), self.image)
     }
     #else
     public var image: UIImage
@@ -302,7 +304,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     
     public func card_info() -> (title: String, color: Color, image: UIImage) //Get info for robot card view
     {
-        return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0), green: Double(figure_color?[1] ?? 0), blue: Double(figure_color?[2] ?? 0)), self.image)
+        return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0) / 255, green: Double(figure_color?[1] ?? 0) / 255, blue: Double(figure_color?[2] ?? 0) / 255), self.image)
     }
     #endif
 }

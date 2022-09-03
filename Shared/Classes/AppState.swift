@@ -212,7 +212,7 @@ class AppState : ObservableObject
     }
     
     //MARK: Get details
-    private func update_detail_info()
+    public func update_detail_info()
     {
         detail_dictionary = details_dictionary[detail_name]!
         previewed_detail = Detail(name: "None", dictionary: detail_dictionary)

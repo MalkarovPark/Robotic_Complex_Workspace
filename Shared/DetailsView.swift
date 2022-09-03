@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import UniformTypeIdentifiers
 
 struct DetailsView: View
 {
@@ -38,17 +39,18 @@ struct DetailsView: View
                                 DetailCardView(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
                                 DetailDeleteButton(details: $base_workspace.details, detail_item: detail_item, on_delete: remove_details)
                             }
-                            /*.onTapGesture
+                            .onTapGesture
                             {
-                                view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
+                                //view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
                             }
                             .onDrag({
-                                self.dragged_robot = robot_item
-                                return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
+                                self.dragged_detail = detail_item
+                                return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
                             }, preview: {
-                                RobotCardViewPreview(card_color: robot_item.card_info().color, card_image: robot_item.card_info().image, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
+                                DetailCardViewPreview(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
                             })
-                            .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, document: $document, workspace_robots: base_workspace.file_data().robots, robot: robot_item))*/
+                            .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, detail: detail_item))
+                            //.onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
                             .transition(AnyTransition.scale)
                         }
                     }
@@ -173,11 +175,18 @@ struct AddDetailView: View
         }
         .controlSize(.regular)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
+        .onAppear()
+        {
+            app_state.update_detail_info()
+        }
     }
     
     func add_detail_in_workspace()
     {
         //base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_model_dictionary))
+        app_state.get_scene_image = true
+        app_state.previewed_detail?.name = new_detail_name
+        base_workspace.add_detail(detail: app_state.previewed_detail!)
         //document.preset.robots = base_workspace.file_data().robots
         
         //base_workspace.elements_check()
@@ -207,6 +216,8 @@ struct DetailSceneView_macOS: NSViewRepresentable
     
     func makeNSView(context: Context) -> SCNView
     {
+        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
+        
         //Add gesture recognizer
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
@@ -222,28 +233,20 @@ struct DetailSceneView_macOS: NSViewRepresentable
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        if base_workspace.selected_robot.programs_count > 0
-        {
-            if base_workspace.selected_robot.selected_program.points_count > 0
-            {
-                base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
-            }
-        }
-        
-        if app_state.reset_view && app_state.reset_view_enabled
+        //Update commands
+        if app_state.reset_view// && app_state.reset_view_enabled
         {
             app_state.reset_view = false
             app_state.reset_view_enabled = false
             
             ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
+                SCNAction.group([SCNAction.move(to: base_workspace.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
         }
         
         if app_state.get_scene_image == true
         {
             app_state.get_scene_image = false
-            
-            base_workspace.selected_robot.image = ui_view.snapshot()
+            app_state.previewed_detail?.image = ui_view.snapshot()
         }
     }
     
@@ -290,7 +293,7 @@ struct DetailSceneView_macOS: NSViewRepresentable
     {
         if app_state.preview_update_scene
         {
-            var remove_node = scene_view.scene?.rootNode.childNode(withName: "Figure", recursively: true)
+            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Figure", recursively: true)
             remove_node?.removeFromParentNode()
             
             scene_view.scene?.rootNode.addChildNode(app_state.previewed_detail?.node ?? SCNNode())
@@ -342,7 +345,7 @@ struct DetailSceneView_iOS: UIViewRepresentable
             }
         }
         
-        if app_state.reset_view && app_state.reset_view_enabled
+        if app_state.reset_view// && app_state.reset_view_enabled
         {
             app_state.reset_view = false
             app_state.reset_view_enabled = false
@@ -354,8 +357,7 @@ struct DetailSceneView_iOS: UIViewRepresentable
         if app_state.get_scene_image == true
         {
             app_state.get_scene_image = false
-            
-            base_workspace.selected_robot.image = ui_view.snapshot()
+            app_state.previewed_detail?.image = ui_view.snapshot()
         }
     }
     
@@ -438,6 +440,7 @@ struct DetailCardView: View
                     Spacer()
                     
                     Rectangle()
+                        .fill(.clear)
                         .overlay
                     {
                         #if os(macOS)
@@ -452,9 +455,10 @@ struct DetailCardView: View
                     }
                     .frame(width: 64, height: 64)
                     .background(Color.clear)
+                    
                     Rectangle()
                         .foregroundColor(card_color)
-                    .frame(width: 32, height: 64)
+                        .frame(width: 32, height: 64)
                 }
             }
             .background(.thinMaterial)
@@ -477,27 +481,26 @@ struct DetailDeleteButton: View
     
     var body: some View
     {
-        VStack
+        HStack
         {
-            HStack
+            Spacer()
+            VStack
             {
-                Spacer()
-                Button(action: { delete_detail_alert_presented = true })
+                ZStack
                 {
-                    Label("Details", systemImage: "xmark")
-                        .labelStyle(.iconOnly)
+                    Image(systemName: "xmark")
+                        .foregroundColor(.white)
                         .padding(4.0)
                 }
-                    .foregroundColor(.black)
-                    .background(.thinMaterial)
-                    .clipShape(Circle())
-                    .frame(width: 24.0, height: 24.0)
-                    .padding(8.0)
-                    #if os(macOS)
-                    .buttonStyle(BorderlessButtonStyle())
-                    #endif
+                .frame(width: 24, height: 24)
+                //.background(.thinMaterial)
+                //.clipShape(Circle())
+                .onTapGesture
+                {
+                    delete_detail_alert_presented = true
+                }
+                .padding(4.0)
             }
-            Spacer()
         }
         .alert(isPresented: $delete_detail_alert_presented)
         {
@@ -516,6 +519,95 @@ struct DetailDeleteButton: View
         {
             self.on_delete(IndexSet(integer: index))
             base_workspace.elements_check()
+        }
+    }
+}
+
+//MARK: - Robot card preview for drag
+struct DetailCardViewPreview: View
+{
+    @State var card_color: Color
+    #if os(macOS)
+    @State var card_image: NSImage
+    #else
+    @State var card_image: UIImage
+    #endif
+    @State var card_title: String
+    
+    var body: some View
+    {
+        ZStack
+        {
+            VStack
+            {
+                HStack(spacing: 0)
+                {
+                    Text(card_title)
+                        .font(.headline)
+                        .padding()
+                    
+                    Spacer()
+                    
+                    Rectangle()
+                        .fill(.clear)
+                        .overlay
+                    {
+                        #if os(macOS)
+                        Image(nsImage: card_image)
+                            .resizable()
+                            .scaledToFill()
+                        #else
+                        Image(uiImage: card_image)
+                            .resizable()
+                            .scaledToFill()
+                        #endif
+                    }
+                    .frame(width: 64, height: 64)
+                    .background(Color.clear)
+                    
+                    Rectangle()
+                        .foregroundColor(card_color)
+                        .frame(width: 32, height: 64)
+                }
+            }
+            .background(.thinMaterial)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+    }
+}
+
+//MARK: - Drag and Drop delegate
+struct DetailDropDelegate : DropDelegate
+{
+    @Binding var details : [Detail]
+    @Binding var dragged_detail : Detail?
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    //@State var workspace_details: [detail_struct]
+    
+    let detail: Detail
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        //document.preset.details = workspace_details //Update file after elements reordering
+        return true
+    }
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragged_detail = self.dragged_detail else
+        {
+            return
+        }
+        
+        if dragged_detail != detail
+        {
+            let from = details.firstIndex(of: dragged_detail)!
+            let to = details.firstIndex(of: detail)!
+            withAnimation(.default)
+            {
+                self.details.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
         }
     }
 }

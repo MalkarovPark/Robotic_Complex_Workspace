@@ -267,20 +267,20 @@ struct RobotDeleteButton: View
             HStack
             {
                 Spacer()
-                Button(action: { delete_robot_alert_presented = true })
+                
+                ZStack
                 {
-                    Label("Robots", systemImage: "xmark")
-                        .labelStyle(.iconOnly)
+                    Image(systemName: "xmark")
                         .padding(4.0)
                 }
-                    .foregroundColor(.black)
-                    .background(.thinMaterial)
-                    .clipShape(Circle())
-                    .frame(width: 24.0, height: 24.0)
-                    .padding(8.0)
-                    #if os(macOS)
-                    .buttonStyle(BorderlessButtonStyle())
-                    #endif
+                .frame(width: 24, height: 24)
+                .background(.thinMaterial)
+                .clipShape(Circle())
+                .onTapGesture
+                {
+                    delete_robot_alert_presented = true
+                }
+                .padding(8.0)
             }
             Spacer()
         }
@@ -976,7 +976,6 @@ struct CellSceneView_macOS: NSViewRepresentable
         if app_state.get_scene_image == true
         {
             app_state.get_scene_image = false
-            
             base_workspace.selected_robot.image = ui_view.snapshot()
         }
     }
@@ -1099,8 +1098,7 @@ struct CellSceneView_iOS: UIViewRepresentable
         
         if app_state.get_scene_image == true
         {
-            app_state.get_scene_image = false
-            
+            app_state.get_scene_image = false            
             base_workspace.selected_robot.image = ui_view.snapshot()
         }
     }

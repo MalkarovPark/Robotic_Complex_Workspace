@@ -16,7 +16,7 @@ class Workspace: ObservableObject
     @Published public var tools = [Tool]()
     @Published public var details = [Detail]()
     
-    //MARK: - Robot manage functions
+    //MARK: - Robots manage functions
     public func add_robot(robot: Robot)
     {
         var name_count = 1
@@ -138,6 +138,41 @@ class Workspace: ObservableObject
         }
         return names
     }
+    
+    //MARK: - Tools manage functions
+    
+    
+    //MARK: - Details manage funcions
+    public func add_detail(detail: Detail)
+    {
+        var name_count = 1
+        for viewed_detail in details
+        {
+            if viewed_detail.name == detail.name
+            {
+                name_count += 1
+            }
+        }
+        
+        if name_count > 1
+        {
+            detail.name! += " \(name_count)"
+        }
+        details.append(detail)
+    }
+    
+    public func delete_detail(number: Int)
+    {
+        if details.indices.contains(number) == true
+        {
+            robots.remove(at: number)
+        }
+    }
+    
+    /*public func delete_detal(name: String)
+    {
+        delete_detail(number: number_by_name(name: name))
+    }*/
     
     //MARK: - Control program functions
     public var robots_names: [String] //Get names of robots in workspace
