@@ -19,6 +19,7 @@ class AppState : ObservableObject
     @Published var get_scene_image = false
     #if os(iOS)
     @Published var settings_view_presented = false
+    @Published var is_compact_view = false
     #endif
     
     public var workspace_scene = SCNScene()

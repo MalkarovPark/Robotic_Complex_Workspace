@@ -806,10 +806,20 @@ struct RobotSceneView: View
             #if os(macOS)
             CellSceneView_macOS()
             #else
-            CellSceneView_iOS()
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
-                .navigationBarTitleDisplayMode(.inline)
+            if !app_state.is_compact_view
+            {
+                CellSceneView_iOS()
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+            else
+            {
+                CellSceneView_iOS()
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .padding()
+                    .navigationBarTitleDisplayMode(.inline)
+            }
             #endif
             
             HStack
@@ -1344,7 +1354,7 @@ struct RobotInspectorView: View
     
     var body: some View
     {
-        VStack
+        VStack(spacing: 0)
         {
             Text("Points")
                 .padding(.top)
@@ -1375,7 +1385,7 @@ struct RobotInspectorView: View
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 6.0, style: .continuous))
-                .padding([.leading, .trailing, .bottom])
+                .padding()
                 
                 if base_workspace.selected_robot.programs_count == 0
                 {
@@ -1418,7 +1428,7 @@ struct RobotInspectorView: View
                 }
             }
             
-            Spacer()
+            //Spacer()
             GroupBox
             {
                 VStack
@@ -1562,21 +1572,15 @@ struct RobotInspectorView: View
                     }
                 }
             }
-            #if os(macOS)
-            .padding([.leading, .trailing])
-            .padding(.bottom, 12.0)
-            #else
-            .padding([.leading, .trailing, .bottom])
-            #endif
+            .padding([.horizontal, .bottom])
             
-            Spacer()
             #if os(macOS)
             Divider()
             #endif
             
             Section
             {
-                HStack(spacing: 12.0)
+                HStack(spacing: 0) //(spacing: 12.0)
                 {
                     #if os(iOS)
                     Text("Program")
@@ -1601,7 +1605,7 @@ struct RobotInspectorView: View
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
                     .frame(maxWidth: .infinity)
                     #if os(iOS)
-                    .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                    .buttonStyle(.borderedProminent)
                     #endif
                     
                     Button("-")
@@ -1609,6 +1613,7 @@ struct RobotInspectorView: View
                         delete_position_program()
                     }
                     .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                    .padding(.horizontal)
                     
                     Button("+")
                     {
@@ -1629,8 +1634,9 @@ struct RobotInspectorView: View
                     #endif
                 }
             }
-            .padding(8.0)
-            .padding([.leading, .bottom, .trailing], 8.0)
+            .padding()
+            //.padding(8.0)
+            //.padding([.leading, .bottom, .trailing], 8.0)
         }
     }
     

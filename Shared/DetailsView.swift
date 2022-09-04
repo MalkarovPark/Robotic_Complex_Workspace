@@ -39,10 +39,6 @@ struct DetailsView: View
                                 DetailCardView(document: $document, detail_item: detail_item, card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
                                 DetailDeleteButton(details: $base_workspace.details, detail_item: detail_item, on_delete: remove_details)
                             }
-                            .onTapGesture
-                            {
-                                //view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
-                            }
                             .onDrag({
                                 self.dragged_detail = detail_item
                                 return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
@@ -128,12 +124,6 @@ struct AddDetailView: View
                 .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                 .padding(.vertical, 8.0)
                 .padding(.horizontal)
-            #else
-            DetailSceneView_iOS()
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                .padding(.vertical, 8.0)
-                .padding(.horizontal)
-            #endif
             
             HStack
             {
@@ -155,6 +145,37 @@ struct AddDetailView: View
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .padding(.vertical, 8.0)
             .padding(.horizontal)
+            #else
+            DetailSceneView_iOS()
+                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                .padding(.vertical, 8.0)
+                .padding(.horizontal)
+            
+            HStack
+            {
+                HStack
+                {
+                    Text("Name")
+                        .bold()
+                    TextField("None", text: $new_detail_name)
+                }
+                .padding(.vertical, 8.0)
+                .padding(.horizontal)
+                
+                Picker(selection: $app_state.detail_name, label: Text("Model")
+                        .bold())
+                {
+                    ForEach(app_state.details, id: \.self)
+                    {
+                        Text($0)
+                    }
+                }
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .buttonStyle(.borderedProminent)
+                .padding(.vertical, 8.0)
+                .padding(.horizontal)
+            }
+            #endif
             
             Spacer()
             Divider()
@@ -174,7 +195,9 @@ struct AddDetailView: View
             }
         }
         .controlSize(.regular)
+        #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
+        #endif
         .onAppear()
         {
             app_state.update_detail_info()

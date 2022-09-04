@@ -16,6 +16,8 @@ struct WorkspaceView: View
     #if os(iOS)
     @Binding var file_name: String
     @Binding var file_url: URL
+    
+    @EnvironmentObject var app_state: AppState
     #endif
     
     @State var worked = false
@@ -121,6 +123,10 @@ struct WorkspaceView: View
                     first_loaded = false
                 }
             }
+            
+            #if os(iOS)
+            app_state.is_compact_view = horizontal_size_class == .compact
+            #endif
         }
         
         //MARK: Toolbar
@@ -210,10 +216,20 @@ struct ComplexWorkspaceView: View
             #if os(macOS)
             WorkspaceSceneView_macOS()
             #else
-            WorkspaceSceneView_iOS()
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
-                .navigationBarTitleDisplayMode(.inline)
+            if !app_state.is_compact_view
+            {
+                WorkspaceSceneView_iOS()
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+            else
+            {
+                WorkspaceSceneView_iOS()
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .padding()
+                    .navigationBarTitleDisplayMode(.inline)
+            }
             #endif
             
             HStack
@@ -670,7 +686,7 @@ struct AddInWorkspaceView: View
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity)
                 #if os(iOS)
-                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                .buttonStyle(.borderedProminent)
                 #endif
             }
             .padding()
@@ -852,7 +868,10 @@ struct AddInWorkspaceView: View
                 update_unit_origin_position()
             }
             
-            Spacer()
+            if app_state.is_compact_view
+            {
+                Spacer()
+            }
             #endif
             
             HStack
@@ -1751,7 +1770,7 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        .buttonStyle(.borderedProminent)
                         #endif
                     case .modificator:
                         Picker("Type", selection: $add_new_element_data.modificator_type)
@@ -1764,7 +1783,7 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        .buttonStyle(.borderedProminent)
                         #endif
                     case .logic:
                         Picker("Type", selection: $add_new_element_data.logic_type)
@@ -1777,7 +1796,7 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        .buttonStyle(.borderedProminent)
                         #endif
                     }
                 }
@@ -1839,7 +1858,7 @@ struct ElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        .buttonStyle(.borderedProminent)
                         #endif
                     case .modificator:
                         Picker("Type", selection: $new_element_item_data.modificator_type)
@@ -1852,7 +1871,7 @@ struct ElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        .buttonStyle(.borderedProminent)
                         #endif
                     case .logic:
                         Picker("Type", selection: $new_element_item_data.logic_type)
@@ -1865,7 +1884,7 @@ struct ElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous) .stroke(Color.accentColor, lineWidth: 2))
+                        .buttonStyle(.borderedProminent)
                         #endif
                     }
                 }
