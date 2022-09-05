@@ -171,7 +171,7 @@ struct AddDetailView: View
                     }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.bordered)
                 .padding(.vertical, 8.0)
                 .padding(.horizontal)
             }
@@ -187,10 +187,12 @@ struct AddDetailView: View
                 
                 Button("Cancel", action: { add_detail_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
+                    .buttonStyle(.bordered)
                     .padding([.top, .leading, .bottom])
                 
                 Button("Save", action: add_detail_in_workspace)
                     .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
                     .padding()
             }
         }
@@ -256,10 +258,17 @@ struct DetailView: View
                     }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                #if os(iOS)
+                .buttonStyle(.bordered)
+                .frame(maxWidth: .infinity)
+                #endif
                 .padding(.horizontal)
                 
                 Toggle("Gripable", isOn: $new_gripable)
                     .toggleStyle(SwitchToggleStyle())
+                    #if os(iOS)
+                    .frame(maxWidth: 128)
+                    #endif
                     .padding(.trailing)
             }
             .padding(.vertical)
@@ -524,28 +533,43 @@ struct DetailCardView: View
             {
                 HStack(spacing: 0)
                 {
-                    Text(card_title)
-                        .font(.headline)
-                        .padding()
-                    
-                    Spacer()
-                    
-                    Rectangle()
-                        .fill(.clear)
-                        .overlay
+                    HStack(spacing: 0)
                     {
-                        #if os(macOS)
-                        Image(nsImage: card_image)
-                            .resizable()
-                            .scaledToFill()
-                        #else
-                        Image(uiImage: card_image)
-                            .resizable()
-                            .scaledToFill()
-                        #endif
+                        Text(card_title)
+                            .font(.headline)
+                            .padding()
+                        
+                        Spacer()
+                        
+                        Rectangle()
+                            .fill(.clear)
+                            .overlay
+                        {
+                            #if os(macOS)
+                            Image(nsImage: card_image)
+                                .resizable()
+                                .scaledToFill()
+                            #else
+                            Image(uiImage: card_image)
+                                .resizable()
+                                .scaledToFill()
+                            #endif
+                        }
+                        .frame(width: 64, height: 64)
+                        .background(Color.clear)
                     }
-                    .frame(width: 64, height: 64)
-                    .background(Color.clear)
+                    .onTapGesture
+                    {
+                        detail_view_presented = true
+                    }
+                    .popover(isPresented: $detail_view_presented)
+                    {
+                        DetailView(document: $document, detail_item: $detail_item)
+                            .onDisappear()
+                        {
+                            detail_view_presented = false
+                        }
+                    }
                     
                     Rectangle()
                         .foregroundColor(card_color)
@@ -556,18 +580,6 @@ struct DetailCardView: View
         }
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         .shadow(radius: 8.0)
-        .onTapGesture
-        {
-            detail_view_presented = true
-        }
-        .popover(isPresented: $detail_view_presented)
-        {
-            DetailView(document: $document, detail_item: $detail_item)
-                .onDisappear()
-            {
-                detail_view_presented = false
-            }
-        }
     }
 }
 
@@ -596,8 +608,6 @@ struct DetailDeleteButton: View
                         .padding(4.0)
                 }
                 .frame(width: 24, height: 24)
-                //.background(.thinMaterial)
-                //.clipShape(Circle())
                 .onTapGesture
                 {
                     delete_detail_alert_presented = true

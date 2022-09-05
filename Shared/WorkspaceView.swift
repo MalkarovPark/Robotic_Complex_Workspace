@@ -686,7 +686,7 @@ struct AddInWorkspaceView: View
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity)
                 #if os(iOS)
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.bordered)
                 #endif
             }
             .padding()
@@ -1770,7 +1770,7 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.bordered)
                         #endif
                     case .modificator:
                         Picker("Type", selection: $add_new_element_data.modificator_type)
@@ -1783,7 +1783,7 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.bordered)
                         #endif
                     case .logic:
                         Picker("Type", selection: $add_new_element_data.logic_type)
@@ -1796,7 +1796,7 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.bordered)
                         #endif
                     }
                 }
@@ -1858,7 +1858,7 @@ struct ElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.bordered)
                         #endif
                     case .modificator:
                         Picker("Type", selection: $new_element_item_data.modificator_type)
@@ -1871,7 +1871,7 @@ struct ElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.bordered)
                         #endif
                     case .logic:
                         Picker("Type", selection: $new_element_item_data.logic_type)
@@ -1884,7 +1884,7 @@ struct ElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         #if os(iOS)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.bordered)
                         #endif
                     }
                 }
