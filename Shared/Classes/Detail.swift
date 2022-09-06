@@ -279,6 +279,11 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         //node?.physicsBody = physics
     }
     
+    //MARK: Detail in workspace handling
+    public var is_placed = false
+    public var location = [Float](repeating: 0, count: 3) //[0, 0, 0] x, y, z
+    public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] r, p, w
+    
     //MARK: - UI functions
     private var detail_image_data = Data()
     

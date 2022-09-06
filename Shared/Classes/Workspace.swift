@@ -547,6 +547,52 @@ class Workspace: ObservableObject
     }
 }
 
+enum PositionComponents: String, Equatable, CaseIterable
+{
+    case location = "Location"
+    case rotation = "Rotation"
+}
+
+enum LocationComponents: Equatable, CaseIterable
+{
+    case x
+    case y
+    case z
+    
+    var info: (text: String, index: Int)
+    {
+        switch self
+        {
+        case .x:
+            return("X: ", 0)
+        case .y:
+            return("Y: ", 1)
+        case .z:
+            return("Z: ", 2)
+        }
+    }
+}
+
+enum RotationComponents: Equatable, CaseIterable
+{
+    case r
+    case p
+    case w
+    
+    var info: (text: String, index: Int)
+    {
+        switch self
+        {
+        case .r:
+            return("R: ", 0)
+        case .p:
+            return("P: ", 1)
+        case .w:
+            return("W: ", 2)
+        }
+    }
+}
+
 //MARK: - Structure for workspace preset document handling
 struct WorkspacePreset: Codable
 {

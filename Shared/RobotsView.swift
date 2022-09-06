@@ -963,9 +963,6 @@ struct CellSceneView_macOS: NSViewRepresentable
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        //ui_view.allowsCameraControl = true
-        //ui_view.rendersContinuously = true
-        
         if base_workspace.selected_robot.programs_count > 0
         {
             if base_workspace.selected_robot.selected_program.points_count > 0
@@ -1086,9 +1083,6 @@ struct CellSceneView_iOS: UIViewRepresentable
 
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
-        //ui_view.allowsCameraControl = true
-        //ui_view.rendersContinuously = true
-        
         if base_workspace.selected_robot.programs_count > 0
         {
             if base_workspace.selected_robot.selected_program.points_count > 0
@@ -1635,8 +1629,6 @@ struct RobotInspectorView: View
                 }
             }
             .padding()
-            //.padding(8.0)
-            //.padding([.leading, .bottom, .trailing], 8.0)
         }
     }
     
@@ -1877,7 +1869,6 @@ struct PositionItemListView: View
                     .presentationDetents([.height(512.0)])
             }
             #endif
-            
             Spacer()
         }
         .onTapGesture
@@ -1911,87 +1902,52 @@ struct PositionItemView: View
             #if os(macOS)
             HStack(spacing: 16)
             {
-                GroupBox(label: Text("Location")
-                            .font(.headline))
-                {
-                    VStack(spacing: 12)
+                ForEach(PositionComponents.allCases, id: \.self)
+                { position_component in
+                    GroupBox(label: Text(position_component.rawValue)
+                        .font(.headline))
                     {
-                        HStack(spacing: 8)
+                        VStack(spacing: 12)
                         {
-                            Text("X:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_location[0], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_location[0], in: 0...Double(base_workspace.selected_robot.space_scale[0]))
-                                .labelsHidden()
+                            switch position_component
+                            {
+                            case .location:
+                                ForEach(LocationComponents.allCases, id: \.self)
+                                { location_component in
+                                    HStack(spacing: 8)
+                                    {
+                                        Text(location_component.info.text)
+                                            .frame(width: 20.0)
+                                        TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
+                                            .textFieldStyle(.roundedBorder)
+                                        Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Double(base_workspace.selected_robot.space_scale[location_component.info.index]))
+                                            .labelsHidden()
+                                    }
+                                }
+                                .onChange(of: item_view_pos_location)
+                                { _ in
+                                    update_point_location()
+                                }
+                            case .rotation:
+                                ForEach(RotationComponents.allCases, id: \.self)
+                                { rotation_component in
+                                    HStack(spacing: 8)
+                                    {
+                                        Text(rotation_component.info.text)
+                                            .frame(width: 20.0)
+                                        TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
+                                            .textFieldStyle(.roundedBorder)
+                                            .keyboardType(.decimalPad)
+                                        Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
+                                            .labelsHidden()
+                                    }
+                                    .onChange(of: item_view_pos_rotation)
+                                    { _ in
+                                        update_point_rotation()
+                                    }
+                                }
+                            }
                         }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("Y:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_location[1], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_location[1], in: 0...Double(base_workspace.selected_robot.space_scale[1]))
-                                .labelsHidden()
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("Z:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_location[2], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_location[2], in: 0...Double(base_workspace.selected_robot.space_scale[2]))
-                                .labelsHidden()
-                        }
-                    }
-                    .padding(8.0)
-                    .onChange(of: item_view_pos_location)
-                    { _ in
-                        update_point_location()
-                    }
-                }
-                
-                GroupBox(label: Text("Rotation")
-                            .font(.headline))
-                {
-                    VStack(spacing: 12)
-                    {
-                        HStack(spacing: 8)
-                        {
-                            Text("R:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_rotation[0], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_rotation[0], in: -180...180)
-                                .labelsHidden()
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("P:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_rotation[1], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_rotation[1], in: -180...180)
-                                .labelsHidden()
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("W:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_rotation[2], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                            Stepper("Enter", value: $item_view_pos_rotation[2], in: -180...180)
-                                .labelsHidden()
-                        }
-                    }
-                    .padding(8.0)
-                    .onChange(of: item_view_pos_rotation)
-                    { _ in
-                        update_point_rotation()
                     }
                 }
             }
@@ -1999,99 +1955,62 @@ struct PositionItemView: View
             #else
             VStack(spacing: 12)
             {
-                GroupBox(label: Text("Location")
-                            .font(.headline))
-                {
-                    VStack(spacing: 12)
+                ForEach(PositionComponents.allCases, id: \.self)
+                { position_component in
+                    GroupBox(label: Text(position_component.rawValue)
+                        .font(.headline))
                     {
-                        HStack(spacing: 8)
+                        VStack(spacing: 12)
                         {
-                            Text("X:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_location[0], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_location[0], in: 0...Double(base_workspace.selected_robot.space_scale[0]))
-                                .labelsHidden()
+                            switch position_component
+                            {
+                            case .location:
+                                ForEach(LocationComponents.allCases, id: \.self)
+                                { location_component in
+                                    HStack(spacing: 8)
+                                    {
+                                        Text(location_component.info.text)
+                                            .frame(width: 20.0)
+                                        TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
+                                            .textFieldStyle(.roundedBorder)
+                                            .keyboardType(.decimalPad)
+                                        Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Double(base_workspace.selected_robot.space_scale[location_component.info.index]))
+                                            .labelsHidden()
+                                    }
+                                }
+                                .onChange(of: item_view_pos_location)
+                                { _ in
+                                    update_point_location()
+                                }
+                            case .rotation:
+                                ForEach(RotationComponents.allCases, id: \.self)
+                                { rotation_component in
+                                    HStack(spacing: 8)
+                                    {
+                                        Text(rotation_component.info.text)
+                                            .frame(width: 20.0)
+                                        TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
+                                            .textFieldStyle(.roundedBorder)
+                                            .keyboardType(.decimalPad)
+                                        Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
+                                            .labelsHidden()
+                                    }
+                                    .onChange(of: item_view_pos_rotation)
+                                    { _ in
+                                        update_point_rotation()
+                                    }
+                                }
+                            }
                         }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("Y:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_location[1], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_location[1], in: 0...Double(base_workspace.selected_robot.space_scale[1]))
-                                .labelsHidden()
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("Z:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_location[2], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_location[2], in: 0...Double(base_workspace.selected_robot.space_scale[2]))
-                                .labelsHidden()
-                        }
-                    }
-                    .padding(8.0)
-                    .onChange(of: item_view_pos_location)
-                    { _ in
-                        update_point_location()
-                    }
-                }
-                
-                GroupBox(label: Text("Rotation")
-                            .font(.headline))
-                {
-                    VStack(spacing: 12)
-                    {
-                        HStack(spacing: 8)
-                        {
-                            Text("R:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_rotation[0], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_rotation[0], in: -180...180)
-                                .labelsHidden()
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("P:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_rotation[1], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_rotation[1], in: -180...180)
-                                .labelsHidden()
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("W:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $item_view_pos_rotation[2], format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .keyboardType(.decimalPad)
-                            Stepper("Enter", value: $item_view_pos_rotation[2], in: -180...180)
-                                .labelsHidden()
-                        }
-                    }
-                    .padding(8.0)
-                    .onChange(of: item_view_pos_rotation)
-                    { _ in
-                        update_point_rotation()
                     }
                 }
             }
             .padding([.top, .leading, .trailing])
             
-            Spacer()
+            if app_state.is_compact_view
+            {
+                Spacer()
+            }
             #endif
             
             HStack

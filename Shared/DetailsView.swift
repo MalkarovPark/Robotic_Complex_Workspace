@@ -499,7 +499,7 @@ struct DetailSceneView_iOS: UIViewRepresentable
     {
         if app_state.preview_update_scene
         {
-            var remove_node = scene_view.scene?.rootNode.childNode(withName: "Figure", recursively: true)
+            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Figure", recursively: true)
             remove_node?.removeFromParentNode()
             
             scene_view.scene?.rootNode.addChildNode(app_state.previewed_detail?.node ?? SCNNode())
@@ -655,28 +655,31 @@ struct DetailCardViewPreview: View
             {
                 HStack(spacing: 0)
                 {
-                    Text(card_title)
-                        .font(.headline)
-                        .padding()
-                    
-                    Spacer()
-                    
-                    Rectangle()
-                        .fill(.clear)
-                        .overlay
+                    HStack(spacing: 0)
                     {
-                        #if os(macOS)
-                        Image(nsImage: card_image)
-                            .resizable()
-                            .scaledToFill()
-                        #else
-                        Image(uiImage: card_image)
-                            .resizable()
-                            .scaledToFill()
-                        #endif
+                        Text(card_title)
+                            .font(.headline)
+                            .padding()
+                        
+                        Spacer()
+                        
+                        Rectangle()
+                            .fill(.clear)
+                            .overlay
+                        {
+                            #if os(macOS)
+                            Image(nsImage: card_image)
+                                .resizable()
+                                .scaledToFill()
+                            #else
+                            Image(uiImage: card_image)
+                                .resizable()
+                                .scaledToFill()
+                            #endif
+                        }
+                        .frame(width: 64, height: 64)
+                        .background(Color.clear)
                     }
-                    .frame(width: 64, height: 64)
-                    .background(Color.clear)
                     
                     Rectangle()
                         .foregroundColor(card_color)
