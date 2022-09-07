@@ -285,7 +285,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     }
     
     //MARK: - Work with file system
-    public var program_info: program_struct
+    public var file_info: program_struct
     {
         return program_struct(name: name ?? "None", points: self.points)
     }

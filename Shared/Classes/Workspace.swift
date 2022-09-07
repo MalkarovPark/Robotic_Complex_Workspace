@@ -22,7 +22,7 @@ class Workspace: ObservableObject
         var name_count = 1
         for viewed_robot in robots
         {
-            if viewed_robot.robot_info.name == robot.robot_info.name
+            if viewed_robot.file_info.name == robot.file_info.name
             {
                 name_count += 1
             }
@@ -461,13 +461,26 @@ class Workspace: ObservableObject
     }
     
     //MARK: - Work with file system
-    public func file_data() -> (robots: [robot_struct], elements: [workspace_program_element_struct])
+    public func file_data() -> (robots: [robot_struct], tools: [tool_struct], details: [detail_struct], elements: [workspace_program_element_struct])
     {
         //Get robots info for save to file
         var robots_file_info = [robot_struct]()
         for robot in robots
         {
-            robots_file_info.append(robot.robot_info)
+            robots_file_info.append(robot.file_info)
+        }
+        
+        //Get tools info for save to file
+        var tools_file_info = [tool_struct]()
+        for tool in tools
+        {
+            tools_file_info.append(tool.file_info)
+        }
+        
+        //Get details info for save to file
+        var details_file_info = [detail_struct]()
+        for detail in details {
+            details_file_info.append(detail.file_info)
         }
         
         //Get workspace program elements info for save to file
@@ -477,7 +490,7 @@ class Workspace: ObservableObject
             elements_file_info.append(element.element_data)
         }
         
-        return(robots_file_info, elements_file_info)
+        return(robots_file_info, tools_file_info, details_file_info, elements_file_info)
     }
     
     public func file_view(preset: WorkspacePreset)
@@ -487,6 +500,20 @@ class Workspace: ObservableObject
         for robot_struct in preset.robots
         {
             robots.append(Robot(robot_struct: robot_struct))
+        }
+        
+        //Update tools data from file
+        tools.removeAll()
+        for tool_struct in preset.tools
+        {
+            tools.append(Tool(tool_struct: tool_struct))
+        }
+        
+        //Update details data from file
+        details.removeAll()
+        for detail_struct in preset.details
+        {
+            details.append(Detail(detail_struct: detail_struct))
         }
         
         //Update workspace program elements data from file
@@ -597,5 +624,7 @@ enum RotationComponents: Equatable, CaseIterable
 struct WorkspacePreset: Codable
 {
     var robots = [robot_struct]()
+    var tools = [tool_struct]()
+    var details = [detail_struct]()
     var elements = [workspace_program_element_struct]()
 }

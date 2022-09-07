@@ -22,4 +22,25 @@ class Tool: Identifiable, Equatable, Hashable, ObservableObject
     
     public var name: String?
     public var node: SCNNode?
+    public var tool_scene_address: String?
+    
+    //MARK: - Init functions
+    init(tool_struct: tool_struct) //Init by detail structure
+    {
+        self.name = tool_struct.name
+        self.tool_scene_address = tool_struct.scene
+    }
+    
+    //MARK: - Work with file system
+    public var file_info: tool_struct
+    {
+        return tool_struct(name: self.name, scene: self.tool_scene_address)
+    }
+}
+
+//MARK: - Tool structure for workspace preset document handling
+struct tool_struct: Codable
+{
+    var name: String?
+    var scene: String?
 }

@@ -79,7 +79,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     init(robot_struct: robot_struct) //Init by robot structure
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lenghts: robot_struct.lenghts, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.robot_image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lenghts: robot_struct.lenghts, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
         read_programs(robot_struct: robot_struct)
     }
     
@@ -1232,7 +1232,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     #endif
     
     //MARK: - Work with file system
-    public var robot_info: robot_struct //Convert robot data to robot_struct
+    public var file_info: robot_struct //Convert robot data to robot_struct
     {
         //Convert robot programs set to program_struct array
         var programs_array = [program_struct]()
@@ -1240,11 +1240,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             for program in programs
             {
-                programs_array.append(program.program_info)
+                programs_array.append(program.file_info)
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lenghts: with_lenghts ? self.lenghts : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, robot_image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lenghts: with_lenghts ? self.lenghts : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
@@ -1281,7 +1281,7 @@ struct robot_struct: Codable
     
     var get_statistics: Bool
     
-    var robot_image_data: Data
+    var image_data: Data
     var programs: [program_struct]
     
     var origin_location: [Float]

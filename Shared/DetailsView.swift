@@ -45,8 +45,7 @@ struct DetailsView: View
                             }, preview: {
                                 DetailCardViewPreview(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
                             })
-                            .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, detail: detail_item))
-                            //.onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
+                            .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
                             .transition(AnyTransition.scale)
                         }
                     }
@@ -96,7 +95,7 @@ struct DetailsView: View
         withAnimation
         {
             base_workspace.details.remove(atOffsets: offsets)
-            //document.preset.robots = base_workspace.file_data().robots
+            document.preset.details = base_workspace.file_data().details
         }
     }
 }
@@ -212,7 +211,7 @@ struct AddDetailView: View
         app_state.get_scene_image = true
         app_state.previewed_detail?.name = new_detail_name
         base_workspace.add_detail(detail: app_state.previewed_detail!)
-        //document.preset.robots = base_workspace.file_data().robots
+        document.preset.details = base_workspace.file_data().details
         
         //base_workspace.elements_check()
         
@@ -263,6 +262,11 @@ struct DetailView: View
                 .frame(maxWidth: .infinity)
                 #endif
                 .padding(.horizontal)
+                .onChange(of: new_physics)
+                { _ in
+                    app_state.get_scene_image = true
+                    document.preset.details = base_workspace.file_data().details
+                }
                 
                 Toggle("Gripable", isOn: $new_gripable)
                     .toggleStyle(SwitchToggleStyle())
@@ -270,6 +274,11 @@ struct DetailView: View
                     .frame(maxWidth: 128)
                     #endif
                     .padding(.trailing)
+                    .onChange(of: new_gripable)
+                    { _ in
+                        app_state.get_scene_image = true
+                        document.preset.details = base_workspace.file_data().details
+                    }
             }
             .padding(.vertical)
         }
@@ -281,6 +290,8 @@ struct DetailView: View
             app_state.preview_update_scene = true
             new_physics = detail_item.physics_type
             new_gripable = detail_item.gripable ?? false
+            
+            app_state.get_scene_image = true
         }
         .onDisappear()
         {
@@ -699,13 +710,13 @@ struct DetailDropDelegate : DropDelegate
     @Binding var dragged_detail : Detail?
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    //@State var workspace_details: [detail_struct]
+    @State var workspace_details: [detail_struct]
     
     let detail: Detail
     
     func performDrop(info: DropInfo) -> Bool
     {
-        //document.preset.details = workspace_details //Update file after elements reordering
+        document.preset.details = workspace_details //Update file after elements reordering
         return true
     }
     

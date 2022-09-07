@@ -27,12 +27,12 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     public var node: SCNNode? //Detail scene node
     public var detail_scene_address = "" //Adders of detail scene. If empty – this detail used defult model.
     
-    public var gripable: Bool? //Can this detail be gripped and picked up
-    
     private var figure: String?
     private var lenghts: [Float]? //Lenghts for detail without scene figure
     private var figure_color: [Int]? //Color for detail without scene figure
     private var material_name: String? //Material for detail without scene figure
+    
+    public var gripable: Bool? //Can this detail be gripped and picked up
     
     private var physics: SCNPhysicsBody?
     public var physics_type: PhysicsType = .ph_none //Physic body type
@@ -128,6 +128,36 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
             {
                 self.node = SCNScene(named: self.detail_scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
             }
+        }
+        else
+        {
+            node_by_description()
+        }
+    }
+    
+    init(detail_struct: detail_struct) //Init by detail structure
+    {
+        self.name = detail_struct.name
+        
+        self.figure = detail_struct.figure
+        self.lenghts = detail_struct.lenghts
+        
+        self.figure_color = detail_struct.figure_color
+        self.material_name = detail_struct.material_name
+        self.physics_type = detail_struct.physics_type
+        
+        self.gripable = detail_struct.gripable
+        
+        self.is_placed = detail_struct.is_placed
+        self.location = detail_struct.location
+        self.rotation = detail_struct.rotation
+        
+        self.image_data = detail_struct.image_data
+        
+        if detail_struct.scene != ""
+        {
+            self.detail_scene_address = detail_struct.scene
+            self.node = SCNScene(named: self.detail_scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
         }
         else
         {
@@ -285,18 +315,18 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] r, p, w
     
     //MARK: - UI functions
-    private var detail_image_data = Data()
+    private var image_data = Data()
     
     #if os(macOS)
     public var image: NSImage
     {
         get
         {
-            return NSImage(data: detail_image_data) ?? NSImage()
+            return NSImage(data: image_data) ?? NSImage()
         }
         set
         {
-            detail_image_data = newValue.tiffRepresentation ?? Data()
+            image_data = newValue.tiffRepresentation ?? Data()
         }
     }
     
@@ -309,11 +339,11 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     {
         get
         {
-            return UIImage(data: detail_image_data) ?? UIImage()
+            return UIImage(data: image_data) ?? UIImage()
         }
         set
         {
-            detail_image_data = newValue.pngData() ?? Data()
+            image_data = newValue.pngData() ?? Data()
         }
     }
     
@@ -322,6 +352,12 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0) / 255, green: Double(figure_color?[1] ?? 0) / 255, blue: Double(figure_color?[2] ?? 0) / 255), self.image)
     }
     #endif
+    
+    //MARK: - Work with file system
+    public var file_info: detail_struct
+    {
+        return detail_struct(name: self.name ?? "None", scene: self.detail_scene_address, figure: self.figure ?? "box", lenghts: self.lenghts ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
+    }
 }
 
 enum PhysicsType: String, Codable, Equatable, CaseIterable
@@ -330,4 +366,27 @@ enum PhysicsType: String, Codable, Equatable, CaseIterable
     case ph_dynamic = "Dynamic"
     case ph_kinematic = "Kinematic"
     case ph_none = "None"
+}
+
+//MARK: - Detail structure for workspace preset document handling
+struct detail_struct: Codable
+{
+    var name: String
+    
+    var scene: String
+    
+    var figure: String
+    var lenghts: [Float]
+    
+    var figure_color: [Int]
+    var material_name: String
+    var physics_type: PhysicsType
+    
+    var gripable: Bool
+    
+    var is_placed: Bool
+    var location: [Float]
+    var rotation: [Float]
+    
+    var image_data: Data
 }
