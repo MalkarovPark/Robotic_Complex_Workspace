@@ -228,6 +228,7 @@ struct DetailView: View
     //@State private var new_detail_name = ""
     @State var new_physics: PhysicsType = .ph_none
     @State var new_gripable = false
+    @State private var ready_for_save = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -264,8 +265,7 @@ struct DetailView: View
                 .padding(.horizontal)
                 .onChange(of: new_physics)
                 { _ in
-                    app_state.get_scene_image = true
-                    document.preset.details = base_workspace.file_data().details
+                    update_data()
                 }
                 
                 Toggle("Gripable", isOn: $new_gripable)
@@ -276,8 +276,7 @@ struct DetailView: View
                     .padding(.trailing)
                     .onChange(of: new_gripable)
                     { _ in
-                        app_state.get_scene_image = true
-                        document.preset.details = base_workspace.file_data().details
+                        update_data()
                     }
             }
             .padding(.vertical)
@@ -291,12 +290,23 @@ struct DetailView: View
             new_physics = detail_item.physics_type
             new_gripable = detail_item.gripable ?? false
             
-            app_state.get_scene_image = true
+            //app_state.get_scene_image = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
+            {
+                ready_for_save = true
+            }
+            //ready_for_save = true
         }
-        .onDisappear()
+    }
+    
+    func update_data()
+    {
+        if ready_for_save
         {
+            app_state.get_scene_image = true
             detail_item.physics_type = new_physics
             detail_item.gripable = new_gripable
+            document.preset.details = base_workspace.file_data().details
         }
     }
 }

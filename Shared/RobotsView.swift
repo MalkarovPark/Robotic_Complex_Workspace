@@ -1920,6 +1920,9 @@ struct PositionItemView: View
                                             .frame(width: 20.0)
                                         TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
                                             .textFieldStyle(.roundedBorder)
+                                            #if os(iOS)
+                                            .keyboardType(.decimalPad)
+                                            #endif
                                         Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Double(base_workspace.selected_robot.space_scale[location_component.info.index]))
                                             .labelsHidden()
                                     }
@@ -1937,7 +1940,9 @@ struct PositionItemView: View
                                             .frame(width: 20.0)
                                         TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
                                             .textFieldStyle(.roundedBorder)
+                                            #if os(iOS)
                                             .keyboardType(.decimalPad)
+                                            #endif
                                         Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
                                             .labelsHidden()
                                     }
