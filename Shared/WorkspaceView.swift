@@ -327,8 +327,8 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
         base_workspace.details_node = viewed_scene.rootNode.childNode(withName: "details", recursively: false)
         
-        //Add placed robots in workspace
-        base_workspace.place_robots(scene: viewed_scene)
+        //Add placed robots and details in workspace
+        base_workspace.place_objects(scene: viewed_scene)
         
         //Add gesture recognizer
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
@@ -395,12 +395,19 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 
                 if workspace.is_selected
                 {
-                    //switch workspace.selected_object_type
-                    workspace.selected_robot.unit_origin_node?.isHidden = true
-                    workspace.view_pointer_node.removeFromParentNode()
-                    
-                    workspace.deselect_robot()
-                    workspace.deselect_detail()
+                    switch workspace.selected_object_type
+                    {
+                    case .robot:
+                        workspace.selected_robot.unit_origin_node?.isHidden = true
+                        workspace.deselect_robot()
+                    case .tool:
+                        break
+                    case .detail:
+                        workspace.detail_node?.physicsBody = workspace.selected_detail.physics
+                        workspace.view_pointer_node.removeFromParentNode()
+                        workspace.deselect_detail()
+                        workspace.detail_node = nil
+                    }
                     workspace.update_view()
                 }
                 
@@ -409,7 +416,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                     result = hit_results[0]
                     
                     print(result.localCoordinates)
-                    //print("🍮 tapped – \(result.node.name!) \n category \(result.node.categoryBitMask)")
+                    print("🍮 tapped – \(result.node.name!) category \(result.node.categoryBitMask)")
                     var object_name = ""
                     
                     switch result.node.categoryBitMask
@@ -518,7 +525,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         base_workspace.details_node = viewed_scene.rootNode.childNode(withName: "details", recursively: false)
         
         //Add placed robots in workspace
-        base_workspace.place_robots(scene: viewed_scene)
+        base_workspace.place_objects(scene: viewed_scene)
         
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
@@ -580,58 +587,89 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
                 var result = SCNHitTestResult()
                 
+                if workspace.is_selected
+                {
+                    switch workspace.selected_object_type
+                    {
+                    case .robot:
+                        workspace.selected_robot.unit_origin_node?.isHidden = true
+                        workspace.deselect_robot()
+                    case .tool:
+                        break
+                    case .detail:
+                        workspace.detail_node?.physicsBody = workspace.selected_detail.physics
+                        workspace.view_pointer_node.removeFromParentNode()
+                        workspace.deselect_detail()
+                        workspace.detail_node = nil
+                    }
+                    workspace.update_view()
+                }
+                
                 if hit_results.count > 0
                 {
                     result = hit_results[0]
                     
                     print(result.localCoordinates)
-                    //print("🍮 tapped – \(result.node.name!)")
-                    var robot_name = ""
+                    print("🍮 tapped – \(result.node.name!) category \(result.node.categoryBitMask)")
+                    var object_name = ""
                     
-                    //Find robot node name
-                    if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
+                    switch result.node.categoryBitMask
                     {
-                        robot_name = (result.node.parent?.parent?.name)!
-                    }
-                    else
-                    {
-                        let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
-                        var cycled_node = result.node.parent
-                        
-                        if detail_number != 0 && result.node.parent?.name?.first == "d"
+                    case 2:
+                        //Find robot node name
+                        if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
                         {
-                            while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
-                            {
-                                cycled_node = cycled_node?.parent
-                            }
-                            
-                            robot_name = (cycled_node?.parent?.parent?.name)!
+                            object_name = (result.node.parent?.parent?.name)!
                         }
-                    }
-                    
-                    print("🍮 tapped – \(robot_name)")
-                    workspace.update_view()
-                    
-                    if workspace.is_selected
-                    {
-                        workspace.selected_robot.unit_origin_node?.isHidden = true
-                    }
-                    workspace.select_robot(name: robot_name)
-                    
-                    if workspace.is_selected
-                    {
-                        workspace.selected_robot.unit_origin_node?.isHidden = false
-                    }
-                }
-                else
-                {
-                    if workspace.is_selected
-                    {
-                        workspace.selected_robot.unit_origin_node?.isHidden = true
+                        else
+                        {
+                            let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
+                            var cycled_node = result.node.parent
+                            
+                            if detail_number != 0 && result.node.parent?.name?.first == "d"
+                            {
+                                while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
+                                {
+                                    cycled_node = cycled_node?.parent
+                                }
+                                
+                                object_name = (cycled_node?.parent?.parent?.name)!
+                            }
+                        }
                         
-                        workspace.deselect_robot()
                         workspace.update_view()
+                        
+                        if workspace.is_selected
+                        {
+                            workspace.selected_robot.unit_origin_node?.isHidden = true
+                        }
+                        workspace.select_robot(name: object_name)
+                        
+                        if workspace.is_selected
+                        {
+                            workspace.selected_robot.unit_origin_node?.isHidden = false
+                        }
+                    case 4:
+                        object_name = result.node.name!
+                        workspace.update_view()
+                        
+                        if workspace.is_selected
+                        {
+                            workspace.view_pointer_node.removeFromParentNode()
+                            workspace.detail_node?.physicsBody = workspace.selected_detail.physics
+                        }
+                        workspace.select_detail(name: object_name)
+                        
+                        if workspace.is_selected
+                        {
+                            workspace.detail_node?.physicsBody = .none
+                            workspace.selected_detail.node?.addChildNode(workspace.view_pointer_node)
+                        }
+                    default:
+                        break
                     }
+                    
+                    print("🍮 tapped – \(object_name)")
                 }
             }
         }
@@ -1178,6 +1216,11 @@ struct InfoView: View
             base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: base_workspace.selected_robot.name!, recursively: false)!
         case .detail:
             base_workspace.detail_node = base_workspace.details_node?.childNode(withName: base_workspace.selected_detail.name!, recursively: false)!
+            base_workspace.detail_node?.physicsBody = .none
+            
+            base_workspace.selected_detail.location = [Float(base_workspace.detail_node?.presentation.position.x ?? 0), Float(base_workspace.detail_node?.presentation.position.z ?? 0), Float(base_workspace.detail_node?.presentation.position.y ?? 0)]
+            base_workspace.selected_detail.rotation = [Float(base_workspace.detail_node?.presentation.rotation.x ?? 0), Float(base_workspace.detail_node?.presentation.rotation.z ?? 0), Float(base_workspace.detail_node?.presentation.rotation.y ?? 0)]
+            base_workspace.update_view()
         }
     }
     

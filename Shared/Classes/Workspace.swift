@@ -615,7 +615,7 @@ class Workspace: ObservableObject
     public var detail_node: SCNNode?
     public var view_pointer_node = SCNScene(named: "Components.scnassets/View.scn")!.rootNode.childNode(withName: "pointer", recursively: false)! //: SCNNode?
     
-    public func place_robots(scene: SCNScene)
+    public func place_objects(scene: SCNScene)
     {
         if self.avaliable_robots_names.count < self.robots.count
         {
@@ -645,6 +645,35 @@ class Workspace: ObservableObject
                     unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(robot.rotation[1])))
                     unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(robot.rotation[2])))
                     unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(robot.rotation[0])))
+                    #endif
+                }
+            }
+        }
+        
+        if self.avaliable_details_names.count < self.details.count
+        {
+            for detail in details
+            {
+                if detail.is_placed
+                {
+                    let detail_node = detail.node
+                    detail_node?.physicsBody = detail.physics
+                    detail_node?.categoryBitMask = 4
+                    detail_node?.name = detail.name
+                    details_node?.addChildNode(detail_node ?? SCNNode())
+                    
+                    #if os(macOS)
+                    detail_node?.position = SCNVector3(x: CGFloat(detail.location[1]), y: CGFloat(detail.location[2]), z: CGFloat(detail.location[0]))
+                    
+                    detail_node?.eulerAngles.x = to_rad(in_angle: CGFloat(detail.rotation[1]))
+                    detail_node?.eulerAngles.y = to_rad(in_angle: CGFloat(detail.rotation[2]))
+                    detail_node?.eulerAngles.z = to_rad(in_angle: CGFloat(detail.rotation[0]))
+                    #else
+                    detail_node?.position = SCNVector3(x: robot.location[1], y: robot.location[2], z: robot.location[0])
+                    
+                    detail_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(detail.rotation[1])))
+                    detail_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(detail.rotation[2])))
+                    detail_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(detail.rotation[0])))
                     #endif
                 }
             }
