@@ -26,6 +26,8 @@ class AppState : ObservableObject
     public var previewed_detail: Detail?
     public var preview_update_scene = false
     
+    @Published var add_selection = 0
+    
     @Published var manufacturer_name = "None" //Manufacturer's display string for the menu
     {
         didSet

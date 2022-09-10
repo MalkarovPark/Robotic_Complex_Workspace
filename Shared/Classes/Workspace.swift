@@ -45,13 +45,13 @@ class Workspace: ObservableObject
     
     public func delete_robot(name: String)
     {
-        delete_robot(number: number_by_name(name: name))
+        delete_robot(number: robot_number_by_name(name: name))
     }
     
     //MARK: Robot selection functions
     private var selected_robot_index = -1
     
-    private func number_by_name(name: String) -> Int //Get index number of robot by name
+    private func robot_number_by_name(name: String) -> Int //Get index number of robot by name
     {
         let comparison_robot = Robot(name: name)
         let robot_number = robots.firstIndex(of: comparison_robot)
@@ -66,7 +66,7 @@ class Workspace: ObservableObject
     
     public func select_robot(name: String) //Select robot by name
     {
-        selected_robot_index = number_by_name(name: name)
+        selected_robot_index = robot_number_by_name(name: name)
     }
     
     public func deselect_robot()
@@ -110,7 +110,7 @@ class Workspace: ObservableObject
     
     public func robot_by_name(name: String) -> Robot //Get index number of robot by name
     {
-        return self.robots[number_by_name(name: name)]
+        return self.robots[robot_number_by_name(name: name)]
     }
     
     public var avaliable_robots_names: [String] //Array of robots names not added to workspace
@@ -139,8 +139,67 @@ class Workspace: ObservableObject
         return names
     }
     
-    //MARK: - Tools manage functions
+    //MARK: - Details manage functions
+    //MARK: Details selection functions
+    private var selected_detail_index = -1
     
+    public var selected_detail: Detail //Return robot by selected index
+    {
+        get
+        {
+            if selected_detail_index > -1
+            {
+                return details[selected_detail_index]
+            }
+            else
+            {
+                return Detail(name: "None", dictionary: ["String" : "Any"])
+            }
+        }
+        set
+        {
+            if selected_detail_index > -1
+            {
+                details[selected_detail_index] = newValue
+            }
+        }
+    }
+    
+    private func detail_number_by_name(name: String) -> Int //Get index number of robot by name
+    {
+        let comparison_detail = Detail(name: name, scene: "")
+        let detail_number = details.firstIndex(of: comparison_detail)
+        
+        return detail_number ?? -1
+    }
+    
+    public func select_detail(number: Int) //Select detail by number
+    {
+        selected_detail_index = number
+    }
+    
+    public func select_detail(name: String) //Select detail by name
+    {
+        selected_detail_index = detail_number_by_name(name: name)
+    }
+    
+    public func deselect_detail()
+    {
+        selected_detail_index = -1
+    }
+    
+    public var avaliable_details_names: [String] //Array of details names not added to workspace
+    {
+        var names = [String]()
+        for detail in details
+        {
+            if detail.name != nil && !detail.is_placed
+            {
+                names.append(detail.name!)
+            }
+        }
+        return names
+    }
     
     //MARK: - Details manage funcions
     public func add_detail(detail: Detail)
@@ -169,7 +228,7 @@ class Workspace: ObservableObject
         }
     }
     
-    /*public func delete_detal(name: String)
+    /*public func delete_detail(name: String)
     {
         delete_detail(number: number_by_name(name: name))
     }*/
@@ -525,7 +584,7 @@ class Workspace: ObservableObject
     }
     
     //MARK: - UI Functions
-    public var is_robot_editing = false
+    public var is_robot_editing = false //Determines whether the robot can be selected if it is open for editing
     
     func update_view() //Force update SwiftUI view
     {
@@ -535,7 +594,9 @@ class Workspace: ObservableObject
     //MARK: - Visual functions
     public var camera_node: SCNNode?
     public var workcells_node: SCNNode?
+    public var details_node: SCNNode?
     public var unit_node: SCNNode?
+    public var detail_node: SCNNode?
     
     public func place_robots(scene: SCNScene)
     {
