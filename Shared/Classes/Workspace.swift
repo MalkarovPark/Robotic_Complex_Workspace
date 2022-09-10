@@ -74,18 +74,6 @@ class Workspace: ObservableObject
         selected_robot_index = -1
     }
     
-    public var is_selected: Bool
-    {
-        if selected_robot_index == -1
-        {
-            return false
-        }
-        else
-        {
-            return true
-        }
-    }
-    
     public var selected_robot: Robot //Return robot by selected index
     {
         get
@@ -584,19 +572,48 @@ class Workspace: ObservableObject
     }
     
     //MARK: - UI Functions
-    public var is_robot_editing = false //Determines whether the robot can be selected if it is open for editing
+    public var is_editing = false //Determines whether the robot can be selected if it is open for editing
     
     func update_view() //Force update SwiftUI view
     {
         self.objectWillChange.send()
     }
     
+    public var is_selected: Bool
+    {
+        if selected_robot_index == -1 && selected_detail_index == -1
+        {
+            return false
+        }
+        else
+        {
+            return true
+        }
+    }
+    
+    public var selected_category = 0
+    
+    public var selected_object_type: WorkspaceObjecTypes
+    {
+        if selected_robot_index > -1
+        {
+            return .robot
+        }
+        
+        if selected_detail_index > -1
+        {
+            return .detail
+        }
+        
+        return .tool
+    }
     //MARK: - Visual functions
     public var camera_node: SCNNode?
     public var workcells_node: SCNNode?
     public var details_node: SCNNode?
     public var unit_node: SCNNode?
     public var detail_node: SCNNode?
+    public var view_pointer_node = SCNScene(named: "Components.scnassets/View.scn")!.rootNode.childNode(withName: "pointer", recursively: false)! //: SCNNode?
     
     public func place_robots(scene: SCNScene)
     {
@@ -633,6 +650,13 @@ class Workspace: ObservableObject
             }
         }
     }
+}
+
+enum WorkspaceObjecTypes: String, Equatable, CaseIterable
+{
+    case robot = "Robot"
+    case detail = "Detail"
+    case tool = "Tool"
 }
 
 enum PositionComponents: String, Equatable, CaseIterable

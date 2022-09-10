@@ -204,7 +204,7 @@ struct ComplexWorkspaceView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var add_robot_in_workspace_view_presented = false
-    @State var robot_info_view_presented = false
+    @State var info_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -257,11 +257,11 @@ struct ComplexWorkspaceView: View
                             AddInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        //.disabled(base_workspace.avaliable_robots_names.count == 0 || (base_workspace.is_selected && base_workspace.selected_robot.is_placed)  || base_workspace.is_performing)
+                        .disabled(base_workspace.is_performing)
                         
                         Divider()
                         
-                        Button(action: { robot_info_view_presented.toggle() })
+                        Button(action: { info_view_presented.toggle() })
                         {
                             Image(systemName: "pencil")
                                 .imageScale(.large)
@@ -274,9 +274,9 @@ struct ComplexWorkspaceView: View
                         #if os(iOS)
                         .foregroundColor(.black)
                         #endif
-                        .popover(isPresented: $robot_info_view_presented)
+                        .popover(isPresented: $info_view_presented)
                         {
-                            InfoView(robot_info_view_presented: $robot_info_view_presented, document: $document)
+                            InfoView(info_view_presented: $info_view_presented, document: $document)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
                         .disabled(!base_workspace.is_selected || base_workspace.is_performing)
@@ -387,64 +387,88 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: NSClickGestureRecognizer)
         {
-            if !workspace.is_robot_editing && !workspace.is_performing
+            if !workspace.is_editing && !workspace.is_performing
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
                 var result = SCNHitTestResult()
+                
+                if workspace.is_selected
+                {
+                    //switch workspace.selected_object_type
+                    workspace.selected_robot.unit_origin_node?.isHidden = true
+                    workspace.view_pointer_node.removeFromParentNode()
+                    
+                    workspace.deselect_robot()
+                    workspace.deselect_detail()
+                    workspace.update_view()
+                }
                 
                 if hit_results.count > 0
                 {
                     result = hit_results[0]
                     
                     print(result.localCoordinates)
-                    //print("🍮 tapped – \(result.node.name!)")
-                    var robot_name = ""
+                    //print("🍮 tapped – \(result.node.name!) \n category \(result.node.categoryBitMask)")
+                    var object_name = ""
                     
-                    //Find robot node name
-                    if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
+                    switch result.node.categoryBitMask
                     {
-                        robot_name = (result.node.parent?.parent?.name)!
-                    }
-                    else
-                    {
-                        let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
-                        var cycled_node = result.node.parent
-                        
-                        if detail_number != 0 && result.node.parent?.name?.first == "d"
+                    case 2:
+                        //Find robot node name
+                        if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
                         {
-                            while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
-                            {
-                                cycled_node = cycled_node?.parent
-                            }
-                            
-                            robot_name = (cycled_node?.parent?.parent?.name)!
+                            object_name = (result.node.parent?.parent?.name)!
                         }
-                    }
-                    
-                    print("🍮 tapped – \(robot_name)")
-                    workspace.update_view()
-                    
-                    if workspace.is_selected
-                    {
-                        workspace.selected_robot.unit_origin_node?.isHidden = true
-                    }
-                    workspace.select_robot(name: robot_name)
-                    
-                    if workspace.is_selected
-                    {
-                        workspace.selected_robot.unit_origin_node?.isHidden = false
-                    }
-                }
-                else
-                {
-                    if workspace.is_selected
-                    {
-                        workspace.selected_robot.unit_origin_node?.isHidden = true
+                        else
+                        {
+                            let detail_number = 1 + (result.node.parent?.name?.last?.wholeNumberValue ?? -1)
+                            var cycled_node = result.node.parent
+                            
+                            if detail_number != 0 && result.node.parent?.name?.first == "d"
+                            {
+                                while cycled_node?.name?.last?.wholeNumberValue ?? -1 > 0
+                                {
+                                    cycled_node = cycled_node?.parent
+                                }
+                                
+                                object_name = (cycled_node?.parent?.parent?.name)!
+                            }
+                        }
                         
-                        workspace.deselect_robot()
                         workspace.update_view()
+                        
+                        if workspace.is_selected
+                        {
+                            workspace.selected_robot.unit_origin_node?.isHidden = true
+                        }
+                        workspace.select_robot(name: object_name)
+                        
+                        if workspace.is_selected
+                        {
+                            workspace.selected_robot.unit_origin_node?.isHidden = false
+                        }
+                    case 4:
+                        object_name = result.node.name!
+                        workspace.update_view()
+                        
+                        if workspace.is_selected
+                        {
+                            workspace.view_pointer_node.removeFromParentNode()
+                            workspace.detail_node?.physicsBody = workspace.selected_detail.physics
+                        }
+                        workspace.select_detail(name: object_name)
+                        
+                        if workspace.is_selected
+                        {
+                            workspace.detail_node?.physicsBody = .none
+                            workspace.selected_detail.node?.addChildNode(workspace.view_pointer_node)
+                        }
+                    default:
+                        break
                     }
+                    
+                    print("🍮 tapped – \(object_name)")
                 }
             }
         }
@@ -550,7 +574,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: UITapGestureRecognizer)
         {
-            if !workspace.is_robot_editing && !workspace.is_performing
+            if !workspace.is_editing && !workspace.is_performing
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -686,13 +710,13 @@ struct AddInWorkspaceView: View
                         .onAppear
                         {
                             change_selected_robot()
-                            base_workspace.is_robot_editing = true
+                            base_workspace.is_editing = true
                             selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
                         }
                         .onDisappear
                         {
                             dismiss_robot()
-                            base_workspace.is_robot_editing = false
+                            base_workspace.is_editing = false
                         }
                         .onChange(of: selected_robot_name)
                         { _ in
@@ -861,6 +885,7 @@ struct AddInWorkspaceView: View
         }
     }
     
+    //MARK: Robots placing functions
     func view_robot() //Get robot and update position
     {
         base_workspace.select_robot(name: selected_robot_name)
@@ -942,6 +967,7 @@ struct AddInWorkspaceView: View
         add_robot_in_workspace_view_presented.toggle()
     }
     
+    //MARK: Details placing functions
     func change_selected_detail()
     {
         if !first_select
@@ -960,19 +986,6 @@ struct AddInWorkspaceView: View
         }
     }
     
-    func view_detail()
-    {
-        base_workspace.select_detail(name: selected_detail_name)
-        
-        base_workspace.detail_node = SCNScene(named: "Components.scnassets/View.scn")!.rootNode.childNode(withName: "pointer", recursively: false)! //Get workcell from Workcell.scn and add it to Workspace.scn
-        base_workspace.detail_node?.addChildNode(base_workspace.selected_detail.node ?? SCNNode())
-        
-        base_workspace.detail_node?.name = selected_detail_name
-        base_workspace.details_node?.addChildNode(base_workspace.detail_node!)
-        
-        //base_workspace.selected_robot.unit_origin_node?.isHidden = false
-    }
-    
     func update_detail_origin_position()
     {
         #if os(macOS)
@@ -988,6 +1001,16 @@ struct AddInWorkspaceView: View
         base_workspace.detail_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[2])))
         base_workspace.detail_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[0])))
         #endif
+    }
+    
+    func view_detail()
+    {
+        base_workspace.select_detail(name: selected_detail_name)
+        
+        base_workspace.detail_node = base_workspace.selected_detail.node?.clone()
+        base_workspace.detail_node?.addChildNode(base_workspace.view_pointer_node)
+        
+        base_workspace.details_node?.addChildNode(base_workspace.detail_node!)
     }
     
     func dismiss_detail()
@@ -1014,15 +1037,21 @@ struct AddInWorkspaceView: View
     {
         base_workspace.selected_detail.is_placed = true
         
-        //base_workspace.selected_detail.unit_origin_node?.isHidden = true
+        //Remove previewed detail (with origin cylinders)
         let saved_location = base_workspace.detail_node?.position
         let saved_rotation = base_workspace.detail_node?.rotation
         base_workspace.detail_node?.removeFromParentNode()
         base_workspace.detail_node = base_workspace.selected_detail.node!
+        
+        //Place detail and apply physics
+        base_workspace.detail_node?.name = selected_detail_name
+        
         base_workspace.detail_node?.position = saved_location!
         base_workspace.detail_node?.rotation = saved_rotation!
+        base_workspace.detail_node?.categoryBitMask = 4
+        base_workspace.detail_node?.physicsBody = base_workspace.selected_detail.physics
         
-        base_workspace.workcells_node?.addChildNode(base_workspace.detail_node ?? SCNNode())
+        base_workspace.details_node?.addChildNode(base_workspace.detail_node ?? SCNNode())
         
         document.preset.details = base_workspace.file_data().details
         
@@ -1032,7 +1061,7 @@ struct AddInWorkspaceView: View
 
 struct InfoView: View
 {
-    @Binding var robot_info_view_presented: Bool
+    @Binding var info_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @EnvironmentObject var base_workspace: Workspace
@@ -1042,24 +1071,61 @@ struct InfoView: View
     {
         VStack(spacing: 0)
         {
-            Text("\(base_workspace.selected_robot.name ?? "None")")
-                .font(.title3)
-                .padding([.top, .leading, .trailing])
+            switch base_workspace.selected_object_type
+            {
+            case .robot:
+                Text("\(base_workspace.selected_robot.name ?? "None")")
+                    .font(.title3)
+                    .padding([.top, .leading, .trailing])
+            case .tool:
+                Text("\(base_workspace.selected_robot.name ?? "None")")
+                    .font(.title3)
+                    .padding([.top, .leading, .trailing])
+            case .detail:
+                Text("\(base_workspace.selected_detail.name ?? "None")")
+                    .font(.title3)
+                    .padding([.top, .leading, .trailing])
+            }
             
             #if os(macOS)
             HStack(spacing: 16)
             {
-                PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                switch base_workspace.selected_object_type
+                {
+                case .robot:
+                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                        .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+                        { _ in
+                            update_unit_origin_position()
+                        }
+                case .tool:
+                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                        .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+                        { _ in
+                            update_unit_origin_position()
+                        }
+                case .detail:
+                    PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
+                        .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
+                        { _ in
+                            update_detail_origin_position()
+                        }
+                }
             }
             .padding([.top, .leading, .trailing])
-            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
-            { _ in
-                update_unit_origin_position()
-            }
+            
             #else
             VStack(spacing: 12)
             {
-                PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                switch base_workspace.selected_object_type
+                {
+                case .robot:
+                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                case .tool:
+                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                case .detail:
+                    PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
+                }
             }
             .padding([.top, .leading, .trailing])
             .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
@@ -1075,7 +1141,7 @@ struct InfoView: View
             
             HStack
             {
-                Button(action: remove_robot)
+                Button(action: remove_object)
                 {
                     Text("Remove from workspace")
                     #if os(macOS)
@@ -1092,7 +1158,7 @@ struct InfoView: View
         }
         .onAppear
         {
-            view_robot()
+            view_object()
         }
         .onDisappear
         {
@@ -1100,10 +1166,19 @@ struct InfoView: View
         }
     }
     
-    func view_robot() //Get robot and update position
+    func view_object() //Get robot and update position
     {
-        base_workspace.is_robot_editing = true
-        base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: base_workspace.selected_robot.name!, recursively: false)!
+        base_workspace.is_editing = true
+        
+        switch base_workspace.selected_object_type
+        {
+        case .robot:
+            base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: base_workspace.selected_robot.name!, recursively: false)!
+        case .tool:
+            base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: base_workspace.selected_robot.name!, recursively: false)!
+        case .detail:
+            base_workspace.detail_node = base_workspace.details_node?.childNode(withName: base_workspace.selected_detail.name!, recursively: false)!
+        }
     }
     
     func update_unit_origin_position()
@@ -1125,29 +1200,88 @@ struct InfoView: View
         document.preset.robots = base_workspace.file_data().robots
     }
     
-    func remove_robot()
+    func remove_object()
     {
-        base_workspace.selected_robot.is_placed = false
-        document.preset.robots = base_workspace.file_data().robots
-        robot_info_view_presented.toggle()
+        switch base_workspace.selected_object_type
+        {
+        case .robot:
+            base_workspace.selected_robot.is_placed = false
+            document.preset.robots = base_workspace.file_data().robots
+        case .tool:
+            base_workspace.selected_robot.is_placed = false
+            document.preset.robots = base_workspace.file_data().robots
+        case .detail:
+            base_workspace.selected_detail.is_placed = false
+            document.preset.details = base_workspace.file_data().details
+        }
+        info_view_presented.toggle()
+    }
+    
+    func update_detail_origin_position()
+    {
+        #if os(macOS)
+        base_workspace.detail_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_detail.location[1]), y: CGFloat(base_workspace.selected_detail.location[2]), z: CGFloat(base_workspace.selected_detail.location[0]))
+        
+        base_workspace.detail_node?.eulerAngles.x = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[1]))
+        base_workspace.detail_node?.eulerAngles.y = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[2]))
+        base_workspace.detail_node?.eulerAngles.z = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[0]))
+        #else
+        base_workspace.detail_node?.worldPosition = SCNVector3(x: base_workspace.selected_detail.location[1], y: base_workspace.selected_detail.location[2], z: base_workspace.selected_detail.location[0])
+        
+        base_workspace.detail_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[1])))
+        base_workspace.detail_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[2])))
+        base_workspace.detail_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[0])))
+        #endif
     }
     
     func dismiss_view()
     {
-        if !base_workspace.selected_robot.is_placed
+        switch base_workspace.selected_object_type
         {
-            base_workspace.selected_robot.location = [0, 0, 0]
-            base_workspace.selected_robot.rotation = [0, 0, 0]
-            
-            base_workspace.deselect_robot()
-            base_workspace.elements_check()
-            document.preset.elements = base_workspace.file_data().elements
-            document.preset.robots = base_workspace.file_data().robots
-            base_workspace.update_view()
-            
-            base_workspace.unit_node?.removeFromParentNode()
+        case .robot:
+            if !base_workspace.selected_robot.is_placed
+            {
+                base_workspace.selected_robot.location = [0, 0, 0]
+                base_workspace.selected_robot.rotation = [0, 0, 0]
+                
+                base_workspace.deselect_robot()
+                base_workspace.elements_check()
+                document.preset.elements = base_workspace.file_data().elements
+                document.preset.robots = base_workspace.file_data().robots
+                base_workspace.update_view()
+                
+                base_workspace.unit_node?.removeFromParentNode()
+            }
+        case .tool:
+            if !base_workspace.selected_robot.is_placed
+            {
+                base_workspace.selected_robot.location = [0, 0, 0]
+                base_workspace.selected_robot.rotation = [0, 0, 0]
+                
+                base_workspace.deselect_robot()
+                base_workspace.elements_check()
+                document.preset.elements = base_workspace.file_data().elements
+                document.preset.robots = base_workspace.file_data().robots
+                base_workspace.update_view()
+                
+                base_workspace.unit_node?.removeFromParentNode()
+            }
+        case .detail:
+            if !base_workspace.selected_detail.is_placed
+            {
+                base_workspace.selected_detail.location = [0, 0, 0]
+                base_workspace.selected_detail.rotation = [0, 0, 0]
+                
+                base_workspace.deselect_detail()
+                //base_workspace.elements_check()
+                //document.preset.elements = base_workspace.file_data().elements
+                document.preset.details = base_workspace.file_data().details
+                base_workspace.update_view()
+                
+                base_workspace.detail_node?.removeFromParentNode()
+            }
         }
-        base_workspace.is_robot_editing = false
+        base_workspace.is_editing = false
     }
 }
 
@@ -2202,7 +2336,7 @@ struct WorkspaceView_Previews: PreviewProvider
             #endif
             /*AddRobotInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_robot_in_workspace_view_presented: .constant(true))
                 .environmentObject(Workspace())*/
-            InfoView(robot_info_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            InfoView(info_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })

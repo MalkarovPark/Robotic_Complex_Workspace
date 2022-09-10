@@ -34,7 +34,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     
     public var gripable: Bool? //Can this detail be gripped and picked up
     
-    private var physics: SCNPhysicsBody?
+    public var physics: SCNPhysicsBody?
     public var physics_type: PhysicsType = .ph_none //Physic body type
     
     public var enable_physics = false
