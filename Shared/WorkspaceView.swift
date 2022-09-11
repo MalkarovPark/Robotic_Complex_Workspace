@@ -1218,8 +1218,8 @@ struct InfoView: View
             base_workspace.detail_node = base_workspace.details_node?.childNode(withName: base_workspace.selected_detail.name!, recursively: false)!
             base_workspace.detail_node?.physicsBody = .none
             
-            base_workspace.selected_detail.location = [Float(base_workspace.detail_node?.presentation.position.x ?? 0), Float(base_workspace.detail_node?.presentation.position.z ?? 0), Float(base_workspace.detail_node?.presentation.position.y ?? 0)]
-            base_workspace.selected_detail.rotation = [Float(base_workspace.detail_node?.presentation.rotation.x ?? 0), Float(base_workspace.detail_node?.presentation.rotation.z ?? 0), Float(base_workspace.detail_node?.presentation.rotation.y ?? 0)]
+            base_workspace.selected_detail.location = [Float(base_workspace.detail_node?.presentation.position.z ?? 0), Float(base_workspace.detail_node?.presentation.position.x ?? 0), Float(base_workspace.detail_node?.presentation.position.y ?? 0)]
+            base_workspace.selected_detail.rotation = [Float(base_workspace.detail_node?.presentation.rotation.z ?? 0), Float(base_workspace.detail_node?.presentation.rotation.x ?? 0), Float(base_workspace.detail_node?.presentation.rotation.y ?? 0)]
             base_workspace.update_view()
         }
     }

@@ -35,6 +35,20 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     public var gripable: Bool? //Can this detail be gripped and picked up
     
     public var physics: SCNPhysicsBody?
+    {
+        switch physics_type
+        {
+        case .ph_static:
+            return .static()
+        case .ph_dynamic:
+            return .dynamic()
+        case .ph_kinematic:
+            return .kinematic()
+        default:
+            return .none
+        }
+    }
+    
     public var physics_type: PhysicsType = .ph_none //Physic body type
     
     public var enable_physics = false
@@ -47,7 +61,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
             }
             else
             {
-                physics = node?.physicsBody //Save original physics
+                //physics = node?.physicsBody //Save original physics
                 node?.physicsBody = .static()
             }
         }
@@ -165,7 +179,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    func node_by_description()
+    private func node_by_description()
     {
         node = SCNNode()
         
@@ -295,7 +309,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         }
         
         //Set physics type
-        switch physics_type
+        /*switch physics_type
         {
         case .ph_static:
             physics = .static()
@@ -305,7 +319,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
             physics = .kinematic()
         default:
             physics = .none
-        }
+        }*/
         //node?.physicsBody = physics
     }
     

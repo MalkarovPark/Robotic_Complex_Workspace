@@ -287,6 +287,11 @@ struct DetailView: View
         {
             app_state.previewed_detail = detail_item
             app_state.preview_update_scene = true
+            
+            app_state.previewed_detail?.node?.position = SCNVector3(x: 0, y: 0, z: 0)
+            app_state.previewed_detail?.node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
+            app_state.previewed_detail?.enable_physics = false
+            
             new_physics = detail_item.physics_type
             new_gripable = detail_item.gripable ?? false
             

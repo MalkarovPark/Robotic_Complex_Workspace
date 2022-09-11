@@ -657,7 +657,7 @@ class Workspace: ObservableObject
                 if detail.is_placed
                 {
                     let detail_node = detail.node
-                    detail_node?.physicsBody = detail.physics
+                    detail.enable_physics = true
                     detail_node?.categoryBitMask = 4
                     detail_node?.name = detail.name
                     details_node?.addChildNode(detail_node ?? SCNNode())
