@@ -280,7 +280,8 @@ struct PropertiesSettingsView: View
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
-    @State var load_panel_presented = false
+    @State private var load_panel_presented = false
+    @State private var clear_message_presented = false
     #endif
     
     var body: some View
@@ -290,18 +291,9 @@ struct PropertiesSettingsView: View
             #if os(macOS)
             VStack(alignment: .leading)
             {
-                HStack
+                GroupBox(label: Text("Robots").font(.headline))
                 {
-                    Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
-                    Spacer()
-                    
-                    Button("Save", action: show_save_panel)
-                    Button("Load", action: show_load_panel)
-                }
-                
-                GroupBox
-                {
-                    VStack
+                    VStack(spacing: 4)
                     {
                         HStack
                         {
@@ -333,36 +325,137 @@ struct PropertiesSettingsView: View
                             }
                             .padding(.trailing)
                         }
+                        .padding(4)
+                        
+                        Divider()
+                        
+                        HStack
+                        {
+                            Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Spacer()
+                            
+                            Button(action: show_save_panel)
+                            {
+                                Label("Export", systemImage: "square.and.arrow.up")
+                                    .labelStyle(.iconOnly)
+                            }
+                            
+                            Button(action: {
+                                app_state.clear_additive_data()
+                                plist_url = nil
+                                additive_robots_data = nil
+                            })
+                            {
+                                Label("Clear", systemImage: "arrow.counterclockwise")
+                                    .labelStyle(.iconOnly)
+                            }
+                            Button("Load", action: show_load_panel)
+                        }
+                        .padding(4)
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
                 }
-                .padding(.vertical, 8.0)
+                .padding(.bottom, 8.0)
                 
-                HStack
+                GroupBox
                 {
-                    Spacer()
-                    Button("Clear Data")
+                    VStack(spacing: 4)
                     {
-                        app_state.clear_additive_data()
-                        plist_url = nil
-                        additive_robots_data = nil
+                        HStack
+                        {
+                            Text("Tools")
+                                .foregroundColor(Color.gray)
+                            Spacer()
+                            
+                            Text("–")
+                                .foregroundColor(Color.gray)
+                            Spacer()
+                            
+                            Text(app_state.robots_property_file_info.Brands)
+                                .foregroundColor(Color.gray)
+                        }
+                        .padding(4)
+                        
+                        Divider()
+                        
+                        HStack
+                        {
+                            Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Spacer()
+                            
+                            Button(action: show_save_panel)
+                            {
+                                Label("Export", systemImage: "square.and.arrow.up")
+                                    .labelStyle(.iconOnly)
+                            }
+                            
+                            Button(action: {
+                                app_state.clear_additive_data()
+                                plist_url = nil
+                                additive_robots_data = nil
+                            })
+                            {
+                                Label("Clear", systemImage: "arrow.counterclockwise")
+                                    .labelStyle(.iconOnly)
+                            }
+                            Button("Load", action: show_load_panel)
+                        }
+                        .padding(4)
                     }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                }
+                .padding(.bottom, 8.0)
+                
+                GroupBox
+                {
+                    VStack(spacing: 4)
+                    {
+                        HStack
+                        {
+                            Text("Details")
+                                .foregroundColor(Color.gray)
+                            Spacer()
+                            
+                            Text("–")
+                                .foregroundColor(Color.gray)
+                            Spacer()
+                            
+                            Text(app_state.robots_property_file_info.Brands)
+                                .foregroundColor(Color.gray)
+                        }
+                        .padding(4)
+                        
+                        Divider()
+                        
+                        HStack
+                        {
+                            Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Spacer()
+                            
+                            Button(action: show_save_panel)
+                            {
+                                Label("Export", systemImage: "square.and.arrow.up")
+                                    .labelStyle(.iconOnly)
+                            }
+                            
+                            Button(action: {
+                                app_state.clear_additive_data()
+                                plist_url = nil
+                                additive_robots_data = nil
+                            })
+                            {
+                                Label("Clear", systemImage: "arrow.counterclockwise")
+                                    .labelStyle(.iconOnly)
+                            }
+                            Button("Load", action: show_load_panel)
+                        }
+                        .padding(4)
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
                 }
             }
             #else
-            Section(header: Text("File"))
-            {
-                HStack
-                {
-                    Text(plist_url?.deletingPathExtension().lastPathComponent ?? "None")
-                    Spacer()
-                    
-                    Button("Save", action: show_save_panel)
-                    Button("Load", action: show_load_panel)
-                }
-            }
-            
-            Section(header: Text("Data"))
+            Section(header: Text("Robots"))
             {
                 HStack
                 {
@@ -397,13 +490,121 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Button("Clear")
+                    Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Spacer()
+                    
+                    /*Button(action: show_save_panel)
                     {
+                        Label("Export", systemImage: "square.and.arrow.up")
+                            .labelStyle(.iconOnly)
+                    }
+                    
+                    Button(action: {
                         app_state.clear_additive_data()
                         plist_url = nil
                         additive_robots_data = nil
-                    }
+                    })
+                    {
+                        Label("Clear", systemImage: "arrow.counterclockwise")
+                            .labelStyle(.iconOnly)
+                    }*/
+                    Button("Export", action: show_save_panel)
+                    Button("Load", action: show_load_panel)
                 }
+            }
+            
+            Section
+            {
+                HStack
+                {
+                    Text("Tools")
+                        .foregroundColor(Color.gray)
+                    Spacer()
+                    
+                    Text("–")
+                        .foregroundColor(Color.gray)
+                    Spacer()
+                    
+                    Text(app_state.robots_property_file_info.Brands)
+                        .foregroundColor(Color.gray)
+                }
+                
+                HStack
+                {
+                    Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Spacer()
+                    
+                    /*Button(action: show_save_panel)
+                    {
+                        Label("Export", systemImage: "square.and.arrow.up")
+                            .labelStyle(.iconOnly)
+                    }
+                    
+                    Button(action: {
+                        app_state.clear_additive_data()
+                        plist_url = nil
+                        additive_robots_data = nil
+                    })
+                    {
+                        Label("Clear", systemImage: "arrow.counterclockwise")
+                            .labelStyle(.iconOnly)
+                    }*/
+                    Button("Export", action: show_save_panel)
+                    Button("Load", action: show_load_panel)
+                }
+            }
+            
+            Section
+            {
+                HStack
+                {
+                    Text("Details")
+                        .foregroundColor(Color.gray)
+                    Spacer()
+                    
+                    Text("–")
+                        .foregroundColor(Color.gray)
+                    Spacer()
+                    
+                    Text(app_state.robots_property_file_info.Brands)
+                        .foregroundColor(Color.gray)
+                }
+                
+                HStack
+                {
+                    Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Spacer()
+                    
+                    Button("Export", action: show_save_panel)
+                    Button("Load", action: show_load_panel)
+                }
+            }
+            
+            Button("Clear", role: .destructive)
+            {
+                clear_message_presented = true
+            }
+            .confirmationDialog(Text("None"), isPresented: $clear_message_presented)
+            {
+                Button("Robots", role: .destructive)
+                {
+                    app_state.clear_additive_data()
+                    plist_url = nil
+                    additive_robots_data = nil
+                }
+                Button("Tools", role: .destructive)
+                {
+                    app_state.clear_additive_data()
+                    plist_url = nil
+                    additive_robots_data = nil
+                }
+                Button("Details", role: .destructive)
+                {
+                    app_state.clear_additive_data()
+                    plist_url = nil
+                    additive_robots_data = nil
+                }
+                Button("Cancel", role: .cancel) { }
             }
             #endif
         }
