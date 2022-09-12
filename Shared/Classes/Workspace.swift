@@ -494,6 +494,7 @@ class Workspace: ObservableObject
             else
             {
                 is_performing = false
+                update_view()
             }
         }
     }

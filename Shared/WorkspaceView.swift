@@ -245,7 +245,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(base_workspace.avaliable_robots_names.count == 0 || (base_workspace.is_selected && base_workspace.selected_robot.is_placed)  || base_workspace.is_performing ? Color.secondary : Color.black)
+                                .foregroundColor(base_workspace.is_performing ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -1908,9 +1908,7 @@ struct AddElementView: View
                         }
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
-                        #if os(iOS)
                         .buttonStyle(.bordered)
-                        #endif
                     case .modificator:
                         Picker("Type", selection: $add_new_element_data.modificator_type)
                         {
@@ -1921,9 +1919,7 @@ struct AddElementView: View
                         }
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
-                        #if os(iOS)
                         .buttonStyle(.bordered)
-                        #endif
                     case .logic:
                         Picker("Type", selection: $add_new_element_data.logic_type)
                         {
@@ -1934,9 +1930,7 @@ struct AddElementView: View
                         }
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
-                        #if os(iOS)
                         .buttonStyle(.bordered)
-                        #endif
                     }
                 }
             }
