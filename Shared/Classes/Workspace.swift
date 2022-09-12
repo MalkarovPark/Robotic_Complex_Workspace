@@ -669,7 +669,7 @@ class Workspace: ObservableObject
                     detail_node?.eulerAngles.y = to_rad(in_angle: CGFloat(detail.rotation[2]))
                     detail_node?.eulerAngles.z = to_rad(in_angle: CGFloat(detail.rotation[0]))
                     #else
-                    detail_node?.position = SCNVector3(x: robot.location[1], y: robot.location[2], z: robot.location[0])
+                    detail_node?.position = SCNVector3(x: Float(detail.location[1]), y: Float(detail.location[2]), z: Float(detail.location[0]))
                     
                     detail_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(detail.rotation[1])))
                     detail_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(detail.rotation[2])))

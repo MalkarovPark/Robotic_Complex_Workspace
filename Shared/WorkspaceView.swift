@@ -1159,17 +1159,25 @@ struct InfoView: View
                 {
                 case .robot:
                     PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                        .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+                        { _ in
+                            update_unit_origin_position()
+                        }
                 case .tool:
                     PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                        .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+                        { _ in
+                            update_unit_origin_position()
+                        }
                 case .detail:
                     PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
+                        .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
+                        { _ in
+                            update_detail_origin_position()
+                        }
                 }
             }
             .padding([.top, .leading, .trailing])
-            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
-            { _ in
-                update_unit_origin_position()
-            }
             
             if app_state.is_compact_view
             {
@@ -1275,6 +1283,8 @@ struct InfoView: View
         base_workspace.detail_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[2])))
         base_workspace.detail_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[0])))
         #endif
+        
+        document.preset.details = base_workspace.file_data().details
     }
     
     func dismiss_view()
