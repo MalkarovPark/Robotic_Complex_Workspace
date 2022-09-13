@@ -13,6 +13,8 @@ import SwiftUI
 class AppState : ObservableObject
 {
     @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
+    @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
+    @AppStorage("AdditiveDetailsData") private var additive_details_data: Data?
     
     @Published var reset_view = false
     @Published var reset_view_enabled = true
@@ -20,6 +22,7 @@ class AppState : ObservableObject
     #if os(iOS)
     @Published var settings_view_presented = false
     @Published var is_compact_view = false
+    public var plist_file_type: WorkspaceObjecTypes?
     #endif
     
     public var workspace_scene = SCNScene()
@@ -114,9 +117,15 @@ class AppState : ObservableObject
     public var tool_dictionary = [String: Any]()
     public var tools = [String]()
     
+    private var tools_data: Data //Data store from robots property list
+    private var additive_tools_dictionary = [String: [String: Any]]()
+    
     public var details_dictionary = [String: [String: Any]]()
     public var detail_dictionary = [String: Any]()
     public var details = [String]()
+    
+    private var details_data: Data //Data store from robots property list
+    private var additive_details_dictionary = [String: [String: Any]]()
     
     //MARK: - App State class init function
     init()
@@ -131,12 +140,16 @@ class AppState : ObservableObject
         manufacturer_name = manufacturers.first ?? "None"
         
         //Get data about details from internal propery list file
-        tools_dictionary = try! PropertyListSerialization.propertyList(from: Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!), options: .mutableContainers, format: nil) as! [String: [String: Any]]
+        tools_data = try! Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!)
+        
+        tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
         tools = Array(tools_dictionary.keys).sorted(by: <)
         tool_name = tools.first ?? "None"
         
         //Get data about tools from internal propery list file
-        details_dictionary = try! PropertyListSerialization.propertyList(from: Data(contentsOf: Bundle.main.url(forResource: "DetailsInfo", withExtension: "plist")!), options: .mutableContainers, format: nil) as! [String: [String: Any]]
+        details_data = try! Data(contentsOf: Bundle.main.url(forResource: "DetailsInfo", withExtension: "plist")!)
+        
+        details_dictionary = try! PropertyListSerialization.propertyList(from: details_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
         details = Array(details_dictionary.keys).sorted(by: <)
         detail_name = details.first ?? "None"
     }
@@ -144,26 +157,58 @@ class AppState : ObservableObject
     //MARK: - Get additive robots data from external property list
     public func get_additive_data()
     {
+        var new_objects = Array<String>()
+        
+        //MARK: Manufacturers data
         do
         {
-            //MARK: Manufacturers data
             additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_robots_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
             
-            let new_manufacturers = Array(additive_robots_dictionary.keys).sorted(by: <)
-            manufacturers.append(contentsOf: new_manufacturers)
+            new_objects = Array(additive_robots_dictionary.keys).sorted(by: <)
+            manufacturers.append(contentsOf: new_objects)
             
-            for i in 0..<new_manufacturers.count
+            for i in 0..<new_objects.count
             {
-                robots_dictionary.updateValue(additive_robots_dictionary[new_manufacturers[i]]!, forKey: new_manufacturers[i])
+                robots_dictionary.updateValue(additive_robots_dictionary[new_objects[i]]!, forKey: new_objects[i])
             }
-            
-            //MARK: Tools data
-            
-            //MARK: Details data
         }
         catch
         {
-            print (error.localizedDescription)
+            print(error.localizedDescription)
+        }
+        
+        //MARK: Tools data
+        do
+        {
+            additive_tools_dictionary = try PropertyListSerialization.propertyList(from: additive_tools_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: Any]]
+            new_objects = Array(additive_tools_dictionary.keys).sorted(by: <)
+            tools.append(contentsOf: new_objects)
+            
+            for i in 0..<new_objects.count
+            {
+                tools_dictionary.updateValue(additive_tools_dictionary[new_objects[i]]!, forKey: new_objects[i])
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        //MARK: Details data
+        do
+        {
+            additive_details_dictionary = try PropertyListSerialization.propertyList(from: additive_details_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: Any]]
+            new_objects = Array(additive_details_dictionary.keys).sorted(by: <)
+            details.append(contentsOf: new_objects)
+            
+            for i in 0..<new_objects.count
+            {
+                details_dictionary.updateValue(additive_details_dictionary[new_objects[i]]!, forKey: new_objects[i])
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
         }
         
         update_series_info()
@@ -172,15 +217,31 @@ class AppState : ObservableObject
     
     public func update_additive_data()
     {
-        clear_additive_data()
+        for object_type in WorkspaceObjecTypes.allCases
+        {
+            clear_additive_data(type: object_type)
+        }
+        //clear_additive_data()
         get_additive_data()
     }
     
-    public func clear_additive_data()
+    public func clear_additive_data(type: WorkspaceObjecTypes)
     {
-        robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
-        manufacturers = Array(robots_dictionary.keys).sorted(by: <)
-        manufacturer_name = manufacturers.first ?? "None"
+        switch type
+        {
+        case .robot:
+            robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
+            manufacturers = Array(robots_dictionary.keys).sorted(by: <)
+            manufacturer_name = manufacturers.first ?? "None"
+        case .tool:
+            tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
+            tools = Array(tools_dictionary.keys).sorted(by: <)
+            tool_name = tools.first ?? "None"
+        case .detail:
+            details_dictionary = try! PropertyListSerialization.propertyList(from: details_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
+            details = Array(details_dictionary.keys).sorted(by: <)
+            detail_name = details.first ?? "None"
+        }
     }
     
     //MARK: - Get info from dictionaries
@@ -223,12 +284,14 @@ class AppState : ObservableObject
     }
     
     //MARK: - Info for settings view
-    //MARK: Robots info
-    public var robots_property_file_info: (Brands: String, Series: String, Models: String)
+    public var property_files_info: (Brands: String, Series: String, Models: String, Tools: String, Details: String)
     {
         var brands = 0
         var series = 0
         var models = 0
+        
+        var tools = 0
+        var details = 0
         
         if additive_robots_data != nil
         {
@@ -244,6 +307,16 @@ class AppState : ObservableObject
             }
         }
         
-        return (Brands: String(brands), Series: String(series), Models: String(models))
+        if additive_tools_data != nil
+        {
+            tools = additive_tools_dictionary.keys.count
+        }
+        
+        if additive_details_data != nil
+        {
+            details = additive_details_dictionary.keys.count
+        }
+        
+        return (Brands: String(brands), Series: String(series), Models: String(models), Tools: String(tools), Details: String(details))
     }
 }

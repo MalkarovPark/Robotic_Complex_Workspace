@@ -274,8 +274,13 @@ struct GeneralSettingsView: View
 
 struct PropertiesSettingsView: View
 {
-    @AppStorage("RobotsPlistURL") private var plist_url: URL?
+    @AppStorage("RobotsPlistURL") private var robots_plist_url: URL?
+    @AppStorage("ToolsPlistURL") private var tools_plist_url: URL?
+    @AppStorage("DetailsPlistURL") private var details_plist_url: URL?
+    
     @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
+    @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
+    @AppStorage("AdditiveDetailsData") private var additive_details_data: Data?
     
     @EnvironmentObject var app_state: AppState
     
@@ -299,7 +304,7 @@ struct PropertiesSettingsView: View
                         {
                             VStack
                             {
-                                Text(app_state.robots_property_file_info.Brands)
+                                Text(app_state.property_files_info.Brands)
                                     .foregroundColor(Color.gray)
                                 Text("Brands")
                                     .foregroundColor(Color.gray)
@@ -309,7 +314,7 @@ struct PropertiesSettingsView: View
                             
                             VStack
                             {
-                                Text(app_state.robots_property_file_info.Series)
+                                Text(app_state.property_files_info.Series)
                                     .foregroundColor(Color.gray)
                                 Text("Series")
                                     .foregroundColor(Color.gray)
@@ -318,7 +323,7 @@ struct PropertiesSettingsView: View
                             
                             VStack
                             {
-                                Text(app_state.robots_property_file_info.Models)
+                                Text(app_state.property_files_info.Models)
                                     .foregroundColor(Color.gray)
                                 Text("Models")
                                     .foregroundColor(Color.gray)
@@ -331,7 +336,7 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Text("File – " + (robots_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                             Spacer()
                             
                             Button(action: show_save_panel)
@@ -341,15 +346,15 @@ struct PropertiesSettingsView: View
                             }
                             
                             Button(action: {
-                                app_state.clear_additive_data()
-                                plist_url = nil
+                                app_state.clear_additive_data(type: .robot)
+                                robots_plist_url = nil
                                 additive_robots_data = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
                                     .labelStyle(.iconOnly)
                             }
-                            Button("Load", action: show_load_panel)
+                            Button("Load", action: { show_load_panel(type: .robot) })
                         }
                         .padding(4)
                     }
@@ -371,7 +376,7 @@ struct PropertiesSettingsView: View
                                 .foregroundColor(Color.gray)
                             Spacer()
                             
-                            Text(app_state.robots_property_file_info.Brands)
+                            Text(app_state.property_files_info.Tools)
                                 .foregroundColor(Color.gray)
                         }
                         .padding(4)
@@ -380,7 +385,7 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Text("File – " + (tools_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                             Spacer()
                             
                             Button(action: show_save_panel)
@@ -390,15 +395,16 @@ struct PropertiesSettingsView: View
                             }
                             
                             Button(action: {
-                                app_state.clear_additive_data()
-                                plist_url = nil
-                                additive_robots_data = nil
+                                app_state.clear_additive_data(type: .tool
+                                )
+                                tools_plist_url = nil
+                                additive_tools_data = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
                                     .labelStyle(.iconOnly)
                             }
-                            Button("Load", action: show_load_panel)
+                            Button("Load", action: { show_load_panel(type: .tool) })
                         }
                         .padding(4)
                     }
@@ -420,7 +426,7 @@ struct PropertiesSettingsView: View
                                 .foregroundColor(Color.gray)
                             Spacer()
                             
-                            Text(app_state.robots_property_file_info.Brands)
+                            Text(app_state.property_files_info.Details)
                                 .foregroundColor(Color.gray)
                         }
                         .padding(4)
@@ -429,7 +435,7 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Text("File – " + (details_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                             Spacer()
                             
                             Button(action: show_save_panel)
@@ -439,15 +445,15 @@ struct PropertiesSettingsView: View
                             }
                             
                             Button(action: {
-                                app_state.clear_additive_data()
-                                plist_url = nil
-                                additive_robots_data = nil
+                                app_state.clear_additive_data(type: .detail)
+                                details_plist_url = nil
+                                additive_details_data = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
                                     .labelStyle(.iconOnly)
                             }
-                            Button("Load", action: show_load_panel)
+                            Button("Load", action: { show_load_panel(type: .detail) })
                         }
                         .padding(4)
                     }
@@ -461,7 +467,7 @@ struct PropertiesSettingsView: View
                 {
                     VStack
                     {
-                        Text(app_state.robots_property_file_info.Brands)
+                        Text(app_state.property_files_info.Brands)
                             .foregroundColor(Color.gray)
                         Text("Brands")
                             .foregroundColor(Color.gray)
@@ -471,7 +477,7 @@ struct PropertiesSettingsView: View
                     
                     VStack
                     {
-                        Text(app_state.robots_property_file_info.Series)
+                        Text(app_state.property_files_info.Series)
                             .foregroundColor(Color.gray)
                         Text("Series")
                             .foregroundColor(Color.gray)
@@ -480,7 +486,7 @@ struct PropertiesSettingsView: View
                     
                     VStack
                     {
-                        Text(app_state.robots_property_file_info.Models)
+                        Text(app_state.property_files_info.Models)
                             .foregroundColor(Color.gray)
                         Text("Models")
                             .foregroundColor(Color.gray)
@@ -490,7 +496,7 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Text("File – " + (robots_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                     Spacer()
                     
                     /*Button(action: show_save_panel)
@@ -509,7 +515,7 @@ struct PropertiesSettingsView: View
                             .labelStyle(.iconOnly)
                     }*/
                     Button("Export", action: show_save_panel)
-                    Button("Load", action: show_load_panel)
+                    Button("Load", action: { show_load_panel(type: .robot) })
                 }
             }
             
@@ -525,13 +531,13 @@ struct PropertiesSettingsView: View
                         .foregroundColor(Color.gray)
                     Spacer()
                     
-                    Text(app_state.robots_property_file_info.Brands)
+                    Text(app_state.property_files_info.Tools)
                         .foregroundColor(Color.gray)
                 }
                 
                 HStack
                 {
-                    Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Text("File – " + (tools_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                     Spacer()
                     
                     /*Button(action: show_save_panel)
@@ -550,7 +556,7 @@ struct PropertiesSettingsView: View
                             .labelStyle(.iconOnly)
                     }*/
                     Button("Export", action: show_save_panel)
-                    Button("Load", action: show_load_panel)
+                    Button("Load", action: { show_load_panel(type: .tool) })
                 }
             }
             
@@ -566,17 +572,17 @@ struct PropertiesSettingsView: View
                         .foregroundColor(Color.gray)
                     Spacer()
                     
-                    Text(app_state.robots_property_file_info.Brands)
+                    Text(app_state.property_files_info.Details)
                         .foregroundColor(Color.gray)
                 }
                 
                 HStack
                 {
-                    Text("File – " + (plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Text("File – " + (details_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                     Spacer()
                     
                     Button("Export", action: show_save_panel)
-                    Button("Load", action: show_load_panel)
+                    Button("Load", action: { show_load_panel(type: .detail) })
                 }
             }
             
@@ -586,23 +592,23 @@ struct PropertiesSettingsView: View
             }
             .confirmationDialog(Text("None"), isPresented: $clear_message_presented)
             {
-                Button("Robots", role: .destructive)
+                Button("Robots")
                 {
-                    app_state.clear_additive_data()
-                    plist_url = nil
+                    app_state.clear_additive_data(type: .robot)
+                    robots_plist_url = nil
                     additive_robots_data = nil
                 }
-                Button("Tools", role: .destructive)
+                Button("Tools")
                 {
-                    app_state.clear_additive_data()
-                    plist_url = nil
-                    additive_robots_data = nil
+                    app_state.clear_additive_data(type: .tool)
+                    tools_plist_url = nil
+                    additive_tools_data = nil
                 }
-                Button("Details", role: .destructive)
+                Button("Details")
                 {
-                    app_state.clear_additive_data()
-                    plist_url = nil
-                    additive_robots_data = nil
+                    app_state.clear_additive_data(type: .detail)
+                    details_plist_url = nil
+                    additive_details_data = nil
                 }
                 Button("Cancel", role: .cancel) { }
             }
@@ -618,7 +624,7 @@ struct PropertiesSettingsView: View
         #endif
     }
     
-    func show_load_panel()
+    func show_load_panel(type: WorkspaceObjecTypes)
     {
         #if os(macOS)
         let openPanel = NSOpenPanel()
@@ -628,21 +634,59 @@ struct PropertiesSettingsView: View
         openPanel.canChooseFiles = true
         let response = openPanel.runModal()
         
-        plist_url = response == .OK ? openPanel.url : nil
-        do
+        switch type
         {
-            if ((plist_url?.startAccessingSecurityScopedResource()) != nil)
+        case .robot:
+            robots_plist_url = response == .OK ? openPanel.url : nil
+            
+            do
             {
-                additive_robots_data = try Data(contentsOf: plist_url!)
-                app_state.update_additive_data()
+                if ((robots_plist_url?.startAccessingSecurityScopedResource()) != nil)
+                {
+                    additive_robots_data = try Data(contentsOf: robots_plist_url!)
+                    app_state.update_additive_data()
+                }
+            }
+            catch
+            {
+                print("error reading")
+                print(error.localizedDescription)
+            }
+        case .tool:
+            tools_plist_url = response == .OK ? openPanel.url : nil
+            
+            do
+            {
+                if ((tools_plist_url?.startAccessingSecurityScopedResource()) != nil)
+                {
+                    additive_tools_data = try Data(contentsOf: tools_plist_url!)
+                    app_state.update_additive_data()
+                }
+            }
+            catch
+            {
+                print("error reading")
+                print(error.localizedDescription)
+            }
+        case .detail:
+            details_plist_url = response == .OK ? openPanel.url : nil
+            
+            do
+            {
+                if ((details_plist_url?.startAccessingSecurityScopedResource()) != nil)
+                {
+                    additive_details_data = try Data(contentsOf: details_plist_url!)
+                    app_state.update_additive_data()
+                }
+            }
+            catch
+            {
+                print("error reading")
+                print(error.localizedDescription)
             }
         }
-        catch
-        {
-            print ("error reading")
-            print (error.localizedDescription)
-        }
         #else
+        app_state.plist_file_type = type
         load_panel_presented = true
         #endif
     }
@@ -681,14 +725,19 @@ struct AdvancedSettingsView: View
 #if os(iOS)
 struct DocumentPickerView: UIViewControllerRepresentable
 {
-    @AppStorage("RobotsPlistURL") private var plist_url: URL?
+    @AppStorage("RobotsPlistURL") private var robots_plist_url: URL?
+    @AppStorage("ToolsPlistURL") private var tools_plist_url: URL?
+    @AppStorage("DetailsPlistURL") private var details_plist_url: URL?
+    
     @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
+    @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
+    @AppStorage("AdditiveDetailsData") private var additive_details_data: Data?
     
     @EnvironmentObject var app_state: AppState
     
     func makeCoordinator() -> Coordinator
     {
-        return DocumentPickerView.Coordinator(parent1: self)
+        return DocumentPickerView.Coordinator(parent1: self, app_state: app_state)
     }
     
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController
@@ -707,27 +756,65 @@ struct DocumentPickerView: UIViewControllerRepresentable
     class Coordinator: NSObject, UIDocumentPickerDelegate
     {
         var parent: DocumentPickerView
+        var app_state: AppState
         
-        init(parent1: DocumentPickerView)
+        init(parent1: DocumentPickerView, app_state: AppState)
         {
             parent = parent1
+            self.app_state = app_state
         }
         
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL])
         {
-            parent.plist_url = urls[0]
-            do
+            switch app_state.plist_file_type
             {
-                if ((parent.plist_url?.startAccessingSecurityScopedResource()) != nil)
+            case .robot:
+                parent.robots_plist_url = urls[0]
+                do
                 {
-                    parent.additive_robots_data = try Data(contentsOf: parent.plist_url!)
-                    parent.app_state.update_additive_data()
+                    if ((parent.robots_plist_url?.startAccessingSecurityScopedResource()) != nil)
+                    {
+                        parent.additive_robots_data = try Data(contentsOf: parent.robots_plist_url!)
+                        parent.app_state.update_additive_data()
+                    }
                 }
-            }
-            catch
-            {
-                print ("error reading")
-                print (error.localizedDescription)
+                catch
+                {
+                    print ("error reading")
+                    print (error.localizedDescription)
+                }
+            case .tool:
+                parent.tools_plist_url = urls[0]
+                do
+                {
+                    if ((parent.tools_plist_url?.startAccessingSecurityScopedResource()) != nil)
+                    {
+                        parent.additive_tools_data = try Data(contentsOf: parent.tools_plist_url!)
+                        parent.app_state.update_additive_data()
+                    }
+                }
+                catch
+                {
+                    print ("error reading")
+                    print (error.localizedDescription)
+                }
+            case .detail:
+                parent.details_plist_url = urls[0]
+                do
+                {
+                    if ((parent.details_plist_url?.startAccessingSecurityScopedResource()) != nil)
+                    {
+                        parent.additive_details_data = try Data(contentsOf: parent.details_plist_url!)
+                        parent.app_state.update_additive_data()
+                    }
+                }
+                catch
+                {
+                    print ("error reading")
+                    print (error.localizedDescription)
+                }
+            default:
+                break
             }
             
             print(urls[0].absoluteString)
