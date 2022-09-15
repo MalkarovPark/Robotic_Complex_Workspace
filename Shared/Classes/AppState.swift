@@ -29,6 +29,8 @@ class AppState : ObservableObject
     public var previewed_detail: Detail?
     public var preview_update_scene = false
     
+    @Published var view_update_state = false
+    
     @Published var add_selection = 0
     
     @Published var manufacturer_name = "None" //Manufacturer's display string for the menu
@@ -162,7 +164,7 @@ class AppState : ObservableObject
         //MARK: Manufacturers data
         do
         {
-            additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_robots_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
+            additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_robots_data ?? Data(), options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]]
             
             new_objects = Array(additive_robots_dictionary.keys).sorted(by: <)
             manufacturers.append(contentsOf: new_objects)

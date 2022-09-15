@@ -18,6 +18,7 @@ struct DetailsView: View
     @State private var dragged_detail: Detail?
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
     
@@ -27,29 +28,61 @@ struct DetailsView: View
         {
             if base_workspace.details.count > 0
             {
-                //MARK: Scroll view for details
-                ScrollView(.vertical, showsIndicators: true)
+                if app_state.view_update_state
                 {
-                    LazyVGrid(columns: columns, spacing: 24)
+                    //MARK: Scroll view for details
+                    ScrollView(.vertical, showsIndicators: true)
                     {
-                        ForEach(base_workspace.details)
-                        { detail_item in
-                            ZStack
-                            {
-                                DetailCardView(document: $document, detail_item: detail_item, card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
-                                DetailDeleteButton(details: $base_workspace.details, detail_item: detail_item, on_delete: remove_details)
+                        LazyVGrid(columns: columns, spacing: 24)
+                        {
+                            ForEach(base_workspace.details)
+                            { detail_item in
+                                ZStack
+                                {
+                                    DetailCardView(document: $document, detail_item: detail_item, card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
+                                    DetailDeleteButton(details: $base_workspace.details, detail_item: detail_item, on_delete: remove_details)
+                                }
+                                .onDrag({
+                                    self.dragged_detail = detail_item
+                                    return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
+                                }, preview: {
+                                    DetailCardViewPreview(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
+                                })
+                                .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
+                                .transition(AnyTransition.scale)
                             }
-                            .onDrag({
-                                self.dragged_detail = detail_item
-                                return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
-                            }, preview: {
-                                DetailCardViewPreview(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
-                            })
-                            .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
-                            .transition(AnyTransition.scale)
                         }
+                        .padding(20)
                     }
-                    .padding(20)
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                }
+                else
+                {
+                    //MARK: Scroll view for details
+                    ScrollView(.vertical, showsIndicators: true)
+                    {
+                        LazyVGrid(columns: columns, spacing: 24)
+                        {
+                            ForEach(base_workspace.details)
+                            { detail_item in
+                                ZStack
+                                {
+                                    DetailCardView(document: $document, detail_item: detail_item, card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
+                                    DetailDeleteButton(details: $base_workspace.details, detail_item: detail_item, on_delete: remove_details)
+                                }
+                                .onDrag({
+                                    self.dragged_detail = detail_item
+                                    return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
+                                }, preview: {
+                                    DetailCardViewPreview(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
+                                })
+                                .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
+                                .transition(AnyTransition.scale)
+                            }
+                        }
+                        .padding(20)
+                    }
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
             }
             else
@@ -228,7 +261,10 @@ struct DetailView: View
     //@State private var new_detail_name = ""
     @State var new_physics: PhysicsType = .ph_none
     @State var new_gripable = false
+    @State var new_color: Color = .accentColor
+    
     @State private var ready_for_save = false
+    @State private var is_document_updated = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -249,8 +285,7 @@ struct DetailView: View
             
             HStack(spacing: 0)
             {
-                Picker(selection: $new_physics, label: Text("Physics")
-                        .bold())
+                Picker("Physics", selection: $new_physics)
                 {
                     ForEach(PhysicsType.allCases, id: \.self)
                     { type in
@@ -267,6 +302,16 @@ struct DetailView: View
                 { _ in
                     update_data()
                 }
+                
+                ColorPicker("Color", selection: $new_color)
+                    .padding(.trailing)
+                    .onChange(of: new_color)
+                    { _ in
+                        update_data()
+                    }
+                #if os(iOS)
+                    .frame(width: 112)
+                #endif
                 
                 Toggle("Gripable", isOn: $new_gripable)
                     .toggleStyle(SwitchToggleStyle())
@@ -294,6 +339,7 @@ struct DetailView: View
             
             new_physics = detail_item.physics_type
             new_gripable = detail_item.gripable ?? false
+            new_color = detail_item.color
             
             //app_state.get_scene_image = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
@@ -301,6 +347,13 @@ struct DetailView: View
                 ready_for_save = true
             }
             //ready_for_save = true
+        }
+        .onDisappear()
+        {
+            if is_document_updated
+            {
+                app_state.view_update_state.toggle()
+            }
         }
     }
     
@@ -311,7 +364,10 @@ struct DetailView: View
             app_state.get_scene_image = true
             detail_item.physics_type = new_physics
             detail_item.gripable = new_gripable
+            detail_item.color = new_color
+            
             document.preset.details = base_workspace.file_data().details
+            is_document_updated = true
         }
     }
 }

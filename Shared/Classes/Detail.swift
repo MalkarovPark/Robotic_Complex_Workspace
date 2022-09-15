@@ -68,7 +68,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: - Detail init functions
-    init(name: String, scene: String) //Init detial by scene_name
+    init(name: String, scene: String) //Init detail by scene_name
     {
         self.name = name
         self.detail_scene_address = scene
@@ -304,23 +304,8 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         case "shadow only":
             node?.geometry?.firstMaterial?.lightingModel = .shadowOnly
         default:
-            node?.geometry?.firstMaterial?.lightingModel = .blinn
-            //break
+            node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
         }
-        
-        //Set physics type
-        /*switch physics_type
-        {
-        case .ph_static:
-            physics = .static()
-        case .ph_dynamic:
-            physics = .dynamic()
-        case .ph_kinematic:
-            physics = .kinematic()
-        default:
-            physics = .none
-        }*/
-        //node?.physicsBody = physics
     }
     
     //MARK: Detail in workspace handling
@@ -330,6 +315,33 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     
     //MARK: - UI functions
     private var image_data = Data()
+    public var color: Color
+    {
+        get
+        {
+            return Color(red: Double(figure_color?[0] ?? 0) / 255, green: Double(figure_color?[1] ?? 0) / 255, blue: Double(figure_color?[2] ?? 0) / 255)
+        }
+        set
+        {
+            #if os(macOS)
+            let viewed_color_components = NSColor(newValue).cgColor.components
+            #else
+            let viewed_color_components = UIColor(newValue).cgColor.components
+            #endif
+            
+            for i in 0..<(figure_color?.count ?? 3)
+            {
+                self.figure_color?[i] = Int((viewed_color_components?[i] ?? 0) * 255)
+            }
+            
+            //Update color by components
+            #if os(macOS)
+            node?.geometry?.firstMaterial?.diffuse.contents = NSColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
+            #else
+            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
+            #endif
+        }
+    }
     
     #if os(macOS)
     public var image: NSImage
@@ -346,7 +358,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     
     public func card_info() -> (title: String, color: Color, image: NSImage) //Get info for robot card view (in RobotsView)
     {
-        return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0) / 255, green: Double(figure_color?[1] ?? 0) / 255, blue: Double(figure_color?[2] ?? 0) / 255), self.image)
+        return("\(self.name ?? "Detail")", self.color, self.image)
     }
     #else
     public var image: UIImage
