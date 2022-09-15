@@ -366,7 +366,11 @@ struct DetailView: View
             detail_item.gripable = new_gripable
             detail_item.color = new_color
             
-            document.preset.details = base_workspace.file_data().details
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                document.preset.details = base_workspace.file_data().details
+            }
+            //document.preset.details = base_workspace.file_data().details
             is_document_updated = true
         }
     }

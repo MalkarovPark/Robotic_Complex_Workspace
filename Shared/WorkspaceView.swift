@@ -847,16 +847,35 @@ struct AddInWorkspaceView: View
                 Text("None")
             }
             #else
-            VStack(spacing: 12)
+            switch app_state.add_selection
             {
-                PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+            case 0:
+                VStack(spacing: 12)
+                {
+                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                }
+                .padding([.top, .leading, .trailing])
+                .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+                { _ in
+                    update_unit_origin_position()
+                }
+                .disabled(base_workspace.avaliable_robots_names.count == 0)
+            case 1:
+                Text("")
+            case 2:
+                VStack(spacing: 12)
+                {
+                    PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
+                }
+                .padding([.top, .leading, .trailing])
+                .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
+                { _ in
+                    update_detail_origin_position()
+                }
+                .disabled(base_workspace.avaliable_details_names.count == 0)
+            default:
+                Text("None")
             }
-            .padding([.top, .leading, .trailing])
-            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
-            { _ in
-                update_unit_origin_position()
-            }
-            .disabled(base_workspace.avaliable_robots_names.count == 0)
             
             if app_state.is_compact_view
             {
