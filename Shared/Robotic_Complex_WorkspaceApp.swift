@@ -12,6 +12,7 @@ import SceneKit
 struct Robotic_Complex_WorkspaceApp: App
 {
     @StateObject var app_state = AppState()
+    @State var first_loaded = true
     
     @AppStorage("RobotsPlistURL") private var plist_url: URL?
     
@@ -23,9 +24,13 @@ struct Robotic_Complex_WorkspaceApp: App
             file in ContentView(document: file.$document)
                 .environmentObject(app_state)
                 .onAppear
-            {
-                app_state.get_additive_data()
-            }
+                {
+                    if first_loaded
+                    {
+                        app_state.get_additive_data()
+                        first_loaded = false
+                    }
+                }
         }
         .commands
         {
