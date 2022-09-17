@@ -739,7 +739,7 @@ enum RotationComponents: Equatable, CaseIterable
 struct WorkspacePreset: Codable
 {
     var robots = [robot_struct]()
+    var elements = [workspace_program_element_struct]()
     var tools = [tool_struct]()
     var details = [detail_struct]()
-    var elements = [workspace_program_element_struct]()
 }

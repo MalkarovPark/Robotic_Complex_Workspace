@@ -434,18 +434,18 @@ struct AddRobotView: View
             Divider()
             
             //MARK: Cancel and Save buttons
-            HStack
+            HStack(spacing: 0)
             {
                 Spacer()
                 
                 Button("Cancel", action: { add_robot_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
-                    .padding([.top, .leading, .bottom])
                 
                 Button("Save", action: add_robot_in_workspace)
                     .keyboardShortcut(.defaultAction)
-                    .padding()
+                    .padding(.leading)
             }
+            .padding()
         }
         .controlSize(.regular)
         .frame(minWidth: 160, idealWidth: 240, maxWidth: 320, minHeight: 240, maxHeight: 300)

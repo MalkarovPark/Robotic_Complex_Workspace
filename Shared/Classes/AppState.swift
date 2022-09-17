@@ -131,7 +131,7 @@ class AppState : ObservableObject
     //MARK: - App State class init function
     init()
     {
-        //Get data about robots from internal propery list file
+        //Get robots data from internal propery list file
         robots_data = try! Data(contentsOf: Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")!)
         
         robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
@@ -140,14 +140,14 @@ class AppState : ObservableObject
         manufacturers = Array(robots_dictionary.keys).sorted(by: <)
         manufacturer_name = manufacturers.first ?? "None"
         
-        //Get data about details from internal propery list file
+        //Get details data from internal propery list file
         tools_data = try! Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!)
         
         tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
         tools = Array(tools_dictionary.keys).sorted(by: <)
         tool_name = tools.first ?? "None"
         
-        //Get data about tools from internal propery list file
+        //Get tools data from internal propery list file
         details_data = try! Data(contentsOf: Bundle.main.url(forResource: "DetailsInfo", withExtension: "plist")!)
         
         details_dictionary = try! PropertyListSerialization.propertyList(from: details_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
