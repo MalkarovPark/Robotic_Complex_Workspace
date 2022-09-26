@@ -1807,7 +1807,7 @@ struct AddProgramView: View
                 
                 Button("Add")
                 {
-                    base_workspace.selected_robot.add_program(prog: PositionsProgram(name: add_text))
+                    base_workspace.selected_robot.add_program(program: PositionsProgram(name: add_text))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                     
                     document.preset.robots = base_workspace.file_data().robots

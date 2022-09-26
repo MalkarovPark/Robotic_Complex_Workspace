@@ -19,19 +19,7 @@ class Workspace: ObservableObject
     //MARK: - Robots manage functions
     public func add_robot(robot: Robot)
     {
-        var name_count = 1
-        for viewed_robot in robots
-        {
-            if viewed_robot.file_info.name == robot.file_info.name
-            {
-                name_count += 1
-            }
-        }
-        
-        if name_count > 1
-        {
-            robot.name! += " \(name_count)"
-        }
+        robot.name = mismatched_name(name: robot.name!, names: robots_names)
         robots.append(robot)
     }
     
@@ -192,19 +180,7 @@ class Workspace: ObservableObject
     //MARK: - Details manage funcions
     public func add_detail(detail: Detail)
     {
-        var name_count = 1
-        for viewed_detail in details
-        {
-            if viewed_detail.name == detail.name
-            {
-                name_count += 1
-            }
-        }
-        
-        if name_count > 1
-        {
-            detail.name! += " \(name_count)"
-        }
+        detail.name = mismatched_name(name: detail.name!, names: details_names)
         details.append(detail)
     }
     
@@ -233,6 +209,19 @@ class Workspace: ObservableObject
             }
         }
         return robots_names
+    }
+    
+    public var details_names: [String] //Get names of details in workspace
+    {
+        var details_names = [String]()
+        if details.count > 0
+        {
+            for detail in details
+            {
+                details_names.append(detail.name ?? "None")
+            }
+        }
+        return details_names
     }
     
     var marks_names: [String] //Get names of marks in workspace program
@@ -742,4 +731,30 @@ struct WorkspacePreset: Codable
     var elements = [workspace_program_element_struct]()
     var tools = [tool_struct]()
     var details = [detail_struct]()
+}
+
+//MARK: Functions
+func mismatched_name(name: String, names: [String]) -> String
+{
+    var name_count = 1
+    var name_postfix: String
+    {
+        return name_count > 1 ? " \(name_count)" : ""
+    }
+    
+    if names.count > 0
+    {
+        for _ in 0..<names.count
+        {
+            for viewed_name in names
+            {
+                if viewed_name == name + name_postfix
+                {
+                    name_count += 1
+                }
+            }
+        }
+    }
+    
+    return name + name_postfix
 }

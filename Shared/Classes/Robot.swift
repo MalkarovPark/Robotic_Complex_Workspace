@@ -142,23 +142,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    public func add_program(prog: PositionsProgram)
+    public func add_program(program: PositionsProgram)
     {
-        var name_count = 1 //Count of same program names
-        for viewed_program in programs
-        {
-            if viewed_program.name == prog.name //Find same program names
-            {
-                name_count += 1
-            }
-        }
-        
-        if name_count > 1 //Change new program name by count of program with same names
-        {
-            prog.name! += " \(name_count)"
-        }
-        
-        programs.append(prog)
+        program.name = mismatched_name(name: program.name!, names: programs_names)
+        programs.append(program)
         selected_program.visual_clear()
     }
     
