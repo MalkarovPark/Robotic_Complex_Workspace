@@ -208,10 +208,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     private func number_by_name(name: String) -> Int //Get index number of program by name
     {
-        let comparison_program = PositionsProgram(name: name)
-        let prog_number = programs.firstIndex(of: comparison_program)
-        
-        return prog_number ?? -1
+        return programs.firstIndex(of: PositionsProgram(name: name)) ?? -1
     }
     
     public var programs_names: [String] //Get all names of programs in robot

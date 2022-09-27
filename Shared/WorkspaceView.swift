@@ -346,10 +346,6 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        //ui_view.allowsCameraControl = true
-        //ui_view.rendersContinuously = true
-        
-        //Update commands
         if app_state.reset_view && app_state.reset_view_enabled
         {
             app_state.reset_view = false
@@ -393,30 +389,12 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
                 var result = SCNHitTestResult()
                 
-                if workspace.is_selected
-                {
-                    switch workspace.selected_object_type
-                    {
-                    case .robot:
-                        workspace.selected_robot.unit_origin_node?.isHidden = true
-                        workspace.deselect_robot()
-                    case .tool:
-                        break
-                    case .detail:
-                        workspace.detail_node?.physicsBody = workspace.selected_detail.physics
-                        workspace.view_pointer_node.removeFromParentNode()
-                        workspace.deselect_detail()
-                        workspace.detail_node = nil
-                    }
-                    workspace.update_view()
-                }
-                
                 if hit_results.count > 0
                 {
                     result = hit_results[0]
                     
                     print(result.localCoordinates)
-                    print("🍮 tapped – \(result.node.name!) category \(result.node.categoryBitMask)")
+                    print("🍮 tapped – \(result.node.name!), category \(result.node.categoryBitMask)")
                     var object_name = ""
                     
                     switch result.node.categoryBitMask
@@ -443,39 +421,98 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                             }
                         }
                         
-                        workspace.update_view()
-                        
                         if workspace.is_selected
                         {
-                            workspace.selected_robot.unit_origin_node?.isHidden = true
+                            if object_name != workspace.selected_robot.name
+                            {
+                                deselect_object(type: .robot)
+                                
+                                select_object(name: object_name, type: .robot)
+                            }
+                            else
+                            {
+                                deselect_object(type: .robot)
+                            }
                         }
-                        workspace.select_robot(name: object_name)
-                        
-                        if workspace.is_selected
+                        else
                         {
-                            workspace.selected_robot.unit_origin_node?.isHidden = false
+                            select_object(name: object_name, type: .robot)
                         }
                     case 4:
                         object_name = result.node.name!
-                        workspace.update_view()
+                        //workspace.update_view()
                         
                         if workspace.is_selected
                         {
-                            workspace.view_pointer_node.removeFromParentNode()
-                            workspace.detail_node?.physicsBody = workspace.selected_detail.physics
+                            if object_name != workspace.selected_detail.name
+                            {
+                                deselect_object(type: .detail)
+                                
+                                select_object(name: object_name, type: .detail)
+                            }
+                            else
+                            {
+                                deselect_object(type: .detail)
+                            }
                         }
-                        workspace.select_detail(name: object_name)
-                        
-                        if workspace.is_selected
+                        else
                         {
-                            workspace.detail_node?.physicsBody = .none
-                            workspace.selected_detail.node?.addChildNode(workspace.view_pointer_node)
+                            select_object(name: object_name, type: .detail)
                         }
                     default:
-                        break
+                        //Deselect selected object by type
+                        if workspace.is_selected
+                        {
+                            switch workspace.selected_object_type
+                            {
+                            case .robot:
+                                workspace.selected_robot.unit_origin_node?.isHidden = true
+                                workspace.deselect_robot()
+                            case .tool:
+                                break
+                            case .detail:
+                                deselect_object(type: .detail)
+                            }
+                            workspace.update_view()
+                        }
                     }
-                    
-                    print("🍮 tapped – \(object_name)")
+                }
+            }
+            
+            func deselect_object(type: WorkspaceObjecTypes)
+            {
+                workspace.update_view()
+                
+                switch type
+                {
+                case .robot:
+                    workspace.selected_robot.unit_origin_node?.isHidden = true
+                    workspace.deselect_robot()
+                case .tool:
+                    break
+                case .detail:
+                    workspace.detail_node?.physicsBody = workspace.selected_detail.physics
+                    workspace.view_pointer_node.removeFromParentNode()
+                    workspace.deselect_detail()
+                    workspace.detail_node = nil
+                }
+            }
+            
+            func select_object(name: String, type: WorkspaceObjecTypes)
+            {
+                workspace.update_view()
+                
+                switch type
+                {
+                case .robot:
+                    workspace.select_robot(name: name)
+                    workspace.selected_robot.unit_origin_node?.isHidden = false
+                case .tool:
+                    break
+                case .detail:
+                    workspace.select_detail(name: name)
+                    workspace.detail_node?.physicsBody = .none
+                    workspace.selected_detail.node?.addChildNode(workspace.view_pointer_node)
                 }
             }
         }
@@ -1063,6 +1100,7 @@ struct AddInWorkspaceView: View
     func view_detail()
     {
         base_workspace.select_detail(name: selected_detail_name)
+        base_workspace.selected_detail.model_position_reset()
         
         base_workspace.detail_node = base_workspace.selected_detail.node?.clone()
         base_workspace.detail_node?.addChildNode(base_workspace.view_pointer_node)
@@ -1072,8 +1110,6 @@ struct AddInWorkspaceView: View
     
     func dismiss_detail()
     {
-        base_workspace.update_view()
-        
         if base_workspace.selected_detail.is_placed
         {
             base_workspace.elements_check()
@@ -1246,7 +1282,7 @@ struct InfoView: View
             base_workspace.detail_node?.physicsBody = .none
             
             base_workspace.selected_detail.location = [Float(base_workspace.detail_node?.presentation.position.z ?? 0), Float(base_workspace.detail_node?.presentation.position.x ?? 0), Float(base_workspace.detail_node?.presentation.position.y ?? 0)]
-            base_workspace.selected_detail.rotation = [Float(base_workspace.detail_node?.presentation.rotation.z ?? 0), Float(base_workspace.detail_node?.presentation.rotation.x ?? 0), Float(base_workspace.detail_node?.presentation.rotation.y ?? 0)]
+            base_workspace.selected_detail.rotation = [Float(to_deg(in_angle: base_workspace.detail_node?.presentation.eulerAngles.z ?? 0)), Float(to_deg(in_angle: base_workspace.detail_node?.presentation.eulerAngles.x ?? 0)), Float(to_deg(in_angle: base_workspace.detail_node?.presentation.eulerAngles.y ?? 0))]
             base_workspace.update_view()
         }
     }
@@ -1524,6 +1560,7 @@ struct ControlProgramView: View
                     {
                         new_program_element.element_data.robot_program_name = base_workspace.selected_robot.programs_names.first!
                     }
+                    base_workspace.deselect_robot()
                 }
             case .tool:
                 break

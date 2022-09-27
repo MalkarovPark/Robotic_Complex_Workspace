@@ -41,10 +41,7 @@ class Workspace: ObservableObject
     
     private func robot_number_by_name(name: String) -> Int //Get index number of robot by name
     {
-        let comparison_robot = Robot(name: name)
-        let robot_number = robots.firstIndex(of: comparison_robot)
-        
-        return robot_number ?? -1
+        return robots.firstIndex(of: Robot(name: name)) ?? -1
     }
     
     public func select_robot(number: Int) //Select robot by number
@@ -119,7 +116,7 @@ class Workspace: ObservableObject
     //MARK: Details selection functions
     private var selected_detail_index = -1
     
-    public var selected_detail: Detail //Return robot by selected index
+    public var selected_detail: Detail //Return detail by selected index
     {
         get
         {
@@ -143,10 +140,7 @@ class Workspace: ObservableObject
     
     private func detail_number_by_name(name: String) -> Int //Get index number of robot by name
     {
-        let comparison_detail = Detail(name: name, scene: "")
-        let detail_number = details.firstIndex(of: comparison_detail)
-        
-        return detail_number ?? -1
+        return details.firstIndex(of: Detail(name: name, scene: "")) ?? -1
     }
     
     public func select_detail(number: Int) //Select detail by number

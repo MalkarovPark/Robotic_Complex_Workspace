@@ -295,5 +295,5 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
 struct program_struct: Codable
 {
     var name: String
-    var points = [PositionPoint()] //[[Double](repeating: 0.0, count: 6)] //x y z| r p w
+    var points = [PositionPoint()]
 }

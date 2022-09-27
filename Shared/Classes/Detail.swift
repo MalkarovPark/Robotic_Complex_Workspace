@@ -313,6 +313,14 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     public var location = [Float](repeating: 0, count: 3) //[0, 0, 0] x, y, z
     public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] r, p, w
     
+    public func model_position_reset()
+    {
+        node?.position = SCNVector3(0, 0, 0)
+        node?.rotation.x = 0
+        node?.rotation.y = 0
+        node?.rotation.z = 0
+    }
+    
     //MARK: - UI functions
     private var image_data = Data()
     public var color: Color
