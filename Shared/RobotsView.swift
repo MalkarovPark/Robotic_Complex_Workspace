@@ -637,7 +637,7 @@ struct RobotView: View
                         Label("Stop", systemImage: "stop")
                     }
                     Button(action: { base_workspace.selected_robot.start_pause_moving()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                         {
                             base_workspace.update_view()
                         }
@@ -1458,7 +1458,7 @@ struct RobotInspectorView: View
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_value: $base_workspace.selected_robot.pointer_location[0], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[0])
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_location[0], in: 0.0...Double(base_workspace.selected_robot.space_scale[0]))
+                            Slider(value: $base_workspace.selected_robot.pointer_location[0], in: 0.0...base_workspace.selected_robot.space_scale[0])
                                 .padding(.trailing)
                         }
                         
@@ -1476,7 +1476,7 @@ struct RobotInspectorView: View
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_value: $base_workspace.selected_robot.pointer_location[1], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[1])
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_location[1], in: 0.0...Double(base_workspace.selected_robot.space_scale[1]))
+                            Slider(value: $base_workspace.selected_robot.pointer_location[1], in: 0.0...base_workspace.selected_robot.space_scale[1])
                                 .padding(.trailing)
                         }
                         
@@ -1494,7 +1494,7 @@ struct RobotInspectorView: View
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_value: $base_workspace.selected_robot.pointer_location[2], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[2])
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_location[2], in: 0.0...Double(base_workspace.selected_robot.space_scale[2]))
+                            Slider(value: $base_workspace.selected_robot.pointer_location[2], in: 0.0...base_workspace.selected_robot.space_scale[2])
                                 .padding(.trailing)
                         }
                         #if os(macOS)
@@ -1717,7 +1717,7 @@ struct PositionDropDelegate: DropDelegate
 struct PositionParameterView: View
 {
     @Binding var position_parameter_view_presented: Bool
-    @Binding var parameter_value: Double
+    @Binding var parameter_value: Float
     @Binding var limit_min: Float
     @Binding var limit_max: Float
     
@@ -1752,7 +1752,7 @@ struct PositionParameterView: View
                 .frame(width: 128.0)
             #endif
             
-            Stepper("Enter", value: $parameter_value, in: Double(limit_min)...Double(limit_max))
+            Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
                 .labelsHidden()
             #if os(iOS)
                 .padding(.trailing, 8.0)
@@ -1886,8 +1886,8 @@ struct PositionItemView: View
     @Binding var position_item_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var item_view_pos_location = [Double]()
-    @State var item_view_pos_rotation = [Double]()
+    @State var item_view_pos_location = [Float]()
+    @State var item_view_pos_rotation = [Float]()
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -1923,7 +1923,7 @@ struct PositionItemView: View
                                             #if os(iOS)
                                             .keyboardType(.decimalPad)
                                             #endif
-                                        Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Double(base_workspace.selected_robot.space_scale[location_component.info.index]))
+                                        Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
                                             .labelsHidden()
                                     }
                                 }
@@ -1979,7 +1979,7 @@ struct PositionItemView: View
                                         TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
                                             .textFieldStyle(.roundedBorder)
                                             .keyboardType(.decimalPad)
-                                        Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Double(base_workspace.selected_robot.space_scale[location_component.info.index]))
+                                        Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
                                             .labelsHidden()
                                     }
                                 }

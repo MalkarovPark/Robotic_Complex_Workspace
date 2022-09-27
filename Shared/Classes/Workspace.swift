@@ -620,15 +620,15 @@ class Workspace: ObservableObject
                     #if os(macOS)
                     unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.location[1]), y: CGFloat(robot.location[2]), z: CGFloat(robot.location[0]))
                     
-                    unit_node?.eulerAngles.x = to_rad(in_angle: CGFloat(robot.rotation[1]))
-                    unit_node?.eulerAngles.y = to_rad(in_angle: CGFloat(robot.rotation[2]))
-                    unit_node?.eulerAngles.z = to_rad(in_angle: CGFloat(robot.rotation[0]))
+                    unit_node?.eulerAngles.x = CGFloat(robot.rotation[1].to_rad)
+                    unit_node?.eulerAngles.y = CGFloat(robot.rotation[2].to_rad)
+                    unit_node?.eulerAngles.z = CGFloat(robot.rotation[0].to_rad)
                     #else
                     unit_node?.worldPosition = SCNVector3(x: robot.location[1], y: robot.location[2], z: robot.location[0])
 
-                    unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(robot.rotation[1])))
-                    unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(robot.rotation[2])))
-                    unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(robot.rotation[0])))
+                    unit_node?.eulerAngles.x = robot.rotation[1].to_rad
+                    unit_node?.eulerAngles.y = robot.rotation[2].to_rad
+                    unit_node?.eulerAngles.z = robot.rotation[0].to_rad
                     #endif
                 }
             }
@@ -649,15 +649,15 @@ class Workspace: ObservableObject
                     #if os(macOS)
                     detail_node?.position = SCNVector3(x: CGFloat(detail.location[1]), y: CGFloat(detail.location[2]), z: CGFloat(detail.location[0]))
                     
-                    detail_node?.eulerAngles.x = to_rad(in_angle: CGFloat(detail.rotation[1]))
-                    detail_node?.eulerAngles.y = to_rad(in_angle: CGFloat(detail.rotation[2]))
-                    detail_node?.eulerAngles.z = to_rad(in_angle: CGFloat(detail.rotation[0]))
+                    detail_node?.eulerAngles.x = CGFloat(detail.rotation[1].to_rad)
+                    detail_node?.eulerAngles.y = CGFloat(detail.rotation[2].to_rad)
+                    detail_node?.eulerAngles.z = CGFloat(detail.rotation[0].to_rad)
                     #else
                     detail_node?.position = SCNVector3(x: Float(detail.location[1]), y: Float(detail.location[2]), z: Float(detail.location[0]))
                     
-                    detail_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(detail.rotation[1])))
-                    detail_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(detail.rotation[2])))
-                    detail_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(detail.rotation[0])))
+                    detail_node?.eulerAngles.x = detail.rotation[1].to_rad
+                    detail_node?.eulerAngles.y = detail.rotation[2].to_rad
+                    detail_node?.eulerAngles.z = detail.rotation[0].to_rad
                     #endif
                 }
             }
@@ -751,4 +751,18 @@ func mismatched_name(name: String, names: [String]) -> String
     }
     
     return name + name_postfix
+}
+
+//MARK: - Angles convertion extension
+extension Float
+{
+    var to_deg: Float
+    {
+        return self * 180 / .pi
+    }
+    
+    var to_rad: Float
+    {
+        return self * .pi / 180
+    }
 }

@@ -260,13 +260,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: - Moving functions
-    public var move_time: Double?
+    public var move_time: Float?
     public var draw_path = false //Draw path of the robot tool point
     public var is_moving = false //Moving state of robot
     public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
     public var target_point_index = 0 //Index of target point in points array
     
-    public var pointer_location = [0.0, 0.0, 0.0] //x, y, z
+    public var pointer_location: [Float] = [0.0, 0.0, 0.0] //x, y, z
     {
         didSet
         {
@@ -274,7 +274,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    public var pointer_rotation = [0.0, 0.0, 0.0] //r, p, w
+    public var pointer_rotation: [Float] = [0.0, 0.0, 0.0] //r, p, w
     {
         didSet
         {
@@ -294,22 +294,15 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //Return robot pointer position
-    #if os(macOS)
-    public func get_pointer_position() -> (location: SCNVector3, rot_x: Double, rot_y: Double, rot_z: Double)
-    {
-        return(SCNVector3(pointer_location[1] / 10, pointer_location[2] / 10, pointer_location[0] / 10), to_rad(in_angle: pointer_rotation[0]), to_rad(in_angle: pointer_rotation[1]), to_rad(in_angle: pointer_rotation[2]))
-    }
-    #else
     public func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
-        return(SCNVector3(pointer_location[1] / 10, pointer_location[2] / 10, pointer_location[0] / 10), Float(to_rad(in_angle: pointer_rotation[0])), Float(to_rad(in_angle: pointer_rotation[1])), Float(to_rad(in_angle: pointer_rotation[2])))
+        return(SCNVector3(pointer_location[1] / 10, pointer_location[2] / 10, pointer_location[0] / 10), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
-    #endif
     
     private func current_pointer_position_select() //Return current robot pointer position
     {
-        pointer_location = [Double(((pointer_node?.position.z ?? 0)) * 10), Double(((pointer_node?.position.x ?? 0)) * 10), Double(((pointer_node?.position.y ?? 0)) * 10)]
-        pointer_rotation = [to_deg(in_angle: Double(tool_node?.eulerAngles.z ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.x ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.y ?? 0))]
+        pointer_location = [Float(pointer_node?.position.z ?? 0) * 10, Float(pointer_node?.position.x ?? 0) * 10, Float(pointer_node?.position.y ?? 0) * 10]
+        pointer_rotation = [Float(tool_node?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
     
     public func move_to_next_point()
@@ -468,14 +461,20 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     private func update_rotation()
     {
+        #if os(macOS)
+        pointer_node?.eulerAngles.x = CGFloat(get_pointer_position().rot_y)
+        pointer_node?.eulerAngles.y = CGFloat(get_pointer_position().rot_z)
+        tool_node?.eulerAngles.z = CGFloat(get_pointer_position().rot_x)
+        #else
         pointer_node?.eulerAngles.x = get_pointer_position().rot_y
         pointer_node?.eulerAngles.y = get_pointer_position().rot_z
         tool_node?.eulerAngles.z = get_pointer_position().rot_x
+        #endif
     }
     
     private var robot_details = [SCNNode]()
 
-    private var theta = [Double](repeating: 0.0, count: 6)
+    private var theta = [Float](repeating: 0.0, count: 6)
     private var lenghts = [Float]()
     
     public var origin_location = [Float](repeating: 0, count: 3) //x, y, z
@@ -523,17 +522,17 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         box_node?.position.y = CGFloat(origin_location[2] + vertical_lenght) //Add vertical base lenght
         box_node?.position.z = CGFloat(origin_location[0])
         
-        box_node?.eulerAngles.x = to_rad(in_angle: CGFloat(origin_rotation[1]))
-        box_node?.eulerAngles.y = to_rad(in_angle: CGFloat(origin_rotation[2]))
-        box_node?.eulerAngles.z = to_rad(in_angle: CGFloat(origin_rotation[0]))
+        box_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
+        box_node?.eulerAngles.y = CGFloat(origin_rotation[2].to_rad)
+        box_node?.eulerAngles.z = CGFloat(origin_rotation[0].to_rad)
         #else
         box_node?.position.x = Float(origin_location[1])
         box_node?.position.y = Float(origin_location[2] + vertical_lenght)
         box_node?.position.z = Float(origin_location[0])
         
-        box_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(origin_rotation[1])))
-        box_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(origin_rotation[2])))
-        box_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(origin_rotation[0])))
+        box_node?.eulerAngles.x = origin_rotation[1].to_rad
+        box_node?.eulerAngles.y = origin_rotation[2].to_rad
+        box_node?.eulerAngles.z = origin_rotation[0].to_rad
         #endif
         
         //MARK: Place camera
@@ -626,19 +625,19 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 {
                     for position_point in program.points
                     {
-                        if position_point.x > Double(space_scale[0])
+                        if position_point.x > Float(space_scale[0])
                         {
-                            position_point.x = Double(space_scale[0])
+                            position_point.x = Float(space_scale[0])
                         }
                         
-                        if position_point.y > Double(space_scale[1])
+                        if position_point.y > Float(space_scale[1])
                         {
-                            position_point.y = Double(space_scale[1])
+                            position_point.y = Float(space_scale[1])
                         }
                         
-                        if position_point.z > Double(space_scale[2])
+                        if position_point.z > Float(space_scale[2])
                         {
-                            position_point.z = Double(space_scale[2])
+                            position_point.z = Float(space_scale[2])
                         }
                     }
                     
@@ -879,9 +878,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: Inverse kinematic calculations
-    private var ik_lenghts: [Double]
+    private var ik_lenghts: [Float]
     {
-        var lenghts = [Double]()
+        var lenghts = [Float]()
         var px, py, pz: Float
         
         if !origin_rotated
@@ -942,14 +941,14 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
 
-        lenghts = [Double(px), Double(py), Double(pz)]
+        lenghts = [Float(px), Float(py), Float(pz)]
         
         return lenghts
     }
     
-    private var ik_angles: [Double] //Calculate manipulator details rotation angles
+    private var ik_angles: [Float] //Calculate manipulator details rotation angles
     {
-        var angles = [Double]()
+        var angles = [Float]()
         var C3 = Float()
         do
         {
@@ -981,15 +980,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 pz += origin_location[2]
             }
             
-            #if os(macOS)
-            rx = -(Float(tool_node?.eulerAngles.z ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[0]))))
-            ry = -(Float(pointer_node?.eulerAngles.x ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[1])))) + (.pi)
-            rz = -(Float(pointer_node?.eulerAngles.y ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[2]))))
-            #else
-            rx = -(Float(tool_node?.eulerAngles.z ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[0]))))
-            ry = -(Float(pointer_node?.eulerAngles.x ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[1])))) + (.pi)
-            rz = -(Float(pointer_node?.eulerAngles.y ?? 0) + Float(to_rad(in_angle: CGFloat(origin_rotation[2]))))
-            #endif
+            rx = -(Float(tool_node?.eulerAngles.z ?? 0) + origin_rotation[0].to_rad)
+            ry = -(Float(pointer_node?.eulerAngles.x ?? 0) + origin_rotation[1].to_rad) + (.pi)
+            rz = -(Float(pointer_node?.eulerAngles.y ?? 0) + origin_rotation[2].to_rad)
             
             bx = cos(rx) * sin(ry) * cos(rz) - sin(rx) * sin(rz)
             by = cos(rx) * sin(ry) * sin(rz) - sin(rx) * cos(rz)
@@ -1006,16 +999,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             C3 = (pow(p5x, 2) + pow(p5y, 2) + pow(p5z - lenghts[0], 2) - pow(lenghts[1], 2) - pow(lenghts[2] + lenghts[3], 2)) / (2 * lenghts[1] * (lenghts[2] + lenghts[3]))
             
             //Joint 1
-            theta[0] = Double(atan2(p5y, p5x))
+            theta[0] = Float(atan2(p5y, p5x))
             
             //Joints 3, 2
-            theta[2] = Double(atan2(pow(abs(1 - pow(C3, 2)), 0.5), C3))
+            theta[2] = Float(atan2(pow(abs(1 - pow(C3, 2)), 0.5), C3))
             
             M = lenghts[1] + (lenghts[2] + lenghts[3]) * C3
             N = (lenghts[2] + lenghts[3]) * sin(Float(theta[2]))
             A = pow(p5x * p5x + p5y * p5y, 0.5)
             B = p5z - lenghts[0]
-            theta[1] = Double(atan2(M * A - N * B, N * A + M * B))
+            theta[1] = Float(atan2(M * A - N * B, N * A + M * B))
             
             //Jionts 4, 5, 6
             C1 = cos(Float(theta[0]))
@@ -1030,9 +1023,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             bsy = -S1 * bx + C1 * by
             bsz = S23 * (C1 * bx + S1 * by) + C23 * bz
             
-            theta[3] = Double(atan2(asy, asx))
-            theta[4] = Double(atan2(cos(Float(theta[3])) * asx + sin(Float(theta[3])) * asy, asz))
-            theta[5] = Double(atan2(cos(Float(theta[3])) * bsy - sin(Float(theta[3])) * bsx, -bsz / sin(Float(theta[4]))))
+            theta[3] = Float(atan2(asy, asx))
+            theta[4] = Float(atan2(cos(Float(theta[3])) * asx + sin(Float(theta[3])) * asy, asz))
+            theta[5] = Float(atan2(cos(Float(theta[3])) * bsy - sin(Float(theta[3])) * bsx, -bsz / sin(Float(theta[4]))))
             
             angles.append(-(theta[0] + .pi))
             angles.append(-theta[1])
@@ -1047,9 +1040,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private func transform_by_origin() -> ((x: Float, y: Float, z: Float))
     {
         //New values for coordinates components
-        let new_x = Float(pointer_node?.position.z ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) + Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1])))) - Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
-        let new_y = Float(pointer_node?.position.x ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[2])))) - Float(pointer_node?.position.y ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) + Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[2]))))
-        let new_z = Float(pointer_node?.position.y ?? 0) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[0])))) * Float(cos(to_rad(in_angle: CGFloat(origin_rotation[1])))) + Float(pointer_node?.position.x ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[0])))) - Float(pointer_node?.position.z ?? 0) * Float(sin(to_rad(in_angle: CGFloat(origin_rotation[1]))))
+        let new_x = Float(pointer_node?.position.z ?? 0) * Float(cos(origin_rotation[1].to_rad)) * Float(cos(origin_rotation[2].to_rad)) + Float(pointer_node?.position.y ?? 0) * Float(sin(origin_rotation[1].to_rad)) - Float(pointer_node?.position.x ?? 0) * Float(sin(origin_rotation[2].to_rad))
+        let new_y = Float(pointer_node?.position.x ?? 0) * Float(cos(origin_rotation[0].to_rad)) * Float(cos(origin_rotation[2].to_rad)) - Float(pointer_node?.position.y ?? 0) * Float(sin(origin_rotation[0].to_rad)) + Float(pointer_node?.position.z ?? 0) * Float(sin(origin_rotation[2].to_rad))
+        let new_z = Float(pointer_node?.position.y ?? 0) * Float(cos(origin_rotation[0].to_rad)) * Float(cos(origin_rotation[1].to_rad)) + Float(pointer_node?.position.x ?? 0) * Float(sin(origin_rotation[0].to_rad)) - Float(pointer_node?.position.z ?? 0) * Float(sin(origin_rotation[1].to_rad))
         
         return((x: new_x, y: new_y, z: new_z))
     }
@@ -1063,13 +1056,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             {
                 //Set manipulator portal details displacement
                 #if os(macOS)
+                robot_details[1].position.x = CGFloat(ik_lenghts[1])
+                robot_details[3].position.y = CGFloat(ik_lenghts[2])
+                robot_details[2].position.z = CGFloat(ik_lenghts[0])
+                #else
                 robot_details[1].position.x = ik_lenghts[1]
                 robot_details[3].position.y = ik_lenghts[2]
                 robot_details[2].position.z = ik_lenghts[0]
-                #else
-                robot_details[1].position.x = Float(ik_lenghts[1])
-                robot_details[3].position.y = Float(ik_lenghts[2])
-                robot_details[2].position.z = Float(ik_lenghts[0])
                 #endif
             }
         case .vi_dof:
@@ -1121,13 +1114,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
                 chart_data.robot_details_angles.append(PositionChartInfo(index: chart_element_index, value: ik_angles[i], type: "J\(i + 1)"))
             }
             
-            let pointer_location_chart = [Double(((pointer_node?.position.z ?? 0)) * 10), Double(((pointer_node?.position.x ?? 0)) * 10), Double(((pointer_node?.position.y ?? 0)) * 10)]
+            let pointer_location_chart = [Float(((pointer_node?.position.z ?? 0)) * 10), Float(((pointer_node?.position.x ?? 0)) * 10), Float(((pointer_node?.position.y ?? 0)) * 10)]
             for i in 0...axis_names.count - 1
             {
                 chart_data.tool_location.append(PositionChartInfo(index: chart_element_index, value: pointer_location_chart[i], type: axis_names[i]))
             }
             
-            let pointer_rotation_chart = [to_deg(in_angle: Double(tool_node?.eulerAngles.z ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.x ?? 0)), to_deg(in_angle: Double(pointer_node?.eulerAngles.y ?? 0))]
+            let pointer_rotation_chart = [Float(tool_node?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
             for i in 0...rotation_axis_names.count - 1
             {
                 chart_data.tool_rotation.append(PositionChartInfo(index: chart_element_index, value: pointer_rotation_chart[i], type: rotation_axis_names[i]))
@@ -1278,7 +1271,7 @@ struct PositionChartInfo: Identifiable
 {
     var id = UUID()
     var index: Int
-    var value: Double
+    var value: Float
     var type: String
 }
 
@@ -1287,15 +1280,4 @@ enum Kinematic: String, Codable, Equatable, CaseIterable
 {
     case vi_dof = "6DOF"
     case portal = "Portal"
-}
-
-//MARK: - Angle convertion functions
-func to_deg(in_angle: CGFloat) -> CGFloat //Convert radians to angles
-{
-    return in_angle * 180 / .pi
-}
-
-func to_rad(in_angle: CGFloat) -> CGFloat //Convert angles to radians
-{
-    return in_angle * .pi / 180
 }

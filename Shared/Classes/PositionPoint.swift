@@ -20,8 +20,8 @@ class PositionPoint: Identifiable, Codable, Hashable
         hasher.combine(id)
     }
     
-    public var x, y, z: Double //Point location
-    public var r, p, w: Double //Point rotation
+    public var x, y, z: Float //Point location
+    public var r, p, w: Float //Point rotation
     public var move_type: MoveType
     
     //MARK: - Initialization
@@ -38,7 +38,7 @@ class PositionPoint: Identifiable, Codable, Hashable
         self.move_type = .linear
     }
     
-    init(x: Double, y: Double, z: Double, r: Double, p: Double, w: Double, move_type: MoveType)
+    init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType)
     {
         self.x = x
         self.y = y
@@ -51,7 +51,7 @@ class PositionPoint: Identifiable, Codable, Hashable
         self.move_type = move_type
     }
     
-    init(x: Double, y: Double, z: Double)
+    init(x: Float, y: Float, z: Float)
     {
         self.x = x
         self.y = y

@@ -1017,15 +1017,15 @@ struct AddInWorkspaceView: View
         #if os(macOS)
         base_workspace.unit_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_robot.location[1]), y: CGFloat(base_workspace.selected_robot.location[2]), z: CGFloat(base_workspace.selected_robot.location[0]))
         
-        base_workspace.unit_node?.eulerAngles.x = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1]))
-        base_workspace.unit_node?.eulerAngles.y = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2]))
-        base_workspace.unit_node?.eulerAngles.z = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0]))
+        base_workspace.unit_node?.eulerAngles.x = CGFloat(base_workspace.selected_robot.rotation[1].to_rad)
+        base_workspace.unit_node?.eulerAngles.y = CGFloat(base_workspace.selected_robot.rotation[2].to_rad)
+        base_workspace.unit_node?.eulerAngles.z = CGFloat(base_workspace.selected_robot.rotation[0].to_rad)
         #else
         base_workspace.unit_node?.worldPosition = SCNVector3(x: base_workspace.selected_robot.location[1], y: base_workspace.selected_robot.location[2], z: base_workspace.selected_robot.location[0])
         
-        base_workspace.unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1])))
-        base_workspace.unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2])))
-        base_workspace.unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0])))
+        base_workspace.unit_node?.eulerAngles.x = base_workspace.selected_robot.rotation[1].to_rad
+        base_workspace.unit_node?.eulerAngles.y = base_workspace.selected_robot.rotation[2].to_rad
+        base_workspace.unit_node?.eulerAngles.z = base_workspace.selected_robot.rotation[0].to_rad
         #endif
     }
     
@@ -1085,15 +1085,15 @@ struct AddInWorkspaceView: View
         #if os(macOS)
         base_workspace.detail_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_detail.location[1]), y: CGFloat(base_workspace.selected_detail.location[2]), z: CGFloat(base_workspace.selected_detail.location[0]))
         
-        base_workspace.detail_node?.eulerAngles.x = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[1]))
-        base_workspace.detail_node?.eulerAngles.y = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[2]))
-        base_workspace.detail_node?.eulerAngles.z = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[0]))
+        base_workspace.detail_node?.eulerAngles.x = CGFloat(base_workspace.selected_detail.rotation[1].to_rad)
+        base_workspace.detail_node?.eulerAngles.y = CGFloat(base_workspace.selected_detail.rotation[2].to_rad)
+        base_workspace.detail_node?.eulerAngles.z = CGFloat(base_workspace.selected_detail.rotation[0].to_rad)
         #else
         base_workspace.detail_node?.worldPosition = SCNVector3(x: base_workspace.selected_detail.location[1], y: base_workspace.selected_detail.location[2], z: base_workspace.selected_detail.location[0])
         
-        base_workspace.detail_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[1])))
-        base_workspace.detail_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[2])))
-        base_workspace.detail_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[0])))
+        base_workspace.detail_node?.eulerAngles.x = base_workspace.selected_detail.rotation[1].to_rad
+        base_workspace.detail_node?.eulerAngles.y = base_workspace.selected_detail.rotation[2].to_rad
+        base_workspace.detail_node?.eulerAngles.z = base_workspace.selected_detail.rotation[0].to_rad
         #endif
     }
     
@@ -1282,7 +1282,11 @@ struct InfoView: View
             base_workspace.detail_node?.physicsBody = .none
             
             base_workspace.selected_detail.location = [Float(base_workspace.detail_node?.presentation.position.z ?? 0), Float(base_workspace.detail_node?.presentation.position.x ?? 0), Float(base_workspace.detail_node?.presentation.position.y ?? 0)]
-            base_workspace.selected_detail.rotation = [Float(to_deg(in_angle: base_workspace.detail_node?.presentation.eulerAngles.z ?? 0)), Float(to_deg(in_angle: base_workspace.detail_node?.presentation.eulerAngles.x ?? 0)), Float(to_deg(in_angle: base_workspace.detail_node?.presentation.eulerAngles.y ?? 0))]
+            #if os(macOS)
+            base_workspace.selected_detail.rotation = [Float(base_workspace.detail_node?.presentation.eulerAngles.z ?? 0).to_deg, Float(base_workspace.detail_node?.presentation.eulerAngles.x ?? 0).to_deg, Float(base_workspace.detail_node?.presentation.eulerAngles.y ?? 0).to_deg]
+            #else
+            base_workspace.selected_detail.rotation = [Float(base_workspace.detail_node?.presentation.eulerAngles.z ?? 0).to_deg, Float(base_workspace.detail_node?.presentation.eulerAngles.x ?? 0).to_deg, Float(base_workspace.detail_node?.presentation.eulerAngles.y ?? 0).to_deg]
+            #endif
             base_workspace.update_view()
         }
     }
@@ -1292,15 +1296,15 @@ struct InfoView: View
         #if os(macOS)
         base_workspace.unit_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_robot.location[1]), y: CGFloat(base_workspace.selected_robot.location[2]), z: CGFloat(base_workspace.selected_robot.location[0]))
         
-        base_workspace.unit_node?.eulerAngles.x = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1]))
-        base_workspace.unit_node?.eulerAngles.y = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2]))
-        base_workspace.unit_node?.eulerAngles.z = to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0]))
+        base_workspace.unit_node?.eulerAngles.x = CGFloat(base_workspace.selected_robot.rotation[1].to_rad)
+        base_workspace.unit_node?.eulerAngles.y = CGFloat(base_workspace.selected_robot.rotation[2].to_rad)
+        base_workspace.unit_node?.eulerAngles.z = CGFloat(base_workspace.selected_robot.rotation[0].to_rad)
         #else
         base_workspace.unit_node?.worldPosition = SCNVector3(x: base_workspace.selected_robot.location[1], y: base_workspace.selected_robot.location[2], z: base_workspace.selected_robot.location[0])
         
-        base_workspace.unit_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[1])))
-        base_workspace.unit_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[2])))
-        base_workspace.unit_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_robot.rotation[0])))
+        base_workspace.unit_node?.eulerAngles.x = base_workspace.selected_robot.rotation[1].to_rad
+        base_workspace.unit_node?.eulerAngles.y = base_workspace.selected_robot.rotation[2].to_rad
+        base_workspace.unit_node?.eulerAngles.z = base_workspace.selected_robot.rotation[0].to_rad
         #endif
         
         document.preset.robots = base_workspace.file_data().robots
@@ -1328,15 +1332,15 @@ struct InfoView: View
         #if os(macOS)
         base_workspace.detail_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_detail.location[1]), y: CGFloat(base_workspace.selected_detail.location[2]), z: CGFloat(base_workspace.selected_detail.location[0]))
         
-        base_workspace.detail_node?.eulerAngles.x = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[1]))
-        base_workspace.detail_node?.eulerAngles.y = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[2]))
-        base_workspace.detail_node?.eulerAngles.z = to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[0]))
+        base_workspace.detail_node?.eulerAngles.x = CGFloat(base_workspace.selected_detail.rotation[1].to_rad)
+        base_workspace.detail_node?.eulerAngles.y = CGFloat(base_workspace.selected_detail.rotation[2].to_rad)
+        base_workspace.detail_node?.eulerAngles.z = CGFloat(base_workspace.selected_detail.rotation[0].to_rad)
         #else
         base_workspace.detail_node?.worldPosition = SCNVector3(x: base_workspace.selected_detail.location[1], y: base_workspace.selected_detail.location[2], z: base_workspace.selected_detail.location[0])
         
-        base_workspace.detail_node?.eulerAngles.x = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[1])))
-        base_workspace.detail_node?.eulerAngles.y = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[2])))
-        base_workspace.detail_node?.eulerAngles.z = Float(to_rad(in_angle: CGFloat(base_workspace.selected_detail.rotation[0])))
+        base_workspace.detail_node?.eulerAngles.x = base_workspace.selected_detail.rotation[1].to_rad
+        base_workspace.detail_node?.eulerAngles.y = base_workspace.selected_detail.rotation[2].to_rad
+        base_workspace.detail_node?.eulerAngles.z = base_workspace.selected_detail.rotation[0].to_rad
         #endif
         
         document.preset.details = base_workspace.file_data().details
@@ -1542,7 +1546,8 @@ struct ControlProgramView: View
     func add_new_program_element()
     {
         base_workspace.update_view()
-        let new_program_element = WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type)
+        //let new_program_element = WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type)
+        let new_program_element = WorkspaceProgramElement(element_struct: add_new_element_data)
         
         //Checking for existing workspace components for element selection
         switch new_program_element.element_data.element_type
