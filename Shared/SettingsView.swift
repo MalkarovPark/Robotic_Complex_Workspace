@@ -18,7 +18,7 @@ struct SettingsView: View
     
     private enum Tabs: Hashable
     {
-        case general, properties, advanced
+        case general, properties, advanced //Settings view tab bar items
     }
     
     var body: some View
@@ -51,12 +51,15 @@ struct SettingsView: View
     }
 }
 
+//MARK: - Settings view with tab bar
 struct GeneralSettingsView: View
 {
+    //Default robot origin location properties from user defaults
     @AppStorage("DefaultLocation_X") private var location_x: Double = 0
     @AppStorage("DefaultLocation_Y") private var location_y: Double = 20
     @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
     
+    //Default robot origion rotation properties from user defaults
     @AppStorage("DefaultScale_X") private var scale_x: Double = 200
     @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
     @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
@@ -272,12 +275,15 @@ struct GeneralSettingsView: View
     }
 }
 
+//MARK: - Property list settings view
 struct PropertiesSettingsView: View
 {
+    //Viewed property lists URLs
     @AppStorage("RobotsPlistURL") private var robots_plist_url: URL?
     @AppStorage("ToolsPlistURL") private var tools_plist_url: URL?
     @AppStorage("DetailsPlistURL") private var details_plist_url: URL?
     
+    //User defaults with additive data from imported property lists
     @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
     @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
     @AppStorage("AdditiveDetailsData") private var additive_details_data: Data?
@@ -285,6 +291,7 @@ struct PropertiesSettingsView: View
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
+    //Flags for file iOS/iPadOS dialogs presentaion
     @State private var load_panel_presented = false
     @State private var clear_message_presented = false
     #endif
@@ -296,6 +303,7 @@ struct PropertiesSettingsView: View
             #if os(macOS)
             VStack(alignment: .leading)
             {
+                //MARK: Robots data handling view
                 GroupBox(label: Text("Robots").font(.headline))
                 {
                     VStack(spacing: 4)
@@ -362,6 +370,7 @@ struct PropertiesSettingsView: View
                 }
                 .padding(.bottom, 8.0)
                 
+                //MARK: Tools data handling view
                 GroupBox
                 {
                     VStack(spacing: 4)
@@ -412,6 +421,7 @@ struct PropertiesSettingsView: View
                 }
                 .padding(.bottom, 8.0)
                 
+                //MARK: Details data handling view
                 GroupBox
                 {
                     VStack(spacing: 4)
@@ -461,6 +471,7 @@ struct PropertiesSettingsView: View
                 }
             }
             #else
+            //MARK: Robots data handling view
             Section(header: Text("Robots"))
             {
                 HStack
@@ -499,26 +510,12 @@ struct PropertiesSettingsView: View
                     Text("File – " + (robots_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                     Spacer()
                     
-                    /*Button(action: show_save_panel)
-                    {
-                        Label("Export", systemImage: "square.and.arrow.up")
-                            .labelStyle(.iconOnly)
-                    }
-                    
-                    Button(action: {
-                        app_state.clear_additive_data()
-                        plist_url = nil
-                        additive_robots_data = nil
-                    })
-                    {
-                        Label("Clear", systemImage: "arrow.counterclockwise")
-                            .labelStyle(.iconOnly)
-                    }*/
                     Button("Export", action: show_save_panel)
                     Button("Load", action: { show_load_panel(type: .robot) })
                 }
             }
             
+            //MARK: Tools data handling view
             Section
             {
                 HStack
@@ -540,26 +537,12 @@ struct PropertiesSettingsView: View
                     Text("File – " + (tools_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
                     Spacer()
                     
-                    /*Button(action: show_save_panel)
-                    {
-                        Label("Export", systemImage: "square.and.arrow.up")
-                            .labelStyle(.iconOnly)
-                    }
-                    
-                    Button(action: {
-                        app_state.clear_additive_data()
-                        plist_url = nil
-                        additive_robots_data = nil
-                    })
-                    {
-                        Label("Clear", systemImage: "arrow.counterclockwise")
-                            .labelStyle(.iconOnly)
-                    }*/
                     Button("Export", action: show_save_panel)
                     Button("Load", action: { show_load_panel(type: .tool) })
                 }
             }
             
+            //MARK: Details data handling view
             Section
             {
                 HStack
@@ -586,6 +569,7 @@ struct PropertiesSettingsView: View
                 }
             }
             
+            //Clear data elements
             Button("Clear", role: .destructive)
             {
                 clear_message_presented = true
@@ -624,6 +608,7 @@ struct PropertiesSettingsView: View
         #endif
     }
     
+    //MARK: Save and load dialogs
     func show_load_panel(type: WorkspaceObjecTypes)
     {
         #if os(macOS)
@@ -709,6 +694,7 @@ struct PropertiesSettingsView: View
     }
 }
 
+//MARK: - Advanced settings view
 struct AdvancedSettingsView: View
 {
     var body: some View
@@ -723,6 +709,7 @@ struct AdvancedSettingsView: View
 }
 
 #if os(iOS)
+//MARK: - Document dialog for iOS/iPadOS
 struct DocumentPickerView: UIViewControllerRepresentable
 {
     @AppStorage("RobotsPlistURL") private var robots_plist_url: URL?
@@ -823,6 +810,7 @@ struct DocumentPickerView: UIViewControllerRepresentable
 }
 #endif
 
+//MARK: - Previews
 struct SettingsView_Previews: PreviewProvider
 {
     static var previews: some View

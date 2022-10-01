@@ -9,10 +9,12 @@ import SwiftUI
 
 struct ContentView: View
 {
+    //Default robot origin location properties from user defaults
     @AppStorage("DefaultLocation_X") private var location_x: Double = 0
     @AppStorage("DefaultLocation_Y") private var location_y: Double = 20
     @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
     
+    //Default robot origion rotation properties from user defaults
     @AppStorage("DefaultScale_X") private var scale_x: Double = 200
     @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
     @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
@@ -21,22 +23,21 @@ struct ContentView: View
     
     #if os(iOS)
     @State var file_name = "" //Visible file name
-    @State var file_url: URL
+    @State var file_url: URL //Visible file URL
     #endif
-    @State var first_loaded = true
+    @State var first_loaded = true //Fade in workspace scene property
     
-    @StateObject private var base_workspace = Workspace() //Workspace object in app
+    @StateObject private var base_workspace = Workspace() //Workspace object for opened file
     
     #if os(iOS)
-    //MARK: Horizontal window size handler
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     #endif
     
     //MARK: Main view
     @ViewBuilder var body: some View
     {
-        #if os(iOS)
-        Sidebar(document: $document, first_loaded: $first_loaded, file_url: $file_url, file_name: $file_name)
+        #if os(macOS)
+        Sidebar(document: $document, first_loaded: $first_loaded)
             .environmentObject(base_workspace)
             .onAppear
             {
@@ -44,7 +45,7 @@ struct ContentView: View
                 update_preferences()
             }
         #else
-        Sidebar(document: $document, first_loaded: $first_loaded)
+        Sidebar(document: $document, first_loaded: $first_loaded, file_url: $file_url, file_name: $file_name)
             .environmentObject(base_workspace)
             .onAppear
             {

@@ -1233,7 +1233,7 @@ struct OriginMoveView: View
     {
         VStack(spacing: 12)
         {
-            Text("Move Origin")
+            Text("Origin Location")
                 .font(.title3)
                 .padding([.top, .leading, .trailing])
             
@@ -1286,7 +1286,7 @@ struct OriginRotateView: View
     {
         VStack(spacing: 12)
         {
-            Text("Rotate Origin")
+            Text("Origin Rotation")
                 .font(.title3)
                 .padding([.top, .leading, .trailing])
             

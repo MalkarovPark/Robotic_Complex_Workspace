@@ -11,12 +11,14 @@ import SwiftUI
 
 class Workspace: ObservableObject
 {
+    //MARK: - Workspace objects data
     @Published public var robots = [Robot]()
     @Published public var elements = [WorkspaceProgramElement]()
     @Published public var tools = [Tool]()
     @Published public var details = [Detail]()
     
-    //MARK: - Robots manage functions
+    //MARK: - Robots handling functions
+    //MARK: Robots manage functions
     public func add_robot(robot: Robot)
     {
         robot.name = mismatched_name(name: robot.name!, names: robots_names)
@@ -25,7 +27,7 @@ class Workspace: ObservableObject
     
     public func delete_robot(number: Int)
     {
-        if robots.indices.contains(number) == true
+        if robots.indices.contains(number)
         {
             robots.remove(at: number)
         }
@@ -81,9 +83,23 @@ class Workspace: ObservableObject
         }
     }
     
+    //MARK: Robots naming
     public func robot_by_name(name: String) -> Robot //Get index number of robot by name
     {
         return self.robots[robot_number_by_name(name: name)]
+    }
+    
+    public var robots_names: [String] //Get names of all robots in workspace
+    {
+        var robots_names = [String]()
+        if robots.count > 0
+        {
+            for robot in robots
+            {
+                robots_names.append(robot.name ?? "None")
+            }
+        }
+        return robots_names
     }
     
     public var avaliable_robots_names: [String] //Array of robots names not added to workspace
@@ -112,7 +128,27 @@ class Workspace: ObservableObject
         return names
     }
     
-    //MARK: - Details manage functions
+    //MARK: - Details handling functions
+    //MARK: Details manage funcions
+    public func add_detail(detail: Detail)
+    {
+        detail.name = mismatched_name(name: detail.name!, names: details_names)
+        details.append(detail)
+    }
+    
+    public func delete_detail(number: Int)
+    {
+        if details.indices.contains(number)
+        {
+            robots.remove(at: number)
+        }
+    }
+    
+    /*public func delete_detail(name: String)
+    {
+        delete_detail(number: number_by_name(name: name))
+    }*/
+    
     //MARK: Details selection functions
     private var selected_detail_index = -1
     
@@ -158,6 +194,20 @@ class Workspace: ObservableObject
         selected_detail_index = -1
     }
     
+    //MARK: Details naming
+    public var details_names: [String] //Get names of all details in workspace
+    {
+        var details_names = [String]()
+        if details.count > 0
+        {
+            for detail in details
+            {
+                details_names.append(detail.name ?? "None")
+            }
+        }
+        return details_names
+    }
+    
     public var avaliable_details_names: [String] //Array of details names not added to workspace
     {
         var names = [String]()
@@ -171,54 +221,9 @@ class Workspace: ObservableObject
         return names
     }
     
-    //MARK: - Details manage funcions
-    public func add_detail(detail: Detail)
-    {
-        detail.name = mismatched_name(name: detail.name!, names: details_names)
-        details.append(detail)
-    }
-    
-    public func delete_detail(number: Int)
-    {
-        if details.indices.contains(number) == true
-        {
-            robots.remove(at: number)
-        }
-    }
-    
-    /*public func delete_detail(name: String)
-    {
-        delete_detail(number: number_by_name(name: name))
-    }*/
-    
     //MARK: - Control program functions
-    public var robots_names: [String] //Get names of robots in workspace
-    {
-        var robots_names = [String]()
-        if robots.count > 0
-        {
-            for robot in robots
-            {
-                robots_names.append(robot.name ?? "None")
-            }
-        }
-        return robots_names
-    }
-    
-    public var details_names: [String] //Get names of details in workspace
-    {
-        var details_names = [String]()
-        if details.count > 0
-        {
-            for detail in details
-            {
-                details_names.append(detail.name ?? "None")
-            }
-        }
-        return details_names
-    }
-    
-    var marks_names: [String] //Get names of marks in workspace program
+    //MARK: Workspace program elements handling
+    var marks_names: [String] //Get names of all marks in workspace program
     {
         var marks_names = [String]()
         for program_element in self.elements
@@ -267,19 +272,34 @@ class Workspace: ObservableObject
                 }
             }
         }
-    }
-    
-    private func element_robot_check(element: WorkspaceProgramElement) //Check element by selected robot exists
-    {
-        if element.element_data.robot_name != ""
+        
+        func element_robot_check(element: WorkspaceProgramElement) //Check element by selected robot exists
         {
-            if self.robot_by_name(name: element.element_data.robot_name).is_placed == false
+            if element.element_data.robot_name != ""
+            {
+                if self.robot_by_name(name: element.element_data.robot_name).is_placed == false
+                {
+                    if self.placed_robots_names.count > 0
+                    {
+                        element.element_data.robot_name = self.placed_robots_names.first!
+                        
+                        if robot_by_name(name: element.element_data.robot_name).programs_count > 0
+                        {
+                            element.element_data.robot_program_name = robot_by_name(name: element.element_data.robot_name).programs_names.first!
+                        }
+                    }
+                    else
+                    {
+                        element.element_data.robot_name = ""
+                    }
+                }
+            }
+            else
             {
                 if self.placed_robots_names.count > 0
                 {
-                    element.element_data.robot_name = self.placed_robots_names.first!
-                    
-                    if robot_by_name(name: element.element_data.robot_name).programs_count > 0
+                    element.element_data.robot_name = robots.first?.name ?? "None"
+                    if robots.first?.programs_count ?? 0 > 0
                     {
                         element.element_data.robot_program_name = robot_by_name(name: element.element_data.robot_name).programs_names.first!
                     }
@@ -290,66 +310,56 @@ class Workspace: ObservableObject
                 }
             }
         }
-        else
+        
+        func element_jump_check(element: WorkspaceProgramElement) //Check element by selected mark exists
         {
-            if self.placed_robots_names.count > 0
+            if marks_names.count > 0
             {
-                element.element_data.robot_name = robots.first?.name ?? "None"
-                if robots.first?.programs_count ?? 0 > 0
+                var mark_founded = false
+                
+                for mark_name in self.marks_names
                 {
-                    element.element_data.robot_program_name = robot_by_name(name: element.element_data.robot_name).programs_names.first!
-                }
-            }
-        }
-    }
-    
-    private func element_jump_check(element: WorkspaceProgramElement) //Check element by selected mark exists
-    {
-        if marks_names.count > 0
-        {
-            var mark_founded = false
-            
-            for mark_name in self.marks_names
-            {
-                if mark_name == element.element_data.target_mark_name
-                {
-                    mark_founded = true
+                    if mark_name == element.element_data.target_mark_name
+                    {
+                        mark_founded = true
+                    }
+                    
+                    if mark_founded == true
+                    {
+                        break
+                    }
                 }
                 
-                if mark_founded == true
+                if mark_founded == false && element.element_data.mark_name == ""
                 {
-                    break
+                    element.element_data.target_mark_name = marks_names[0]
                 }
             }
-            
-            if mark_founded == false && element.element_data.mark_name == ""
+            else
             {
-                element.element_data.target_mark_name = marks_names[0]
+                element.element_data.target_mark_name = ""
             }
-        }
-        else
-        {
-            element.element_data.target_mark_name = ""
         }
     }
     
     @Published var cycled = false //Cyclic program performance flag
     
-    public var is_performing = false
-    public var selected_element_index = 0
+    public var performed = false
     public var workspace_scene = SCNScene()
     
-    public func start_pause_perform()
+    private var selected_element_index = 0
+    
+    public func start_pause_performing()
     {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) //Delayed update view
         {
             self.update_view()
         }
         
-        if is_performing == false
+        if performed == false
         {
             //Move to next point if moving was stop
-            is_performing = true
+            performed = true
             selected_robot.unit_origin_node?.isHidden = true
             selected_robot_index = -1
             
@@ -364,7 +374,7 @@ class Workspace: ObservableObject
         else
         {
             //Remove all action if moving was perform
-            is_performing = false
+            performed = false
             selected_robot.start_pause_moving()
             selected_robot_index = -1
         }
@@ -383,7 +393,6 @@ class Workspace: ObservableObject
                 marks_associations.append((element_data.mark_name, i))
             }
         }
-        print(marks_associations)
         
         //Set target element indexes of marks to jump elements.
         var target_mark_name: String
@@ -427,7 +436,7 @@ class Workspace: ObservableObject
                         selected_robot.robot_workcell_connect(scene: workspace_scene, name: selected_robot.name!, connect_camera: false)
                         selected_robot.select_program(name: element.element_data.robot_program_name)
                         selected_robot.start_pause_moving()
-                        while selected_robot.moving_completed == false && self.is_performing == true
+                        while selected_robot.moving_completed == false && self.performed == true
                         {
                             
                         }
@@ -448,7 +457,7 @@ class Workspace: ObservableObject
                 }
             }
             
-            if is_performing == true
+            if performed == true
             {
                 update_view()
                 elements[selected_element_index].is_selected = false
@@ -476,19 +485,19 @@ class Workspace: ObservableObject
             }
             else
             {
-                is_performing = false
+                performed = false
                 update_view()
             }
         }
     }
     
-    public func reset_perform()
+    public func reset_performing()
     {
-        elements[selected_element_index].is_selected = false
+        elements[selected_element_index].is_selected = false //Deselect performed program element
         selected_robot.reset_moving()
-        selected_element_index = 0
-        selected_robot_index = -1
-        is_performing = false
+        selected_element_index = 0 //Select firs program element
+        deselect_robot()
+        performed = false //Enable workspace program edit
     }
     
     //MARK: - Work with file system

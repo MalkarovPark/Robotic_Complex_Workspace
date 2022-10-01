@@ -25,11 +25,9 @@ struct WorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     
     #if os(iOS)
-    //MARK: Horizontal window size handler
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     
-    //Picker data for thin window size
-    @State private var program_view_presented = false
+    @State private var program_view_presented = false //Picker data for thin window size
     #endif
     
     var body: some View
@@ -180,16 +178,16 @@ struct WorkspaceView: View
     
     func stop_perform()
     {
-        if base_workspace.is_performing
+        if base_workspace.performed
         {
-            base_workspace.reset_perform()
+            base_workspace.reset_performing()
             base_workspace.update_view()
         }
     }
     
     func toggle_perform()
     {
-        base_workspace.start_pause_perform()
+        base_workspace.start_pause_performing()
     }
     
     func change_cycle()
@@ -245,7 +243,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(base_workspace.is_performing ? Color.secondary : Color.black)
+                                .foregroundColor(base_workspace.performed ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -257,7 +255,7 @@ struct ComplexWorkspaceView: View
                             AddInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        .disabled(base_workspace.is_performing)
+                        .disabled(base_workspace.performed)
                         
                         Divider()
                         
@@ -267,7 +265,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(!base_workspace.is_selected || base_workspace.is_performing ? Color.secondary : Color.black)
+                                .foregroundColor(!base_workspace.is_selected || base_workspace.performed ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -279,7 +277,7 @@ struct ComplexWorkspaceView: View
                             InfoView(info_view_presented: $info_view_presented, document: $document)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        .disabled(!base_workspace.is_selected || base_workspace.is_performing)
+                        .disabled(!base_workspace.is_selected || base_workspace.performed)
                     }
                     .background(.thinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
@@ -383,7 +381,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: NSClickGestureRecognizer)
         {
-            if !workspace.is_editing && !workspace.is_performing
+            if !workspace.is_editing && !workspace.performed
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -520,7 +518,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func scene_check() //Render functions
     {
-        if base_workspace.is_selected && base_workspace.is_performing
+        if base_workspace.is_selected && base_workspace.performed
         {
             base_workspace.selected_robot.update_robot()
             
@@ -618,7 +616,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         private let scn_view: SCNView
         @objc func handle_tap(sender: UITapGestureRecognizer)
         {
-            if !workspace.is_editing && !workspace.is_performing
+            if !workspace.is_editing && !workspace.performed
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -714,7 +712,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func scene_check() //Render functions
     {
-        if base_workspace.is_selected && base_workspace.is_performing
+        if base_workspace.is_selected && base_workspace.performed
         {
             base_workspace.selected_robot.update_robot()
             
@@ -1385,8 +1383,6 @@ struct InfoView: View
                 base_workspace.selected_detail.rotation = [0, 0, 0]
                 
                 base_workspace.deselect_detail()
-                //base_workspace.elements_check()
-                //document.preset.elements = base_workspace.file_data().elements
                 document.preset.details = base_workspace.file_data().details
                 base_workspace.update_view()
                 
@@ -1482,7 +1478,7 @@ struct ControlProgramView: View
                     .padding(4)
                 }
                 .padding()
-                .disabled(base_workspace.is_performing)
+                .disabled(base_workspace.performed)
             }
             .animation(.spring(), value: base_workspace.elements)
             
@@ -2203,7 +2199,7 @@ struct PerformerElementView: View
                     {
                         if robot_name == ""
                         {
-                            robot_name = base_workspace.robots_names[0]
+                            robot_name = base_workspace.placed_robots_names.first!
                         }
                         else
                         {
@@ -2211,7 +2207,7 @@ struct PerformerElementView: View
                             base_workspace.update_view()
                         }
                     }
-                    .disabled(base_workspace.robots_names.count == 0)
+                    .disabled(base_workspace.placed_robots_names.count == 0)
                     .frame(maxWidth: .infinity)
                     
                     Picker("Program", selection: $robot_program_name) //Robot program picker
@@ -2263,7 +2259,7 @@ struct PerformerElementView: View
                                 {
                                     if robot_name == ""
                                     {
-                                        robot_name = base_workspace.robots_names[0]
+                                        robot_name = base_workspace.placed_robots_names[0]
                                     }
                                     else
                                     {
@@ -2271,7 +2267,7 @@ struct PerformerElementView: View
                                         base_workspace.update_view()
                                     }
                                 }
-                                .disabled(base_workspace.robots_names.count == 0)
+                                .disabled(base_workspace.placed_robots_names.count == 0)
                                 .pickerStyle(.wheel)
                                 .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                                 .compositingGroup()

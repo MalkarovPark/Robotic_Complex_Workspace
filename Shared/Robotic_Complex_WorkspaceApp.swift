@@ -11,32 +11,32 @@ import SceneKit
 @main
 struct Robotic_Complex_WorkspaceApp: App
 {
-    @StateObject var app_state = AppState()
-    @State var first_loaded = true
+    @StateObject var app_state = AppState() //Init application state
+    @State var first_loaded = true //First flag for fade in workspace scene if app first loaded
     
-    @AppStorage("RobotsPlistURL") private var plist_url: URL?
+    @AppStorage("RobotsPlistURL") private var plist_url: URL? //Robot property list location URL from user defaults
     
     var body: some Scene
     {
         #if os(macOS)
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
         {
-            file in ContentView(document: file.$document)
+            file in ContentView(document: file.$document) //Pass document instance to main app view in closure
                 .environmentObject(app_state)
                 .onAppear
                 {
                     if first_loaded
                     {
-                        app_state.get_additive_data()
+                        app_state.get_additive_data() //Get models data from property lists
                         first_loaded = false
                     }
                 }
         }
         .commands
         {
-            SidebarCommands()
+            SidebarCommands() //Sidebar control items for view menu item
             
-            CommandGroup(after: CommandGroupPlacement.sidebar)
+            CommandGroup(after: CommandGroupPlacement.sidebar) //View commands for view menu item
             {
                 Divider()
                 Button("Reset Camera")
@@ -44,7 +44,7 @@ struct Robotic_Complex_WorkspaceApp: App
                     app_state.reset_view = true
                 }
                 .keyboardShortcut("0", modifiers: .command)
-                .disabled(!app_state.reset_view_enabled)
+                .disabled(!app_state.reset_view_enabled) //Disable reset view item when camera is reseting
                 Divider()
             }
         }
@@ -60,14 +60,18 @@ struct Robotic_Complex_WorkspaceApp: App
                 .environmentObject(app_state)
                 .onAppear
             {
-                app_state.get_additive_data()
+                if first_loaded
+                {
+                    app_state.get_additive_data() //Get models data from property lists
+                    first_loaded = false
+                }
             }
         }
         .commands
         {
-            SidebarCommands()
+            SidebarCommands() //Sidebar control items for view menu item
             
-            CommandGroup(after: CommandGroupPlacement.sidebar)
+            CommandGroup(after: CommandGroupPlacement.sidebar) //View commands for view menu item
             {
                 Divider()
                 Button("Reset Camera")
@@ -75,11 +79,11 @@ struct Robotic_Complex_WorkspaceApp: App
                     app_state.reset_view = true
                 }
                 .keyboardShortcut("0", modifiers: .command)
-                .disabled(!app_state.reset_view_enabled)
+                .disabled(!app_state.reset_view_enabled) //Disable reset view item when camera is reseting
                 Divider()
             }
             
-            CommandGroup(after: CommandGroupPlacement.appSettings)
+            CommandGroup(after: CommandGroupPlacement.appSettings) //Application settings commands
             {
                 Button("Settings...")
                 {

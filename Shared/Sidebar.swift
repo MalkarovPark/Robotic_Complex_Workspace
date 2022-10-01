@@ -9,10 +9,10 @@ import SwiftUI
 
 enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 {
-    case WorkspaceView, RobotsView, ToolsView, DetailsView
+    case WorkspaceView, RobotsView, ToolsView, DetailsView //Sidebar items
     
     var id: Int { rawValue }
-    var localizedName: LocalizedStringKey
+    var localizedName: LocalizedStringKey //Names of sidebar items
     {
         switch self
         {
@@ -27,7 +27,7 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
         }
     }
     
-    var image_name: String
+    var image_name: String //Names of sidebar items symbols
     {
         switch self
         {
@@ -43,6 +43,7 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
     }
 }
 
+//MARK: - Sidebar view and content
 struct Sidebar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -64,20 +65,6 @@ struct Sidebar: View
     }
 }
 
-struct Sidebar_Previews: PreviewProvider
-{
-    static var previews: some View
-    {
-        #if os(macOS)
-        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false))
-            .environmentObject(Workspace())
-            .environmentObject(AppState())
-        #else
-        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
-        #endif
-    }
-}
-
 struct SidebarContent: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -89,11 +76,8 @@ struct SidebarContent: View
     @Binding var file_name: String
     
     @State var settings_view_presented = false
-    #endif
     
-    #if os(iOS)
-    //MARK: Horizontal window size handler
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     #endif
     
     @State var sidebar_selection: navigation_item? = .WorkspaceView
@@ -102,6 +86,7 @@ struct SidebarContent: View
     {
         NavigationSplitView
         {
+            //MARK: Sidebar
             List(navigation_item.allCases, selection: $sidebar_selection)
             { selection in
                 NavigationLink(value: selection)
@@ -123,6 +108,7 @@ struct SidebarContent: View
             #if os(iOS)
             .toolbar
             {
+                //Settings button for iOS/iPadOS sidebar toolbar
                 ToolbarItem(placement: placement_trailing)
                 {
                     HStack(alignment: .center)
@@ -143,6 +129,7 @@ struct SidebarContent: View
             }
             .sheet(isPresented: $app_state.settings_view_presented)
             {
+                //Show settings view for iOS/iPadOS
                 SettingsView(setting_view_presented: $app_state.settings_view_presented)
                     .environmentObject(app_state)
                     .onDisappear
@@ -154,6 +141,7 @@ struct SidebarContent: View
         } detail: {
             ZStack
             {
+                //MARK: Content
                 switch sidebar_selection
                 {
                 case .WorkspaceView:
@@ -189,4 +177,19 @@ struct SidebarContent: View
           with: nil)
     }
     #endif
+}
+
+//MARK: - Previews
+struct Sidebar_Previews: PreviewProvider
+{
+    static var previews: some View
+    {
+        #if os(macOS)
+        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false))
+            .environmentObject(Workspace())
+            .environmentObject(AppState())
+        #else
+        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
+        #endif
+    }
 }
