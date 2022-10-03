@@ -25,7 +25,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     
     public var name: String? //Detail name
     public var node: SCNNode? //Detail scene node
-    public var detail_scene_address = "" //Adders of detail scene. If empty – this detail used defult model.
+    public var scene_address = "" //Addres of detail scene. If empty – this detail used defult model.
     
     private var figure: String?
     private var lenghts: [Float]? //Lenghts for detail without scene figure
@@ -71,7 +71,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     init(name: String, scene: String) //Init detail by scene_name
     {
         self.name = name
-        self.detail_scene_address = scene
+        self.scene_address = scene
         
         if scene != ""
         {
@@ -137,10 +137,10 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         
         if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
         {
-            self.detail_scene_address = dictionary["Scene"] as? String ?? ""
-            if self.detail_scene_address != ""
+            self.scene_address = dictionary["Scene"] as? String ?? ""
+            if self.scene_address != ""
             {
-                self.node = SCNScene(named: self.detail_scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
+                self.node = SCNScene(named: self.scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
             }
         }
         else
@@ -170,8 +170,8 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         
         if detail_struct.scene != ""
         {
-            self.detail_scene_address = detail_struct.scene
-            self.node = SCNScene(named: self.detail_scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
+            self.scene_address = detail_struct.scene
+            self.node = SCNScene(named: self.scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
         }
         else
         {
@@ -390,7 +390,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Work with file system
     public var file_info: detail_struct
     {
-        return detail_struct(name: self.name ?? "None", scene: self.detail_scene_address, figure: self.figure ?? "box", lenghts: self.lenghts ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
+        return detail_struct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lenghts: self.lenghts ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
     }
 }
 

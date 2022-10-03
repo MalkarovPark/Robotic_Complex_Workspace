@@ -22,19 +22,23 @@ class Tool: Identifiable, Equatable, Hashable, ObservableObject
     
     public var name: String?
     public var node: SCNNode?
-    public var tool_scene_address: String?
+    public var scene_address = "" //Addres of detail scene. If empty – this detail used defult model.
     
     //MARK: - Init functions
     init(tool_struct: tool_struct) //Init by detail structure
     {
         self.name = tool_struct.name
-        self.tool_scene_address = tool_struct.scene
+        self.scene_address = tool_struct.scene!
     }
+    
+    //MARK: - Control functions
+    public var operation_code: Int?
+    public var info_code: Int?
     
     //MARK: - Work with file system
     public var file_info: tool_struct
     {
-        return tool_struct(name: self.name, scene: self.tool_scene_address)
+        return tool_struct(name: self.name, scene: self.scene_address)
     }
 }
 

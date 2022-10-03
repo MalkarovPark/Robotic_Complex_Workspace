@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 class PositionPoint: Identifiable, Codable, Hashable
 {
@@ -69,6 +68,4 @@ enum MoveType: String, Codable, Equatable, CaseIterable
 {
     case linear = "Linear"
     case fine = "Fine"
-    
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }
