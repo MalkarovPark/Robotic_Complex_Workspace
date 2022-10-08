@@ -502,7 +502,7 @@ struct AddRobotView: View
     
     func add_robot_in_workspace()
     {
-        base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_dictionary))
+        base_workspace.add_robot(Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_dictionary))
         document.preset.robots = base_workspace.file_data().robots
         
         base_workspace.elements_check()
@@ -538,7 +538,7 @@ struct RobotView: View
             RobotSceneView(document: $document)
                 .onDisappear(perform: close_robot)
             RobotInspectorView(document: $document)
-                .disabled(base_workspace.selected_robot.is_moving == true)
+                .disabled(base_workspace.selected_robot.performed == true)
                 .frame(width: 256)
             #else
             if horizontal_size_class == .compact
@@ -569,7 +569,7 @@ struct RobotView: View
                             VStack
                             {
                                 RobotInspectorView(document: $document)
-                                    .disabled(base_workspace.selected_robot.is_moving == true)
+                                    .disabled(base_workspace.selected_robot.performed == true)
                                     .presentationDetents([.medium, .large])
                             }
                             .onDisappear()
@@ -586,7 +586,7 @@ struct RobotView: View
                 RobotSceneView(document: $document)
                     .onDisappear(perform: close_robot)
                 RobotInspectorView(document: $document)
-                    .disabled(base_workspace.selected_robot.is_moving == true)
+                    .disabled(base_workspace.selected_robot.performed == true)
                     .frame(width: 288)
             }
             #endif
@@ -1038,7 +1038,7 @@ struct CellSceneView_macOS: NSViewRepresentable
             }
             //base_workspace.selected_robot.moving_completed = false
         }
-        if base_workspace.selected_robot.is_moving == true
+        if base_workspace.selected_robot.performed == true
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
@@ -1158,7 +1158,7 @@ struct CellSceneView_iOS: UIViewRepresentable
             }
             //base_workspace.selected_robot.moving_completed = false
         }
-        if base_workspace.selected_robot.is_moving == true
+        if base_workspace.selected_robot.performed == true
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
@@ -1674,7 +1674,7 @@ struct RobotInspectorView: View
     
     func add_point_to_program()
     {
-        base_workspace.selected_robot.selected_program.add_point(pos_x: base_workspace.selected_robot.pointer_location[0], pos_y: base_workspace.selected_robot.pointer_location[1], pos_z: base_workspace.selected_robot.pointer_location[2], rot_x: base_workspace.selected_robot.pointer_rotation[0], rot_y: base_workspace.selected_robot.pointer_rotation[1], rot_z: base_workspace.selected_robot.pointer_rotation[2])
+        base_workspace.selected_robot.selected_program.add_point(PositionPoint(x: base_workspace.selected_robot.pointer_location[0], y: base_workspace.selected_robot.pointer_location[1], z: base_workspace.selected_robot.pointer_location[2], r: base_workspace.selected_robot.pointer_rotation[0], p: base_workspace.selected_robot.pointer_rotation[1], w: base_workspace.selected_robot.pointer_rotation[2], move_type: .linear))
         
         document.preset.robots = base_workspace.file_data().robots
         app_state.get_scene_image = true
@@ -1807,7 +1807,7 @@ struct AddProgramView: View
                 
                 Button("Add")
                 {
-                    base_workspace.selected_robot.add_program(program: PositionsProgram(name: add_text))
+                    base_workspace.selected_robot.add_program(PositionsProgram(name: add_text))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                     
                     document.preset.robots = base_workspace.file_data().robots

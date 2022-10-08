@@ -24,17 +24,17 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     }
     
     //MARK: - Point manage functions
-    public func add_point(pos_x: Float, pos_y: Float, pos_z: Float, rot_x: Float, rot_y: Float, rot_z: Float)
+    public func add_point(_ point: PositionPoint)
     {
-        points.append(PositionPoint(x: pos_x, y: pos_y, z: pos_z, r: rot_x, p: rot_y, w: rot_z, move_type: .linear))
+        points.append(point)
         visual_build()
     }
     
-    public func update_point(number: Int, pos_x: Float, pos_y: Float, pos_z: Float, rot_x: Float, rot_y: Float, rot_z: Float)
+    public func update_point(number: Int, _ point: PositionPoint)
     {
         if points.indices.contains(number) //Checking for the presence of a point with a given number to update
         {
-            points[number] = PositionPoint(x: pos_x, y: pos_y, z: pos_z, r: rot_x, p: rot_y, w: rot_z, move_type: .linear)
+            points[number] = point
             visual_build()
         }
     }

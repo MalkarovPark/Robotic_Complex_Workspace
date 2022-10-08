@@ -243,7 +243,7 @@ struct AddDetailView: View
         //base_workspace.add_robot(robot: Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_model_dictionary))
         app_state.get_scene_image = true
         app_state.previewed_detail?.name = new_detail_name
-        base_workspace.add_detail(detail: app_state.previewed_detail!)
+        base_workspace.add_detail(app_state.previewed_detail!)
         document.preset.details = base_workspace.file_data().details
         
         //base_workspace.elements_check()

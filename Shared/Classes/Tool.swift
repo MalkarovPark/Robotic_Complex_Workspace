@@ -32,8 +32,37 @@ class Tool: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: - Control functions
-    public var operation_code: Int?
-    public var info_code: Int?
+    public var operation_code: Int? = -1
+    {
+        didSet
+        {
+            //Checking for positive value of operation code number
+            if operation_code! >= 0
+            {
+                //Perform function by opcode as array number
+                print("\(operation_code ?? 0) 🍩")
+            }
+            else
+            {
+                //Reset tool perfroming by negative code
+                print("\(operation_code ?? 0) 🍷")
+            }
+        }
+    }
+    
+    public var info_code: Int? = 0
+    
+    public var performed: Bool
+    {
+        if operation_code ?? 0 >= 0
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
     
     //MARK: - Work with file system
     public var file_info: tool_struct

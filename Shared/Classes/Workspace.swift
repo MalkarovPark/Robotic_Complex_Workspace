@@ -19,7 +19,7 @@ class Workspace: ObservableObject
     
     //MARK: - Robots handling functions
     //MARK: Robots manage functions
-    public func add_robot(robot: Robot)
+    public func add_robot(_ robot: Robot)
     {
         robot.name = mismatched_name(name: robot.name!, names: robots_names)
         robots.append(robot)
@@ -130,7 +130,7 @@ class Workspace: ObservableObject
     
     //MARK: - Details handling functions
     //MARK: Details manage funcions
-    public func add_detail(detail: Detail)
+    public func add_detail(_ detail: Detail)
     {
         detail.name = mismatched_name(name: detail.name!, names: details_names)
         details.append(detail)

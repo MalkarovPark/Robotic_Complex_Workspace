@@ -251,7 +251,7 @@ struct ToolSceneView_macOS: NSViewRepresentable
                 base_workspace.update_view()
             }
         }
-        if base_workspace.selected_robot.is_moving == true
+        if base_workspace.selected_robot.performed == true
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
@@ -369,7 +369,7 @@ struct ToolSceneView_iOS: UIViewRepresentable
                 base_workspace.update_view()
             }
         }
-        if base_workspace.selected_robot.is_moving == true
+        if base_workspace.selected_robot.performed == true
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {

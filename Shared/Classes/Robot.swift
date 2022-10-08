@@ -132,7 +132,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         {
             //Stop robot moving before program change
             selected_program.visual_clear()
-            is_moving = false
+            performed = false
             moving_completed = false
             target_point_index = 0
         }
@@ -142,25 +142,25 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    public func add_program(program: PositionsProgram)
+    public func add_program(_ program: PositionsProgram)
     {
         program.name = mismatched_name(name: program.name!, names: programs_names)
         programs.append(program)
         selected_program.visual_clear()
     }
     
-    public func update_program(number: Int, prog: PositionsProgram) //Update program by number
+    public func update_program(number: Int, _ program: PositionsProgram) //Update program by number
     {
         if programs.indices.contains(number) //Checking for the presence of a position program with a given number to update
         {
-            programs[number] = prog
+            programs[number] = program
             selected_program.visual_clear()
         }
     }
     
-    public func update_program(name: String, prog: PositionsProgram) //Update program by name
+    public func update_program(name: String, _ program: PositionsProgram) //Update program by name
     {
-        update_program(number: number_by_name(name: name), prog: prog)
+        update_program(number: number_by_name(name: name), program)
     }
     
     public func delete_program(number: Int) //Delete program by number
@@ -234,7 +234,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         var color = Color.gray //Gray point color if the robot is not reching the point
         let point_number = self.selected_program.points.firstIndex(of: point) //Number of selected point
         
-        if is_moving
+        if performed
         {
             if point_number == target_point_index //Yellow color, if the robot is in the process of moving to the point
             {
@@ -262,7 +262,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Moving functions
     public var move_time: Float?
     public var draw_path = false //Draw path of the robot tool point
-    public var is_moving = false //Moving state of robot
+    public var performed = false //Moving state of robot
     public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
     public var target_point_index = 0 //Index of target point in points array
     
@@ -345,7 +345,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             {
                 //Reset target point index if all points passed
                 target_point_index = 0
-                is_moving = false
+                performed = false
                 moving_completed = true
                 current_pointer_position_select()
             }
@@ -354,18 +354,18 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func start_pause_moving() //Handling robot moving
     {
-        if is_moving == false
+        if performed == false
         {
             clear_chart_data()
             
             //Move to next point if moving was stop
-            is_moving = true
+            performed = true
             move_to_next_point()
         }
         else
         {
             //Remove all action if moving was perform
-            is_moving = false
+            performed = false
             if demo_work == true
             {
                 pointer_node?.removeAllActions()
@@ -387,7 +387,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         pointer_node?.removeAllActions()
         tool_node?.removeAllActions()
         current_pointer_position_select()
-        is_moving = false
+        performed = false
         target_point_index = 0
     }
     
@@ -1107,7 +1107,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     func update_chart_data()
     {
-        if get_statistics && is_moving //Get data if robot is moving and statistic collection enabled
+        if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
             for i in 0...ik_angles.count - 1
             {
