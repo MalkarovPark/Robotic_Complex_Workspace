@@ -33,7 +33,7 @@ class RobotConnector
         block!()
     }
     
-    private(set) var state: [String: Any]? //Connector state info
+    private(set) var state: [[String: Any]]? //Connector state info
 }
 
 class ToolConnector
@@ -58,6 +58,6 @@ class ToolConnector
     }
     
     private(set) var info_code: Int = -1 //Info code parameter for tool
-    private(set) var state: [String: Any]? //Connector state info
+    private(set) var state: [[String: Any]]? //Connector state info
     
 }

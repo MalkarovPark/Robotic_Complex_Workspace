@@ -283,6 +283,10 @@ struct PropertiesSettingsView: View
     @AppStorage("ToolsPlistURL") private var tools_plist_url: URL?
     @AppStorage("DetailsPlistURL") private var details_plist_url: URL?
     
+    @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
+    @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
+    @AppStorage("DetailsBookmark") private var details_bookmark: Data?
+    
     //User defaults with additive data from imported property lists
     @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
     @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
@@ -624,51 +628,18 @@ struct PropertiesSettingsView: View
         case .robot:
             robots_plist_url = response == .OK ? openPanel.url : nil
             
-            do
-            {
-                if ((robots_plist_url?.startAccessingSecurityScopedResource()) != nil)
-                {
-                    additive_robots_data = try Data(contentsOf: robots_plist_url!)
-                    app_state.update_additive_data()
-                }
-            }
-            catch
-            {
-                print("error reading")
-                print(error.localizedDescription)
-            }
+            get_additive(additive_data: &additive_robots_data, bookmark_data: &robots_bookmark, plist_url: robots_plist_url)
+            app_state.update_additive_data()
         case .tool:
             tools_plist_url = response == .OK ? openPanel.url : nil
             
-            do
-            {
-                if ((tools_plist_url?.startAccessingSecurityScopedResource()) != nil)
-                {
-                    additive_tools_data = try Data(contentsOf: tools_plist_url!)
-                    app_state.update_additive_data()
-                }
-            }
-            catch
-            {
-                print("error reading")
-                print(error.localizedDescription)
-            }
+            get_additive(additive_data: &additive_tools_data, bookmark_data: &tools_bookmark, plist_url: tools_plist_url)
+            app_state.update_additive_data()
         case .detail:
             details_plist_url = response == .OK ? openPanel.url : nil
             
-            do
-            {
-                if ((details_plist_url?.startAccessingSecurityScopedResource()) != nil)
-                {
-                    additive_details_data = try Data(contentsOf: details_plist_url!)
-                    app_state.update_additive_data()
-                }
-            }
-            catch
-            {
-                print("error reading")
-                print(error.localizedDescription)
-            }
+            get_additive(additive_data: &additive_details_data, bookmark_data: &details_bookmark, plist_url: details_plist_url)
+            app_state.update_additive_data()
         }
         #else
         app_state.plist_file_type = type
@@ -716,6 +687,10 @@ struct DocumentPickerView: UIViewControllerRepresentable
     @AppStorage("ToolsPlistURL") private var tools_plist_url: URL?
     @AppStorage("DetailsPlistURL") private var details_plist_url: URL?
     
+    @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
+    @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
+    @AppStorage("DetailsBookmark") private var details_bookmark: Data?
+    
     @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
     @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
     @AppStorage("AdditiveDetailsData") private var additive_details_data: Data?
@@ -757,49 +732,19 @@ struct DocumentPickerView: UIViewControllerRepresentable
             {
             case .robot:
                 parent.robots_plist_url = urls[0]
-                do
-                {
-                    if ((parent.robots_plist_url?.startAccessingSecurityScopedResource()) != nil)
-                    {
-                        parent.additive_robots_data = try Data(contentsOf: parent.robots_plist_url!)
-                        parent.app_state.update_additive_data()
-                    }
-                }
-                catch
-                {
-                    print ("error reading")
-                    print (error.localizedDescription)
-                }
+                
+                get_additive(additive_data: &parent.additive_robots_data, bookmark_data: &parent.robots_bookmark, plist_url: parent.robots_plist_url)
+                parent.app_state.update_additive_data()
             case .tool:
                 parent.tools_plist_url = urls[0]
-                do
-                {
-                    if ((parent.tools_plist_url?.startAccessingSecurityScopedResource()) != nil)
-                    {
-                        parent.additive_tools_data = try Data(contentsOf: parent.tools_plist_url!)
-                        parent.app_state.update_additive_data()
-                    }
-                }
-                catch
-                {
-                    print ("error reading")
-                    print (error.localizedDescription)
-                }
+                
+                get_additive(additive_data: &parent.additive_tools_data, bookmark_data: &parent.tools_bookmark, plist_url: parent.tools_plist_url)
+                parent.app_state.update_additive_data()
             case .detail:
                 parent.details_plist_url = urls[0]
-                do
-                {
-                    if ((parent.details_plist_url?.startAccessingSecurityScopedResource()) != nil)
-                    {
-                        parent.additive_details_data = try Data(contentsOf: parent.details_plist_url!)
-                        parent.app_state.update_additive_data()
-                    }
-                }
-                catch
-                {
-                    print ("error reading")
-                    print (error.localizedDescription)
-                }
+                
+                get_additive(additive_data: &parent.additive_details_data, bookmark_data: &parent.details_bookmark, plist_url: parent.details_plist_url)
+                parent.app_state.update_additive_data()
             default:
                 break
             }
@@ -809,6 +754,26 @@ struct DocumentPickerView: UIViewControllerRepresentable
     }
 }
 #endif
+
+//MARK: - Data functions
+func get_additive(additive_data: inout Data?, bookmark_data: inout Data?, plist_url: URL?)
+{
+    do
+    {
+        if ((plist_url?.startAccessingSecurityScopedResource()) != nil)
+        {
+            additive_data = try Data(contentsOf: plist_url!)
+            
+            plist_url?.stopAccessingSecurityScopedResource()
+            bookmark_data? = (try plist_url?.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil))!
+        }
+    }
+    catch
+    {
+        print("error reading")
+        print(error.localizedDescription)
+    }
+}
 
 //MARK: - Previews
 struct SettingsView_Previews: PreviewProvider
