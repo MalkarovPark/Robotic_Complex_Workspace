@@ -12,9 +12,13 @@ import SwiftUI
 //MARK: - Class for work with various application data
 class AppState : ObservableObject
 {
-    @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
-    @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
-    @AppStorage("AdditiveDetailsData") private var additive_details_data: Data?
+    @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
+    @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
+    @AppStorage("DetailsBookmark") private var details_bookmark: Data?
+    
+    @AppStorage("RobotsEmpty") private var robots_empty: Bool?
+    @AppStorage("ToolsEmpty") private var tools_empty: Bool?
+    @AppStorage("DetailsEmpty") private var details_empty: Bool?
     
     @Published var reset_view = false
     @Published var reset_view_enabled = true
@@ -162,55 +166,103 @@ class AppState : ObservableObject
         var new_objects = Array<String>()
         
         //MARK: Manufacturers data
-        do
+        if !(robots_empty ?? true)
         {
-            additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_robots_data ?? Data(), options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]]
-            
-            new_objects = Array(additive_robots_dictionary.keys).sorted(by: <)
-            manufacturers.append(contentsOf: new_objects)
-            
-            for i in 0..<new_objects.count
+            do
             {
-                robots_dictionary.updateValue(additive_robots_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                var is_stale = false
+                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                
+                guard !is_stale else
+                {
+                    //Handle stale data here.
+                    return
+                }
+                
+                var address = url.absoluteString
+                let plist_url = URL(string: address + "ToolsInfo.plist")
+                let additive_data = try Data(contentsOf: plist_url!)
+                
+                additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]]
+                
+                new_objects = Array(additive_robots_dictionary.keys).sorted(by: <)
+                manufacturers.append(contentsOf: new_objects)
+                
+                for i in 0..<new_objects.count
+                {
+                    robots_dictionary.updateValue(additive_robots_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                }
             }
-        }
-        catch
-        {
-            print(error.localizedDescription)
+            catch
+            {
+                print(error.localizedDescription)
+            }
         }
         
         //MARK: Tools data
-        do
+        if !(tools_empty ?? true)
         {
-            additive_tools_dictionary = try PropertyListSerialization.propertyList(from: additive_tools_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: Any]]
-            new_objects = Array(additive_tools_dictionary.keys).sorted(by: <)
-            tools.append(contentsOf: new_objects)
-            
-            for i in 0..<new_objects.count
+            do
             {
-                tools_dictionary.updateValue(additive_tools_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                var is_stale = false
+                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                
+                guard !is_stale else
+                {
+                    //Handle stale data here.
+                    return
+                }
+                
+                var address = url.absoluteString
+                let plist_url = URL(string: address + "ToolsInfo.plist")
+                let additive_data = try Data(contentsOf: plist_url!)
+                
+                additive_tools_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
+                new_objects = Array(additive_tools_dictionary.keys).sorted(by: <)
+                tools.append(contentsOf: new_objects)
+                
+                for i in 0..<new_objects.count
+                {
+                    tools_dictionary.updateValue(additive_tools_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                }
             }
-        }
-        catch
-        {
-            print(error.localizedDescription)
+            catch
+            {
+                print(error.localizedDescription)
+            }
         }
         
         //MARK: Details data
-        do
+        if !(details_empty ?? true)
         {
-            additive_details_dictionary = try PropertyListSerialization.propertyList(from: additive_details_data ?? Data(), options: .mutableContainers, format: nil) as! [String: [String: Any]]
-            new_objects = Array(additive_details_dictionary.keys).sorted(by: <)
-            details.append(contentsOf: new_objects)
-            
-            for i in 0..<new_objects.count
+            do
             {
-                details_dictionary.updateValue(additive_details_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                var is_stale = false
+                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                
+                guard !is_stale else
+                {
+                    //Handle stale data here.
+                    return
+                }
+                
+                var address = url.absoluteString
+                let plist_url = URL(string: address + "DetailsInfo.plist")
+                let additive_data = try Data(contentsOf: plist_url!)
+                
+                additive_details_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
+                new_objects = Array(additive_details_dictionary.keys).sorted(by: <)
+                details.append(contentsOf: new_objects)
+                
+                for i in 0..<new_objects.count
+                {
+                    details_dictionary.updateValue(additive_details_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                }
             }
-        }
-        catch
-        {
-            print(error.localizedDescription)
+            catch
+            {
+                print(error.localizedDescription)
+            }
         }
         
         update_series_info()
@@ -220,13 +272,21 @@ class AppState : ObservableObject
         did_updated = true
     }
     
-    public func update_additive_data()
+    public func update_additive_data(type: WorkspaceObjecTypes)
     {
-        for object_type in WorkspaceObjecTypes.allCases
+        switch type
         {
-            clear_additive_data(type: object_type)
+        case .robot:
+            clear_additive_data(type: type)
+            robots_empty = false
+        case .tool:
+            clear_additive_data(type: type)
+            tools_empty = false
+        case .detail:
+            clear_additive_data(type: type)
+            details_empty = false
         }
-        //clear_additive_data()
+        
         get_additive_data()
     }
     
@@ -238,14 +298,17 @@ class AppState : ObservableObject
             robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
             manufacturers = Array(robots_dictionary.keys).sorted(by: <)
             manufacturer_name = manufacturers.first ?? "None"
+            robots_empty = true
         case .tool:
             tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
             tools = Array(tools_dictionary.keys).sorted(by: <)
             tool_name = tools.first ?? "None"
+            tools_empty = true
         case .detail:
             details_dictionary = try! PropertyListSerialization.propertyList(from: details_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
             details = Array(details_dictionary.keys).sorted(by: <)
             detail_name = details.first ?? "None"
+            details_empty = true
         }
     }
     
@@ -284,7 +347,31 @@ class AppState : ObservableObject
     public func update_detail_info()
     {
         detail_dictionary = details_dictionary[detail_name]!
-        previewed_detail = Detail(name: "None", dictionary: detail_dictionary)
+        
+        if details_empty ?? true
+        {
+            previewed_detail = Detail(name: "None", dictionary: detail_dictionary)
+        }
+        else
+        {
+            do
+            {
+                var is_stale = false
+                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                
+                guard !is_stale else
+                {
+                    //Handle stale data here.
+                    return
+                }
+                
+                previewed_detail = Detail(name: "None", dictionary: detail_dictionary, folder_url: url)
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
         preview_update_scene = true
     }
     
@@ -298,7 +385,7 @@ class AppState : ObservableObject
         var tools = 0
         var details = 0
         
-        if additive_robots_data != nil
+        if !(robots_empty ?? true)
         {
             brands = additive_robots_dictionary.keys.count
             for key_name in additive_robots_dictionary.keys
@@ -312,12 +399,12 @@ class AppState : ObservableObject
             }
         }
         
-        if additive_tools_data != nil
+        if !(tools_empty ?? true)
         {
             tools = additive_tools_dictionary.keys.count
         }
         
-        if additive_details_data != nil
+        if !(details_empty ?? true)
         {
             details = additive_details_dictionary.keys.count
         }

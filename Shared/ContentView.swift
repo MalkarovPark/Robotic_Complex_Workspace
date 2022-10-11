@@ -19,6 +19,14 @@ struct ContentView: View
     @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
     @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
     
+    @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
+    @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
+    @AppStorage("DetailsBookmark") private var details_bookmark: Data?
+    
+    @AppStorage("RobotsEmpty") private var robots_empty: Bool?
+    @AppStorage("ToolsEmpty") private var tools_empty: Bool?
+    @AppStorage("DetailsEmpty") private var details_empty: Bool?
+    
     @Binding var document: Robotic_Complex_WorkspaceDocument //Opened document
     
     #if os(iOS)
@@ -57,7 +65,12 @@ struct ContentView: View
     
     func get_file_data() //Store preset file data into workspace
     {
-        base_workspace.file_view(preset: document.preset)
+        //Pass bookmarks data into workspace for the models access
+        base_workspace.robots_bookmark = robots_empty ?? true ? nil : robots_bookmark
+        base_workspace.tools_bookmark = tools_empty ?? true ? nil : tools_bookmark
+        base_workspace.details_bookmark = details_empty ?? true ? nil : details_bookmark
+        
+        base_workspace.file_view(preset: document.preset) //Get file data from document
     }
     
     func update_preferences()

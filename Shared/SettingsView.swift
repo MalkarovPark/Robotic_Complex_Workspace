@@ -279,18 +279,19 @@ struct GeneralSettingsView: View
 struct PropertiesSettingsView: View
 {
     //Viewed property lists URLs
-    @AppStorage("RobotsPlistURL") private var robots_plist_url: URL?
-    @AppStorage("ToolsPlistURL") private var tools_plist_url: URL?
-    @AppStorage("DetailsPlistURL") private var details_plist_url: URL?
+    @AppStorage("RobotsPlistName") private var robots_plist_name: String?
+    @AppStorage("ToolsPlistName") private var tools_plist_name: String?
+    @AppStorage("DetailsPlistName") private var details_plist_name: String?
     
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
     @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
     @AppStorage("DetailsBookmark") private var details_bookmark: Data?
     
+    @AppStorage("RobotsEmpty") private var robots_empty: Bool?
+    @AppStorage("ToolsEmpty") private var tools_empty: Bool?
+    @AppStorage("DetailsEmpty") private var details_empty: Bool?
+    
     //User defaults with additive data from imported property lists
-    @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
-    @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
-    @AppStorage("AdditiveDetailsData") private var additive_details_data: Data?
     
     @EnvironmentObject var app_state: AppState
     
@@ -348,7 +349,7 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (robots_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Text("File – " + (robots_plist_name ?? "None"))
                             Spacer()
                             
                             Button(action: show_save_panel)
@@ -359,8 +360,8 @@ struct PropertiesSettingsView: View
                             
                             Button(action: {
                                 app_state.clear_additive_data(type: .robot)
-                                robots_plist_url = nil
-                                additive_robots_data = nil
+                                //robots_plist_url = nil
+                                //additive_robots_data = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
@@ -398,7 +399,7 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (tools_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Text("File – " + (tools_plist_name ?? "None"))
                             Spacer()
                             
                             Button(action: show_save_panel)
@@ -410,8 +411,8 @@ struct PropertiesSettingsView: View
                             Button(action: {
                                 app_state.clear_additive_data(type: .tool
                                 )
-                                tools_plist_url = nil
-                                additive_tools_data = nil
+                                //tools_plist_url = nil
+                                //additive_tools_data = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
@@ -449,7 +450,7 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (details_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                            Text("File – " + (details_plist_name ?? "None"))
                             Spacer()
                             
                             Button(action: show_save_panel)
@@ -460,8 +461,7 @@ struct PropertiesSettingsView: View
                             
                             Button(action: {
                                 app_state.clear_additive_data(type: .detail)
-                                details_plist_url = nil
-                                additive_details_data = nil
+                                //details_plist_url = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
@@ -617,29 +617,27 @@ struct PropertiesSettingsView: View
     {
         #if os(macOS)
         let openPanel = NSOpenPanel()
-        openPanel.allowedFileTypes = ["plist"]
+        //openPanel.allowedFileTypes = ["plist"]
         openPanel.allowsMultipleSelection = false
         openPanel.canChooseDirectories = false
-        openPanel.canChooseFiles = true
+        openPanel.canChooseFiles = false
+        openPanel.canChooseDirectories = true
         let response = openPanel.runModal()
         
         switch type
         {
         case .robot:
-            robots_plist_url = response == .OK ? openPanel.url : nil
-            
-            get_additive(additive_data: &additive_robots_data, bookmark_data: &robots_bookmark, plist_url: robots_plist_url)
-            app_state.update_additive_data()
+            get_additive(bookmark_data: &robots_bookmark, url: response == .OK ? openPanel.url : nil)
+            app_state.update_additive_data(type: .robot)
+            robots_empty = false
         case .tool:
-            tools_plist_url = response == .OK ? openPanel.url : nil
-            
-            get_additive(additive_data: &additive_tools_data, bookmark_data: &tools_bookmark, plist_url: tools_plist_url)
-            app_state.update_additive_data()
+            get_additive(bookmark_data: &tools_bookmark, url: response == .OK ? openPanel.url : nil)
+            app_state.update_additive_data(type: .tool)
+            tools_empty = false
         case .detail:
-            details_plist_url = response == .OK ? openPanel.url : nil
-            
-            get_additive(additive_data: &additive_details_data, bookmark_data: &details_bookmark, plist_url: details_plist_url)
-            app_state.update_additive_data()
+            get_additive(bookmark_data: &details_bookmark, url: response == .OK ? openPanel.url : nil)
+            app_state.update_additive_data(type: .detail)
+            details_empty = false
         }
         #else
         app_state.plist_file_type = type
@@ -756,23 +754,34 @@ struct DocumentPickerView: UIViewControllerRepresentable
 #endif
 
 //MARK: - Data functions
-func get_additive(additive_data: inout Data?, bookmark_data: inout Data?, plist_url: URL?)
+func get_additive(bookmark_data: inout Data?, url: URL?)
 {
+    guard url!.startAccessingSecurityScopedResource() else
+    {
+        // Handle the failure here.
+        return
+    }
+    
+    // Make sure you release the security-scoped resource when you finish.
+    defer { url?.stopAccessingSecurityScopedResource() }
+    //bookmark_data? = (try url?.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil))!
+    print(url)
+    
     do
     {
-        if ((plist_url?.startAccessingSecurityScopedResource()) != nil)
-        {
-            additive_data = try Data(contentsOf: plist_url!)
-            
-            plist_url?.stopAccessingSecurityScopedResource()
-            bookmark_data? = (try plist_url?.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil))!
-        }
+        // Make sure the bookmark is minimal!
+        bookmark_data = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
     }
     catch
     {
-        print("error reading")
-        print(error.localizedDescription)
+        print("Bookmark error \(error)")
     }
+    
+    //var address = url?.absoluteString
+
+    //let plist_url = URL(string: address! + "DetailsInfo.plist")
+    
+    //additive_data = try Data(contentsOf: plist_url!)
 }
 
 //MARK: - Previews

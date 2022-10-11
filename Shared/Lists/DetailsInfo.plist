@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Detail 1</key>
+	<key>Scene Detail</key>
 	<dict>
 		<key>Scene</key>
-		<string>None</string>
+		<string>TestDetail.scn</string>
 		<key>Gripable</key>
 		<false/>
 	</dict>

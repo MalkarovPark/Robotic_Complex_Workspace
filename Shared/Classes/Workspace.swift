@@ -519,7 +519,8 @@ class Workspace: ObservableObject
         
         //Get details info for save to file
         var details_file_info = [detail_struct]()
-        for detail in details {
+        for detail in details
+        {
             details_file_info.append(detail.file_info)
         }
         
@@ -532,6 +533,10 @@ class Workspace: ObservableObject
         
         return(robots_file_info, tools_file_info, details_file_info, elements_file_info)
     }
+    
+    public var robots_bookmark: Data?
+    public var details_bookmark: Data?
+    public var tools_bookmark: Data?
     
     public func file_view(preset: WorkspacePreset)
     {
@@ -551,9 +556,38 @@ class Workspace: ObservableObject
         
         //Update details data from file
         details.removeAll()
-        for detail_struct in preset.details
+        if details_bookmark == nil
         {
-            details.append(Detail(detail_struct: detail_struct))
+            //Add details without scene
+            for detail_struct in preset.details
+            {
+                details.append(Detail(detail_struct: detail_struct))
+            }
+        }
+        else
+        {
+            //Add details with scene
+            for detail_struct in preset.details
+            {
+                print(detail_struct)
+                do
+                {
+                    var is_stale = false
+                    let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                    
+                    guard !is_stale else
+                    {
+                        //Handle stale data here
+                        return
+                    }
+                    
+                    details.append(Detail(detail_struct: detail_struct, folder_url: url))
+                }
+                catch
+                {
+                    print(error.localizedDescription)
+                }
+            }
         }
         
         //Update workspace program elements data from file

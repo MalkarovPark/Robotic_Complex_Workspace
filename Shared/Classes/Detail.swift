@@ -81,6 +81,42 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     
     init(name: String, dictionary: [String: Any]) //Init detail by dictionary
     {
+        init_by_dictionary(name: name, dictionary: dictionary)
+        
+        if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
+        {
+            self.figure = "box"
+        }
+        node_by_description()
+    }
+    
+    init(name: String, dictionary: [String: Any], folder_url: URL) //Init detail by dictionary and use models folder
+    {
+        init_by_dictionary(name: name, dictionary: dictionary)
+        
+        if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
+        {
+            self.scene_address = dictionary["Scene"] as? String ?? ""
+            if self.scene_address != ""
+            {
+                do
+                {
+                    self.node = try SCNScene(url: URL(string: folder_url.absoluteString + scene_address)!).rootNode.childNode(withName: "detail", recursively: false)?.clone()
+                }
+                catch
+                {
+                    print("ERROR loading scene")
+                }
+            }
+        }
+        else
+        {
+            node_by_description()
+        }
+    }
+    
+    private func init_by_dictionary(name: String, dictionary: [String: Any])
+    {
         self.name = name
         
         //Get values form dictionary
@@ -134,13 +170,33 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
                 physics_type = .ph_none
             }
         }
+    }
+    
+    init(detail_struct: detail_struct) //Init by detail structure
+    {
+        init_by_struct(detail_struct: detail_struct)
         
-        if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
+        if detail_struct.scene != ""
         {
-            self.scene_address = dictionary["Scene"] as? String ?? ""
-            if self.scene_address != ""
+            self.figure = "box"
+        }
+        node_by_description()
+    }
+    
+    init(detail_struct: detail_struct, folder_url: URL) //Init by detail structure
+    {
+        init_by_struct(detail_struct: detail_struct)
+        
+        if detail_struct.scene != "" //If dictionary conatains scene address get node from it.
+        {
+            do
             {
-                self.node = SCNScene(named: self.scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
+                self.scene_address = detail_struct.scene
+                self.node = try SCNScene(url: URL(string: folder_url.absoluteString + detail_struct.scene)!).rootNode.childNode(withName: "detail", recursively: false)
+            }
+            catch
+            {
+                print("ERROR loading scene")
             }
         }
         else
@@ -149,7 +205,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    init(detail_struct: detail_struct) //Init by detail structure
+    private func init_by_struct(detail_struct: detail_struct)
     {
         self.name = detail_struct.name
         
@@ -167,16 +223,6 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         self.rotation = detail_struct.rotation
         
         self.image_data = detail_struct.image_data
-        
-        if detail_struct.scene != ""
-        {
-            self.scene_address = detail_struct.scene
-            self.node = SCNScene(named: self.scene_address)?.rootNode.childNode(withName: "detail", recursively: false)
-        }
-        else
-        {
-            node_by_description()
-        }
     }
     
     private func node_by_description()
