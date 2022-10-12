@@ -26,7 +26,6 @@ class AppState : ObservableObject
     #if os(iOS)
     @Published var settings_view_presented = false
     @Published var is_compact_view = false
-    public var plist_file_type: WorkspaceObjecTypes?
     #endif
     
     public var workspace_scene = SCNScene()
@@ -272,7 +271,7 @@ class AppState : ObservableObject
         did_updated = true
     }
     
-    public func update_additive_data(type: WorkspaceObjecTypes)
+    public func update_additive_data(type: WorkspaceObjectType)
     {
         switch type
         {
@@ -290,7 +289,7 @@ class AppState : ObservableObject
         get_additive_data()
     }
     
-    public func clear_additive_data(type: WorkspaceObjecTypes)
+    public func clear_additive_data(type: WorkspaceObjectType)
     {
         switch type
         {

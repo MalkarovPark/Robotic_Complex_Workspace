@@ -291,15 +291,13 @@ struct PropertiesSettingsView: View
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
     @AppStorage("DetailsEmpty") private var details_empty: Bool?
     
-    //User defaults with additive data from imported property lists
-    
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
-    //Flags for file iOS/iPadOS dialogs presentaion
-    @State private var load_panel_presented = false
     @State private var clear_message_presented = false
     #endif
+    @State private var load_panel_presented = false
+    @State private var folder_selection_type: WorkspaceObjectType = .robot
     
     var body: some View
     {
@@ -349,25 +347,28 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (robots_plist_name ?? "None"))
-                            Spacer()
-                            
-                            Button(action: show_save_panel)
+                            Picker(selection: $app_state.detail_name, label: Text("Plist")
+                                    .bold())
                             {
-                                Label("Export", systemImage: "square.and.arrow.up")
-                                    .labelStyle(.iconOnly)
+                                ForEach(app_state.details, id: \.self)
+                                {
+                                    Text($0)
+                                }
                             }
+                            Spacer()
                             
                             Button(action: {
                                 app_state.clear_additive_data(type: .robot)
-                                //robots_plist_url = nil
-                                //additive_robots_data = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
                                     .labelStyle(.iconOnly)
                             }
-                            Button("Load", action: { show_load_panel(type: .robot) })
+                            Button(action: { show_load_panel(type: .robot) })
+                            {
+                                Label("Folder", systemImage: "folder")
+                                    .labelStyle(.iconOnly)
+                            }
                         }
                         .padding(4)
                     }
@@ -399,26 +400,29 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (tools_plist_name ?? "None"))
-                            Spacer()
-                            
-                            Button(action: show_save_panel)
+                            Picker(selection: $app_state.detail_name, label: Text("Plist")
+                                    .bold())
                             {
-                                Label("Export", systemImage: "square.and.arrow.up")
-                                    .labelStyle(.iconOnly)
+                                ForEach(app_state.details, id: \.self)
+                                {
+                                    Text($0)
+                                }
                             }
+                            Spacer()
                             
                             Button(action: {
                                 app_state.clear_additive_data(type: .tool
                                 )
-                                //tools_plist_url = nil
-                                //additive_tools_data = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
                                     .labelStyle(.iconOnly)
                             }
-                            Button("Load", action: { show_load_panel(type: .tool) })
+                            Button(action: { show_load_panel(type: .tool) })
+                            {
+                                Label("Folder", systemImage: "folder")
+                                    .labelStyle(.iconOnly)
+                            }
                         }
                         .padding(4)
                     }
@@ -450,24 +454,28 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Text("File – " + (details_plist_name ?? "None"))
-                            Spacer()
-                            
-                            Button(action: show_save_panel)
+                            Picker(selection: $app_state.detail_name, label: Text("Plist")
+                                    .bold())
                             {
-                                Label("Export", systemImage: "square.and.arrow.up")
-                                    .labelStyle(.iconOnly)
+                                ForEach(app_state.details, id: \.self)
+                                {
+                                    Text($0)
+                                }
                             }
+                            Spacer()
                             
                             Button(action: {
                                 app_state.clear_additive_data(type: .detail)
-                                //details_plist_url = nil
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
                                     .labelStyle(.iconOnly)
                             }
-                            Button("Load", action: { show_load_panel(type: .detail) })
+                            Button(action: { show_load_panel(type: .detail) })
+                            {
+                                Label("Folder", systemImage: "folder")
+                                    .labelStyle(.iconOnly)
+                            }
                         }
                         .padding(4)
                     }
@@ -511,11 +519,22 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Text("File – " + (robots_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Picker(selection: $app_state.detail_name, label: Text("Plist")
+                            .bold())
+                    {
+                        ForEach(app_state.details, id: \.self)
+                        {
+                            Text($0)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
                     Spacer()
                     
-                    Button("Export", action: show_save_panel)
-                    Button("Load", action: { show_load_panel(type: .robot) })
+                    Button(action: { show_load_panel(type: .robot) })
+                    {
+                        Label("Folder", systemImage: "folder")
+                            .labelStyle(.iconOnly)
+                    }
                 }
             }
             
@@ -538,11 +557,22 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Text("File – " + (tools_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Picker(selection: $app_state.detail_name, label: Text("Plist")
+                            .bold())
+                    {
+                        ForEach(app_state.details, id: \.self)
+                        {
+                            Text($0)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
                     Spacer()
                     
-                    Button("Export", action: show_save_panel)
-                    Button("Load", action: { show_load_panel(type: .tool) })
+                    Button(action: { show_load_panel(type: .tool) })
+                    {
+                        Label("Folder", systemImage: "folder")
+                            .labelStyle(.iconOnly)
+                    }
                 }
             }
             
@@ -565,11 +595,22 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Text("File – " + (details_plist_url?.deletingPathExtension().lastPathComponent ?? "None"))
+                    Picker(selection: $app_state.detail_name, label: Text("Plist")
+                            .bold())
+                    {
+                        ForEach(app_state.details, id: \.self)
+                        {
+                            Text($0)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
                     Spacer()
                     
-                    Button("Export", action: show_save_panel)
-                    Button("Load", action: { show_load_panel(type: .detail) })
+                    Button(action: { show_load_panel(type: .detail) })
+                    {
+                        Label("Folder", systemImage: "folder")
+                            .labelStyle(.iconOnly)
+                    }
                 }
             }
             
@@ -583,20 +624,14 @@ struct PropertiesSettingsView: View
                 Button("Robots")
                 {
                     app_state.clear_additive_data(type: .robot)
-                    robots_plist_url = nil
-                    additive_robots_data = nil
                 }
                 Button("Tools")
                 {
                     app_state.clear_additive_data(type: .tool)
-                    tools_plist_url = nil
-                    additive_tools_data = nil
                 }
                 Button("Details")
                 {
                     app_state.clear_additive_data(type: .detail)
-                    details_plist_url = nil
-                    additive_details_data = nil
                 }
                 Button("Cancel", role: .cancel) { }
             }
@@ -604,62 +639,40 @@ struct PropertiesSettingsView: View
         }
         #if os(macOS)
         .frame(width: 256)
-        #else
-        .sheet(isPresented: $load_panel_presented)
-        {
-            DocumentPickerView()
-        }
         #endif
+        .fileImporter(isPresented: $load_panel_presented,
+                              allowedContentTypes: [.folder],
+                              allowsMultipleSelection: true)
+        { result in
+            switch result
+            {
+            case .success(let success):
+                switch folder_selection_type
+                {
+                case .robot:
+                    get_additive(bookmark_data: &robots_bookmark, url: success.first)
+                    app_state.update_additive_data(type: .robot)
+                    robots_empty = false
+                case .tool:
+                    get_additive(bookmark_data: &tools_bookmark, url: success.first)
+                    app_state.update_additive_data(type: .tool)
+                    tools_empty = false
+                case .detail:
+                    get_additive(bookmark_data: &details_bookmark, url: success.first)
+                    app_state.update_additive_data(type: .detail)
+                    details_empty = false
+                }
+            case .failure(let failure):
+                break
+            }
+        }
     }
     
     //MARK: Save and load dialogs
-    func show_load_panel(type: WorkspaceObjecTypes)
+    func show_load_panel(type: WorkspaceObjectType)
     {
-        #if os(macOS)
-        let openPanel = NSOpenPanel()
-        //openPanel.allowedFileTypes = ["plist"]
-        openPanel.allowsMultipleSelection = false
-        openPanel.canChooseDirectories = false
-        openPanel.canChooseFiles = false
-        openPanel.canChooseDirectories = true
-        let response = openPanel.runModal()
-        
-        switch type
-        {
-        case .robot:
-            get_additive(bookmark_data: &robots_bookmark, url: response == .OK ? openPanel.url : nil)
-            app_state.update_additive_data(type: .robot)
-            robots_empty = false
-        case .tool:
-            get_additive(bookmark_data: &tools_bookmark, url: response == .OK ? openPanel.url : nil)
-            app_state.update_additive_data(type: .tool)
-            tools_empty = false
-        case .detail:
-            get_additive(bookmark_data: &details_bookmark, url: response == .OK ? openPanel.url : nil)
-            app_state.update_additive_data(type: .detail)
-            details_empty = false
-        }
-        #else
-        app_state.plist_file_type = type
+        folder_selection_type = type
         load_panel_presented = true
-        #endif
-    }
-    
-    func show_save_panel()
-    {
-        #if os(macOS)
-        let savePanel = NSSavePanel()
-        savePanel.allowedFileTypes = ["plist"]
-        savePanel.canCreateDirectories = true
-        savePanel.isExtensionHidden = false
-        savePanel.allowsOtherFileTypes = false
-        savePanel.title = "Save your text"
-        savePanel.message = "Choose a folder and a name to store your text."
-        savePanel.nameFieldLabel = "File name:"
-        
-        let response = savePanel.runModal()
-        print(response == .OK ? savePanel.url : nil)
-        #endif
     }
 }
 
@@ -677,82 +690,6 @@ struct AdvancedSettingsView: View
     }
 }
 
-#if os(iOS)
-//MARK: - Document dialog for iOS/iPadOS
-struct DocumentPickerView: UIViewControllerRepresentable
-{
-    @AppStorage("RobotsPlistURL") private var robots_plist_url: URL?
-    @AppStorage("ToolsPlistURL") private var tools_plist_url: URL?
-    @AppStorage("DetailsPlistURL") private var details_plist_url: URL?
-    
-    @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
-    @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
-    @AppStorage("DetailsBookmark") private var details_bookmark: Data?
-    
-    @AppStorage("AdditiveRobotsData") private var additive_robots_data: Data?
-    @AppStorage("AdditiveToolsData") private var additive_tools_data: Data?
-    @AppStorage("AdditiveDetailsData") private var additive_details_data: Data?
-    
-    @EnvironmentObject var app_state: AppState
-    
-    func makeCoordinator() -> Coordinator
-    {
-        return DocumentPickerView.Coordinator(parent1: self, app_state: app_state)
-    }
-    
-    func makeUIViewController(context: Context) -> UIDocumentPickerViewController
-    {
-        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.propertyList], asCopy: true)
-        picker.allowsMultipleSelection = false
-        picker.delegate = context.coordinator
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context)
-    {
-        
-    }
-    
-    class Coordinator: NSObject, UIDocumentPickerDelegate
-    {
-        var parent: DocumentPickerView
-        var app_state: AppState
-        
-        init(parent1: DocumentPickerView, app_state: AppState)
-        {
-            parent = parent1
-            self.app_state = app_state
-        }
-        
-        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL])
-        {
-            switch app_state.plist_file_type
-            {
-            case .robot:
-                parent.robots_plist_url = urls[0]
-                
-                get_additive(additive_data: &parent.additive_robots_data, bookmark_data: &parent.robots_bookmark, plist_url: parent.robots_plist_url)
-                parent.app_state.update_additive_data()
-            case .tool:
-                parent.tools_plist_url = urls[0]
-                
-                get_additive(additive_data: &parent.additive_tools_data, bookmark_data: &parent.tools_bookmark, plist_url: parent.tools_plist_url)
-                parent.app_state.update_additive_data()
-            case .detail:
-                parent.details_plist_url = urls[0]
-                
-                get_additive(additive_data: &parent.additive_details_data, bookmark_data: &parent.details_bookmark, plist_url: parent.details_plist_url)
-                parent.app_state.update_additive_data()
-            default:
-                break
-            }
-            
-            print(urls[0].absoluteString)
-        }
-    }
-}
-#endif
-
 //MARK: - Data functions
 func get_additive(bookmark_data: inout Data?, url: URL?)
 {
@@ -765,7 +702,6 @@ func get_additive(bookmark_data: inout Data?, url: URL?)
     // Make sure you release the security-scoped resource when you finish.
     defer { url?.stopAccessingSecurityScopedResource() }
     //bookmark_data? = (try url?.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil))!
-    print(url)
     
     do
     {

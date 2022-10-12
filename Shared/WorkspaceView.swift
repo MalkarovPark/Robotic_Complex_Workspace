@@ -477,7 +477,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 }
             }
             
-            func deselect_object(type: WorkspaceObjecTypes)
+            func deselect_object(type: WorkspaceObjectType)
             {
                 workspace.update_view()
                 
@@ -496,7 +496,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 }
             }
             
-            func select_object(name: String, type: WorkspaceObjecTypes)
+            func select_object(name: String, type: WorkspaceObjectType)
             {
                 workspace.update_view()
                 

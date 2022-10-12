@@ -620,7 +620,7 @@ class Workspace: ObservableObject
     
     public var selected_category = 0
     
-    public var selected_object_type: WorkspaceObjecTypes
+    public var selected_object_type: WorkspaceObjectType
     {
         if selected_robot_index > -1
         {
@@ -708,7 +708,7 @@ class Workspace: ObservableObject
     }
 }
 
-enum WorkspaceObjecTypes: String, Equatable, CaseIterable
+enum WorkspaceObjectType: String, Equatable, CaseIterable
 {
     case robot = "Robot"
     case detail = "Detail"
