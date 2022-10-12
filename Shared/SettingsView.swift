@@ -278,15 +278,17 @@ struct GeneralSettingsView: View
 //MARK: - Property list settings view
 struct PropertiesSettingsView: View
 {
-    //Viewed property lists URLs
-    @AppStorage("RobotsPlistName") private var robots_plist_name: String?
-    @AppStorage("ToolsPlistName") private var tools_plist_name: String?
-    @AppStorage("DetailsPlistName") private var details_plist_name: String?
-    
+    //Bookmarks for the workspace objects model data
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
     @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
     @AppStorage("DetailsBookmark") private var details_bookmark: Data?
     
+    //Saved names of property list files for workspace objects
+    @AppStorage("RobotsPlistName") private var robots_plist_name: String?
+    @AppStorage("ToolsPlistName") private var tools_plist_name: String?
+    @AppStorage("DetailsPlistName") private var details_plist_name: String?
+    
+    //If data folder selected
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
     @AppStorage("DetailsEmpty") private var details_empty: Bool?
@@ -347,13 +349,18 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Picker(selection: $app_state.detail_name, label: Text("Plist")
+                            Picker(selection: $app_state.selected_plist_names.Robots, label: Text(app_state.selected_folder.Robots)
                                     .bold())
                             {
-                                ForEach(app_state.details, id: \.self)
+                                ForEach(app_state.avaliable_plist_names.Robots, id: \.self)
                                 {
                                     Text($0)
                                 }
+                            }
+                            .onChange(of: app_state.selected_plist_names.Robots)
+                            { new_value in
+                                robots_plist_name = new_value
+                                app_state.update_additive_data(type: .robot)
                             }
                             Spacer()
                             
@@ -400,13 +407,18 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Picker(selection: $app_state.detail_name, label: Text("Plist")
+                            Picker(selection: $app_state.selected_plist_names.Tools, label: Text(app_state.selected_folder.Tools)
                                     .bold())
                             {
-                                ForEach(app_state.details, id: \.self)
+                                ForEach(app_state.avaliable_plist_names.Tools, id: \.self)
                                 {
                                     Text($0)
                                 }
+                            }
+                            .onChange(of: app_state.selected_plist_names.Tools)
+                            { new_value in
+                                tools_plist_name = new_value
+                                app_state.update_additive_data(type: .tool)
                             }
                             Spacer()
                             
@@ -454,13 +466,18 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Picker(selection: $app_state.detail_name, label: Text("Plist")
+                            Picker(selection: $app_state.selected_plist_names.Details, label: Text(app_state.selected_folder.Details)
                                     .bold())
                             {
-                                ForEach(app_state.details, id: \.self)
+                                ForEach(app_state.avaliable_plist_names.Details, id: \.self)
                                 {
                                     Text($0)
                                 }
+                            }
+                            .onChange(of: app_state.selected_plist_names.Details)
+                            { new_value in
+                                details_plist_name = new_value
+                                app_state.update_additive_data(type: .detail)
                             }
                             Spacer()
                             
@@ -519,15 +536,20 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Picker(selection: $app_state.detail_name, label: Text("Plist")
+                    Picker(selection: $app_state.selected_plist_names.Robots, label: Text(app_state.selected_folder.Robots)
                             .bold())
                     {
-                        ForEach(app_state.details, id: \.self)
+                        ForEach(app_state.avaliable_plist_names.Robots, id: \.self)
                         {
                             Text($0)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
+                    .onChange(of: app_state.selected_plist_names.Robots)
+                    { new_value in
+                        robots_plist_name = new_value
+                        app_state.update_additive_data(type: .robot)
+                    }
                     Spacer()
                     
                     Button(action: { show_load_panel(type: .robot) })
@@ -557,15 +579,20 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Picker(selection: $app_state.detail_name, label: Text("Plist")
+                    Picker(selection: $app_state.selected_plist_names.Tools, label: Text(app_state.selected_folder.Tools)
                             .bold())
                     {
-                        ForEach(app_state.details, id: \.self)
+                        ForEach(app_state.avaliable_plist_names.Tools, id: \.self)
                         {
                             Text($0)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
+                    .onChange(of: app_state.selected_plist_names.Tools)
+                    { new_value in
+                        tools_plist_name = new_value
+                        app_state.update_additive_data(type: .tool)
+                    }
                     Spacer()
                     
                     Button(action: { show_load_panel(type: .tool) })
@@ -595,15 +622,20 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Picker(selection: $app_state.detail_name, label: Text("Plist")
+                    Picker(selection: $app_state.selected_plist_names.Details, label: Text(app_state.selected_folder.Details)
                             .bold())
                     {
-                        ForEach(app_state.details, id: \.self)
+                        ForEach(app_state.avaliable_plist_names.Details, id: \.self)
                         {
                             Text($0)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
+                    .onChange(of: app_state.selected_plist_names.Details)
+                    { new_value in
+                        details_plist_name = new_value
+                        app_state.update_additive_data(type: .detail)
+                    }
                     Spacer()
                     
                     Button(action: { show_load_panel(type: .detail) })
@@ -640,6 +672,12 @@ struct PropertiesSettingsView: View
         #if os(macOS)
         .frame(width: 256)
         #endif
+        .onAppear
+        {
+            app_state.selected_plist_names.Robots = robots_plist_name ?? ""
+            app_state.selected_plist_names.Tools = tools_plist_name ?? ""
+            app_state.selected_plist_names.Details = details_plist_name ?? ""
+        }
         .fileImporter(isPresented: $load_panel_presented,
                               allowedContentTypes: [.folder],
                               allowsMultipleSelection: true)

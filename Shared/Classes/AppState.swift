@@ -12,15 +12,17 @@ import SwiftUI
 //MARK: - Class for work with various application data
 class AppState : ObservableObject
 {
+    //Bookmarks for the workspace objects model data
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
     @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
     @AppStorage("DetailsBookmark") private var details_bookmark: Data?
     
+    //If data folder selected
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
     @AppStorage("DetailsEmpty") private var details_empty: Bool?
     
-    @Published var reset_view = false
+    @Published var reset_view = false //Return camera position to default in scene views
     @Published var reset_view_enabled = true
     @Published var get_scene_image = false
     #if os(iOS)
@@ -160,6 +162,81 @@ class AppState : ObservableObject
     }
     
     //MARK: - Get additive robots data from external property list
+    @Published var selected_plist_names: (Robots: String, Tools: String, Details: String) = (Robots: "", Tools: "", Details: "")
+    
+    public var avaliable_plist_names: (Robots: [String], Tools: [String], Details: [String])
+    {
+        var plist_names = (Robots: [String](), Tools: [String](), Details: [String]())
+        
+        //Get robot plists names
+        if !(robots_empty ?? true)
+        {
+            plist_names.Robots = get_plist_filenames(bookmark_data: robots_bookmark)
+        }
+        else
+        {
+            plist_names.Robots = [String]()
+        }
+        
+        //Get tools plists names
+        if !(tools_empty ?? true)
+        {
+            plist_names.Tools = get_plist_filenames(bookmark_data: tools_bookmark)
+        }
+        else
+        {
+            plist_names.Tools = [String]()
+        }
+        
+        //Get details plists names
+        if !(details_empty ?? true)
+        {
+            plist_names.Details = get_plist_filenames(bookmark_data: details_bookmark)
+        }
+        else
+        {
+            plist_names.Details = [String]()
+        }
+        
+        func get_plist_filenames(bookmark_data: Data?) -> [String] //Return array of property list files names
+        {
+            var names = [String]()
+            
+            do
+            {
+                var is_stale = false
+                
+                for plist_url in directory_contents(url: try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)) //Get all files from url
+                {
+                    names.append(plist_url.lastPathComponent) //Append file name
+                }
+                names = names.filter{ $0.contains(".plist") } //Remove non-plist files names
+                names = names.compactMap { $0.components(separatedBy: ".").first } //Remove extension from names
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+            
+            return names
+        }
+        
+        return plist_names
+    }
+    
+    func directory_contents(url: URL) -> [URL]
+    {
+        do
+        {
+            return try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+        }
+        catch
+        {
+            print(error)
+            return []
+        }
+    }
+    
     public func get_additive_data()
     {
         var new_objects = Array<String>()
@@ -179,7 +256,7 @@ class AppState : ObservableObject
                 }
                 
                 var address = url.absoluteString
-                let plist_url = URL(string: address + "ToolsInfo.plist")
+                let plist_url = URL(string: address + selected_plist_names.Robots + ".plist")
                 let additive_data = try Data(contentsOf: plist_url!)
                 
                 additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]]
@@ -213,7 +290,7 @@ class AppState : ObservableObject
                 }
                 
                 var address = url.absoluteString
-                let plist_url = URL(string: address + "ToolsInfo.plist")
+                let plist_url = URL(string: address + selected_plist_names.Tools + ".plist")
                 let additive_data = try Data(contentsOf: plist_url!)
                 
                 additive_tools_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
@@ -246,7 +323,7 @@ class AppState : ObservableObject
                 }
                 
                 var address = url.absoluteString
-                let plist_url = URL(string: address + "DetailsInfo.plist")
+                let plist_url = URL(string: address + selected_plist_names.Details + ".plist")
                 let additive_data = try Data(contentsOf: plist_url!)
                 
                 additive_details_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
@@ -375,7 +452,7 @@ class AppState : ObservableObject
     }
     
     //MARK: - Info for settings view
-    public var property_files_info: (Brands: String, Series: String, Models: String, Tools: String, Details: String)
+    public var property_files_info: (Brands: String, Series: String, Models: String, Tools: String, Details: String) //Count of models by object type
     {
         var brands = 0
         var series = 0
@@ -409,5 +486,67 @@ class AppState : ObservableObject
         }
         
         return (Brands: String(brands), Series: String(series), Models: String(models), Tools: String(tools), Details: String(details))
+    }
+    
+    public var selected_folder: (Robots: String, Tools: String, Details: String) //Selected folder name for object data
+    {
+        var folder_names = (Robots: String(), Tools: String(), Details: String())
+        var url: URL
+        
+        if !(robots_empty ?? true)
+        {
+            do
+            {
+                var is_stale = false
+                url = try URL(resolvingBookmarkData: robots_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                folder_names.Robots = url.lastPathComponent
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+        else
+        {
+            folder_names.Robots = "None"
+        }
+        
+        if !(tools_empty ?? true)
+        {
+            do
+            {
+                var is_stale = false
+                url = try URL(resolvingBookmarkData: tools_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                folder_names.Tools = url.lastPathComponent
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+        else
+        {
+            folder_names.Tools = "None"
+        }
+        
+        if !(details_empty ?? true)
+        {
+            do
+            {
+                var is_stale = false
+                url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                folder_names.Details = url.lastPathComponent
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+        else
+        {
+            folder_names.Details = "None"
+        }
+        
+        return folder_names
     }
 }
