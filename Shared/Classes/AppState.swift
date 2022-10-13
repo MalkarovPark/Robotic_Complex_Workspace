@@ -17,6 +17,11 @@ class AppState : ObservableObject
     @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
     @AppStorage("DetailsBookmark") private var details_bookmark: Data?
     
+    //Saved names of property list files for workspace objects
+    @AppStorage("RobotsPlistName") private var robots_plist_name: String?
+    @AppStorage("ToolsPlistName") private var tools_plist_name: String?
+    @AppStorage("DetailsPlistName") private var details_plist_name: String?
+    
     //If data folder selected
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
@@ -237,113 +242,129 @@ class AppState : ObservableObject
         }
     }
     
-    public func get_additive_data()
+    public func get_defaults_plist_names(type: WorkspaceObjectType)
+    {
+        switch type
+        {
+        case .robot:
+            selected_plist_names.Robots = robots_plist_name ?? ""
+        case .tool:
+            selected_plist_names.Tools = tools_plist_name ?? ""
+        case .detail:
+            selected_plist_names.Details = details_plist_name ?? ""
+        }
+    }
+    
+    public func get_additive_data(type: WorkspaceObjectType)
     {
         var new_objects = Array<String>()
         
-        //MARK: Manufacturers data
-        if !(robots_empty ?? true)
+        switch type
         {
-            do
+        case .robot:
+            //MARK: Manufacturers data
+            if !(robots_empty ?? true)
             {
-                var is_stale = false
-                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                
-                guard !is_stale else
+                do
                 {
-                    //Handle stale data here.
-                    return
+                    var is_stale = false
+                    let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                    
+                    guard !is_stale else
+                    {
+                        //Handle stale data here.
+                        return
+                    }
+                    
+                    var address = url.absoluteString
+                    let plist_url = URL(string: address + selected_plist_names.Robots + ".plist")
+                    let additive_data = try Data(contentsOf: plist_url!)
+                    
+                    additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]]
+                    
+                    new_objects = Array(additive_robots_dictionary.keys).sorted(by: <)
+                    manufacturers.append(contentsOf: new_objects)
+                    
+                    for i in 0..<new_objects.count
+                    {
+                        robots_dictionary.updateValue(additive_robots_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                    }
                 }
-                
-                var address = url.absoluteString
-                let plist_url = URL(string: address + selected_plist_names.Robots + ".plist")
-                let additive_data = try Data(contentsOf: plist_url!)
-                
-                additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]]
-                
-                new_objects = Array(additive_robots_dictionary.keys).sorted(by: <)
-                manufacturers.append(contentsOf: new_objects)
-                
-                for i in 0..<new_objects.count
+                catch
                 {
-                    robots_dictionary.updateValue(additive_robots_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                    print(error.localizedDescription)
                 }
             }
-            catch
+            update_series_info()
+        case .tool:
+            //MARK: Tools data
+            if !(tools_empty ?? true)
             {
-                print(error.localizedDescription)
+                do
+                {
+                    var is_stale = false
+                    let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                    
+                    guard !is_stale else
+                    {
+                        //Handle stale data here.
+                        return
+                    }
+                    
+                    var address = url.absoluteString
+                    let plist_url = URL(string: address + selected_plist_names.Tools + ".plist")
+                    let additive_data = try Data(contentsOf: plist_url!)
+                    
+                    additive_tools_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
+                    new_objects = Array(additive_tools_dictionary.keys).sorted(by: <)
+                    tools.append(contentsOf: new_objects)
+                    
+                    for i in 0..<new_objects.count
+                    {
+                        tools_dictionary.updateValue(additive_tools_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                    }
+                }
+                catch
+                {
+                    print(error.localizedDescription)
+                }
             }
+            update_tool_info()
+        case .detail:
+            //MARK: Details data
+            if !(details_empty ?? true)
+            {
+                do
+                {
+                    var is_stale = false
+                    let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                    
+                    guard !is_stale else
+                    {
+                        //Handle stale data here.
+                        return
+                    }
+                    
+                    var address = url.absoluteString
+                    let plist_url = URL(string: address + selected_plist_names.Details + ".plist")
+                    let additive_data = try Data(contentsOf: plist_url!)
+                    
+                    additive_details_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
+                    new_objects = Array(additive_details_dictionary.keys).sorted(by: <)
+                    details.append(contentsOf: new_objects)
+                    
+                    for i in 0..<new_objects.count
+                    {
+                        details_dictionary.updateValue(additive_details_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                    }
+                }
+                catch
+                {
+                    print(error.localizedDescription)
+                }
+            }
+            update_detail_info()
         }
-        
-        //MARK: Tools data
-        if !(tools_empty ?? true)
-        {
-            do
-            {
-                var is_stale = false
-                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                
-                guard !is_stale else
-                {
-                    //Handle stale data here.
-                    return
-                }
-                
-                var address = url.absoluteString
-                let plist_url = URL(string: address + selected_plist_names.Tools + ".plist")
-                let additive_data = try Data(contentsOf: plist_url!)
-                
-                additive_tools_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
-                new_objects = Array(additive_tools_dictionary.keys).sorted(by: <)
-                tools.append(contentsOf: new_objects)
-                
-                for i in 0..<new_objects.count
-                {
-                    tools_dictionary.updateValue(additive_tools_dictionary[new_objects[i]]!, forKey: new_objects[i])
-                }
-            }
-            catch
-            {
-                print(error.localizedDescription)
-            }
-        }
-        
-        //MARK: Details data
-        if !(details_empty ?? true)
-        {
-            do
-            {
-                var is_stale = false
-                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                
-                guard !is_stale else
-                {
-                    //Handle stale data here.
-                    return
-                }
-                
-                var address = url.absoluteString
-                let plist_url = URL(string: address + selected_plist_names.Details + ".plist")
-                let additive_data = try Data(contentsOf: plist_url!)
-                
-                additive_details_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
-                new_objects = Array(additive_details_dictionary.keys).sorted(by: <)
-                details.append(contentsOf: new_objects)
-                
-                for i in 0..<new_objects.count
-                {
-                    details_dictionary.updateValue(additive_details_dictionary[new_objects[i]]!, forKey: new_objects[i])
-                }
-            }
-            catch
-            {
-                print(error.localizedDescription)
-            }
-        }
-        
-        update_series_info()
-        update_tool_info()
-        update_detail_info()
         
         did_updated = true
     }
@@ -363,7 +384,7 @@ class AppState : ObservableObject
             details_empty = false
         }
         
-        get_additive_data()
+        get_additive_data(type: type)
     }
     
     public func clear_additive_data(type: WorkspaceObjectType)

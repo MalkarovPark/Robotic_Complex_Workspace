@@ -283,11 +283,6 @@ struct PropertiesSettingsView: View
     @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
     @AppStorage("DetailsBookmark") private var details_bookmark: Data?
     
-    //Saved names of property list files for workspace objects
-    @AppStorage("RobotsPlistName") private var robots_plist_name: String?
-    @AppStorage("ToolsPlistName") private var tools_plist_name: String?
-    @AppStorage("DetailsPlistName") private var details_plist_name: String?
-    
     //If data folder selected
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
@@ -359,7 +354,7 @@ struct PropertiesSettingsView: View
                             }
                             .onChange(of: app_state.selected_plist_names.Robots)
                             { new_value in
-                                robots_plist_name = new_value
+                                app_state.get_defaults_plist_names(type: .robot)
                                 app_state.update_additive_data(type: .robot)
                             }
                             Spacer()
@@ -417,7 +412,7 @@ struct PropertiesSettingsView: View
                             }
                             .onChange(of: app_state.selected_plist_names.Tools)
                             { new_value in
-                                tools_plist_name = new_value
+                                app_state.get_defaults_plist_names(type: .tool)
                                 app_state.update_additive_data(type: .tool)
                             }
                             Spacer()
@@ -476,7 +471,7 @@ struct PropertiesSettingsView: View
                             }
                             .onChange(of: app_state.selected_plist_names.Details)
                             { new_value in
-                                details_plist_name = new_value
+                                app_state.get_defaults_plist_names(type: .detail)
                                 app_state.update_additive_data(type: .detail)
                             }
                             Spacer()
@@ -547,7 +542,7 @@ struct PropertiesSettingsView: View
                     .pickerStyle(MenuPickerStyle())
                     .onChange(of: app_state.selected_plist_names.Robots)
                     { new_value in
-                        robots_plist_name = new_value
+                        app_state.get_defaults_plist_names(type: .robot)
                         app_state.update_additive_data(type: .robot)
                     }
                     Spacer()
@@ -590,7 +585,7 @@ struct PropertiesSettingsView: View
                     .pickerStyle(MenuPickerStyle())
                     .onChange(of: app_state.selected_plist_names.Tools)
                     { new_value in
-                        tools_plist_name = new_value
+                        app_state.get_defaults_plist_names(type: .tool)
                         app_state.update_additive_data(type: .tool)
                     }
                     Spacer()
@@ -633,7 +628,7 @@ struct PropertiesSettingsView: View
                     .pickerStyle(MenuPickerStyle())
                     .onChange(of: app_state.selected_plist_names.Details)
                     { new_value in
-                        details_plist_name = new_value
+                        app_state.get_defaults_plist_names(type: .detail)
                         app_state.update_additive_data(type: .detail)
                     }
                     Spacer()
@@ -674,9 +669,11 @@ struct PropertiesSettingsView: View
         #endif
         .onAppear
         {
-            app_state.selected_plist_names.Robots = robots_plist_name ?? ""
-            app_state.selected_plist_names.Tools = tools_plist_name ?? ""
-            app_state.selected_plist_names.Details = details_plist_name ?? ""
+            //Get plist names from user defults
+            for type in WorkspaceObjectType.allCases
+            {
+                app_state.get_defaults_plist_names(type: type) //Get plist names from user defaults
+            }
         }
         .fileImporter(isPresented: $load_panel_presented,
                               allowedContentTypes: [.folder],

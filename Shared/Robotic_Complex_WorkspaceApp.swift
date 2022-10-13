@@ -27,7 +27,12 @@ struct Robotic_Complex_WorkspaceApp: App
                 {
                     if first_loaded
                     {
-                        app_state.get_additive_data() //Get models data from property lists
+                        for type in WorkspaceObjectType.allCases
+                        {
+                            app_state.get_defaults_plist_names(type: type) //Get plist names from user defaults
+                            app_state.get_additive_data(type: type) //Get models data from property lists
+                        }
+                        
                         first_loaded = false
                     }
                 }
@@ -62,7 +67,12 @@ struct Robotic_Complex_WorkspaceApp: App
             {
                 if first_loaded
                 {
-                    app_state.get_additive_data() //Get models data from property lists
+                    for type in WorkspaceObjectType.allCases
+                    {
+                        app_state.get_defaults_plist_names(type: type) //Get plist names from user defaults
+                        app_state.get_additive_data(type: type) //Get models data from property lists
+                    }
+                    
                     first_loaded = false
                 }
             }
