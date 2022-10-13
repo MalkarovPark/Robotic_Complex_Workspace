@@ -353,8 +353,7 @@ struct PropertiesSettingsView: View
                                 }
                             }
                             .onChange(of: app_state.selected_plist_names.Robots)
-                            { new_value in
-                                app_state.get_defaults_plist_names(type: .robot)
+                            { _ in
                                 app_state.update_additive_data(type: .robot)
                             }
                             Spacer()
@@ -411,8 +410,7 @@ struct PropertiesSettingsView: View
                                 }
                             }
                             .onChange(of: app_state.selected_plist_names.Tools)
-                            { new_value in
-                                app_state.get_defaults_plist_names(type: .tool)
+                            { _ in
                                 app_state.update_additive_data(type: .tool)
                             }
                             Spacer()
@@ -470,8 +468,7 @@ struct PropertiesSettingsView: View
                                 }
                             }
                             .onChange(of: app_state.selected_plist_names.Details)
-                            { new_value in
-                                app_state.get_defaults_plist_names(type: .detail)
+                            { _ in
                                 app_state.update_additive_data(type: .detail)
                             }
                             Spacer()
@@ -541,8 +538,7 @@ struct PropertiesSettingsView: View
                     }
                     .pickerStyle(MenuPickerStyle())
                     .onChange(of: app_state.selected_plist_names.Robots)
-                    { new_value in
-                        app_state.get_defaults_plist_names(type: .robot)
+                    { _ in
                         app_state.update_additive_data(type: .robot)
                     }
                     Spacer()
@@ -584,8 +580,7 @@ struct PropertiesSettingsView: View
                     }
                     .pickerStyle(MenuPickerStyle())
                     .onChange(of: app_state.selected_plist_names.Tools)
-                    { new_value in
-                        app_state.get_defaults_plist_names(type: .tool)
+                    { _ in
                         app_state.update_additive_data(type: .tool)
                     }
                     Spacer()
@@ -627,8 +622,7 @@ struct PropertiesSettingsView: View
                     }
                     .pickerStyle(MenuPickerStyle())
                     .onChange(of: app_state.selected_plist_names.Details)
-                    { new_value in
-                        app_state.get_defaults_plist_names(type: .detail)
+                    { _ in
                         app_state.update_additive_data(type: .detail)
                     }
                     Spacer()
