@@ -27,7 +27,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     public var node: SCNNode? //Detail scene node
     public var scene_address = "" //Addres of detail scene. If empty – this detail used defult model.
     
-    private var figure: String?
+    private var figure: String? //Detail figure name
     private var lenghts: [Float]? //Lenghts for detail without scene figure
     private var figure_color: [Int]? //Color for detail without scene figure
     private var material_name: String? //Material for detail without scene figure
@@ -62,7 +62,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
             else
             {
                 //physics = node?.physicsBody //Save original physics
-                node?.physicsBody = .static()
+                node?.physicsBody = nil
             }
         }
     }

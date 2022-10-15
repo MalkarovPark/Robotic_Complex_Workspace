@@ -167,6 +167,36 @@ class AppState : ObservableObject
     }
     
     //MARK: - Get additive robots data from external property list
+    //MARK: Data functions
+    func get_additive(bookmark_data: inout Data?, url: URL?)
+    {
+        guard url!.startAccessingSecurityScopedResource() else
+        {
+            // Handle the failure here.
+            return
+        }
+        
+        // Make sure you release the security-scoped resource when you finish.
+        defer { url?.stopAccessingSecurityScopedResource() }
+        //bookmark_data? = (try url?.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil))!
+        
+        do
+        {
+            // Make sure the bookmark is minimal!
+            bookmark_data = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
+        }
+        catch
+        {
+            print("Bookmark error \(error)")
+        }
+        
+        //var address = url?.absoluteString
+
+        //let plist_url = URL(string: address! + "DetailsInfo.plist")
+        
+        //additive_data = try Data(contentsOf: plist_url!)
+    }
+    
     @Published var selected_plist_names: (Robots: String, Tools: String, Details: String) = (Robots: "", Tools: "", Details: "")
     
     public var avaliable_plist_names: (Robots: [String], Tools: [String], Details: [String])

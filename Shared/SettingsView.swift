@@ -679,15 +679,15 @@ struct PropertiesSettingsView: View
                 switch folder_selection_type
                 {
                 case .robot:
-                    get_additive(bookmark_data: &robots_bookmark, url: success.first)
+                    app_state.get_additive(bookmark_data: &robots_bookmark, url: success.first)
                     app_state.update_additive_data(type: .robot)
                     robots_empty = false
                 case .tool:
-                    get_additive(bookmark_data: &tools_bookmark, url: success.first)
+                    app_state.get_additive(bookmark_data: &tools_bookmark, url: success.first)
                     app_state.update_additive_data(type: .tool)
                     tools_empty = false
                 case .detail:
-                    get_additive(bookmark_data: &details_bookmark, url: success.first)
+                    app_state.get_additive(bookmark_data: &details_bookmark, url: success.first)
                     app_state.update_additive_data(type: .detail)
                     details_empty = false
                 }
@@ -717,36 +717,6 @@ struct AdvancedSettingsView: View
         .padding(20)
         .frame(width: 400, height: 256)
     }
-}
-
-//MARK: - Data functions
-func get_additive(bookmark_data: inout Data?, url: URL?)
-{
-    guard url!.startAccessingSecurityScopedResource() else
-    {
-        // Handle the failure here.
-        return
-    }
-    
-    // Make sure you release the security-scoped resource when you finish.
-    defer { url?.stopAccessingSecurityScopedResource() }
-    //bookmark_data? = (try url?.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil))!
-    
-    do
-    {
-        // Make sure the bookmark is minimal!
-        bookmark_data = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
-    }
-    catch
-    {
-        print("Bookmark error \(error)")
-    }
-    
-    //var address = url?.absoluteString
-
-    //let plist_url = URL(string: address! + "DetailsInfo.plist")
-    
-    //additive_data = try Data(contentsOf: plist_url!)
 }
 
 //MARK: - Previews
