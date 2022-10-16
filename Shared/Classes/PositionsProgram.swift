@@ -81,14 +81,14 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     //Define colors for path and points of program
     #if os(macOS)
     private let target_point_color = NSColor.systemPurple
-    private let target_point_cone_colors = [NSColor.systemBlue, NSColor.systemPink, NSColor.systemTeal]
+    private let target_point_cone_colors = [NSColor.systemIndigo, NSColor.systemPink, NSColor.systemTeal]
     private let selected_point_color = NSColor.systemIndigo
     private let target_point_cone_pos = [[0.0, 0.0, 0.8], [0.8, 0.0, 0.0], [0.0, 0.8, 0.0]]
     private let target_point_cone_rot = [[90.0 * .pi / 180, 0.0, 0.0], [0.0, 0.0, -90 * .pi / 180], [0.0, 0.0, 0.0]]
     private let cylinder_color = NSColor.white
     #else
     private let target_point_color = UIColor.systemPurple
-    private let target_point_cone_colors = [UIColor.systemBlue, UIColor.systemPink, UIColor.systemTeal]
+    private let target_point_cone_colors = [UIColor.systemIndigo, UIColor.systemPink, UIColor.systemTeal]
     private let selected_point_color = UIColor.systemIndigo
     private let target_point_cone_pos: [[Float]] = [[0.0, 0.0, 0.8], [0.8, 0.0, 0.0], [0.0, 0.8, 0.0]]
     private let target_point_cone_rot: [[Float]] = [[90.0 * .pi / 180, 0.0, 0.0], [0.0, 0.0, -90 * .pi / 180], [0.0, 0.0, 0.0]]
