@@ -48,7 +48,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         }
     }
     
-    public var points_info: [[Float]]
+    /*public var points_info: [[Float]]
     {
         var pinfo = [[Float]]()
         if points.count > 0
@@ -61,7 +61,7 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
             }
         }
         return pinfo
-    }
+    }*/
     
     public var points_count: Int
     {
@@ -69,12 +69,12 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     }
     
     //MARK: - Visual functions
-    public var positions_group = SCNNode()
+    public var positions_group = SCNNode() //Node with all positions points model
     public var selected_point_index = -1
     {
         didSet
         {
-            visual_build()
+            visual_build() //Update positions model fot selected point color changing
         }
     }
     
@@ -95,6 +95,26 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
     private let cylinder_color = UIColor.white
     #endif
     
+    private var cone_node: SCNNode
+    {
+        //MARK: Building cones showing tool rotation at point
+        let cone_node = SCNNode()
+        
+        for i in 0..<3 //Set point conical arrows for points
+        {
+            let cone = SCNNode()
+            cone.geometry = SCNCone(topRadius: 0, bottomRadius: 0.2, height: 0.4)
+            cone.geometry?.firstMaterial?.diffuse.contents = target_point_cone_colors[i]
+            cone.position = SCNVector3(x: target_point_cone_pos[i][0], y: target_point_cone_pos[i][1], z: target_point_cone_pos[i][2])
+            cone.eulerAngles.x = target_point_cone_rot[i][0]
+            cone.eulerAngles.y = target_point_cone_rot[i][1]
+            cone.eulerAngles.z = target_point_cone_rot[i][2]
+            cone_node.addChildNode(cone.copy() as! SCNNode)
+        }
+        
+        return cone_node
+    }
+    
     //MARK: Build points visual model
     public func visual_build()
     {
@@ -102,75 +122,21 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         
         if points.count > 0
         {
-            //MARK: Building cones showing tool rotation at point
-            let cone_node = SCNNode()
-            
-            for i in 0..<3 //Set point conical arrows for points
-            {
-                let cone = SCNNode()
-                cone.geometry = SCNCone(topRadius: 0, bottomRadius: 0.2, height: 0.4)
-                cone.geometry?.firstMaterial?.diffuse.contents = target_point_cone_colors[i]
-                cone.position = SCNVector3(x: target_point_cone_pos[i][0], y: target_point_cone_pos[i][1], z: target_point_cone_pos[i][2])
-                cone.eulerAngles.x = target_point_cone_rot[i][0]
-                cone.eulerAngles.y = target_point_cone_rot[i][1]
-                cone.eulerAngles.z = target_point_cone_rot[i][2]
-                cone_node.addChildNode(cone.copy() as! SCNNode)
-            }
-            
             //MARK: Build positions points in robot cell
+            var point_location = SCNVector3()
             if points.count > 1
             {
-                let internal_cone_node = cone_node.clone()
                 var is_first = true
-                var pivot_points = [SCNVector3(), SCNVector3()]
-                var point_location = SCNVector3()
+                var pivot_points = [SCNVector3(), SCNVector3()] //Positions for point-to-point line
                 var point_index = 0
                 
                 for point in points
                 {
-                    let visual_point = SCNNode()
-                    visual_point.geometry = SCNSphere(radius: 0.4)
+                    var visual_point = SCNNode() //Create the point node
                     
-                    #if os(macOS)
-                    point_location = SCNVector3(x: CGFloat(point.y) / 10 - 10, y: CGFloat(point.z / 10) - 10, z: CGFloat(point.x / 10) - 10)
-                    #else
-                    point_location = SCNVector3(x: point.y / 10 - 10, y: point.z / 10 - 10, z: point.x / 10 - 10)
-                    #endif
+                    node_by_data(node: &visual_point, point: point, location: &point_location)
                     
-                    visual_point.position = point_location
-                    
-                    if is_first == true
-                    {
-                        pivot_points[0] = point_location
-                        is_first = false
-                    }
-                    else
-                    {
-                        #if os(macOS)
-                        pivot_points[1] = SCNVector3(point_location.x + CGFloat.random(in: -0.001..<0.001), point_location.y + CGFloat.random(in: -0.001..<0.001), point_location.z + CGFloat.random(in: -0.001..<0.001))
-                        #else
-                        pivot_points[1] = SCNVector3(point_location.x + Float.random(in: -0.001..<0.001), point_location.y + Float.random(in: -0.001..<0.001), point_location.z + Float.random(in: -0.001..<0.001))
-                        #endif
-                        positions_group.addChildNode(build_ptp_line(from: simd_float3(pivot_points[0]), to: simd_float3(pivot_points[1])))
-                        pivot_points[0] = pivot_points[1]
-                    }
-                    
-                    #if os(macOS)
-                    internal_cone_node.eulerAngles.z = CGFloat(point.r.to_rad)
-                    #else
-                    internal_cone_node.eulerAngles.z = point.r.to_rad
-                    #endif
-                    
-                    visual_point.addChildNode(internal_cone_node)
-                    
-                    #if os(macOS)
-                    visual_point.eulerAngles.x = CGFloat(point.p.to_rad)
-                    visual_point.eulerAngles.y = CGFloat(point.w.to_rad)
-                    #else
-                    visual_point.eulerAngles.x = point.p.to_rad
-                    visual_point.eulerAngles.y = point.w.to_rad
-                    #endif
-                    
+                    //Change point node color by selection state
                     if point_index == selected_point_index
                     {
                         visual_point.geometry?.firstMaterial?.diffuse.contents = selected_point_color
@@ -180,41 +146,40 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                         visual_point.geometry?.firstMaterial?.diffuse.contents = target_point_color
                     }
                     
-                    positions_group.addChildNode(visual_point.clone())
-                    point_index += 1
+                    if is_first == true
+                    {
+                        //If point is first – save first location for the point-to-point line
+                        pivot_points[0] = point_location
+                        is_first = false
+                    }
+                    else
+                    {
+                        //If point is not first – build point-to-point line between the neighboring points
+                        #if os(macOS)
+                        pivot_points[1] = SCNVector3(point_location.x + CGFloat.random(in: -0.001..<0.001), point_location.y + CGFloat.random(in: -0.001..<0.001), point_location.z + CGFloat.random(in: -0.001..<0.001))
+                        #else
+                        pivot_points[1] = SCNVector3(point_location.x + Float.random(in: -0.001..<0.001), point_location.y + Float.random(in: -0.001..<0.001), point_location.z + Float.random(in: -0.001..<0.001))
+                        #endif
+                        
+                        positions_group.addChildNode(build_ptp_line(from: simd_float3(pivot_points[0]), to: simd_float3(pivot_points[1]))) //Add point-to-point line model to the positions node
+                        pivot_points[0] = pivot_points[1] //Update first point for point-to-point line
+                    }
+                    
+                    positions_group.addChildNode(visual_point.clone()) //Add point model with point-to-point line to points model
+                    point_index += 1 //Increment index
                 }
             }
             else
             {
-                let visual_point = SCNNode()
-                visual_point.geometry = SCNSphere(radius: 0.4)
+                //MARK: If there is only one point
+                var visual_point = SCNNode() //Create the point node
+                visual_point.geometry = SCNSphere(radius: 0.4) //Add sphere geometry to the point node
                 
-                let point = points.first ?? PositionPoint()
+                let point = points.first ?? PositionPoint() //Get first point data
                 
-                #if os(macOS)
-                let point_location = SCNVector3(x: CGFloat(point.y) / 10 - 10, y: CGFloat(point.z) / 10 - 10, z: CGFloat(point.x / 10) - 10)
-                #else
-                let point_location = SCNVector3(x: point.y / 10 - 10, y: point.z / 10 - 10, z: point.x / 10 - 10)
-                #endif
+                node_by_data(node: &visual_point, point: point, location: &point_location)
                 
-                visual_point.position = point_location
-                
-                #if os(macOS)
-                cone_node.eulerAngles.z = CGFloat(point.r.to_rad)
-                #else
-                cone_node.eulerAngles.z = point.r.to_rad
-                #endif
-                
-                visual_point.addChildNode(cone_node)
-                
-                #if os(macOS)
-                visual_point.eulerAngles.x = CGFloat(point.p.to_rad)
-                visual_point.eulerAngles.y = CGFloat(point.w.to_rad)
-                #else
-                visual_point.eulerAngles.x = point.p.to_rad
-                visual_point.eulerAngles.y = point.w.to_rad
-                #endif
-                
+                //Change point node color by selection state
                 if selected_point_index == 0
                 {
                     visual_point.geometry?.firstMaterial?.diffuse.contents = selected_point_color
@@ -227,37 +192,70 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
                 positions_group.addChildNode(visual_point)
             }
         }
+        
+        func build_ptp_line(from: simd_float3, to: simd_float3) -> SCNNode //Build line between the neighboring points
+        {
+            let vector = to - from
+            let height = simd_length(vector)
+            
+            let cylinder = SCNCylinder(radius: 0.2, height: CGFloat(height))
+            
+            cylinder.firstMaterial?.diffuse.contents = cylinder_color
+            //cylinder.firstMaterial?.transparency = 0.5
+            
+            let line_node = SCNNode(geometry: cylinder)
+            
+            let line_axis = simd_float3(0, height/2, 0)
+            line_node.simdPosition = from + line_axis
+
+            let vector_cross = simd_cross(line_axis, vector)
+            let qw = simd_length(line_axis) * simd_length(vector) + simd_dot(line_axis, vector)
+            let q = simd_quatf(ix: vector_cross.x, iy: vector_cross.y, iz: vector_cross.z, r: qw).normalized
+
+            line_node.simdRotate(by: q, aroundTarget: from)
+            return line_node
+        }
+        
+        func node_by_data(node: inout SCNNode, point: PositionPoint, location: inout SCNVector3) //Add geometry for position point node by position data
+        {
+            node.geometry = SCNSphere(radius: 0.4) //Add sphere geometry to the point node
+            
+            //Set point node location
+            #if os(macOS)
+            location = SCNVector3(x: CGFloat(point.y) / 10 - 10, y: CGFloat(point.z / 10) - 10, z: CGFloat(point.x / 10) - 10)
+            #else
+            location = SCNVector3(x: point.y / 10 - 10, y: point.z / 10 - 10, z: point.x / 10 - 10)
+            #endif
+            node.position = location
+            
+            let internal_cone_node = cone_node.clone() //Add cones for point rotated by position in point rotation
+            
+            //Rotate cone node by roll angle
+            #if os(macOS)
+            internal_cone_node.eulerAngles.z = CGFloat(point.r.to_rad)
+            #else
+            internal_cone_node.eulerAngles.z = point.r.to_rad
+            #endif
+            
+            node.addChildNode(internal_cone_node) //Add cone model to point
+            
+            //Rotate point node by pitch and yaw angles
+            #if os(macOS)
+            node.eulerAngles.x = CGFloat(point.p.to_rad)
+            node.eulerAngles.y = CGFloat(point.w.to_rad)
+            #else
+            node.eulerAngles.x = point.p.to_rad
+            node.eulerAngles.y = point.w.to_rad
+            #endif
+        }
     }
     
-    public func visual_clear() //Remove positions points from cell
+    public func visual_clear() //Remove positions points models from cell
     {
         positions_group.enumerateChildNodes
         { (node, stop) in
             node.removeFromParentNode()
         }
-    }
-    
-    private func build_ptp_line(from: simd_float3, to: simd_float3) -> SCNNode //Build line between neighboring points
-    {
-        let vector = to - from
-        let height = simd_length(vector)
-        
-        let cylinder = SCNCylinder(radius: 0.2, height: CGFloat(height))
-        
-        cylinder.firstMaterial?.diffuse.contents = cylinder_color
-        //cylinder.firstMaterial?.transparency = 0.5
-        
-        let line_node = SCNNode(geometry: cylinder)
-        
-        let line_axis = simd_float3(0, height/2, 0)
-        line_node.simdPosition = from + line_axis
-
-        let vector_cross = simd_cross(line_axis, vector)
-        let qw = simd_length(line_axis) * simd_length(vector) + simd_dot(line_axis, vector)
-        let q = simd_quatf(ix: vector_cross.x, iy: vector_cross.y, iz: vector_cross.z, r: qw).normalized
-
-        line_node.simdRotate(by: q, aroundTarget: from)
-        return line_node
     }
     
     //MARK: - Create moving group for robot
@@ -266,16 +264,17 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
         var moving_position: SCNVector3
         var moving_rotation: [Float] = [0.0, 0.0, 0.0]
         
-        var movings_array = [SCNAction]()
-        var movings_array2 = [SCNAction]()
+        var movings_array = [SCNAction]() //Position moving array by position program
+        var movings_array2 = [SCNAction]() //Rotation moving array by position program for tool node
         
         if points.count > 0
         {
             for point in points
             {
-                moving_position = SCNVector3(point.y / 10, point.z / 10, point.x / 10)
+                moving_position = SCNVector3(point.y / 10, point.z / 10, point.x / 10) //Convert location to scnvector
+                moving_rotation = [point.p.to_rad, point.w.to_rad, 0] //Get rotation from from position point
                 
-                moving_rotation = [point.p.to_rad, point.w.to_rad, 0]
+                //Append scnactions
                 movings_array.append(SCNAction.group([SCNAction.move(to: moving_position, duration: move_time), SCNAction.rotateTo(x: CGFloat(moving_rotation[0]), y: CGFloat(moving_rotation[1]), z: CGFloat(moving_rotation[2]), duration: move_time)]))
                 movings_array2.append(SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(point.r.to_rad), duration: move_time))
             }
