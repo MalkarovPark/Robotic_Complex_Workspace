@@ -401,12 +401,15 @@ class Workspace: ObservableObject
             if element.element_data.element_type == .logic && element.element_data.logic_type == .jump
             {
                 target_mark_name = element.element_data.target_mark_name
-                for marks_association in marks_associations
+                if target_mark_name != ""
                 {
-                    if marks_association.0 == target_mark_name
+                    for marks_association in marks_associations
                     {
-                        element.target_element_index = marks_association.1
-                        break
+                        if marks_association.0 == target_mark_name
+                        {
+                            element.target_element_index = marks_association.1
+                            break
+                        }
                     }
                 }
             }
@@ -451,7 +454,10 @@ class Workspace: ObservableObject
                 switch element.element_data.logic_type
                 {
                 case .jump:
-                    jumped = true
+                    if element.element_data.target_mark_name != ""
+                    {
+                        jumped = true
+                    }
                 default:
                     break
                 }

@@ -21,7 +21,8 @@ class PositionPoint: Identifiable, Codable, Hashable
     
     public var x, y, z: Float //Point location
     public var r, p, w: Float //Point rotation
-    public var move_type: MoveType
+    public var move_type: MoveType //Move type to point
+    public var move_speed: Float //Move speed to point
     
     //MARK: - Initialization
     init()
@@ -35,19 +36,7 @@ class PositionPoint: Identifiable, Codable, Hashable
         self.w = 0
         
         self.move_type = .linear
-    }
-    
-    init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType)
-    {
-        self.x = x
-        self.y = y
-        self.z = z
-        
-        self.r = r
-        self.p = p
-        self.w = w
-        
-        self.move_type = move_type
+        self.move_speed = 10
     }
     
     init(x: Float, y: Float, z: Float)
@@ -61,6 +50,35 @@ class PositionPoint: Identifiable, Codable, Hashable
         self.w = 0
         
         self.move_type = .linear
+        self.move_speed = 10
+    }
+    
+    init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType)
+    {
+        self.x = x
+        self.y = y
+        self.z = z
+        
+        self.r = r
+        self.p = p
+        self.w = w
+        
+        self.move_type = move_type
+        self.move_speed = 10
+    }
+    
+    init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType, move_speed: Float)
+    {
+        self.x = x
+        self.y = y
+        self.z = z
+        
+        self.r = r
+        self.p = p
+        self.w = w
+        
+        self.move_type = move_type
+        self.move_speed = move_speed
     }
 }
 

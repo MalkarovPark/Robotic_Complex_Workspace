@@ -22,7 +22,7 @@ class RobotConnector
     
     private(set) var connected: Bool = false
     
-    //MARK: - Perfom functions
+    //MARK: - Perform functions
     public func move_to(point: PositionPoint)
     {
         
@@ -33,7 +33,14 @@ class RobotConnector
         block!()
     }
     
+    func perform_code(_ opcode: Int) //Perform function for robot operation code
+    {
+        
+    }
+    
+    //MARK: - Info
     private(set) var state: [[String: Any]]? //Connector state info
+    private(set) var info_code: Int = -1 //Info code parameter for robot
 }
 
 class ToolConnector
@@ -51,13 +58,13 @@ class ToolConnector
     
     private(set) var connected: Bool = false
     
-    //MARK: - Perfrom functions
+    //MARK: - Perform functions
     func perform_code(_ opcode: Int) //Perform function for tool operation code
     {
         
     }
     
-    private(set) var info_code: Int = -1 //Info code parameter for tool
+    //MARK: - Info
     private(set) var state: [[String: Any]]? //Connector state info
-    
+    private(set) var info_code: Int = -1 //Info code parameter for tool
 }
