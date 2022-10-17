@@ -635,16 +635,17 @@ class Workspace: ObservableObject
         return .tool
     }
     //MARK: - Visual functions
-    public var camera_node: SCNNode?
-    public var workcells_node: SCNNode?
-    public var details_node: SCNNode?
-    public var unit_node: SCNNode?
-    public var detail_node: SCNNode?
+    public var camera_node: SCNNode? //Camera
+    public var workcells_node: SCNNode? //Workcells
+    public var details_node: SCNNode? //Details
+    public var unit_node: SCNNode? //Selected robot cell node
+    public var detail_node: SCNNode? //Selected detail mode
     public var view_pointer_node = SCNScene(named: "Components.scnassets/View.scn")!.rootNode.childNode(withName: "pointer", recursively: false)! //: SCNNode?
     
     public func place_objects(scene: SCNScene)
     {
-        if self.avaliable_robots_names.count < self.robots.count
+        //Place robots
+        if self.avaliable_robots_names.count < self.robots.count //If there are placed robots in workspace
         {
         	var connect_camera = true
             for robot in robots
@@ -654,12 +655,13 @@ class Workspace: ObservableObject
                     workcells_node?.addChildNode(SCNScene(named: "Components.scnassets/Workcell.scn")!.rootNode.childNode(withName: "unit", recursively: false)!)
                     unit_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
                     
-                    unit_node?.name = robot.name
-                    robot.robot_workcell_connect(scene: scene, name: robot.name!, connect_camera: connect_camera)
-                    robot.update_robot()
+                    unit_node?.name = robot.name //Select robot cell node
+                    robot.robot_workcell_connect(scene: scene, name: robot.name!, connect_camera: connect_camera) //Connect to robot model
+                    robot.update_robot() //Update robot by current position
                     
-                    connect_camera = false
+                    connect_camera = false //Disable camera connect for next robots in array
                     
+                    //Set robot cell node position
                     #if os(macOS)
                     unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.location[1]), y: CGFloat(robot.location[2]), z: CGFloat(robot.location[0]))
                     
@@ -677,7 +679,8 @@ class Workspace: ObservableObject
             }
         }
         
-        if self.avaliable_details_names.count < self.details.count
+        //Place details
+        if self.avaliable_details_names.count < self.details.count //If there are placed details in workspace
         {
             for detail in details
             {
@@ -689,6 +692,7 @@ class Workspace: ObservableObject
                     detail_node?.name = detail.name
                     details_node?.addChildNode(detail_node ?? SCNNode())
                     
+                    //Set detail node position
                     #if os(macOS)
                     detail_node?.position = SCNVector3(x: CGFloat(detail.location[1]), y: CGFloat(detail.location[2]), z: CGFloat(detail.location[0]))
                     
