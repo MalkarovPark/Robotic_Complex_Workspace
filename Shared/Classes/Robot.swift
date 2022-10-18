@@ -90,6 +90,18 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         self.model = model
         
         self.kinematic = kinematic
+        switch self.kinematic //Set inverse kinematic calculate function by robot kinematic type
+        {
+        case .portal:
+            self.ik_perform = ik_lenghts(pointer_location:pointer_roation:origin_location:origin_rotation:lenghts:)
+            self.details_positions_update = update_portal_details(nodes:values:)
+        case .vi_dof:
+            self.ik_perform = ik_angles(pointer_location:pointer_rotation:origin_location:origin_rotation:lenghts:)
+            self.details_positions_update = update_vidof_details(nodes:values:)
+        default:
+            break
+        }
+        
         self.robot_scene_address = scene
         
         //If robot dictionary contains list, then addres changed from default models to special model by key.
@@ -413,7 +425,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func robot_workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
-        //Find scene elements from scene by names and connect to class
+        //Find scene elements from scene by names and connect to instance
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         self.unit_origin_node = self.unit_node?.childNode(withName: "unit_pointer", recursively: true)
         self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
@@ -436,8 +448,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         
         //Place and scale cell box
         robot_location_place()
-        update_space_scale()
-        update_position()
+        update_space_scale() //Set space scale by connected robot parameters
+        update_position() //Update robot details position on robot connection
     }
     
     public var poiner_visible = true
@@ -502,12 +514,12 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public func robot_location_place() //Place cell workspace relative to manipulator
     {
-        let vertical_lenght = lenghts[lenghts.count - 1]
+        let vertical_lenght = lenghts.last
         
         //MARK: Place workcell box
         #if os(macOS)
         box_node?.position.x = CGFloat(origin_location[1])
-        box_node?.position.y = CGFloat(origin_location[2] + vertical_lenght) //Add vertical base lenght
+        box_node?.position.y = CGFloat(origin_location[2] + (vertical_lenght ?? 0)) //Add vertical base lenght
         box_node?.position.z = CGFloat(origin_location[0])
         
         box_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
@@ -515,7 +527,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         box_node?.eulerAngles.z = CGFloat(origin_rotation[0].to_rad)
         #else
         box_node?.position.x = Float(origin_location[1])
-        box_node?.position.y = Float(origin_location[2] + vertical_lenght)
+        box_node?.position.y = Float(origin_location[2] + (vertical_lenght ?? 0))
         box_node?.position.z = Float(origin_location[0])
         
         box_node?.eulerAngles.x = origin_rotation[1].to_rad
@@ -526,11 +538,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         //MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_location[1])
-        camera_node?.position.y += CGFloat(origin_location[2] + vertical_lenght)
+        camera_node?.position.y += CGFloat(origin_location[2] + (vertical_lenght ?? 0))
         camera_node?.position.z += CGFloat(origin_location[0])
         #else
         camera_node?.position.x += Float(origin_location[1])
-        camera_node?.position.y += Float(origin_location[2] + vertical_lenght)
+        camera_node?.position.y += Float(origin_location[2] + (vertical_lenght ?? 0))
         camera_node?.position.z += Float(origin_location[0])
         #endif
     }
@@ -868,57 +880,25 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: Inverse kinematic calculations
     public func update_robot()
     {
-        guard robot_details.count > 0 else
+        guard robot_details.count > 0 else //Robot details nodes exist checking
         {
             return
         }
         
-        var details_data = [Float]()
-        
-        switch kinematic
+        guard ik_perform != nil && details_positions_update != nil else //Funcion exist checking
         {
-        case .portal:
-            details_data = ik_lenghts(pointer_location: origin_transform(pointer_location: visual_scaling(pointer_location, divider: 10), origin_rotation: origin_rotation), pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lenghts: lenghts)
-            
-            //Set manipulator portal details displacement
-            #if os(macOS)
-            robot_details[1].position.x = CGFloat(details_data[1])
-            robot_details[3].position.y = CGFloat(details_data[2])
-            robot_details[2].position.z = CGFloat(details_data[0])
-            #else
-            robot_details[1].position.x = details_data[1]
-            robot_details[3].position.y = details_data[2]
-            robot_details[2].position.z = details_data[0]
-            #endif
-            
-            current_pointer_position_select()
-        case .vi_dof:
-            details_data = ik_angles(pointer_location: origin_transform(pointer_location: visual_scaling(pointer_location, divider: 10), origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lenghts: lenghts)
-            
-            //Set manipulator details rotation angles
-            #if os(macOS)
-            robot_details[0].eulerAngles.y = CGFloat(details_data[0])
-            robot_details[1].eulerAngles.z = CGFloat(details_data[1])
-            robot_details[2].eulerAngles.z = CGFloat(details_data[2])
-            robot_details[3].eulerAngles.y = CGFloat(details_data[3])
-            robot_details[4].eulerAngles.z = CGFloat(details_data[4])
-            robot_details[5].eulerAngles.y = CGFloat(details_data[5])
-            #else
-            robot_details[0].eulerAngles.y = Float(details_data[0])
-            robot_details[1].eulerAngles.z = Float(details_data[1])
-            robot_details[2].eulerAngles.z = Float(details_data[2])
-            robot_details[3].eulerAngles.y = Float(details_data[3])
-            robot_details[4].eulerAngles.z = Float(details_data[4])
-            robot_details[5].eulerAngles.y = Float(details_data[5])
-            #endif
-            
-            current_pointer_position_select()
-            
-            update_chart_data()
-        default:
-            break
+            return
         }
+        
+        //var details_data = ik_perform!(origin_transform(pointer_location: visual_scaling(pointer_location, factor: 0.1), origin_rotation: origin_rotation), pointer_rotation, origin_location, origin_rotation, lenghts)
+        //details_positions_update!(&robot_details, details_data)
+        details_positions_update!(&robot_details, ik_perform!(origin_transform(pointer_location: visual_scaling(pointer_location, factor: 0.1), origin_rotation: origin_rotation), pointer_rotation, origin_location, origin_rotation, lenghts)) //Update robot details position by target point position
+        
+        current_pointer_position_select()
     }
+    
+    private var ik_perform: ((_ pointer_location: [Float], _ pointer_roation: [Float], _ origin_location: [Float], _ origin_rotation: [Float], _ lenghts: [Float]) -> [Float])? = nil //Inverse kinematic calculate function
+    private var details_positions_update: ((_ nodes: inout [SCNNode], _ values: [Float]) -> Void)? = nil //Update robot details positions function
     
     //MARK: Robot in workspace handling
     public var is_placed = false
@@ -1096,7 +1076,7 @@ struct robot_struct: Codable
 }
 
 //MARK: - Inverse kinematic functions
-func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float]
+func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float] //Transform position by origin rotation
 {
     let new_x, new_y, new_z: Float
     if origin_rotation.reduce(0, +) > 0
@@ -1116,17 +1096,18 @@ func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [F
     return [new_x, new_y, new_z]
 }
 
-func visual_scaling(_ numbers: [Float], divider: Float) -> [Float]
+func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lenghts by divider
 {
     var new_numbers = [Float]()
     for number in numbers
     {
-        new_numbers.append(number / divider)
+        new_numbers.append(number * factor)
     }
     
     return new_numbers
 }
 
+//MARK: Calculate inverse kinematic details position for portal robot
 func ik_lenghts(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float], lenghts: [Float]) -> [Float]
 {
     var px, py, pz: Float
@@ -1177,7 +1158,8 @@ func ik_lenghts(pointer_location: [Float], pointer_roation: [Float], origin_loca
     return [px, py, pz]
 }
 
-func ik_angles(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float], lenghts: [Float]) -> [Float] //Calculate manipulator details rotation angles
+//MARK: Calculate inverse kinematic details roataion angles for 6DOF
+func ik_angles(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float], lenghts: [Float]) -> [Float]
 {
     var angles = [Float]()
     var C3 = Float()
@@ -1254,6 +1236,39 @@ func ik_angles(pointer_location: [Float], pointer_rotation: [Float], origin_loca
     }
     
     return angles
+}
+
+//MARK: - Update details psitions for robots models
+func update_portal_details(nodes: inout [SCNNode], values: [Float])
+{
+    #if os(macOS)
+    nodes[1].position.x = CGFloat(values[1])
+    nodes[3].position.y = CGFloat(values[2])
+    nodes[2].position.z = CGFloat(values[0])
+    #else
+    nodes[1].position.x = values[1]
+    nodes[3].position.y = values[2]
+    nodes[2].position.z = values[0]
+    #endif
+}
+
+func update_vidof_details(nodes: inout [SCNNode], values: [Float])
+{
+    #if os(macOS)
+    nodes[0].eulerAngles.y = CGFloat(values[0])
+    nodes[1].eulerAngles.z = CGFloat(values[1])
+    nodes[2].eulerAngles.z = CGFloat(values[2])
+    nodes[3].eulerAngles.y = CGFloat(values[3])
+    nodes[4].eulerAngles.z = CGFloat(values[4])
+    nodes[5].eulerAngles.y = CGFloat(values[5])
+    #else
+    nodes[0].eulerAngles.y = Float(values[0])
+    nodes[1].eulerAngles.z = Float(values[1])
+    nodes[2].eulerAngles.z = Float(values[2])
+    nodes[3].eulerAngles.y = Float(values[3])
+    nodes[4].eulerAngles.z = Float(values[4])
+    nodes[5].eulerAngles.y = Float(values[5])
+    #endif
 }
 
 //MARK: - Charts structures
