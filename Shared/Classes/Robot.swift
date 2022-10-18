@@ -95,9 +95,13 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         case .portal:
             self.ik_perform = ik_lenghts(pointer_location:pointer_roation:origin_location:origin_rotation:lenghts:)
             self.details_positions_update = update_portal_details(nodes:values:)
+            self.details_connect = portal_connect(lenghts:node:details:with_lenghts:)
+            self.update_details_lenghts = update_portal_lengths(node:details:lenghts:)
         case .vi_dof:
             self.ik_perform = ik_angles(pointer_location:pointer_rotation:origin_location:origin_rotation:lenghts:)
             self.details_positions_update = update_vidof_details(nodes:values:)
+            self.details_connect = vidof_connect(lenghts:node:details:with_lenghts:)
+            self.update_details_lenghts = update_vidof_lengths(node:details:lenghts:)
         default:
             break
         }
@@ -501,16 +505,21 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         robot_details.removeAll()
         
-        switch kinematic
+        details_connect!(&lenghts, robot_node!, &robot_details, with_lenghts)
+        
+        if with_lenghts
         {
-        case .portal:
-            portal_connect()
-        case .vi_dof:
-            vi_dof_connect()
-        default:
-            break
+            update_robot_base_height()
+            update_details_lenghts!(&robot_node!, &robot_details, lenghts)
+        }
+        else
+        {
+            lenghts.append(Float(robot_details[0].position.y)) //Append base height [8]
         }
     }
+    
+    private var details_connect: ((_ lenghts: inout [Float], _ node: SCNNode, _ details: inout [SCNNode], _ with_lenghts: Bool) -> Void)? = nil //Connect robot instance function to model details
+    private var update_details_lenghts: ((_ node: inout SCNNode, _ details: inout [SCNNode], _ lenghts: [Float]) -> Void)? = nil
     
     public func robot_location_place() //Place cell workspace relative to manipulator
     {
@@ -647,218 +656,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    private func portal_connect()
-    {
-        if !with_lenghts
-        {
-            lenghts = [Float]()
-            
-            lenghts.append(Float(robot_node!.childNode(withName: "frame2", recursively: true)!.position.y)) //Portal frame height [0]
-            
-            lenghts.append(Float(robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z)) //Position X shift [1]
-            lenghts.append(Float(robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x + robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.x)) //Position Y shift [2]
-            lenghts.append(Float(-robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y)) //Position Z shift [3]
-            lenghts.append(Float(robot_node!.childNode(withName: "target", recursively: true)!.position.y)) //Tool lenght for adding to Z shift [4]
-            
-            lenghts.append(Float(robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x)) //Limit for X [5]
-            lenghts.append(Float(robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z)) //Limit for Y [6]
-            lenghts.append(Float(-robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y)) //Limit for Z [7]
-        }
-        
-        robot_details.append(robot_node!.childNode(withName: "frame", recursively: true)!) //Base position
-        for i in 0...2
-        {
-            robot_details.append(robot_node!.childNode(withName: "d\(i)", recursively: true)!)
-        }
-        
-        if with_lenghts
-        {
-            update_robot_lengths_portal()
-        }
-        else
-        {
-            lenghts.append(Float(robot_details[0].position.y)) //Append base height [8]
-        }
-    }
-    
-    private func vi_dof_connect()
-    {
-        if !with_lenghts //Create array if lenghts not defined
-        {
-            lenghts = [Float](repeating: 0, count: 6)
-        }
-        
-        for i in 0...6
-        {
-            robot_details.append(robot_node!.childNode(withName: "d\(i)", recursively: true)!)
-            
-            if !with_lenghts //Get lengths from the model if they are not in the array
-            {
-                if i > 0
-                {
-                    lenghts[i - 1] = Float(robot_details[i].position.y)
-                }
-            }
-        }
-        
-        if with_lenghts
-        {
-            update_robot_lengths_vi_dof()
-        }
-        else
-        {
-            lenghts.append(Float(robot_details[0].position.y))
-        }
-    }
-    
-    private func update_robot_lengths_portal()
-    {
-        update_robot_base_height()
-        
-        #if os(macOS)
-        robot_node!.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lenghts[0]) //Set vertical position for frame portal
-        #else
-        robot_node!.childNode(withName: "frame2", recursively: true)!.position.y = lenghts[0] //Set vertical position for frame portal
-        #endif
-        
-        modified_node = robot_node!.childNode(withName: "detail_v", recursively: true)!
-        if lenghts[0] - 4 > 0
-        {
-            saved_material = (modified_node.geometry?.firstMaterial)!
-            
-            modified_node.geometry = SCNBox(width: 8, height: CGFloat(lenghts[0]) - 4, length: 8, chamferRadius: 1)
-            modified_node.geometry?.firstMaterial = saved_material
-            #if os(macOS)
-            modified_node.position.y = CGFloat(lenghts[0] - 4) / 2
-            #else
-            modified_node.position.y = (lenghts[0] - 4) / 2
-            #endif
-        }
-        else
-        {
-            modified_node.removeFromParentNode() //Remove the model of Z element if the frame is too low
-        }
-        
-        var frame_element_length: CGFloat
-        
-        //X shift
-        #if os(macOS)
-        robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lenghts[1])
-        robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lenghts[5])
-        frame_element_length = CGFloat(lenghts[5] - lenghts[1]) + 16 //Calculate frame X length
-        #else
-        robot_node!.childNode(withName: "limit1_min", recursively: true)!.position.z = lenghts[1]
-        robot_node!.childNode(withName: "limit1_max", recursively: true)!.position.z = lenghts[5]
-        frame_element_length = CGFloat(lenghts[5] - lenghts[1] + 16) //Calculate frame X length
-        #endif
-        
-        modified_node = robot_node!.childNode(withName: "detail_x", recursively: true)!
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNBox(width: 6, height: 6, length: frame_element_length, chamferRadius: 1) //Update frame X geometry
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.z = (frame_element_length + 8) / 2 //Frame X reposition
-        #else
-        modified_node.position.z = Float(frame_element_length + 8) / 2
-        #endif
-        
-        //Y shift
-        #if os(macOS)
-        robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lenghts[2]) / 2
-        robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lenghts[6])
-        frame_element_length = CGFloat(lenghts[6] - lenghts[2]) + 16 //Calculate frame Y length
-        #else
-        robot_node!.childNode(withName: "limit0_min", recursively: true)!.position.x = lenghts[2] / 2
-        robot_node!.childNode(withName: "limit0_max", recursively: true)!.position.x = lenghts[6]
-        frame_element_length = CGFloat(lenghts[6] - lenghts[2] + 16) //Calculate frame Y length
-        #endif
-        
-        modified_node = robot_node!.childNode(withName: "detail_y", recursively: true)!
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNBox(width: 6, height: 6, length: frame_element_length, chamferRadius: 1) //Update frame Y geometry
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.x = (frame_element_length + 8) / 2 //Frame Y reposition
-        #else
-        modified_node.position.x = Float(frame_element_length + 8) / 2
-        #endif
-        
-        //Z shift
-        #if os(macOS)
-        robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y = CGFloat(-lenghts[3])
-        robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y = CGFloat(lenghts[7])
-        frame_element_length = CGFloat(lenghts[7])
-        #else
-        robot_node!.childNode(withName: "limit2_min", recursively: true)!.position.y = -lenghts[3]
-        robot_node!.childNode(withName: "limit2_max", recursively: true)!.position.y = lenghts[7]
-        frame_element_length = CGFloat(lenghts[7])
-        #endif
-        
-        modified_node = robot_node!.childNode(withName: "detail_z", recursively: true)!
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNBox(width: 6, height: frame_element_length, length: 6, chamferRadius: 1) //Update frame Z geometry
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = (frame_element_length) / 2 //Frame Z reposition
-        #else
-        modified_node.position.y = Float(frame_element_length) / 2
-        #endif
-    }
-    
-    private func update_robot_lengths_vi_dof()
-    {
-        update_robot_base_height()
-        
-        saved_material = (robot_details[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial)! //Save material from detail box
-        
-        for i in 0..<robot_details.count - 1
-        {
-            //Get lenght 0 if first robot detail selected and get previous lenght for all next details
-            #if os(macOS)
-            robot_details[i].position.y = CGFloat(i > 0 ? lenghts[i - 1] : lenghts[lenghts.count - 1])
-            #else
-            robot_details[i].position.y = Float(i > 0 ? lenghts[i - 1] : lenghts[lenghts.count - 1])
-            #endif
-            
-            if i < 5
-            {
-                //Change box model size and move that node vertical for details 0-4
-                modified_node = robot_details[i].childNode(withName: "box", recursively: false)!
-                if i < 3
-                {
-                    modified_node.geometry = SCNBox(width: 6, height: CGFloat(lenghts[i]), length: 6, chamferRadius: 1) //Set geometry for 0-2 details with width 6 and chamfer
-                }
-                else
-                {
-                    if i < 4
-                    {
-                        modified_node.geometry = SCNBox(width: 5, height: CGFloat(lenghts[i]), length: 5, chamferRadius: 1) //Set geometry for 3th detail with width 5 and chamfer
-                    }
-                    else
-                    {
-                        modified_node.geometry = SCNBox(width: 4, height: CGFloat(lenghts[i]), length: 4, chamferRadius: 0) //Set geometry for 4th detail with width 4 and without chamfer
-                    }
-                }
-                modified_node.geometry?.firstMaterial = saved_material //Apply saved material
-                
-                #if os(macOS)
-                modified_node.position.y = CGFloat(lenghts[i] / 2)
-                #else
-                modified_node.position.y = Float(lenghts[i] / 2)
-                #endif
-            }
-            else
-            {
-                //Set tool target (d6) position for 5th detail
-                #if os(macOS)
-                robot_details[6].position.y = CGFloat(lenghts[i])
-                #else
-                robot_details[6].position.y = Float(lenghts[i])
-                #endif
-            }
-        }
-    }
-    
     private func update_robot_base_height()
     {
         //Change robot base
@@ -890,8 +687,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             return
         }
         
-        //var details_data = ik_perform!(origin_transform(pointer_location: visual_scaling(pointer_location, factor: 0.1), origin_rotation: origin_rotation), pointer_rotation, origin_location, origin_rotation, lenghts)
-        //details_positions_update!(&robot_details, details_data)
         details_positions_update!(&robot_details, ik_perform!(origin_transform(pointer_location: visual_scaling(pointer_location, factor: 0.1), origin_rotation: origin_rotation), pointer_rotation, origin_location, origin_rotation, lenghts)) //Update robot details position by target point position
         
         current_pointer_position_select()
@@ -1075,19 +870,222 @@ struct robot_struct: Codable
     var space_scale: [Float]
 }
 
+//MARK: - Model connect functions
+func portal_connect(lenghts: inout [Float], node: SCNNode, details: inout [SCNNode], with_lenghts: Bool)
+{
+    //Get lenghts from robot scene if they is not set in plist
+    if !with_lenghts
+    {
+        lenghts = [Float]()
+        
+        lenghts.append(Float(node.childNode(withName: "frame2", recursively: true)!.position.y)) //Portal frame height [0]
+        
+        lenghts.append(Float(node.childNode(withName: "limit1_min", recursively: true)!.position.z)) //Position X shift [1]
+        lenghts.append(Float(node.childNode(withName: "limit0_min", recursively: true)!.position.x + node.childNode(withName: "limit2_min", recursively: true)!.position.x)) //Position Y shift [2]
+        lenghts.append(Float(-node.childNode(withName: "limit2_min", recursively: true)!.position.y)) //Position Z shift [3]
+        lenghts.append(Float(node.childNode(withName: "target", recursively: true)!.position.y)) //Tool lenght for adding to Z shift [4]
+        
+        lenghts.append(Float(node.childNode(withName: "limit0_max", recursively: true)!.position.x)) //Limit for X [5]
+        lenghts.append(Float(node.childNode(withName: "limit1_max", recursively: true)!.position.z)) //Limit for Y [6]
+        lenghts.append(Float(-node.childNode(withName: "limit2_max", recursively: true)!.position.y)) //Limit for Z [7]
+    }
+    
+    //Connect to detail nodes from robot scene
+    details.append(node.childNode(withName: "frame", recursively: true)!) //Base position
+    for i in 0...2
+    {
+        details.append(node.childNode(withName: "d\(i)", recursively: true)!)
+    }
+}
+
+func vidof_connect(lenghts: inout [Float], node: SCNNode, details: inout [SCNNode], with_lenghts: Bool)
+{
+    //Create lenghts array if they is not set in plist
+    if !with_lenghts
+    {
+        lenghts = [Float](repeating: 0, count: 6)
+    }
+    
+    for i in 0...6
+    {
+        //Connect to detail nodes from robot scene
+        details.append(node.childNode(withName: "d\(i)", recursively: true)!)
+        
+        //Get lenghts from robot scene if they is not set in plist
+        if !with_lenghts
+        {
+            if i > 0
+            {
+                lenghts[i - 1] = Float(details[i].position.y)
+            }
+        }
+    }
+}
+
+func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], lenghts: [Float])
+{
+    #if os(macOS)
+    node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lenghts[0]) //Set vertical position for frame portal
+    #else
+    node.childNode(withName: "frame2", recursively: true)!.position.y = lenghts[0] //Set vertical position for frame portal
+    #endif
+    
+    var modified_node = SCNNode()
+    var saved_material = SCNMaterial()
+    
+    modified_node = node.childNode(withName: "detail_v", recursively: true)!
+    if lenghts[0] - 4 > 0
+    {
+        saved_material = (modified_node.geometry?.firstMaterial)!
+        
+        modified_node.geometry = SCNBox(width: 8, height: CGFloat(lenghts[0]) - 4, length: 8, chamferRadius: 1)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lenghts[0] - 4) / 2
+        #else
+        modified_node.position.y = (lenghts[0] - 4) / 2
+        #endif
+    }
+    else
+    {
+        modified_node.removeFromParentNode() //Remove the model of Z element if the frame is too low
+    }
+    
+    var frame_element_length: CGFloat
+    
+    //X shift
+    #if os(macOS)
+    node.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lenghts[1])
+    node.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lenghts[5])
+    frame_element_length = CGFloat(lenghts[5] - lenghts[1]) + 16 //Calculate frame X length
+    #else
+    node!.childNode(withName: "limit1_min", recursively: true)!.position.z = lenghts[1]
+    node!.childNode(withName: "limit1_max", recursively: true)!.position.z = lenghts[5]
+    frame_element_length = CGFloat(lenghts[5] - lenghts[1] + 16) //Calculate frame X length
+    #endif
+    
+    modified_node = node.childNode(withName: "detail_x", recursively: true)!
+    saved_material = (modified_node.geometry?.firstMaterial)!
+    modified_node.geometry = SCNBox(width: 6, height: 6, length: frame_element_length, chamferRadius: 1) //Update frame X geometry
+    modified_node.geometry?.firstMaterial = saved_material
+    #if os(macOS)
+    modified_node.position.z = (frame_element_length + 8) / 2 //Frame X reposition
+    #else
+    modified_node.position.z = Float(frame_element_length + 8) / 2
+    #endif
+    
+    //Y shift
+    #if os(macOS)
+    node.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lenghts[2]) / 2
+    node.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lenghts[6])
+    frame_element_length = CGFloat(lenghts[6] - lenghts[2]) + 16 //Calculate frame Y length
+    #else
+    node.childNode(withName: "limit0_min", recursively: true)!.position.x = lenghts[2] / 2
+    node.childNode(withName: "limit0_max", recursively: true)!.position.x = lenghts[6]
+    frame_element_length = CGFloat(lenghts[6] - lenghts[2] + 16) //Calculate frame Y length
+    #endif
+    
+    modified_node = node.childNode(withName: "detail_y", recursively: true)!
+    saved_material = (modified_node.geometry?.firstMaterial)!
+    modified_node.geometry = SCNBox(width: 6, height: 6, length: frame_element_length, chamferRadius: 1) //Update frame Y geometry
+    modified_node.geometry?.firstMaterial = saved_material
+    #if os(macOS)
+    modified_node.position.x = (frame_element_length + 8) / 2 //Frame Y reposition
+    #else
+    modified_node.position.x = Float(frame_element_length + 8) / 2
+    #endif
+    
+    //Z shift
+    #if os(macOS)
+    node.childNode(withName: "limit2_min", recursively: true)!.position.y = CGFloat(-lenghts[3])
+    node.childNode(withName: "limit2_max", recursively: true)!.position.y = CGFloat(lenghts[7])
+    frame_element_length = CGFloat(lenghts[7])
+    #else
+    node.childNode(withName: "limit2_min", recursively: true)!.position.y = -lenghts[3]
+    node.childNode(withName: "limit2_max", recursively: true)!.position.y = lenghts[7]
+    frame_element_length = CGFloat(lenghts[7])
+    #endif
+    
+    modified_node = node.childNode(withName: "detail_z", recursively: true)!
+    saved_material = (modified_node.geometry?.firstMaterial)!
+    modified_node.geometry = SCNBox(width: 6, height: frame_element_length, length: 6, chamferRadius: 1) //Update frame Z geometry
+    modified_node.geometry?.firstMaterial = saved_material
+    #if os(macOS)
+    modified_node.position.y = (frame_element_length) / 2 //Frame Z reposition
+    #else
+    modified_node.position.y = Float(frame_element_length) / 2
+    #endif
+}
+
+func update_vidof_lengths(node: inout SCNNode, details: inout [SCNNode], lenghts: [Float])
+{
+    var modified_node = SCNNode()
+    var saved_material = SCNMaterial()
+    
+    saved_material = (details[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial)! //Save material from detail box
+    
+    for i in 0..<details.count - 1
+    {
+        //Get lenght 0 if first robot detail selected and get previous lenght for all next details
+        #if os(macOS)
+        details[i].position.y = CGFloat(i > 0 ? lenghts[i - 1] : lenghts[lenghts.count - 1])
+        #else
+        details[i].position.y = Float(i > 0 ? lenghts[i - 1] : lenghts[lenghts.count - 1])
+        #endif
+        
+        if i < 5
+        {
+            //Change box model size and move that node vertical for details 0-4
+            modified_node = details[i].childNode(withName: "box", recursively: false)!
+            if i < 3
+            {
+                modified_node.geometry = SCNBox(width: 6, height: CGFloat(lenghts[i]), length: 6, chamferRadius: 1) //Set geometry for 0-2 details with width 6 and chamfer
+            }
+            else
+            {
+                if i < 4
+                {
+                    modified_node.geometry = SCNBox(width: 5, height: CGFloat(lenghts[i]), length: 5, chamferRadius: 1) //Set geometry for 3th detail with width 5 and chamfer
+                }
+                else
+                {
+                    modified_node.geometry = SCNBox(width: 4, height: CGFloat(lenghts[i]), length: 4, chamferRadius: 0) //Set geometry for 4th detail with width 4 and without chamfer
+                }
+            }
+            modified_node.geometry?.firstMaterial = saved_material //Apply saved material
+            
+            #if os(macOS)
+            modified_node.position.y = CGFloat(lenghts[i] / 2)
+            #else
+            modified_node.position.y = Float(lenghts[i] / 2)
+            #endif
+        }
+        else
+        {
+            //Set tool target (d6) position for 5th detail
+            #if os(macOS)
+            details[6].position.y = CGFloat(lenghts[i])
+            #else
+            details[6].position.y = Float(lenghts[i])
+            #endif
+        }
+    }
+}
+
 //MARK: - Inverse kinematic functions
 func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float] //Transform position by origin rotation
 {
     let new_x, new_y, new_z: Float
-    if origin_rotation.reduce(0, +) > 0
+    if origin_rotation.reduce(0, +) > 0 //If at least one rotation angle of the origin is not equal to zero
     {
-        //New values for coordinates components
+        //Calculate new values for coordinates components
         new_x = pointer_location[0] * cos(origin_rotation[1].to_rad) * cos(origin_rotation[2].to_rad) + pointer_location[2] * sin(origin_rotation[1].to_rad) - pointer_location[1] * sin(origin_rotation[2].to_rad)
         new_y = pointer_location[1] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[2].to_rad) - pointer_location[2] * sin(origin_rotation[0].to_rad) + pointer_location[0] * sin(origin_rotation[2].to_rad)
         new_z = pointer_location[2] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[1].to_rad) + pointer_location[1] * sin(origin_rotation[0].to_rad) - pointer_location[0] * sin(origin_rotation[1].to_rad)
     }
     else
     {
+        //Return original values
         new_x = pointer_location[0]
         new_y = pointer_location[1]
         new_z = pointer_location[2]
