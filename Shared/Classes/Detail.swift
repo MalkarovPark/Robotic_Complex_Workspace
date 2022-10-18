@@ -28,7 +28,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     public var scene_address = "" //Addres of detail scene. If empty – this detail used defult model.
     
     private var figure: String? //Detail figure name
-    private var lenghts: [Float]? //Lenghts for detail without scene figure
+    private var lengths: [Float]? //lengths for detail without scene figure
     private var figure_color: [Int]? //Color for detail without scene figure
     private var material_name: String? //Material for detail without scene figure
     
@@ -145,15 +145,15 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         
         if dictionary.keys.contains("Lengths")
         {
-            var lenghts = [Float]()
+            var lengths = [Float]()
             let elements = dictionary["Lengths"] as! NSArray
             
             for element in elements //Add elements from NSArray to floats array
             {
-                lenghts.append((element as? Float) ?? 0)
+                lengths.append((element as? Float) ?? 0)
             }
             
-            self.lenghts = lenghts
+            self.lengths = lengths
         }
         
         if dictionary.keys.contains("Physics")
@@ -210,7 +210,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         self.name = detail_struct.name
         
         self.figure = detail_struct.figure
-        self.lenghts = detail_struct.lenghts
+        self.lengths = detail_struct.lengths
         
         self.figure_color = detail_struct.figure_color
         self.material_name = detail_struct.material_name
@@ -230,10 +230,10 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         node = SCNNode()
         
         //Convert Float array to GFloat array
-        var lenghts = [CGFloat]()
-        for lenght in self.lenghts ?? []
+        var lengths = [CGFloat]()
+        for length in self.lengths ?? []
         {
-            lenghts.append(CGFloat(lenght))
+            lengths.append(CGFloat(length))
         }
         
         //Set geometry
@@ -241,81 +241,81 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         switch figure
         {
         case "plane":
-            if lenghts.count == 2
+            if lengths.count == 2
             {
-                geometry = SCNPlane(width: lenghts[0], height: lenghts[1])
+                geometry = SCNPlane(width: lengths[0], height: lengths[1])
             }
             else
             {
                 geometry = SCNPlane(width: 4, height: 4)
             }
         case "box":
-            if lenghts.count >= 3 && lenghts.count <= 4
+            if lengths.count >= 3 && lengths.count <= 4
             {
-                geometry = SCNBox(width: lenghts[0], height: lenghts[1], length: lenghts[2], chamferRadius: lenghts.count == 3 ? 0 : lenghts[3]) //If lenghts 4 – set chamer radius by element 3
+                geometry = SCNBox(width: lengths[0], height: lengths[1], length: lengths[2], chamferRadius: lengths.count == 3 ? 0 : lengths[3]) //If lengths 4 – set chamer radius by element 3
             }
             else
             {
                 geometry = SCNBox(width: 4, height: 4, length: 4, chamferRadius: 1)
             }
         case "sphere":
-            if lenghts.count == 1
+            if lengths.count == 1
             {
-                geometry = SCNSphere(radius: lenghts[0])
+                geometry = SCNSphere(radius: lengths[0])
             }
             else
             {
                 geometry = SCNSphere(radius: 2)
             }
         case "pyramid":
-            if lenghts.count == 3
+            if lengths.count == 3
             {
-                geometry = SCNPyramid(width: lenghts[0], height: lenghts[1], length: lenghts[2])
+                geometry = SCNPyramid(width: lengths[0], height: lengths[1], length: lengths[2])
             }
             else
             {
                 geometry = SCNPyramid(width: 4, height: 2, length: 4)
             }
         case "cylinder":
-            if lenghts.count == 2
+            if lengths.count == 2
             {
-                geometry = SCNCylinder(radius: lenghts[0], height: lenghts[1])
+                geometry = SCNCylinder(radius: lengths[0], height: lengths[1])
             }
             else
             {
                 geometry = SCNCylinder(radius: 2, height: 4)
             }
         case "cone":
-            if lenghts.count == 3
+            if lengths.count == 3
             {
-                geometry = SCNCone(topRadius: lenghts[0], bottomRadius: lenghts[1], height: lenghts[2])
+                geometry = SCNCone(topRadius: lengths[0], bottomRadius: lengths[1], height: lengths[2])
             }
             else
             {
                 geometry = SCNCone(topRadius: 1, bottomRadius: 2, height: 4)
             }
         case "tube":
-            if lenghts.count == 3
+            if lengths.count == 3
             {
-                geometry = SCNTube(innerRadius: lenghts[0], outerRadius: lenghts[1], height: lenghts[2])
+                geometry = SCNTube(innerRadius: lengths[0], outerRadius: lengths[1], height: lengths[2])
             }
             else
             {
                 geometry = SCNTube(innerRadius: 1, outerRadius: 2, height: 4)
             }
         case "capsule":
-            if lenghts.count == 2
+            if lengths.count == 2
             {
-                geometry = SCNCapsule(capRadius: lenghts[0], height: lenghts[1])
+                geometry = SCNCapsule(capRadius: lengths[0], height: lengths[1])
             }
             else
             {
                 geometry = SCNCapsule(capRadius: 2, height: 4)
             }
         case "torus":
-            if lenghts.count == 2
+            if lengths.count == 2
             {
-                geometry = SCNTorus(ringRadius: lenghts[0], pipeRadius: lenghts[1])
+                geometry = SCNTorus(ringRadius: lengths[0], pipeRadius: lengths[1])
             }
             else
             {
@@ -436,7 +436,7 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Work with file system
     public var file_info: detail_struct
     {
-        return detail_struct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lenghts: self.lenghts ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
+        return detail_struct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
     }
 }
 
@@ -456,7 +456,7 @@ struct detail_struct: Codable
     var scene: String
     
     var figure: String
-    var lenghts: [Float]
+    var lengths: [Float]
     
     var figure_color: [Int]
     var material_name: String

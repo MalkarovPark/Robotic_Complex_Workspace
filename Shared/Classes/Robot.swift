@@ -34,17 +34,17 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Robot init functions
     init()
     {
-        robot_init(name: "None", manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
+        robot_init(name: "None", manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     init(name: String)
     {
-        robot_init(name: name, manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     init(name: String, kinematic: Kinematic)
     {
-        robot_init(name: name, manufacturer: "Default", model: "Model", lenghts: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     public static var default_origin_location = [Float](repeating: 0, count: 3)
@@ -63,27 +63,27 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             kinematic = .vi_dof
         }
         
-        var lenghts = [Float]()
+        var lengths = [Float]()
         if dictionary.keys.contains("Details Lengths") //Checking for the availability of lengths data property
         {
             let elements = dictionary["Details Lengths"] as! NSArray
             
             for element in elements //Add elements from NSArray to floats array
             {
-                lenghts.append((element as? Float) ?? 0)
+                lengths.append((element as? Float) ?? 0)
             }
         }
         
-        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lenghts: lenghts, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
+        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lengths: lengths, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
     }
     
     init(robot_struct: robot_struct) //Init by robot structure
     {
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lenghts: robot_struct.lenghts, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, lenghts: [Float], kinematic: Kinematic, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
+    func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], kinematic: Kinematic, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
@@ -93,15 +93,15 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         switch self.kinematic //Set inverse kinematic calculate function by robot kinematic type
         {
         case .portal:
-            self.ik_perform = ik_lenghts(pointer_location:pointer_roation:origin_location:origin_rotation:lenghts:)
+            self.ik_perform = ik_lengths(pointer_location:pointer_roation:origin_location:origin_rotation:lengths:)
             self.details_positions_update = update_portal_details(nodes:values:)
-            self.details_connect = portal_connect(lenghts:node:details:with_lenghts:)
-            self.update_details_lenghts = update_portal_lengths(node:details:lenghts:)
+            self.details_connect = portal_connect(lengths:node:details:with_lengths:)
+            self.update_details_lengths = update_portal_lengths(node:details:lengths:)
         case .vi_dof:
-            self.ik_perform = ik_angles(pointer_location:pointer_rotation:origin_location:origin_rotation:lenghts:)
+            self.ik_perform = ik_angles(pointer_location:pointer_rotation:origin_location:origin_rotation:lengths:)
             self.details_positions_update = update_vidof_details(nodes:values:)
-            self.details_connect = vidof_connect(lenghts:node:details:with_lenghts:)
-            self.update_details_lenghts = update_vidof_lengths(node:details:lenghts:)
+            self.details_connect = vidof_connect(lengths:node:details:with_lengths:)
+            self.update_details_lengths = update_vidof_lengths(node:details:lengths:)
         default:
             break
         }
@@ -123,10 +123,10 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         }
         robot_model_node = SCNScene(named: robot_scene_address)!.rootNode.childNode(withName: "robot", recursively: false)!
         
-        if lenghts.count > 0
+        if lengths.count > 0
         {
-            self.with_lenghts = true
-            self.lenghts = lenghts
+            self.with_lengths = true
+            self.lengths = lengths
         }
         
         self.is_placed = is_placed
@@ -425,7 +425,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     public var robot_scene_address = "" //Adders of robot scene. If empty – this robot used defult model.
     
-    private var with_lenghts = false //Flag that determines the presence of a lenghts array for a robot
+    private var with_lengths = false //Flag that determines the presence of a lengths array for a robot
     
     public func robot_workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
@@ -491,7 +491,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var robot_details = [SCNNode]()
 
     private var theta = [Float](repeating: 0.0, count: 6)
-    private var lenghts = [Float]()
+    private var lengths = [Float]()
     
     public var origin_location = [Float](repeating: 0, count: 3) //x, y, z
     public var origin_rotation = [Float](repeating: 0, count: 3) //r, p, w
@@ -505,30 +505,30 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         robot_details.removeAll()
         
-        details_connect!(&lenghts, robot_node!, &robot_details, with_lenghts)
+        details_connect!(&lengths, robot_node!, &robot_details, with_lengths)
         
-        if with_lenghts
+        if with_lengths
         {
             update_robot_base_height()
-            update_details_lenghts!(&robot_node!, &robot_details, lenghts)
+            update_details_lengths!(&robot_node!, &robot_details, lengths)
         }
         else
         {
-            lenghts.append(Float(robot_details[0].position.y)) //Append base height [8]
+            lengths.append(Float(robot_details[0].position.y)) //Append base height [8]
         }
     }
     
-    private var details_connect: ((_ lenghts: inout [Float], _ node: SCNNode, _ details: inout [SCNNode], _ with_lenghts: Bool) -> Void)? = nil //Connect robot instance function to model details
-    private var update_details_lenghts: ((_ node: inout SCNNode, _ details: inout [SCNNode], _ lenghts: [Float]) -> Void)? = nil
+    private var details_connect: ((_ lengths: inout [Float], _ node: SCNNode, _ details: inout [SCNNode], _ with_lengths: Bool) -> Void)? = nil //Connect robot instance function to model details
+    private var update_details_lengths: ((_ node: inout SCNNode, _ details: inout [SCNNode], _ lengths: [Float]) -> Void)? = nil
     
     public func robot_location_place() //Place cell workspace relative to manipulator
     {
-        let vertical_lenght = lenghts.last
+        let vertical_length = lengths.last
         
         //MARK: Place workcell box
         #if os(macOS)
         box_node?.position.x = CGFloat(origin_location[1])
-        box_node?.position.y = CGFloat(origin_location[2] + (vertical_lenght ?? 0)) //Add vertical base lenght
+        box_node?.position.y = CGFloat(origin_location[2] + (vertical_length ?? 0)) //Add vertical base length
         box_node?.position.z = CGFloat(origin_location[0])
         
         box_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
@@ -536,7 +536,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         box_node?.eulerAngles.z = CGFloat(origin_rotation[0].to_rad)
         #else
         box_node?.position.x = Float(origin_location[1])
-        box_node?.position.y = Float(origin_location[2] + (vertical_lenght ?? 0))
+        box_node?.position.y = Float(origin_location[2] + (vertical_length ?? 0))
         box_node?.position.z = Float(origin_location[0])
         
         box_node?.eulerAngles.x = origin_rotation[1].to_rad
@@ -547,11 +547,11 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         //MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_location[1])
-        camera_node?.position.y += CGFloat(origin_location[2] + (vertical_lenght ?? 0))
+        camera_node?.position.y += CGFloat(origin_location[2] + (vertical_length ?? 0))
         camera_node?.position.z += CGFloat(origin_location[0])
         #else
         camera_node?.position.x += Float(origin_location[1])
-        camera_node?.position.y += Float(origin_location[2] + (vertical_lenght ?? 0))
+        camera_node?.position.y += Float(origin_location[2] + (vertical_length ?? 0))
         camera_node?.position.z += Float(origin_location[0])
         #endif
     }
@@ -661,16 +661,16 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         //Change robot base
         modified_node = robot_node!.childNode(withName: "base", recursively: true)! //Select node to modifty
         saved_material = (modified_node.geometry?.firstMaterial)! //Save original material from node geometry
-        modified_node.geometry = SCNCylinder(radius: 8, height: CGFloat(lenghts[lenghts.count - 1])) //Update geometry //(lenghts[6]))
+        modified_node.geometry = SCNCylinder(radius: 8, height: CGFloat(lengths[lengths.count - 1])) //Update geometry //(lengths[6]))
         modified_node.geometry?.firstMaterial = saved_material //Apply saved original material
         
         //Change position of base model
         #if os(macOS)
-        modified_node.position.y = CGFloat(lenghts[lenghts.count - 1] / 2)
-        robot_details[0].position.y = CGFloat(lenghts[lenghts.count - 1])
+        modified_node.position.y = CGFloat(lengths[lengths.count - 1] / 2)
+        robot_details[0].position.y = CGFloat(lengths[lengths.count - 1])
         #else
-        modified_node.position.y = Float(lenghts[lenghts.count - 1] / 2)
-        robot_details[0].position.y = Float(lenghts[lenghts.count - 1])
+        modified_node.position.y = Float(lengths[lengths.count - 1] / 2)
+        robot_details[0].position.y = Float(lengths[lengths.count - 1])
         #endif
     }
     
@@ -687,12 +687,12 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             return
         }
         
-        details_positions_update!(&robot_details, ik_perform!(origin_transform(pointer_location: visual_scaling(pointer_location, factor: 0.1), origin_rotation: origin_rotation), pointer_rotation, origin_location, origin_rotation, lenghts)) //Update robot details position by target point position
+        details_positions_update!(&robot_details, ik_perform!(origin_transform(pointer_location: visual_scaling(pointer_location, factor: 0.1), origin_rotation: origin_rotation), pointer_rotation, origin_location, origin_rotation, lengths)) //Update robot details position by target point position
         
         current_pointer_position_select()
     }
     
-    private var ik_perform: ((_ pointer_location: [Float], _ pointer_roation: [Float], _ origin_location: [Float], _ origin_rotation: [Float], _ lenghts: [Float]) -> [Float])? = nil //Inverse kinematic calculate function
+    private var ik_perform: ((_ pointer_location: [Float], _ pointer_roation: [Float], _ origin_location: [Float], _ origin_rotation: [Float], _ lengths: [Float]) -> [Float])? = nil //Inverse kinematic calculate function
     private var details_positions_update: ((_ nodes: inout [SCNNode], _ values: [Float]) -> Void)? = nil //Update robot details positions function
     
     //MARK: Robot in workspace handling
@@ -712,7 +712,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
-            let ik_angles = ik_angles(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lenghts: lenghts)
+            let ik_angles = ik_angles(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lengths: lengths)
             for i in 0...ik_angles.count - 1
             {
                 chart_data.robot_details_angles.append(PositionChartInfo(index: chart_element_index, value: ik_angles[i], type: "J\(i + 1)"))
@@ -825,7 +825,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lenghts: with_lenghts ? self.lenghts : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lengths: with_lengths ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
@@ -854,7 +854,7 @@ struct robot_struct: Codable
     
     var kinematic: Kinematic
     var scene: String
-    var lenghts: [Float]
+    var lengths: [Float]
     
     var is_placed: Bool
     var location: [Float]
@@ -871,23 +871,23 @@ struct robot_struct: Codable
 }
 
 //MARK: - Model connect functions
-func portal_connect(lenghts: inout [Float], node: SCNNode, details: inout [SCNNode], with_lenghts: Bool)
+func portal_connect(lengths: inout [Float], node: SCNNode, details: inout [SCNNode], with_lengths: Bool)
 {
-    //Get lenghts from robot scene if they is not set in plist
-    if !with_lenghts
+    //Get lengths from robot scene if they is not set in plist
+    if !with_lengths
     {
-        lenghts = [Float]()
+        lengths = [Float]()
         
-        lenghts.append(Float(node.childNode(withName: "frame2", recursively: true)!.position.y)) //Portal frame height [0]
+        lengths.append(Float(node.childNode(withName: "frame2", recursively: true)!.position.y)) //Portal frame height [0]
         
-        lenghts.append(Float(node.childNode(withName: "limit1_min", recursively: true)!.position.z)) //Position X shift [1]
-        lenghts.append(Float(node.childNode(withName: "limit0_min", recursively: true)!.position.x + node.childNode(withName: "limit2_min", recursively: true)!.position.x)) //Position Y shift [2]
-        lenghts.append(Float(-node.childNode(withName: "limit2_min", recursively: true)!.position.y)) //Position Z shift [3]
-        lenghts.append(Float(node.childNode(withName: "target", recursively: true)!.position.y)) //Tool lenght for adding to Z shift [4]
+        lengths.append(Float(node.childNode(withName: "limit1_min", recursively: true)!.position.z)) //Position X shift [1]
+        lengths.append(Float(node.childNode(withName: "limit0_min", recursively: true)!.position.x + node.childNode(withName: "limit2_min", recursively: true)!.position.x)) //Position Y shift [2]
+        lengths.append(Float(-node.childNode(withName: "limit2_min", recursively: true)!.position.y)) //Position Z shift [3]
+        lengths.append(Float(node.childNode(withName: "target", recursively: true)!.position.y)) //Tool length for adding to Z shift [4]
         
-        lenghts.append(Float(node.childNode(withName: "limit0_max", recursively: true)!.position.x)) //Limit for X [5]
-        lenghts.append(Float(node.childNode(withName: "limit1_max", recursively: true)!.position.z)) //Limit for Y [6]
-        lenghts.append(Float(-node.childNode(withName: "limit2_max", recursively: true)!.position.y)) //Limit for Z [7]
+        lengths.append(Float(node.childNode(withName: "limit0_max", recursively: true)!.position.x)) //Limit for X [5]
+        lengths.append(Float(node.childNode(withName: "limit1_max", recursively: true)!.position.z)) //Limit for Y [6]
+        lengths.append(Float(-node.childNode(withName: "limit2_max", recursively: true)!.position.y)) //Limit for Z [7]
     }
     
     //Connect to detail nodes from robot scene
@@ -898,12 +898,12 @@ func portal_connect(lenghts: inout [Float], node: SCNNode, details: inout [SCNNo
     }
 }
 
-func vidof_connect(lenghts: inout [Float], node: SCNNode, details: inout [SCNNode], with_lenghts: Bool)
+func vidof_connect(lengths: inout [Float], node: SCNNode, details: inout [SCNNode], with_lengths: Bool)
 {
-    //Create lenghts array if they is not set in plist
-    if !with_lenghts
+    //Create lengths array if they is not set in plist
+    if !with_lengths
     {
-        lenghts = [Float](repeating: 0, count: 6)
+        lengths = [Float](repeating: 0, count: 6)
     }
     
     for i in 0...6
@@ -911,39 +911,39 @@ func vidof_connect(lenghts: inout [Float], node: SCNNode, details: inout [SCNNod
         //Connect to detail nodes from robot scene
         details.append(node.childNode(withName: "d\(i)", recursively: true)!)
         
-        //Get lenghts from robot scene if they is not set in plist
-        if !with_lenghts
+        //Get lengths from robot scene if they is not set in plist
+        if !with_lengths
         {
             if i > 0
             {
-                lenghts[i - 1] = Float(details[i].position.y)
+                lengths[i - 1] = Float(details[i].position.y)
             }
         }
     }
 }
 
-func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], lenghts: [Float])
+func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], lengths: [Float])
 {
     #if os(macOS)
-    node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lenghts[0]) //Set vertical position for frame portal
+    node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lengths[0]) //Set vertical position for frame portal
     #else
-    node.childNode(withName: "frame2", recursively: true)!.position.y = lenghts[0] //Set vertical position for frame portal
+    node.childNode(withName: "frame2", recursively: true)!.position.y = lengths[0] //Set vertical position for frame portal
     #endif
     
     var modified_node = SCNNode()
     var saved_material = SCNMaterial()
     
     modified_node = node.childNode(withName: "detail_v", recursively: true)!
-    if lenghts[0] - 4 > 0
+    if lengths[0] - 4 > 0
     {
         saved_material = (modified_node.geometry?.firstMaterial)!
         
-        modified_node.geometry = SCNBox(width: 8, height: CGFloat(lenghts[0]) - 4, length: 8, chamferRadius: 1)
+        modified_node.geometry = SCNBox(width: 8, height: CGFloat(lengths[0]) - 4, length: 8, chamferRadius: 1)
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.y = CGFloat(lenghts[0] - 4) / 2
+        modified_node.position.y = CGFloat(lengths[0] - 4) / 2
         #else
-        modified_node.position.y = (lenghts[0] - 4) / 2
+        modified_node.position.y = (lengths[0] - 4) / 2
         #endif
     }
     else
@@ -955,13 +955,13 @@ func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], lenght
     
     //X shift
     #if os(macOS)
-    node.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lenghts[1])
-    node.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lenghts[5])
-    frame_element_length = CGFloat(lenghts[5] - lenghts[1]) + 16 //Calculate frame X length
+    node.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lengths[1])
+    node.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lengths[5])
+    frame_element_length = CGFloat(lengths[5] - lengths[1]) + 16 //Calculate frame X length
     #else
-    node!.childNode(withName: "limit1_min", recursively: true)!.position.z = lenghts[1]
-    node!.childNode(withName: "limit1_max", recursively: true)!.position.z = lenghts[5]
-    frame_element_length = CGFloat(lenghts[5] - lenghts[1] + 16) //Calculate frame X length
+    node!.childNode(withName: "limit1_min", recursively: true)!.position.z = lengths[1]
+    node!.childNode(withName: "limit1_max", recursively: true)!.position.z = lengths[5]
+    frame_element_length = CGFloat(lengths[5] - lengths[1] + 16) //Calculate frame X length
     #endif
     
     modified_node = node.childNode(withName: "detail_x", recursively: true)!
@@ -976,13 +976,13 @@ func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], lenght
     
     //Y shift
     #if os(macOS)
-    node.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lenghts[2]) / 2
-    node.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lenghts[6])
-    frame_element_length = CGFloat(lenghts[6] - lenghts[2]) + 16 //Calculate frame Y length
+    node.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lengths[2]) / 2
+    node.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lengths[6])
+    frame_element_length = CGFloat(lengths[6] - lengths[2]) + 16 //Calculate frame Y length
     #else
-    node.childNode(withName: "limit0_min", recursively: true)!.position.x = lenghts[2] / 2
-    node.childNode(withName: "limit0_max", recursively: true)!.position.x = lenghts[6]
-    frame_element_length = CGFloat(lenghts[6] - lenghts[2] + 16) //Calculate frame Y length
+    node.childNode(withName: "limit0_min", recursively: true)!.position.x = lengths[2] / 2
+    node.childNode(withName: "limit0_max", recursively: true)!.position.x = lengths[6]
+    frame_element_length = CGFloat(lengths[6] - lengths[2] + 16) //Calculate frame Y length
     #endif
     
     modified_node = node.childNode(withName: "detail_y", recursively: true)!
@@ -997,13 +997,13 @@ func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], lenght
     
     //Z shift
     #if os(macOS)
-    node.childNode(withName: "limit2_min", recursively: true)!.position.y = CGFloat(-lenghts[3])
-    node.childNode(withName: "limit2_max", recursively: true)!.position.y = CGFloat(lenghts[7])
-    frame_element_length = CGFloat(lenghts[7])
+    node.childNode(withName: "limit2_min", recursively: true)!.position.y = CGFloat(-lengths[3])
+    node.childNode(withName: "limit2_max", recursively: true)!.position.y = CGFloat(lengths[7])
+    frame_element_length = CGFloat(lengths[7])
     #else
-    node.childNode(withName: "limit2_min", recursively: true)!.position.y = -lenghts[3]
-    node.childNode(withName: "limit2_max", recursively: true)!.position.y = lenghts[7]
-    frame_element_length = CGFloat(lenghts[7])
+    node.childNode(withName: "limit2_min", recursively: true)!.position.y = -lengths[3]
+    node.childNode(withName: "limit2_max", recursively: true)!.position.y = lengths[7]
+    frame_element_length = CGFloat(lengths[7])
     #endif
     
     modified_node = node.childNode(withName: "detail_z", recursively: true)!
@@ -1017,7 +1017,7 @@ func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], lenght
     #endif
 }
 
-func update_vidof_lengths(node: inout SCNNode, details: inout [SCNNode], lenghts: [Float])
+func update_vidof_lengths(node: inout SCNNode, details: inout [SCNNode], lengths: [Float])
 {
     var modified_node = SCNNode()
     var saved_material = SCNMaterial()
@@ -1026,11 +1026,11 @@ func update_vidof_lengths(node: inout SCNNode, details: inout [SCNNode], lenghts
     
     for i in 0..<details.count - 1
     {
-        //Get lenght 0 if first robot detail selected and get previous lenght for all next details
+        //Get length 0 if first robot detail selected and get previous length for all next details
         #if os(macOS)
-        details[i].position.y = CGFloat(i > 0 ? lenghts[i - 1] : lenghts[lenghts.count - 1])
+        details[i].position.y = CGFloat(i > 0 ? lengths[i - 1] : lengths[lengths.count - 1])
         #else
-        details[i].position.y = Float(i > 0 ? lenghts[i - 1] : lenghts[lenghts.count - 1])
+        details[i].position.y = Float(i > 0 ? lengths[i - 1] : lengths[lengths.count - 1])
         #endif
         
         if i < 5
@@ -1039,34 +1039,34 @@ func update_vidof_lengths(node: inout SCNNode, details: inout [SCNNode], lenghts
             modified_node = details[i].childNode(withName: "box", recursively: false)!
             if i < 3
             {
-                modified_node.geometry = SCNBox(width: 6, height: CGFloat(lenghts[i]), length: 6, chamferRadius: 1) //Set geometry for 0-2 details with width 6 and chamfer
+                modified_node.geometry = SCNBox(width: 6, height: CGFloat(lengths[i]), length: 6, chamferRadius: 1) //Set geometry for 0-2 details with width 6 and chamfer
             }
             else
             {
                 if i < 4
                 {
-                    modified_node.geometry = SCNBox(width: 5, height: CGFloat(lenghts[i]), length: 5, chamferRadius: 1) //Set geometry for 3th detail with width 5 and chamfer
+                    modified_node.geometry = SCNBox(width: 5, height: CGFloat(lengths[i]), length: 5, chamferRadius: 1) //Set geometry for 3th detail with width 5 and chamfer
                 }
                 else
                 {
-                    modified_node.geometry = SCNBox(width: 4, height: CGFloat(lenghts[i]), length: 4, chamferRadius: 0) //Set geometry for 4th detail with width 4 and without chamfer
+                    modified_node.geometry = SCNBox(width: 4, height: CGFloat(lengths[i]), length: 4, chamferRadius: 0) //Set geometry for 4th detail with width 4 and without chamfer
                 }
             }
             modified_node.geometry?.firstMaterial = saved_material //Apply saved material
             
             #if os(macOS)
-            modified_node.position.y = CGFloat(lenghts[i] / 2)
+            modified_node.position.y = CGFloat(lengths[i] / 2)
             #else
-            modified_node.position.y = Float(lenghts[i] / 2)
+            modified_node.position.y = Float(lengths[i] / 2)
             #endif
         }
         else
         {
             //Set tool target (d6) position for 5th detail
             #if os(macOS)
-            details[6].position.y = CGFloat(lenghts[i])
+            details[6].position.y = CGFloat(lengths[i])
             #else
-            details[6].position.y = Float(lenghts[i])
+            details[6].position.y = Float(lengths[i])
             #endif
         }
     }
@@ -1094,7 +1094,7 @@ func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [F
     return [new_x, new_y, new_z]
 }
 
-func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lenghts by divider
+func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lengths by divider
 {
     var new_numbers = [Float]()
     for number in numbers
@@ -1106,13 +1106,13 @@ func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling leng
 }
 
 //MARK: Calculate inverse kinematic details position for portal robot
-func ik_lenghts(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float], lenghts: [Float]) -> [Float]
+func ik_lengths(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float], lengths: [Float]) -> [Float]
 {
     var px, py, pz: Float
     
-    px = pointer_location[0] + origin_location[0] - lenghts[1]
-    py = pointer_location[1] + origin_location[1] - lenghts[2]
-    pz = pointer_location[2] + origin_location[2] - lenghts[0] + lenghts[3] + lenghts[4]
+    px = pointer_location[0] + origin_location[0] - lengths[1]
+    py = pointer_location[1] + origin_location[1] - lengths[2]
+    pz = pointer_location[2] + origin_location[2] - lengths[0] + lengths[3] + lengths[4]
     
     //Checking X detail limit
     if px < 0
@@ -1121,9 +1121,9 @@ func ik_lenghts(pointer_location: [Float], pointer_roation: [Float], origin_loca
     }
     else
     {
-        if px > lenghts[5]
+        if px > lengths[5]
         {
-            px = lenghts[5]
+            px = lengths[5]
         }
     }
     
@@ -1134,9 +1134,9 @@ func ik_lenghts(pointer_location: [Float], pointer_roation: [Float], origin_loca
     }
     else
     {
-        if py > lenghts[6] - lenghts[2] / 2
+        if py > lengths[6] - lengths[2] / 2
         {
-            py = lenghts[6] - lenghts[2] / 2
+            py = lengths[6] - lengths[2] / 2
         }
     }
     
@@ -1147,9 +1147,9 @@ func ik_lenghts(pointer_location: [Float], pointer_roation: [Float], origin_loca
     }
     else
     {
-        if pz < -lenghts[7]
+        if pz < -lengths[7]
         {
-            pz = -lenghts[7]
+            pz = -lengths[7]
         }
     }
 
@@ -1157,7 +1157,7 @@ func ik_lenghts(pointer_location: [Float], pointer_roation: [Float], origin_loca
 }
 
 //MARK: Calculate inverse kinematic details roataion angles for 6DOF
-func ik_angles(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float], lenghts: [Float]) -> [Float]
+func ik_angles(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float], lengths: [Float]) -> [Float]
 {
     var angles = [Float]()
     var C3 = Float()
@@ -1190,11 +1190,11 @@ func ik_angles(pointer_location: [Float], pointer_rotation: [Float], origin_loca
         ay = sin(rz) * cos(ry)
         az = -sin(ry)
         
-        p5x = px - (lenghts[4] + lenghts[5]) * ax
-        p5y = py - (lenghts[4] + lenghts[5]) * ay
-        p5z = pz - (lenghts[4] + lenghts[5]) * az
+        p5x = px - (lengths[4] + lengths[5]) * ax
+        p5y = py - (lengths[4] + lengths[5]) * ay
+        p5z = pz - (lengths[4] + lengths[5]) * az
         
-        C3 = (pow(p5x, 2) + pow(p5y, 2) + pow(p5z - lenghts[0], 2) - pow(lenghts[1], 2) - pow(lenghts[2] + lenghts[3], 2)) / (2 * lenghts[1] * (lenghts[2] + lenghts[3]))
+        C3 = (pow(p5x, 2) + pow(p5y, 2) + pow(p5z - lengths[0], 2) - pow(lengths[1], 2) - pow(lengths[2] + lengths[3], 2)) / (2 * lengths[1] * (lengths[2] + lengths[3]))
         
         //Joint 1
         theta[0] = Float(atan2(p5y, p5x))
@@ -1202,10 +1202,10 @@ func ik_angles(pointer_location: [Float], pointer_rotation: [Float], origin_loca
         //Joints 3, 2
         theta[2] = Float(atan2(pow(abs(1 - pow(C3, 2)), 0.5), C3))
         
-        M = lenghts[1] + (lenghts[2] + lenghts[3]) * C3
-        N = (lenghts[2] + lenghts[3]) * sin(Float(theta[2]))
+        M = lengths[1] + (lengths[2] + lengths[3]) * C3
+        N = (lengths[2] + lengths[3]) * sin(Float(theta[2]))
         A = pow(p5x * p5x + p5y * p5y, 0.5)
-        B = p5z - lenghts[0]
+        B = p5z - lengths[0]
         theta[1] = Float(atan2(M * A - N * B, N * A + M * B))
         
         //Jionts 4, 5, 6
