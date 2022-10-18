@@ -485,18 +485,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var modified_node = SCNNode()
     private var saved_material = SCNMaterial()
     
-    private var origin_rotated: Bool
-    {
-        if origin_rotation.reduce(0, +) > 0
-        {
-            return true
-        }
-        else
-        {
-            return false
-        }
-    }
-    
     public func robot_details_connect() //Connect robot instance to manipulator model details
     {
         robot_details.removeAll()
@@ -878,215 +866,55 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: Inverse kinematic calculations
-    private var ik_lenghts: [Float]
-    {
-        var lenghts = [Float]()
-        var px, py, pz: Float
-        
-        if !origin_rotated
-        {
-            px = Float(pointer_node?.position.z ?? 0) + origin_location[0] - self.lenghts[1]
-            py = Float(pointer_node?.position.x ?? 0) + origin_location[1] - self.lenghts[2]
-            pz = Float(pointer_node?.position.y ?? 0) + origin_location[2] - self.lenghts[0] + self.lenghts[3] + self.lenghts[4]
-        }
-        else
-        {
-            let new_pos = transform_by_origin()
-            px = new_pos.x
-            py = new_pos.y
-            pz = new_pos.z
-            
-            //Add origin location components
-            px += origin_location[0] - self.lenghts[1]
-            py += origin_location[1] - self.lenghts[2]
-            pz += origin_location[2] - self.lenghts[0] + self.lenghts[3] + self.lenghts[4]
-        }
-        
-        //Checking X detail limit
-        if px < 0
-        {
-            px = 0
-        }
-        else
-        {
-            if px > self.lenghts[5]
-            {
-                px = self.lenghts[5]
-            }
-        }
-        
-        //Checking Y detail limit
-        if py < 0
-        {
-            py = 0
-        }
-        else
-        {
-            if py > self.lenghts[6] - self.lenghts[2] / 2
-            {
-                py = self.lenghts[6] - self.lenghts[2] / 2
-            }
-        }
-        
-        //Checking Z detail limit
-        if pz > 0
-        {
-            pz = 0
-        }
-        else
-        {
-            if pz < -self.lenghts[7]
-            {
-                pz = -self.lenghts[7]
-            }
-        }
-
-        lenghts = [Float(px), Float(py), Float(pz)]
-        
-        return lenghts
-    }
-    
-    private var ik_angles: [Float] //Calculate manipulator details rotation angles
-    {
-        var angles = [Float]()
-        var C3 = Float()
-        do
-        {
-            var px, py, pz: Float
-            var rx, ry, rz: Float
-            var ax, ay, az, bx, by, bz: Float
-            var asx, asy, asz, bsx, bsy, bsz: Float
-            var p5x, p5y, p5z: Float
-            var C1, C23, S1, S23: Float
-            
-            var M, N, A, B: Float
-            
-            if !origin_rotated
-            {
-                px = -(Float(pointer_node?.position.z ?? 0) + origin_location[0])
-                py = Float(pointer_node?.position.x ?? 0) + origin_location[1]
-                pz = Float(pointer_node?.position.y ?? 0) + origin_location[2]
-            }
-            else
-            {
-                let new_pos = transform_by_origin()
-                px = new_pos.x
-                py = new_pos.y
-                pz = new_pos.z
-                
-                //Add origin location components
-                px = -(px + origin_location[0])
-                py += origin_location[1]
-                pz += origin_location[2]
-            }
-            
-            rx = -(Float(tool_node?.eulerAngles.z ?? 0) + origin_rotation[0].to_rad)
-            ry = -(Float(pointer_node?.eulerAngles.x ?? 0) + origin_rotation[1].to_rad) + (.pi)
-            rz = -(Float(pointer_node?.eulerAngles.y ?? 0) + origin_rotation[2].to_rad)
-            
-            bx = cos(rx) * sin(ry) * cos(rz) - sin(rx) * sin(rz)
-            by = cos(rx) * sin(ry) * sin(rz) - sin(rx) * cos(rz)
-            bz = cos(rx) * cos(ry)
-            
-            ax = cos(rz) * cos(ry)
-            ay = sin(rz) * cos(ry)
-            az = -sin(ry)
-            
-            p5x = px - (lenghts[4] + lenghts[5]) * ax
-            p5y = py - (lenghts[4] + lenghts[5]) * ay
-            p5z = pz - (lenghts[4] + lenghts[5]) * az
-            
-            C3 = (pow(p5x, 2) + pow(p5y, 2) + pow(p5z - lenghts[0], 2) - pow(lenghts[1], 2) - pow(lenghts[2] + lenghts[3], 2)) / (2 * lenghts[1] * (lenghts[2] + lenghts[3]))
-            
-            //Joint 1
-            theta[0] = Float(atan2(p5y, p5x))
-            
-            //Joints 3, 2
-            theta[2] = Float(atan2(pow(abs(1 - pow(C3, 2)), 0.5), C3))
-            
-            M = lenghts[1] + (lenghts[2] + lenghts[3]) * C3
-            N = (lenghts[2] + lenghts[3]) * sin(Float(theta[2]))
-            A = pow(p5x * p5x + p5y * p5y, 0.5)
-            B = p5z - lenghts[0]
-            theta[1] = Float(atan2(M * A - N * B, N * A + M * B))
-            
-            //Jionts 4, 5, 6
-            C1 = cos(Float(theta[0]))
-            C23 = cos(Float(theta[1]) + Float(theta[2]))
-            S1 = sin(Float(theta[0]))
-            S23 = sin(Float(theta[1]) + Float(theta[2]))
-            
-            asx = C23 * (C1 * ax + S1 * ay) - S23 * az
-            asy = -S1 * ax + C1 * ay
-            asz = S23 * (C1 * ax + S1 * ay) + C23 * az
-            bsx = C23 * (C1 * bx + S1 * by) - S23 * bz
-            bsy = -S1 * bx + C1 * by
-            bsz = S23 * (C1 * bx + S1 * by) + C23 * bz
-            
-            theta[3] = Float(atan2(asy, asx))
-            theta[4] = Float(atan2(cos(Float(theta[3])) * asx + sin(Float(theta[3])) * asy, asz))
-            theta[5] = Float(atan2(cos(Float(theta[3])) * bsy - sin(Float(theta[3])) * bsx, -bsz / sin(Float(theta[4]))))
-            
-            angles.append(-(theta[0] + .pi))
-            angles.append(-theta[1])
-            angles.append(-theta[2])
-            angles.append(-(theta[3] + .pi))
-            angles.append(theta[4])
-            angles.append(-theta[5])
-        }
-        return angles
-    }
-    
-    private func transform_by_origin() -> ((x: Float, y: Float, z: Float))
-    {
-        //New values for coordinates components
-        let new_x = Float(pointer_node?.position.z ?? 0) * Float(cos(origin_rotation[1].to_rad)) * Float(cos(origin_rotation[2].to_rad)) + Float(pointer_node?.position.y ?? 0) * Float(sin(origin_rotation[1].to_rad)) - Float(pointer_node?.position.x ?? 0) * Float(sin(origin_rotation[2].to_rad))
-        let new_y = Float(pointer_node?.position.x ?? 0) * Float(cos(origin_rotation[0].to_rad)) * Float(cos(origin_rotation[2].to_rad)) - Float(pointer_node?.position.y ?? 0) * Float(sin(origin_rotation[0].to_rad)) + Float(pointer_node?.position.z ?? 0) * Float(sin(origin_rotation[2].to_rad))
-        let new_z = Float(pointer_node?.position.y ?? 0) * Float(cos(origin_rotation[0].to_rad)) * Float(cos(origin_rotation[1].to_rad)) + Float(pointer_node?.position.x ?? 0) * Float(sin(origin_rotation[0].to_rad)) - Float(pointer_node?.position.z ?? 0) * Float(sin(origin_rotation[1].to_rad))
-        
-        return((x: new_x, y: new_y, z: new_z))
-    }
-    
     public func update_robot()
     {
+        guard robot_details.count > 0 else
+        {
+            return
+        }
+        
+        var details_data = [Float]()
+        
         switch kinematic
         {
         case .portal:
-            if robot_details.count > 0
-            {
-                //Set manipulator portal details displacement
-                #if os(macOS)
-                robot_details[1].position.x = CGFloat(ik_lenghts[1])
-                robot_details[3].position.y = CGFloat(ik_lenghts[2])
-                robot_details[2].position.z = CGFloat(ik_lenghts[0])
-                #else
-                robot_details[1].position.x = ik_lenghts[1]
-                robot_details[3].position.y = ik_lenghts[2]
-                robot_details[2].position.z = ik_lenghts[0]
-                #endif
-            }
+            details_data = ik_lenghts(pointer_location: origin_transform(pointer_location: visual_scaling(pointer_location, divider: 10), origin_rotation: origin_rotation), pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lenghts: lenghts)
+            
+            //Set manipulator portal details displacement
+            #if os(macOS)
+            robot_details[1].position.x = CGFloat(details_data[1])
+            robot_details[3].position.y = CGFloat(details_data[2])
+            robot_details[2].position.z = CGFloat(details_data[0])
+            #else
+            robot_details[1].position.x = details_data[1]
+            robot_details[3].position.y = details_data[2]
+            robot_details[2].position.z = details_data[0]
+            #endif
+            
+            current_pointer_position_select()
         case .vi_dof:
-            if robot_details.count > 0
-            {
-                //Set manipulator details rotation angles
-                #if os(macOS)
-                robot_details[0].eulerAngles.y = CGFloat(ik_angles[0])
-                robot_details[1].eulerAngles.z = CGFloat(ik_angles[1])
-                robot_details[2].eulerAngles.z = CGFloat(ik_angles[2])
-                robot_details[3].eulerAngles.y = CGFloat(ik_angles[3])
-                robot_details[4].eulerAngles.z = CGFloat(ik_angles[4])
-                robot_details[5].eulerAngles.y = CGFloat(ik_angles[5])
-                #else
-                robot_details[0].eulerAngles.y = Float(ik_angles[0])
-                robot_details[1].eulerAngles.z = Float(ik_angles[1])
-                robot_details[2].eulerAngles.z = Float(ik_angles[2])
-                robot_details[3].eulerAngles.y = Float(ik_angles[3])
-                robot_details[4].eulerAngles.z = Float(ik_angles[4])
-                robot_details[5].eulerAngles.y = Float(ik_angles[5])
-                #endif
-                
-                update_chart_data()
-            }
+            details_data = ik_angles(pointer_location: origin_transform(pointer_location: visual_scaling(pointer_location, divider: 10), origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lenghts: lenghts)
+            
+            //Set manipulator details rotation angles
+            #if os(macOS)
+            robot_details[0].eulerAngles.y = CGFloat(details_data[0])
+            robot_details[1].eulerAngles.z = CGFloat(details_data[1])
+            robot_details[2].eulerAngles.z = CGFloat(details_data[2])
+            robot_details[3].eulerAngles.y = CGFloat(details_data[3])
+            robot_details[4].eulerAngles.z = CGFloat(details_data[4])
+            robot_details[5].eulerAngles.y = CGFloat(details_data[5])
+            #else
+            robot_details[0].eulerAngles.y = Float(details_data[0])
+            robot_details[1].eulerAngles.z = Float(details_data[1])
+            robot_details[2].eulerAngles.z = Float(details_data[2])
+            robot_details[3].eulerAngles.y = Float(details_data[3])
+            robot_details[4].eulerAngles.z = Float(details_data[4])
+            robot_details[5].eulerAngles.y = Float(details_data[5])
+            #endif
+            
+            current_pointer_position_select()
+            
+            update_chart_data()
         default:
             break
         }
@@ -1109,6 +937,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
+            let ik_angles = ik_angles(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lenghts: lenghts)
             for i in 0...ik_angles.count - 1
             {
                 chart_data.robot_details_angles.append(PositionChartInfo(index: chart_element_index, value: ik_angles[i], type: "J\(i + 1)"))
@@ -1264,6 +1093,167 @@ struct robot_struct: Codable
     var origin_location: [Float]
     var origin_rotation: [Float]
     var space_scale: [Float]
+}
+
+//MARK: - Inverse kinematic functions
+func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float]
+{
+    let new_x, new_y, new_z: Float
+    if origin_rotation.reduce(0, +) > 0
+    {
+        //New values for coordinates components
+        new_x = pointer_location[0] * cos(origin_rotation[1].to_rad) * cos(origin_rotation[2].to_rad) + pointer_location[2] * sin(origin_rotation[1].to_rad) - pointer_location[1] * sin(origin_rotation[2].to_rad)
+        new_y = pointer_location[1] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[2].to_rad) - pointer_location[2] * sin(origin_rotation[0].to_rad) + pointer_location[0] * sin(origin_rotation[2].to_rad)
+        new_z = pointer_location[2] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[1].to_rad) + pointer_location[1] * sin(origin_rotation[0].to_rad) - pointer_location[0] * sin(origin_rotation[1].to_rad)
+    }
+    else
+    {
+        new_x = pointer_location[0]
+        new_y = pointer_location[1]
+        new_z = pointer_location[2]
+    }
+    
+    return [new_x, new_y, new_z]
+}
+
+func visual_scaling(_ numbers: [Float], divider: Float) -> [Float]
+{
+    var new_numbers = [Float]()
+    for number in numbers
+    {
+        new_numbers.append(number / divider)
+    }
+    
+    return new_numbers
+}
+
+func ik_lenghts(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float], lenghts: [Float]) -> [Float]
+{
+    var px, py, pz: Float
+    
+    px = pointer_location[0] + origin_location[0] - lenghts[1]
+    py = pointer_location[1] + origin_location[1] - lenghts[2]
+    pz = pointer_location[2] + origin_location[2] - lenghts[0] + lenghts[3] + lenghts[4]
+    
+    //Checking X detail limit
+    if px < 0
+    {
+        px = 0
+    }
+    else
+    {
+        if px > lenghts[5]
+        {
+            px = lenghts[5]
+        }
+    }
+    
+    //Checking Y detail limit
+    if py < 0
+    {
+        py = 0
+    }
+    else
+    {
+        if py > lenghts[6] - lenghts[2] / 2
+        {
+            py = lenghts[6] - lenghts[2] / 2
+        }
+    }
+    
+    //Checking Z detail limit
+    if pz > 0
+    {
+        pz = 0
+    }
+    else
+    {
+        if pz < -lenghts[7]
+        {
+            pz = -lenghts[7]
+        }
+    }
+
+    return [px, py, pz]
+}
+
+func ik_angles(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float], lenghts: [Float]) -> [Float] //Calculate manipulator details rotation angles
+{
+    var angles = [Float]()
+    var C3 = Float()
+    var theta = [Float](repeating: 0.0, count: 6)
+    
+    do
+    {
+        var px, py, pz: Float
+        var rx, ry, rz: Float
+        var ax, ay, az, bx, by, bz: Float
+        var asx, asy, asz, bsx, bsy, bsz: Float
+        var p5x, p5y, p5z: Float
+        var C1, C23, S1, S23: Float
+        
+        var M, N, A, B: Float
+        
+        px = -(pointer_location[0] + origin_location[0])
+        py = pointer_location[1] + origin_location[1]
+        pz = pointer_location[2] + origin_location[2]
+        
+        rx = -(pointer_rotation[0].to_rad + origin_rotation[0].to_rad)
+        ry = -(pointer_rotation[1].to_rad + origin_rotation[1].to_rad) + (.pi)
+        rz = -(pointer_rotation[2].to_rad + origin_rotation[2].to_rad)
+        
+        bx = cos(rx) * sin(ry) * cos(rz) - sin(rx) * sin(rz)
+        by = cos(rx) * sin(ry) * sin(rz) - sin(rx) * cos(rz)
+        bz = cos(rx) * cos(ry)
+        
+        ax = cos(rz) * cos(ry)
+        ay = sin(rz) * cos(ry)
+        az = -sin(ry)
+        
+        p5x = px - (lenghts[4] + lenghts[5]) * ax
+        p5y = py - (lenghts[4] + lenghts[5]) * ay
+        p5z = pz - (lenghts[4] + lenghts[5]) * az
+        
+        C3 = (pow(p5x, 2) + pow(p5y, 2) + pow(p5z - lenghts[0], 2) - pow(lenghts[1], 2) - pow(lenghts[2] + lenghts[3], 2)) / (2 * lenghts[1] * (lenghts[2] + lenghts[3]))
+        
+        //Joint 1
+        theta[0] = Float(atan2(p5y, p5x))
+        
+        //Joints 3, 2
+        theta[2] = Float(atan2(pow(abs(1 - pow(C3, 2)), 0.5), C3))
+        
+        M = lenghts[1] + (lenghts[2] + lenghts[3]) * C3
+        N = (lenghts[2] + lenghts[3]) * sin(Float(theta[2]))
+        A = pow(p5x * p5x + p5y * p5y, 0.5)
+        B = p5z - lenghts[0]
+        theta[1] = Float(atan2(M * A - N * B, N * A + M * B))
+        
+        //Jionts 4, 5, 6
+        C1 = cos(Float(theta[0]))
+        C23 = cos(Float(theta[1]) + Float(theta[2]))
+        S1 = sin(Float(theta[0]))
+        S23 = sin(Float(theta[1]) + Float(theta[2]))
+        
+        asx = C23 * (C1 * ax + S1 * ay) - S23 * az
+        asy = -S1 * ax + C1 * ay
+        asz = S23 * (C1 * ax + S1 * ay) + C23 * az
+        bsx = C23 * (C1 * bx + S1 * by) - S23 * bz
+        bsy = -S1 * bx + C1 * by
+        bsz = S23 * (C1 * bx + S1 * by) + C23 * bz
+        
+        theta[3] = Float(atan2(asy, asx))
+        theta[4] = Float(atan2(cos(Float(theta[3])) * asx + sin(Float(theta[3])) * asy, asz))
+        theta[5] = Float(atan2(cos(Float(theta[3])) * bsy - sin(Float(theta[3])) * bsx, -bsz / sin(Float(theta[4]))))
+        
+        angles.append(-(theta[0] + .pi))
+        angles.append(-theta[1])
+        angles.append(-theta[2])
+        angles.append(-(theta[3] + .pi))
+        angles.append(theta[4])
+        angles.append(-theta[5])
+    }
+    
+    return angles
 }
 
 //MARK: - Charts structures
