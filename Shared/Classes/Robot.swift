@@ -427,7 +427,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     private var with_lengths = false //Flag that determines the presence of a lengths array for a robot
     
-    public func robot_workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
+    public func workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
         //Find scene elements from scene by names and connect to instance
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
@@ -959,8 +959,8 @@ func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], length
     node.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lengths[5])
     frame_element_length = CGFloat(lengths[5] - lengths[1]) + 16 //Calculate frame X length
     #else
-    node!.childNode(withName: "limit1_min", recursively: true)!.position.z = lengths[1]
-    node!.childNode(withName: "limit1_max", recursively: true)!.position.z = lengths[5]
+    node.childNode(withName: "limit1_min", recursively: true)!.position.z = lengths[1]
+    node.childNode(withName: "limit1_max", recursively: true)!.position.z = lengths[5]
     frame_element_length = CGFloat(lengths[5] - lengths[1] + 16) //Calculate frame X length
     #endif
     

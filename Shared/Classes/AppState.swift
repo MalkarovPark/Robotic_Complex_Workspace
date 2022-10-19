@@ -199,6 +199,19 @@ class AppState : ObservableObject
     
     @Published var selected_plist_names: (Robots: String, Tools: String, Details: String) = (Robots: "", Tools: "", Details: "")
     
+    public func save_selected_plist_names(type: WorkspaceObjectType) //Save selected plist names to user defaults
+    {
+        switch type
+        {
+        case .robot:
+            robots_plist_name = selected_plist_names.Robots
+        case .tool:
+            tools_plist_name = selected_plist_names.Tools
+        case .detail:
+            details_plist_name = selected_plist_names.Details
+        }
+    }
+    
     public var avaliable_plist_names: (Robots: [String], Tools: [String], Details: [String])
     {
         var plist_names = (Robots: [String](), Tools: [String](), Details: [String]())

@@ -280,7 +280,7 @@ struct ToolSceneView_iOS: UIViewRepresentable
     func makeUIView(context: Context) -> SCNView
     {
         //Connect workcell box and pointer
-        base_workspace.selected_robot.robot_workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
+        base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
         
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))

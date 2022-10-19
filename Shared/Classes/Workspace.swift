@@ -436,7 +436,7 @@ class Workspace: ObservableObject
                     select_robot(name: element.element_data.robot_name)
                     if selected_robot.programs_names.count > 0 && element.element_data.robot_program_name != ""
                     {
-                        selected_robot.robot_workcell_connect(scene: workspace_scene, name: selected_robot.name!, connect_camera: false)
+                        selected_robot.workcell_connect(scene: workspace_scene, name: selected_robot.name!, connect_camera: false)
                         selected_robot.select_program(name: element.element_data.robot_program_name)
                         selected_robot.start_pause_moving()
                         while selected_robot.moving_completed == false && self.performed == true
@@ -662,7 +662,7 @@ class Workspace: ObservableObject
                     unit_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
                     
                     unit_node?.name = robot.name //Select robot cell node
-                    robot.robot_workcell_connect(scene: scene, name: robot.name!, connect_camera: connect_camera) //Connect to robot model
+                    robot.workcell_connect(scene: scene, name: robot.name!, connect_camera: connect_camera) //Connect to robot model
                     robot.update_robot() //Update robot by current position
                     
                     connect_camera = false //Disable camera connect for next robots in array

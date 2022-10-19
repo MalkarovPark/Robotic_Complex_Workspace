@@ -986,7 +986,7 @@ struct AddInWorkspaceView: View
         base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
         
         base_workspace.unit_node?.name = selected_robot_name
-        base_workspace.selected_robot.robot_workcell_connect(scene: base_workspace.workspace_scene, name: selected_robot_name, connect_camera: false)
+        base_workspace.selected_robot.workcell_connect(scene: base_workspace.workspace_scene, name: selected_robot_name, connect_camera: false)
         base_workspace.selected_robot.update_robot()
         
         base_workspace.selected_robot.unit_origin_node?.isHidden = false

@@ -355,6 +355,7 @@ struct PropertiesSettingsView: View
                             .onChange(of: app_state.selected_plist_names.Robots)
                             { _ in
                                 app_state.update_additive_data(type: .robot)
+                                app_state.save_selected_plist_names(type: .robot)
                             }
                             Spacer()
                             
@@ -412,6 +413,7 @@ struct PropertiesSettingsView: View
                             .onChange(of: app_state.selected_plist_names.Tools)
                             { _ in
                                 app_state.update_additive_data(type: .tool)
+                                app_state.save_selected_plist_names(type: .tool)
                             }
                             Spacer()
                             
@@ -470,6 +472,7 @@ struct PropertiesSettingsView: View
                             .onChange(of: app_state.selected_plist_names.Details)
                             { _ in
                                 app_state.update_additive_data(type: .detail)
+                                app_state.save_selected_plist_names(type: .detail)
                             }
                             Spacer()
                             
@@ -540,6 +543,7 @@ struct PropertiesSettingsView: View
                     .onChange(of: app_state.selected_plist_names.Robots)
                     { _ in
                         app_state.update_additive_data(type: .robot)
+                        app_state.save_selected_plist_names(type: .robot)
                     }
                     Spacer()
                     
@@ -582,6 +586,7 @@ struct PropertiesSettingsView: View
                     .onChange(of: app_state.selected_plist_names.Tools)
                     { _ in
                         app_state.update_additive_data(type: .tool)
+                        app_state.save_selected_plist_names(type: .tool)
                     }
                     Spacer()
                     
@@ -624,6 +629,7 @@ struct PropertiesSettingsView: View
                     .onChange(of: app_state.selected_plist_names.Details)
                     { _ in
                         app_state.update_additive_data(type: .detail)
+                        app_state.save_selected_plist_names(type: .detail)
                     }
                     Spacer()
                     
