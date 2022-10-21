@@ -96,12 +96,12 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
             self.ik_perform = ik_lengths(pointer_location:pointer_roation:origin_location:origin_rotation:lengths:)
             self.details_positions_update = update_portal_details(nodes:values:)
             self.details_connect = portal_connect(lengths:node:details:with_lengths:)
-            self.update_details_lengths = update_portal_lengths(node:details:lengths:)
+            self.update_details_lengths = update_portal_lengths(details:lengths:)
         case .vi_dof:
             self.ik_perform = ik_angles(pointer_location:pointer_rotation:origin_location:origin_rotation:lengths:)
             self.details_positions_update = update_vidof_details(nodes:values:)
             self.details_connect = vidof_connect(lengths:node:details:with_lengths:)
-            self.update_details_lengths = update_vidof_lengths(node:details:lengths:)
+            self.update_details_lengths = update_vidof_lengths(details:lengths:)
         default:
             break
         }
@@ -510,7 +510,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         if with_lengths
         {
             update_robot_base_height()
-            update_details_lengths!(&robot_node!, &robot_details, lengths)
+            update_details_lengths!(&robot_details, lengths)
         }
         else
         {
@@ -519,7 +519,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     private var details_connect: ((_ lengths: inout [Float], _ node: SCNNode, _ details: inout [SCNNode], _ with_lengths: Bool) -> Void)? = nil //Connect robot instance function to model details
-    private var update_details_lengths: ((_ node: inout SCNNode, _ details: inout [SCNNode], _ lengths: [Float]) -> Void)? = nil
+    private var update_details_lengths: ((_ details: inout [SCNNode], _ lengths: [Float]) -> Void)? = nil
     
     public func robot_location_place() //Place cell workspace relative to manipulator
     {
@@ -922,8 +922,9 @@ func vidof_connect(lengths: inout [Float], node: SCNNode, details: inout [SCNNod
     }
 }
 
-func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], lengths: [Float])
+func update_portal_lengths(details: inout [SCNNode], lengths: [Float])
 {
+    let node = details.first!
     #if os(macOS)
     node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lengths[0]) //Set vertical position for frame portal
     #else
@@ -1017,7 +1018,7 @@ func update_portal_lengths(node: inout SCNNode, details: inout [SCNNode], length
     #endif
 }
 
-func update_vidof_lengths(node: inout SCNNode, details: inout [SCNNode], lengths: [Float])
+func update_vidof_lengths(details: inout [SCNNode], lengths: [Float])
 {
     var modified_node = SCNNode()
     var saved_material = SCNMaterial()
