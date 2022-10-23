@@ -27,7 +27,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var manufacturer: String?
     private var model: String?
     
-    private var kinematic: Kinematic?
+    private var kinematic: KinematicType?
     
     @Published private var programs = [PositionsProgram]()
     
@@ -42,7 +42,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
-    init(name: String, kinematic: Kinematic)
+    init(name: String, kinematic: KinematicType)
     {
         robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
@@ -52,7 +52,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     init(name: String, manufacturer: String, dictionary: [String: Any]) //Init robot by dictionary
     {
-        var kinematic: Kinematic
+        var kinematic: KinematicType
         switch dictionary["Kinematic"] as? String ?? "" //Determination of the type of kinematics by string in the property
         {
         case "Portal":
@@ -83,7 +83,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], kinematic: Kinematic, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
+    func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], kinematic: KinematicType, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
@@ -852,7 +852,7 @@ struct robot_struct: Codable
     var manufacturer: String
     var model: String
     
-    var kinematic: Kinematic
+    var kinematic: KinematicType
     var scene: String
     var lengths: [Float]
     
@@ -1073,13 +1073,13 @@ func update_vidof_lengths(details: inout [SCNNode], lengths: [Float])
     }
 }
 
-//MARK: - Inverse kinematic functions
+//MARK: - Conversion functions for space parameters
 func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float] //Transform position by origin rotation
 {
     let new_x, new_y, new_z: Float
     if origin_rotation.reduce(0, +) > 0 //If at least one rotation angle of the origin is not equal to zero
     {
-        //Calculate new values for coordinates components
+        //Calculate new values for coordinates components by origin rotation angles
         new_x = pointer_location[0] * cos(origin_rotation[1].to_rad) * cos(origin_rotation[2].to_rad) + pointer_location[2] * sin(origin_rotation[1].to_rad) - pointer_location[1] * sin(origin_rotation[2].to_rad)
         new_y = pointer_location[1] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[2].to_rad) - pointer_location[2] * sin(origin_rotation[0].to_rad) + pointer_location[0] * sin(origin_rotation[2].to_rad)
         new_z = pointer_location[2] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[1].to_rad) + pointer_location[1] * sin(origin_rotation[0].to_rad) - pointer_location[0] * sin(origin_rotation[1].to_rad)
@@ -1106,6 +1106,7 @@ func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling leng
     return new_numbers
 }
 
+//MARK: - Inverse kinematic functions
 //MARK: Calculate inverse kinematic details position for portal robot
 func ik_lengths(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float], lengths: [Float]) -> [Float]
 {
@@ -1280,7 +1281,7 @@ struct PositionChartInfo: Identifiable
 }
 
 //MARK: - Kinematic types enums
-enum Kinematic: String, Codable, Equatable, CaseIterable
+enum KinematicType: String, Codable, Equatable, CaseIterable
 {
     case vi_dof = "6DOF"
     case portal = "Portal"

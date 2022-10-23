@@ -685,6 +685,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                             workspace.selected_robot.unit_origin_node?.isHidden = false
                         }
                     case 4:
+                        //Find detail node name
                         object_name = result.node.name!
                         workspace.update_view()
                         
