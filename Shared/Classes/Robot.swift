@@ -411,7 +411,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private let pointer_node_color = Color.cyan
     
     public var unit_node: SCNNode? //Robot unit node
-    public var unit_origin_node: SCNNode? //Node of robot workcell origin
+    //public var origin_node: SCNNode? //Node of robot workcell origin
     
     public var box_node: SCNNode? //Box bordered cell workspace
     public var camera_node: SCNNode? //Camera
@@ -431,7 +431,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     {
         //Find scene elements from scene by names and connect to instance
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
-        self.unit_origin_node = self.unit_node?.childNode(withName: "unit_pointer", recursively: true)
+        //self.origin_node = self.unit_node?.childNode(withName: "unit_pointer", recursively: true)
         self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
         self.space_node = self.box_node?.childNode(withName: "space", recursively: true)
         self.pointer_node = self.box_node?.childNode(withName: "pointer", recursively: true)
