@@ -848,16 +848,16 @@ struct AddInWorkspaceView: View
                 .keyboardShortcut(.defaultAction)
                 .padding()
                 .foregroundColor(Color.white)
-                //.disabled(base_workspace.selected_object_unavaliable ?? true)
+                .disabled(base_workspace.selected_object_unavaliable ?? true)
             }
         }
         .onAppear
         {
             base_workspace.is_editing = true
-            /*DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
                 base_workspace.update_view()
-            }*/
+            }
         }
         .onDisappear
         {
@@ -868,8 +868,10 @@ struct AddInWorkspaceView: View
     
     func place_object()
     {
+        let type_for_save = base_workspace.selected_object_type
         base_workspace.place_viewed_object()
-        switch base_workspace.selected_object_type
+        
+        switch type_for_save
         {
         case .robot:
             document.preset.robots = base_workspace.file_data().robots
@@ -899,6 +901,7 @@ struct InfoView: View
     {
         VStack(spacing: 0)
         {
+            //Info view title
             switch base_workspace.selected_object_type
             {
             case .robot:
@@ -917,6 +920,7 @@ struct InfoView: View
                 Text("None")
             }
             
+            //Selected object position editor
             #if os(macOS)
             HStack(spacing: 16)
             {
@@ -926,19 +930,22 @@ struct InfoView: View
                     PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
                         .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
                         { _ in
-                            update_unit_origin_position()
+                            base_workspace.update_object_position()
+                            document.preset.robots = base_workspace.file_data().robots
                         }
                 case .tool:
                     PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
                         .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
                         { _ in
-                            update_unit_origin_position()
+                            base_workspace.update_object_position()
+                            document.preset.robots = base_workspace.file_data().robots
                         }
                 case .detail:
                     PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
                         .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
                         { _ in
-                            update_detail_origin_position()
+                            base_workspace.update_object_position()
+                            document.preset.details = base_workspace.file_data().details
                         }
                 default:
                     Text("None")
@@ -998,149 +1005,34 @@ struct InfoView: View
         }
         .onAppear
         {
-            view_object()
+            base_workspace.is_editing = true
         }
         .onDisappear
         {
-            dismiss_view()
+            base_workspace.is_editing = false
         }
-    }
-    
-    func view_object() //Get robot and update position
-    {
-        base_workspace.is_editing = true
-        
-        switch base_workspace.selected_object_type
-        {
-        case .robot:
-            base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: base_workspace.selected_robot.name!, recursively: false)!
-        case .tool:
-            base_workspace.unit_node = base_workspace.workcells_node?.childNode(withName: base_workspace.selected_robot.name!, recursively: false)!
-        case .detail:
-            base_workspace.detail_node = base_workspace.details_node?.childNode(withName: base_workspace.selected_detail.name!, recursively: false)!
-            base_workspace.detail_node?.physicsBody = .none
-            
-            base_workspace.selected_detail.location = [Float(base_workspace.detail_node?.presentation.position.z ?? 0), Float(base_workspace.detail_node?.presentation.position.x ?? 0), Float(base_workspace.detail_node?.presentation.position.y ?? 0)]
-            #if os(macOS)
-            base_workspace.selected_detail.rotation = [Float(base_workspace.detail_node?.presentation.eulerAngles.z ?? 0).to_deg, Float(base_workspace.detail_node?.presentation.eulerAngles.x ?? 0).to_deg, Float(base_workspace.detail_node?.presentation.eulerAngles.y ?? 0).to_deg]
-            #else
-            base_workspace.selected_detail.rotation = [Float(base_workspace.detail_node?.presentation.eulerAngles.z ?? 0).to_deg, Float(base_workspace.detail_node?.presentation.eulerAngles.x ?? 0).to_deg, Float(base_workspace.detail_node?.presentation.eulerAngles.y ?? 0).to_deg]
-            #endif
-            base_workspace.update_view()
-        default:
-            break
-        }
-    }
-    
-    func update_unit_origin_position()
-    {
-        base_workspace.update_pointer()
-        
-        #if os(macOS)
-        base_workspace.unit_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_robot.location[1]), y: CGFloat(base_workspace.selected_robot.location[2]), z: CGFloat(base_workspace.selected_robot.location[0]))
-        
-        base_workspace.unit_node?.eulerAngles.x = CGFloat(base_workspace.selected_robot.rotation[1].to_rad)
-        base_workspace.unit_node?.eulerAngles.y = CGFloat(base_workspace.selected_robot.rotation[2].to_rad)
-        base_workspace.unit_node?.eulerAngles.z = CGFloat(base_workspace.selected_robot.rotation[0].to_rad)
-        #else
-        base_workspace.unit_node?.worldPosition = SCNVector3(x: base_workspace.selected_robot.location[1], y: base_workspace.selected_robot.location[2], z: base_workspace.selected_robot.location[0])
-        
-        base_workspace.unit_node?.eulerAngles.x = base_workspace.selected_robot.rotation[1].to_rad
-        base_workspace.unit_node?.eulerAngles.y = base_workspace.selected_robot.rotation[2].to_rad
-        base_workspace.unit_node?.eulerAngles.z = base_workspace.selected_robot.rotation[0].to_rad
-        #endif
-        
-        document.preset.robots = base_workspace.file_data().robots
     }
     
     func remove_object()
     {
-        switch base_workspace.selected_object_type
+        let type_for_save = base_workspace.selected_object_type
+        base_workspace.remove_selected_object()
+        
+        switch type_for_save
         {
         case .robot:
-            base_workspace.selected_robot.is_placed = false
             document.preset.robots = base_workspace.file_data().robots
         case .tool:
-            base_workspace.selected_robot.is_placed = false
-            document.preset.robots = base_workspace.file_data().robots
-        case .detail:
-            base_workspace.selected_detail.is_placed = false
+            //location = selected_tool.location
+            //rotation = selected_tool.rotation
+            break
+        case.detail:
             document.preset.details = base_workspace.file_data().details
         default:
             break
         }
+        
         info_view_presented.toggle()
-    }
-    
-    func update_detail_origin_position()
-    {
-        base_workspace.update_pointer()
-        
-        #if os(macOS)
-        base_workspace.detail_node?.worldPosition = SCNVector3(x: CGFloat(base_workspace.selected_detail.location[1]), y: CGFloat(base_workspace.selected_detail.location[2]), z: CGFloat(base_workspace.selected_detail.location[0]))
-        
-        base_workspace.detail_node?.eulerAngles.x = CGFloat(base_workspace.selected_detail.rotation[1].to_rad)
-        base_workspace.detail_node?.eulerAngles.y = CGFloat(base_workspace.selected_detail.rotation[2].to_rad)
-        base_workspace.detail_node?.eulerAngles.z = CGFloat(base_workspace.selected_detail.rotation[0].to_rad)
-        #else
-        base_workspace.detail_node?.worldPosition = SCNVector3(x: base_workspace.selected_detail.location[1], y: base_workspace.selected_detail.location[2], z: base_workspace.selected_detail.location[0])
-        
-        base_workspace.detail_node?.eulerAngles.x = base_workspace.selected_detail.rotation[1].to_rad
-        base_workspace.detail_node?.eulerAngles.y = base_workspace.selected_detail.rotation[2].to_rad
-        base_workspace.detail_node?.eulerAngles.z = base_workspace.selected_detail.rotation[0].to_rad
-        #endif
-        
-        document.preset.details = base_workspace.file_data().details
-    }
-    
-    func dismiss_view()
-    {
-        switch base_workspace.selected_object_type
-        {
-        case .robot:
-            if !base_workspace.selected_robot.is_placed
-            {
-                base_workspace.selected_robot.location = [0, 0, 0]
-                base_workspace.selected_robot.rotation = [0, 0, 0]
-                
-                base_workspace.deselect_robot()
-                base_workspace.elements_check()
-                document.preset.elements = base_workspace.file_data().elements
-                document.preset.robots = base_workspace.file_data().robots
-                base_workspace.update_view()
-                
-                base_workspace.unit_node?.removeFromParentNode()
-            }
-        case .tool:
-            if !base_workspace.selected_robot.is_placed
-            {
-                base_workspace.selected_robot.location = [0, 0, 0]
-                base_workspace.selected_robot.rotation = [0, 0, 0]
-                
-                base_workspace.deselect_robot()
-                base_workspace.elements_check()
-                document.preset.elements = base_workspace.file_data().elements
-                document.preset.robots = base_workspace.file_data().robots
-                base_workspace.update_view()
-                
-                base_workspace.unit_node?.removeFromParentNode()
-            }
-        case .detail:
-            if !base_workspace.selected_detail.is_placed
-            {
-                base_workspace.selected_detail.location = [0, 0, 0]
-                base_workspace.selected_detail.rotation = [0, 0, 0]
-                
-                base_workspace.deselect_detail()
-                document.preset.details = base_workspace.file_data().details
-                base_workspace.update_view()
-                
-                base_workspace.detail_node?.removeFromParentNode()
-            }
-        default:
-            break
-        }
-        base_workspace.is_editing = false
     }
 }
 

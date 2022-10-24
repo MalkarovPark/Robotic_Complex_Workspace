@@ -38,7 +38,7 @@ class Workspace: ObservableObject
         return nil
     }
     
-    public func update_pointer()
+    public func update_pointer() //Set new pointer position by selected workspace object
     {
         switch selected_object_type
         {
@@ -68,12 +68,6 @@ class Workspace: ObservableObject
     {
         object_pointer_node?.isHidden = true
     }
-    
-    /*public func update_edited_object_position()
-    {
-        edited_object_node?.position = object_pointer_node!.position
-        edited_object_node?.eulerAngles = object_pointer_node!.eulerAngles
-    }*/
     
     public var edited_object_node: SCNNode?
     public func view_object_node(type: WorkspaceObjectType, name: String)
@@ -282,7 +276,12 @@ class Workspace: ObservableObject
     {
         print(result.localCoordinates)
         print("🍮 tapped – \(result.node.name!), category \(result.node.categoryBitMask)")
-        var object_name = ""
+        //var object_name = ""
+        var object_node: SCNNode?
+        
+        //Disconnect from edited node
+        edited_object_node = SCNNode() //Remove old reference
+        edited_object_node?.removeFromParentNode() //Remove old node
         
         switch result.node.categoryBitMask //Switch object node bit mask
         {
@@ -290,7 +289,8 @@ class Workspace: ObservableObject
             //Find robot node name
             if result.node.parent?.name == "robot" && result.node.parent?.parent?.parent?.name == "workcells"
             {
-                object_name = (result.node.parent?.parent?.name)!
+                //object_name = (result.node.parent?.parent?.name)!
+                object_node = result.node.parent?.parent
             }
             else
             {
@@ -304,103 +304,150 @@ class Workspace: ObservableObject
                         cycled_node = cycled_node?.parent
                     }
                     
-                    object_name = (cycled_node?.parent?.parent?.name)!
+                    //object_name = (cycled_node?.parent?.parent?.name)!
+                    
+                    object_node = cycled_node?.parent?.parent
                 }
             }
             
-            if is_selected
-            {
-                if object_name != selected_robot.name
-                {
-                    deselect_object(type: .robot)
-                    
-                    select_object(name: object_name, type: .robot)
-                }
-                else
-                {
-                    deselect_object(type: .robot)
-                }
-            }
-            else
-            {
-                select_object(name: object_name, type: .robot)
-            }
+            select_object_for_edit(node: object_node!, type: .robot)
         case 4:
-            object_name = result.node.name!
+            //object_name = result.node.name!
+            object_node = result.node
             
-            if is_selected
-            {
-                if object_name != selected_detail.name
-                {
-                    deselect_object(type: .detail)
-                    
-                    select_object(name: object_name, type: .detail)
-                }
-                else
-                {
-                    deselect_object(type: .detail)
-                }
-            }
-            else
-            {
-                select_object(name: object_name, type: .detail)
-            }
+            select_object_for_edit(node: object_node!, type: .detail)
         default:
             //Deselect selected object by type
             if is_selected
             {
+                update_view()
+                hide_object_poiner()
+                
                 switch selected_object_type
                 {
                 case .robot:
-                    deselect_object(type: .robot)
+                    deselect_robot()
                 case .tool:
-                    break
+                    deselect_tool()
                 case .detail:
-                    deselect_object(type: .detail)
+                    if selected_detail.is_placed
+                    {
+                        detail_node?.physicsBody = selected_detail.physics
+                        //workspace.detail_node = nil
+                    }
+                    deselect_detail()
+                    //workspace.detail_node = nil
                 default:
                     break
                 }
-                update_view()
             }
         }
+        update_view()
+    }
+    
+    private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType)
+    {
+        //Create editable node with name
+        edited_object_node?.removeFromParentNode() //Remove old node
+        edited_object_node = SCNNode() //Remove old reference
         
-        func deselect_object(type: WorkspaceObjectType)
+        //Connect to old detail node
+        var old_detail_node = SCNNode()
+        if selected_object_type == .detail
         {
-            update_view()
-            
+            old_detail_node = edited_object_node!
+        }
+        edited_object_node = node //Connect to tapped node
+        
+        if is_selected
+        {
+            //If any object did selected
             switch type
             {
             case .robot:
-                deselect_robot()
-            case .tool:
-                break
-            case .detail:
-                if selected_detail.is_placed
+                if node.name! != selected_robot.name //If not selected robot tapped
                 {
-                    detail_node?.physicsBody = selected_detail.physics
-                    //workspace.detail_node = nil
+                    //Change selected to new robot
+                    deselect_robot()
+                    deselect_tool()
+                    deselect_detail()
+                    select_robot(name: node.name!)
+                    update_pointer()
                 }
-                deselect_detail()
-                //workspace.detail_node = nil
-            }
-        }
-        
-        func select_object(name: String, type: WorkspaceObjectType)
-        {
-            update_view()
-            
-            switch type
-            {
-            case .robot:
-                select_robot(name: name)
+                else
+                {
+                    //Deselect already selected robot
+                    deselect_robot()
+                    hide_object_poiner()
+                }
             case .tool:
                 break
             case .detail:
-                select_detail(name: name)
-                detail_node?.physicsBody = .none
+                if node.name! != selected_detail.name //If not selected detail tapped
+                {
+                    old_detail_node.physicsBody = selected_detail.physics //Enable physics for deselctable node
+                    
+                    //Change selected to new detail
+                    deselect_detail()
+                    deselect_robot()
+                    deselect_tool()
+                    select_detail(name: node.name!)
+                    update_pointer()
+                    
+                    edited_object_node?.physicsBody = .none //Disable physics physics for selected node
+                }
+                else
+                {
+                    //Deselect already selected detail
+                    deselect_detail()
+                    hide_object_poiner()
+                }
             }
+        }
+        else
+        {
+            switch type
+            {
+            case .robot:
+                select_robot(name: node.name!)
+            case .tool:
+                break
+            case .detail:
+                select_detail(name: node.name!)
+                edited_object_node?.physicsBody = .none
+            }
+            
+            //Unhide pointer and move to object position
+            object_pointer_node?.isHidden = false
             update_pointer()
         }
+    }
+    
+    public func remove_selected_object()
+    {
+        if is_selected
+        {
+            switch selected_object_type
+            {
+            case .robot:
+                selected_robot.is_placed = false
+                deselect_robot()
+            case .tool:
+                selected_robot.is_placed = false
+                deselect_tool()
+            case .detail:
+                selected_detail.is_placed = false
+                deselect_detail()
+            default:
+                break
+            }
+        }
+        
+        //Disconnect from edited node
+        edited_object_node?.removeFromParentNode() //Remove old node
+        edited_object_node = SCNNode() //Remove old reference
+        
+        hide_object_poiner()
     }
     
     //MARK: - Robots handling functions
@@ -1016,7 +1063,7 @@ class Workspace: ObservableObject
     
     public var is_selected: Bool
     {
-        if selected_robot_index == -1 && selected_detail_index == -1 //selected_tool_index == -1
+        if selected_robot_index == -1 && selected_detail_index == -1 && selected_tool_index == -1
         {
             return false
         }
