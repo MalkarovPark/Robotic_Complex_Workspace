@@ -57,11 +57,19 @@ class Workspace: ObservableObject
     private func update_object_pointer_position(location: [Float], rotation: [Float])
     {
         object_pointer_node?.isHidden = false
+        #if os(macOS)
         object_pointer_node?.position = SCNVector3(x: CGFloat(location[1]), y: CGFloat(location[2]), z: CGFloat(location[0]))
         
         object_pointer_node?.eulerAngles.x = CGFloat(rotation[1].to_rad)
         object_pointer_node?.eulerAngles.y = CGFloat(rotation[2].to_rad)
         object_pointer_node?.eulerAngles.z = CGFloat(rotation[0].to_rad)
+        #else
+        object_pointer_node?.position = SCNVector3(x: location[1], y: location[2], z: location[0])
+        
+        object_pointer_node?.eulerAngles.x = rotation[1].to_rad
+        object_pointer_node?.eulerAngles.y = rotation[2].to_rad
+        object_pointer_node?.eulerAngles.z = rotation[0].to_rad
+        #endif
     }
     
     private func hide_object_poiner()
@@ -230,6 +238,8 @@ class Workspace: ObservableObject
         default:
             break
         }
+        
+        is_editing = false
     }
     
     public var selected_object_unavaliable: Bool?
