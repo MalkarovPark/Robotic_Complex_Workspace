@@ -345,15 +345,8 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        if app_state.reset_view && app_state.reset_view_enabled
-        {
-            let reset_action = base_workspace.reset_view_action
-            app_state.reset_view = false
-            app_state.reset_view_enabled = false
-            
-            ui_view.defaultCameraController.pointOfView?.runAction(
-                reset_action, completionHandler: { app_state.reset_view_enabled = true })
-        }
+        //Update commands
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
     }
     
     func makeCoordinator() -> Coordinator
@@ -464,15 +457,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        if app_state.reset_view && app_state.reset_view_enabled
-        {
-            let reset_action = base_workspace.reset_view_action
-            app_state.reset_view = false
-            app_state.reset_view_enabled = false
-            
-            ui_view.defaultCameraController.pointOfView?.runAction(
-                reset_action, completionHandler: { app_state.reset_view_enabled = true })
-        }
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
     }
     
     func makeCoordinator() -> Coordinator

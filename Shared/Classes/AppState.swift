@@ -613,4 +613,24 @@ class AppState : ObservableObject
         
         return folder_names
     }
+    
+    //MARK: - Visual functions
+    func reset_camera_view_position(workspace: Workspace, view: SCNView)
+    {
+        if reset_view && reset_view_enabled
+        {
+            let reset_action = workspace.reset_view_action
+            reset_view = false
+            reset_view_enabled = false
+            
+            view.defaultCameraController.pointOfView?.runAction(
+                reset_action, completionHandler: {
+                    self.reset_view_enabled = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                    {
+                        workspace.update_view()
+                    }
+                })
+        }
+    }
 }

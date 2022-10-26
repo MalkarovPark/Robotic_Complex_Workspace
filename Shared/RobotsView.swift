@@ -963,6 +963,7 @@ struct CellSceneView_macOS: NSViewRepresentable
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
+        //Update commands
         if base_workspace.selected_robot.programs_count > 0
         {
             if base_workspace.selected_robot.selected_program.points_count > 0
@@ -971,14 +972,7 @@ struct CellSceneView_macOS: NSViewRepresentable
             }
         }
         
-        if app_state.reset_view && app_state.reset_view_enabled
-        {
-            app_state.reset_view = false
-            app_state.reset_view_enabled = false
-            
-            ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
-        }
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
         if app_state.get_scene_image == true
         {
@@ -1083,6 +1077,7 @@ struct CellSceneView_iOS: UIViewRepresentable
 
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
+        //Update commands
         if base_workspace.selected_robot.programs_count > 0
         {
             if base_workspace.selected_robot.selected_program.points_count > 0
@@ -1091,14 +1086,7 @@ struct CellSceneView_iOS: UIViewRepresentable
             }
         }
         
-        if app_state.reset_view && app_state.reset_view_enabled
-        {
-            app_state.reset_view = false
-            app_state.reset_view_enabled = false
-            
-            ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
-        }
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
         if app_state.get_scene_image == true
         {

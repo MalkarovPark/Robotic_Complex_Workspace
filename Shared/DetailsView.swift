@@ -174,7 +174,7 @@ struct AddDetailView: View
                     Text($0)
                 }
             }
-            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .textFieldStyle(.roundedBorder)
             .padding(.vertical, 8.0)
             .padding(.horizontal)
             #else
@@ -190,9 +190,10 @@ struct AddDetailView: View
                     Text("Name")
                         .bold()
                     TextField("None", text: $new_detail_name)
+                        .textFieldStyle(.roundedBorder)
                 }
                 .padding(.vertical, 8.0)
-                .padding(.horizontal)
+                .padding(.leading)
                 
                 Picker(selection: $app_state.detail_name, label: Text("Model")
                         .bold())
@@ -202,10 +203,11 @@ struct AddDetailView: View
                         Text($0)
                     }
                 }
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .textFieldStyle(.roundedBorder)
                 .buttonStyle(.bordered)
                 .padding(.vertical, 8.0)
-                .padding(.horizontal)
+                .padding(.leading, 8.0)
+                .padding(.trailing)
             }
             #endif
             
@@ -412,14 +414,7 @@ struct DetailSceneView_macOS: NSViewRepresentable
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        if app_state.reset_view// && app_state.reset_view_enabled
-        {
-            app_state.reset_view = false
-            app_state.reset_view_enabled = false
-            
-            ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
-        }
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
         if app_state.get_scene_image == true
         {
@@ -475,6 +470,7 @@ struct DetailSceneView_macOS: NSViewRepresentable
             remove_node?.removeFromParentNode()
             
             scene_view.scene?.rootNode.addChildNode(app_state.previewed_detail?.node ?? SCNNode())
+            app_state.previewed_detail?.node?.name = "Figure"
             app_state.preview_update_scene = false
         }
     }
@@ -515,22 +511,8 @@ struct DetailSceneView_iOS: UIViewRepresentable
 
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
-        if base_workspace.selected_robot.programs_count > 0
-        {
-            if base_workspace.selected_robot.selected_program.points_count > 0
-            {
-                base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
-            }
-        }
-        
-        if app_state.reset_view// && app_state.reset_view_enabled
-        {
-            app_state.reset_view = false
-            app_state.reset_view_enabled = false
-            
-            ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
-        }
+        //Update commands
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
         if app_state.get_scene_image == true
         {
@@ -586,6 +568,7 @@ struct DetailSceneView_iOS: UIViewRepresentable
             remove_node?.removeFromParentNode()
             
             scene_view.scene?.rootNode.addChildNode(app_state.previewed_detail?.node ?? SCNNode())
+            app_state.previewed_detail?.node?.name = "Figure"
             app_state.preview_update_scene = false
         }
     }
