@@ -73,7 +73,7 @@ struct ContentView: View
         base_workspace.file_view(preset: document.preset) //Get file data from document
     }
     
-    func update_preferences()
+    func update_preferences() //Pass default parameters from preferences
     {
         Robot.default_origin_location[0] = Float(location_x)
         Robot.default_origin_location[1] = Float(location_y)

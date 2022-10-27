@@ -47,9 +47,6 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
-    public static var default_origin_location = [Float](repeating: 0, count: 3)
-    public static var default_space_scale = [Float](repeating: 200, count: 3)
-    
     init(name: String, manufacturer: String, dictionary: [String: Any]) //Init robot by dictionary
     {
         var kinematic: KinematicType
@@ -281,6 +278,9 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     public var performed = false //Moving state of robot
     public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
     public var target_point_index = 0 //Index of target point in points array
+    
+    public static var default_origin_location = [Float](repeating: 0, count: 3)
+    public static var default_space_scale = [Float](repeating: 200, count: 3)
     
     public var pointer_location: [Float] = [0.0, 0.0, 0.0] //x, y, z
     {
@@ -624,7 +624,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
         position_points_spacing()
     }
     
-    private func position_points_spacing()
+    private func position_points_spacing() //Shifting positions when reducing the workcell area
     {
         if programs_count > 0
         {

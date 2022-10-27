@@ -46,7 +46,7 @@ struct Robotic_Complex_WorkspaceApp: App
                 Divider()
                 Button("Reset Camera")
                 {
-                    app_state.reset_view = true
+                    app_state.reset_view = true //Begin reset camera process
                 }
                 .keyboardShortcut("0", modifiers: .command)
                 .disabled(!app_state.reset_view_enabled) //Disable reset view item when camera is reseting

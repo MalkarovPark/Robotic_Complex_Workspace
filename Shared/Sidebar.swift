@@ -46,9 +46,10 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 //MARK: - Sidebar view and content
 struct Sidebar: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    @Binding var first_loaded: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument //Current openet document
+    @Binding var first_loaded: Bool //Delayed workspace scene fading out on firs load
     #if os(iOS)
+    //Document file info for iOS/iPadOS
     @Binding var file_url: URL
     @Binding var file_name: String
     #endif
@@ -80,7 +81,7 @@ struct SidebarContent: View
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     #endif
     
-    @State var sidebar_selection: navigation_item? = .WorkspaceView
+    @State var sidebar_selection: navigation_item? = .WorkspaceView //Selected sidebar item
     
     var body: some View
     {
@@ -169,14 +170,14 @@ struct SidebarContent: View
         }
     }
     
-    #if os(macOS)
+    /*#if os(macOS)
     func toggle_sidebar()
     {
         NSApp.keyWindow?.firstResponder?.tryToPerform(
           #selector(NSSplitViewController.toggleSidebar),
           with: nil)
     }
-    #endif
+    #endif*/
 }
 
 //MARK: - Previews

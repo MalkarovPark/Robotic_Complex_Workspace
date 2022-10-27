@@ -387,7 +387,8 @@ struct ToolsView_Previews: PreviewProvider
         Group
         {
             ToolsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-                        .environmentObject(Workspace())
+                .environmentObject(AppState())
+                .environmentObject(Workspace())
             AddToolView(add_tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())

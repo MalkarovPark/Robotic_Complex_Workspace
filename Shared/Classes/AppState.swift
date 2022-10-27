@@ -27,22 +27,22 @@ class AppState : ObservableObject
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
     @AppStorage("DetailsEmpty") private var details_empty: Bool?
     
-    @Published var reset_view = false //Return camera position to default in scene views
-    @Published var reset_view_enabled = true
-    @Published var get_scene_image = false
+    @Published var reset_view = false //Flag for return camera position to default in scene views
+    @Published var reset_view_enabled = true //Reset menu item availability flag
+    @Published var get_scene_image = false //Flag for getting a snapshot of the scene view
     #if os(iOS)
-    @Published var settings_view_presented = false
-    @Published var is_compact_view = false
+    @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
+    @Published var is_compact_view = false //Compact view additional elements flag
     #endif
     
-    public var workspace_scene = SCNScene()
-    public var previewed_detail: Detail?
-    public var preview_update_scene = false
+    public var workspace_scene = SCNScene() //Link to viewed workspace scene
+    public var previewed_detail: Detail? //Detail for preview view
+    public var preview_update_scene = false //Flag for update previewed detail node in scene
     
-    @Published var view_update_state = false
-    @Published var add_selection = 0
+    @Published var view_update_state = false //Flag for update details view grid
+    @Published var add_selection = 0 //Selected item of object type for AddInWorkspace view
     
-    @Published var manufacturer_name = "None" //Manufacturer's display string for the menu
+    @Published var manufacturer_name = "None" //Manufacturer's display string for menu
     {
         didSet
         {
@@ -55,7 +55,7 @@ class AppState : ObservableObject
         }
     }
     
-    @Published var series_name = "None" //Series display string for the menu
+    @Published var series_name = "None" //Series display string for menu
     {
         didSet
         {
@@ -68,7 +68,7 @@ class AppState : ObservableObject
         }
     }
     
-    @Published var model_name = "None" //Display model value for menu
+    @Published var model_name = "None" //Displayed model string for menu
     {
         didSet
         {
@@ -81,7 +81,7 @@ class AppState : ObservableObject
         }
     }
     
-    @Published var tool_name = "None" //Display model value for menu
+    @Published var tool_name = "None" //Displayed model string for menu
     {
         didSet
         {
@@ -94,7 +94,7 @@ class AppState : ObservableObject
         }
     }
     
-    @Published var detail_name = "None" //Display model value for menu
+    @Published var detail_name = "None" //Displayed model string for menu
     {
         didSet
         {
@@ -107,6 +107,8 @@ class AppState : ObservableObject
         }
     }
     
+    private var did_updated = false //Objects data from property lists update state
+    
     //MARK: Robots models dictionaries
     private var robots_dictionary: [String: [String: [String: [String: Any]]]]
     private var series_dictionary = [String: [String: [String: Any]]]()
@@ -115,30 +117,34 @@ class AppState : ObservableObject
     
     private var additive_robots_dictionary = [String: [String: [String: [String: Any]]]]()
     
-    //MARK: Names of manufacturers, series and models
+    //Names of robots manufacturers, series and models
     public var manufacturers: [String]
     public var series = [String]()
     public var models = [String]()
     
     private var robots_data: Data //Data store from robots property list
-    private var did_updated = false //Robots data from .plist updated state
     
-    //MARK: Tools and details dictionaries, names
+    //MARK: Tools dictionaries
     public var tools_dictionary = [String: [String: Any]]()
     public var tool_dictionary = [String: Any]()
+    
+    //Names of tools models
     public var tools = [String]()
     
-    private var tools_data: Data //Data store from robots property list
-    private var additive_tools_dictionary = [String: [String: Any]]()
+    private var tools_data: Data //Data store from tools property list
+    private var additive_tools_dictionary = [String: [String: Any]]() //Tools dictionary from plist file
     
+    //MARK: Details dictionaries
     public var details_dictionary = [String: [String: Any]]()
     public var detail_dictionary = [String: Any]()
+    
+    //Names of details models
     public var details = [String]()
     
-    private var details_data: Data //Data store from robots property list
-    private var additive_details_dictionary = [String: [String: Any]]()
+    private var details_data: Data //Data store from details property list
+    private var additive_details_dictionary = [String: [String: Any]]() //Details dictionary from plist file
     
-    //MARK: - App State class init function
+    //MARK: - Application state init function
     init()
     {
         //Get robots data from internal propery list file
@@ -172,32 +178,24 @@ class AppState : ObservableObject
     {
         guard url!.startAccessingSecurityScopedResource() else
         {
-            // Handle the failure here.
             return
         }
         
         // Make sure you release the security-scoped resource when you finish.
         defer { url?.stopAccessingSecurityScopedResource() }
-        //bookmark_data? = (try url?.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil))!
         
         do
         {
-            // Make sure the bookmark is minimal!
+            //Make sure the bookmark is minimal!
             bookmark_data = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
         }
         catch
         {
             print("Bookmark error \(error)")
         }
-        
-        //var address = url?.absoluteString
-
-        //let plist_url = URL(string: address! + "DetailsInfo.plist")
-        
-        //additive_data = try Data(contentsOf: plist_url!)
     }
     
-    @Published var selected_plist_names: (Robots: String, Tools: String, Details: String) = (Robots: "", Tools: "", Details: "")
+    @Published var selected_plist_names: (Robots: String, Tools: String, Details: String) = (Robots: "", Tools: "", Details: "") //Plist names for settings view
     
     public func save_selected_plist_names(type: WorkspaceObjectType) //Save selected plist names to user defaults
     {
@@ -212,7 +210,7 @@ class AppState : ObservableObject
         }
     }
     
-    public var avaliable_plist_names: (Robots: [String], Tools: [String], Details: [String])
+    public var avaliable_plist_names: (Robots: [String], Tools: [String], Details: [String]) //Plist names from bookmarked folder for settings menus
     {
         var plist_names = (Robots: [String](), Tools: [String](), Details: [String]())
         
@@ -254,7 +252,7 @@ class AppState : ObservableObject
             {
                 var is_stale = false
                 
-                for plist_url in directory_contents(url: try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)) //Get all files from url
+                for plist_url in directory_contents(url: try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale))
                 {
                     names.append(plist_url.lastPathComponent) //Append file name
                 }
@@ -272,7 +270,7 @@ class AppState : ObservableObject
         return plist_names
     }
     
-    func directory_contents(url: URL) -> [URL]
+    public func directory_contents(url: URL) -> [URL] //Get all files URLs from frolder url
     {
         do
         {
@@ -285,7 +283,7 @@ class AppState : ObservableObject
         }
     }
     
-    public func get_defaults_plist_names(type: WorkspaceObjectType)
+    public func get_defaults_plist_names(type: WorkspaceObjectType) //Pass plist names from user defaults to AppState variables
     {
         switch type
         {
@@ -298,7 +296,7 @@ class AppState : ObservableObject
         }
     }
     
-    public func get_additive_data(type: WorkspaceObjectType)
+    public func get_additive_data(type: WorkspaceObjectType) //Get and add additive dictionaries from bookmarked URL
     {
         var new_objects = Array<String>()
         
@@ -310,24 +308,25 @@ class AppState : ObservableObject
             {
                 do
                 {
+                    //URL access by bookmark
                     var is_stale = false
                     let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
                     
                     guard !is_stale else
                     {
-                        //Handle stale data here.
                         return
                     }
                     
-                    var address = url.absoluteString
-                    let plist_url = URL(string: address + selected_plist_names.Robots + ".plist")
-                    let additive_data = try Data(contentsOf: plist_url!)
+                    let plist_url = URL(string: url.absoluteString + selected_plist_names.Robots + ".plist") //Make file URL with extension
+                    let additive_data = try Data(contentsOf: plist_url!) //Get additive data from plist
                     
-                    additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]]
+                    additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]] //Convert plist data to dictionary
                     
+                    //Append new elements names
                     new_objects = Array(additive_robots_dictionary.keys).sorted(by: <)
                     manufacturers.append(contentsOf: new_objects)
                     
+                    //Append imported dictionary to main
                     for i in 0..<new_objects.count
                     {
                         robots_dictionary.updateValue(additive_robots_dictionary[new_objects[i]]!, forKey: new_objects[i])
@@ -350,12 +349,10 @@ class AppState : ObservableObject
                     
                     guard !is_stale else
                     {
-                        //Handle stale data here.
                         return
                     }
                     
-                    var address = url.absoluteString
-                    let plist_url = URL(string: address + selected_plist_names.Tools + ".plist")
+                    let plist_url = URL(string: url.absoluteString + selected_plist_names.Tools + ".plist")
                     let additive_data = try Data(contentsOf: plist_url!)
                     
                     additive_tools_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
@@ -384,12 +381,10 @@ class AppState : ObservableObject
                     
                     guard !is_stale else
                     {
-                        //Handle stale data here.
                         return
                     }
                     
-                    var address = url.absoluteString
-                    let plist_url = URL(string: address + selected_plist_names.Details + ".plist")
+                    let plist_url = URL(string: url.absoluteString + selected_plist_names.Details + ".plist")
                     let additive_data = try Data(contentsOf: plist_url!)
                     
                     additive_details_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
@@ -453,7 +448,6 @@ class AppState : ObservableObject
     }
     
     //MARK: - Get info from dictionaries
-    //MARK: Get robots
     private func update_series_info() //Convert dictionary of robots to array
     {
         series_dictionary = robots_dictionary[manufacturer_name]!
@@ -488,6 +482,7 @@ class AppState : ObservableObject
     {
         detail_dictionary = details_dictionary[detail_name]!
         
+        //Get detail model by selected item for preview
         if details_empty ?? true
         {
             previewed_detail = Detail(name: "None", dictionary: detail_dictionary)
@@ -501,7 +496,6 @@ class AppState : ObservableObject
                 
                 guard !is_stale else
                 {
-                    //Handle stale data here.
                     return
                 }
                 

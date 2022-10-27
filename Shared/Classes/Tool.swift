@@ -50,9 +50,9 @@ class Tool: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    public var info_code: Int? = 0
+    private(set) var info_code: Int? = 0
     
-    public var performed: Bool
+    public var performed: Bool //Performing state of tool
     {
         if operation_code ?? 0 >= 0
         {

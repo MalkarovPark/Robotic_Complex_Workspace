@@ -265,7 +265,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(!base_workspace.is_selected || base_workspace.is_editing || base_workspace.performed ? Color.secondary : Color.black)
+                                .foregroundColor(!base_workspace.is_selected || base_workspace.performed ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -277,7 +277,7 @@ struct ComplexWorkspaceView: View
                             InfoView(info_view_presented: $info_view_presented, document: $document)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        .disabled(!base_workspace.is_selected || base_workspace.is_editing || base_workspace.performed)
+                        .disabled(!base_workspace.is_selected || base_workspace.performed)
                     }
                     .background(.thinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))

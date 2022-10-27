@@ -17,8 +17,8 @@ class Workspace: ObservableObject
     @Published public var tools = [Tool]()
     @Published public var details = [Detail]()
     
-    //MARK: - Workspace handling functions
-    public var selected_object_type: WorkspaceObjectType?
+    //MARK: - Workspace visual handling functions
+    public var selected_object_type: WorkspaceObjectType? //Return selected object type
     {
         if selected_robot_index > -1 && selected_detail_index == -1 && selected_tool_index == -1
         {
@@ -48,7 +48,7 @@ class Workspace: ObservableObject
             //update_object_pointer_position(location: selected_tool.location, rotation: selected_tool.rotation)
             break
         case .detail:
-            update_object_pointer_position(location: selected_detail.location, rotation: selected_robot.rotation)
+            update_object_pointer_position(location: selected_detail.location, rotation: selected_detail.rotation)
         default:
             break
         }

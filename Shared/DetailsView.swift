@@ -340,12 +340,10 @@ struct DetailView: View
             new_gripable = detail_item.gripable ?? false
             new_color = detail_item.color
             
-            //app_state.get_scene_image = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
             {
                 ready_for_save = true
             }
-            //ready_for_save = true
         }
         .onDisappear()
         {
