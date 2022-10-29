@@ -242,6 +242,11 @@ struct AddDetailView: View
     
     func add_detail_in_workspace()
     {
+        if new_detail_name == ""
+        {
+            new_detail_name = "None"
+        }
+        
         app_state.get_scene_image = true
         app_state.previewed_detail?.name = new_detail_name
         base_workspace.add_detail(app_state.previewed_detail!)

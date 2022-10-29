@@ -26,7 +26,7 @@ struct ToolsView: View
         {
             if base_workspace.tools.count > 0
             {
-                
+                Text("?")
             }
             else
             {
@@ -85,21 +85,19 @@ struct AddToolView:View
                 .padding([.top, .leading, .trailing])
             
             #if os(macOS)
-            DetailSceneView_macOS()
+            ToolSceneView_macOS()
                 .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                 .padding(.vertical, 8.0)
                 .padding(.horizontal)
-            #else
-            DetailSceneView_iOS()
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                .padding(.vertical, 8.0)
-                .padding(.horizontal)
-            #endif
-
-            /*RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .foregroundColor(.accentColor)
-                .padding(.vertical, 8.0)
-                .padding(.horizontal)*/
+            
+            HStack
+            {
+                Text("Name")
+                    .bold()
+                TextField("None", text: $new_tool_name)
+            }
+            .padding(.vertical, 8.0)
+            .padding(.horizontal)
             
             Picker(selection: $app_state.tool_name, label: Text("Model")
                     .bold())
@@ -109,9 +107,42 @@ struct AddToolView:View
                     Text($0)
                 }
             }
-            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .textFieldStyle(.roundedBorder)
             .padding(.vertical, 8.0)
             .padding(.horizontal)
+            #else
+            ToolSceneView_iOS()
+                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                .padding(.vertical, 8.0)
+                .padding(.horizontal)
+            
+            HStack
+            {
+                HStack
+                {
+                    Text("Name")
+                        .bold()
+                    TextField("None", text: $new_tool_name)
+                        .textFieldStyle(.roundedBorder)
+                }
+                .padding(.vertical, 8.0)
+                .padding(.leading)
+                
+                Picker(selection: $app_state.tool_name, label: Text("Model")
+                        .bold())
+                {
+                    ForEach(app_state.tools, id: \.self)
+                    {
+                        Text($0)
+                    }
+                }
+                .textFieldStyle(.roundedBorder)
+                .buttonStyle(.bordered)
+                .padding(.vertical, 8.0)
+                .padding(.leading, 8.0)
+                .padding(.trailing)
+            }
+            #endif
             
             Spacer()
             Divider()
@@ -123,20 +154,38 @@ struct AddToolView:View
                 
                 Button("Cancel", action: { add_tool_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
+                    .buttonStyle(.bordered)
                     .padding([.top, .leading, .bottom])
                 
-                Button("Save", action: { add_tool_in_workspace() })
+                Button("Save", action: add_tool_in_workspace)
                     .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
                     .padding()
             }
         }
         .controlSize(.regular)
+        #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
+        #endif
+        .onAppear()
+        {
+            //app_state.update_tool_info()
+        }
     }
     
     func add_tool_in_workspace()
     {
+        if new_tool_name == ""
+        {
+            new_tool_name = "None"
+        }
         
+        app_state.get_scene_image = true
+        //app_state.previewed_detail?.name = new_detail_name
+        base_workspace.add_detail(app_state.previewed_detail!)
+        document.preset.details = base_workspace.file_data().details
+        
+        add_tool_view_presented.toggle()
     }
 }
 
@@ -387,8 +436,9 @@ struct ToolsView_Previews: PreviewProvider
         Group
         {
             ToolsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-                .environmentObject(AppState())
                 .environmentObject(Workspace())
+                .environmentObject(AppState())
+            
             AddToolView(add_tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())

@@ -17,6 +17,11 @@ class Workspace: ObservableObject
     @Published public var tools = [Tool]()
     @Published public var details = [Detail]()
     
+    init()
+    {
+        Detail.scene_node_name = "detail"
+    }
+    
     //MARK: - Workspace visual handling functions
     public var selected_object_type: WorkspaceObjectType? //Return selected object type
     {
@@ -139,7 +144,7 @@ class Workspace: ObservableObject
             edited_object_node = selected_detail.node?.clone()
             edited_object_node?.name = name
             
-            details_node?.addChildNode(edited_object_node!)
+            details_node?.addChildNode(edited_object_node ?? SCNNode())
         }
     }
     
@@ -404,10 +409,10 @@ class Workspace: ObservableObject
                 
                 //Get detail node position after physics calculation
                 #if os(macOS)
-                selected_detail.location = [Float((edited_object_node?.presentation.worldPosition.x)!), Float((edited_object_node?.presentation.worldPosition.z)!), Float((edited_object_node?.presentation.worldPosition.y)!)]
+                selected_detail.location = [Float((edited_object_node?.presentation.worldPosition.z)!), Float((edited_object_node?.presentation.worldPosition.x)!), Float((edited_object_node?.presentation.worldPosition.y)!)]
                 selected_detail.rotation = [Float((edited_object_node?.presentation.eulerAngles.z)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.x)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.y)!).to_deg]
                 #else
-                selected_detail.location = [(edited_object_node?.presentation.worldPosition.x)!, (edited_object_node?.presentation.worldPosition.z)!, (edited_object_node?.presentation.worldPosition.y)!]
+                selected_detail.location = [(edited_object_node?.presentation.worldPosition.z)!, (edited_object_node?.presentation.worldPosition.x)!, (edited_object_node?.presentation.worldPosition.y)!]
                 selected_detail.rotation = [(edited_object_node?.presentation.eulerAngles.z.to_deg)!, (edited_object_node?.presentation.eulerAngles.x.to_deg)!, (edited_object_node?.presentation.eulerAngles.y.to_deg)!]
                 #endif
             }
@@ -607,14 +612,97 @@ class Workspace: ObservableObject
     
     //MARK: - Tools handling functions
     //MARK: Tools manage funcions
-    
-    //MARK: Details selection functions
+    public func add_tool(_ tool: Tool)
+    {
+        tool.name = mismatched_name(name: tool.name!, names: tools_names)
+        tools.append(tool)
+    }
+
+    public func delete_tool(number: Int)
+    {
+        if tools.indices.contains(number)
+        {
+            tools.remove(at: number)
+        }
+    }
+
+    /*public func delete_tool(name: String)
+    {
+        delete_tool(number: number_by_name(name: name))
+    }*/
+
+    //MARK: Tools selection functions
     private var selected_tool_index = -1
-    
+
+    public var selected_tool: Tool //Return tool by selected index
+    {
+        get
+        {
+            if selected_tool_index > -1
+            {
+                return tools[selected_tool_index]
+            }
+            else
+            {
+                return Tool(name: "None")
+            }
+        }
+        set
+        {
+            if selected_tool_index > -1
+            {
+                tools[selected_tool_index] = newValue
+            }
+        }
+    }
+
+    private func tool_number_by_name(name: String) -> Int //Get index number of robot by name
+    {
+        return tools.firstIndex(of: Tool(name: name)) ?? -1
+    }
+
+    public func select_tool(number: Int) //Select tool by number
+    {
+        selected_tool_index = number
+    }
+
+    public func select_tool(name: String) //Select tool by name
+    {
+        //selected_tool_index = tool_number_by_name(name: name)
+        select_tool(number: tool_number_by_name(name: name))
+    }
+
     public func deselect_tool()
     {
         selected_tool_index = -1
         //hide_object_poiner()
+    }
+
+    //MARK: Tools naming
+    public var tools_names: [String] //Get names of all tools in workspace
+    {
+        var tools_names = [String]()
+        if tools.count > 0
+        {
+            for tool in tools
+            {
+                tools_names.append(tool.name ?? "None")
+            }
+        }
+        return tools_names
+    }
+
+    public var avaliable_tools_names: [String] //Array of tools names not added to workspace
+    {
+        var names = [String]()
+        for tool in tools
+        {
+            if tool.name != nil && !tool.is_placed
+            {
+                names.append(tool.name!)
+            }
+        }
+        return names
     }
     
     //MARK: - Details handling functions
@@ -629,7 +717,7 @@ class Workspace: ObservableObject
     {
         if details.indices.contains(number)
         {
-            robots.remove(at: number)
+            details.remove(at: number)
         }
     }
     
@@ -651,7 +739,7 @@ class Workspace: ObservableObject
             }
             else
             {
-                return Detail(name: "None", dictionary: ["String" : "Any"])
+                return Detail(name: "None")
             }
         }
         set
@@ -665,7 +753,7 @@ class Workspace: ObservableObject
     
     private func detail_number_by_name(name: String) -> Int //Get index number of robot by name
     {
-        return details.firstIndex(of: Detail(name: name, scene: "")) ?? -1
+        return details.firstIndex(of: Detail(name: name)) ?? -1
     }
     
     public func select_detail(number: Int) //Select detail by number
@@ -1063,11 +1151,12 @@ class Workspace: ObservableObject
         }
         else
         {
+            Detail.folder_bookmark = details_bookmark
             //Add details with scene
             for detail_struct in preset.details
             {
-                print(detail_struct)
-                do
+                details.append(Detail(detail_struct: detail_struct))
+                /*do
                 {
                     var is_stale = false
                     let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
@@ -1078,12 +1167,13 @@ class Workspace: ObservableObject
                         return
                     }
                     
-                    details.append(Detail(detail_struct: detail_struct, folder_url: url))
+                    Detail.folder_url = url
+                    details.append(Detail(detail_struct: detail_struct))
                 }
                 catch
                 {
                     print(error.localizedDescription)
-                }
+                }*/
             }
         }
         

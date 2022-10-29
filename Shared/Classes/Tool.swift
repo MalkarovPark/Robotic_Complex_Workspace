@@ -8,26 +8,17 @@
 import Foundation
 import SceneKit
 
-class Tool: Identifiable, Equatable, Hashable, ObservableObject
+class Tool: WorkspaceObject
 {
-    static func == (lhs: Tool, rhs: Tool) -> Bool
-    {
-        return lhs.name == rhs.name //Identity condition by names
-    }
-    
-    func hash(into hasher: inout Hasher)
-    {
-        hasher.combine(name)
-    }
-    
-    public var name: String?
-    public var node: SCNNode?
-    public var scene_address = "" //Addres of detail scene. If empty – this detail used defult model.
-    
     //MARK: - Init functions
+    override init(name: String)
+    {
+        super.init(name: name)
+    }
+    
     init(tool_struct: tool_struct) //Init by detail structure
     {
-        self.name = tool_struct.name
+        super.init(name: tool_struct.name!)
         self.scene_address = tool_struct.scene!
     }
     

@@ -10,28 +10,20 @@ import SceneKit
 import Charts
 import UniformTypeIdentifiers
 
-#if os(macOS)
-let placement_trailing: ToolbarItemPlacement = .automatic
-let quaternary_label_color: Color = Color(NSColor.quaternaryLabelColor)
-#else
-let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
-let quaternary_label_color: Color = Color(UIColor.quaternaryLabel)
-#endif
-
 struct RobotsView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State private var display_rv = false
+    @State private var robot_view_presented = false
     
     var body: some View
     {
         HStack
         {
-            if display_rv == false
+            if robot_view_presented == false
             {
                 //Display robots table view
-                RobotsTableView(display_rv: $display_rv, document: $document)
+                RobotsTableView(robot_view_presented: $robot_view_presented, document: $document)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     .background(Color.white)
@@ -39,7 +31,7 @@ struct RobotsView: View
             else
             {
                 //Display robot view when selected
-                RobotView(display_rv: $display_rv, document: $document)
+                RobotView(robot_view_presented: $robot_view_presented, document: $document)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
@@ -52,7 +44,7 @@ struct RobotsView: View
 
 struct RobotsTableView: View
 {
-    @Binding var display_rv: Bool
+    @Binding var robot_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var add_robot_view_presented = false
@@ -137,7 +129,7 @@ struct RobotsTableView: View
     func view_robot(robot_index: Int)
     {
         base_workspace.select_robot(number: robot_index)
-        self.display_rv = true
+        self.robot_view_presented = true
     }
     
     func remove_robots(at offsets: IndexSet)
@@ -514,7 +506,7 @@ struct AddRobotView: View
 //MARK: Robot view
 struct RobotView: View
 {
-    @Binding var display_rv: Bool
+    @Binding var robot_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var chart_view_presented = false
@@ -654,7 +646,7 @@ struct RobotView: View
     {
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
-        display_rv = false
+        robot_view_presented = false
     }
 }
 
@@ -2101,7 +2093,7 @@ struct RobotsView_Previews: PreviewProvider
             RobotCardView(card_color: .green, card_image: UIImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
             #endif
             
-            RobotView(display_rv: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            RobotView(robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             ChartView(chart_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))

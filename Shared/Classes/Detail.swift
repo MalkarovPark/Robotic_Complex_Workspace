@@ -9,24 +9,8 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class Detail: Identifiable, Equatable, Hashable, ObservableObject
+class Detail: WorkspaceObject
 {
-    static func == (lhs: Detail, rhs: Detail) -> Bool
-    {
-        return lhs.name == rhs.name //Identity condition by names
-    }
-    
-    func hash(into hasher: inout Hasher)
-    {
-        hasher.combine(name)
-    }
-    
-    var id = UUID()
-    
-    public var name: String? //Detail name
-    public var node: SCNNode? //Detail scene node
-    public var scene_address = "" //Addres of detail scene. If empty – this detail used defult model.
-    
     private var figure: String? //Detail figure name
     private var lengths: [Float]? //lengths for detail without scene figure
     private var figure_color: [Int]? //Color for detail without scene figure
@@ -68,9 +52,15 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: - Detail init functions
+    override init(name: String)
+    {
+        super.init(name: name)
+    }
+    
     init(name: String, scene: String) //Init detail by scene_name
     {
-        self.name = name
+        super.init(name: name)
+        
         self.scene_address = scene
         
         if scene != ""
@@ -79,8 +69,9 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    init(name: String, dictionary: [String: Any]) //Init detail by dictionary
+    /*init(name: String, dictionary: [String: Any]) //Init detail by dictionary
     {
+        super.init()
         init_by_dictionary(name: name, dictionary: dictionary)
         
         if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
@@ -88,26 +79,17 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
             self.figure = "box"
         }
         node_by_description()
-    }
+    }*/
     
-    init(name: String, dictionary: [String: Any], folder_url: URL) //Init detail by dictionary and use models folder
+    init(name: String, dictionary: [String: Any]) //Init detail by dictionary and use models folder
     {
+        super.init()
         init_by_dictionary(name: name, dictionary: dictionary)
         
         if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
         {
             self.scene_address = dictionary["Scene"] as? String ?? ""
-            if self.scene_address != ""
-            {
-                do
-                {
-                    self.node = try SCNScene(url: URL(string: folder_url.absoluteString + scene_address)!).rootNode.childNode(withName: "detail", recursively: false)?.clone()
-                }
-                catch
-                {
-                    print("ERROR loading scene")
-                }
-            }
+            get_node_from_scene()
         }
         else
         {
@@ -174,35 +156,8 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     
     init(detail_struct: detail_struct) //Init by detail structure
     {
+        super.init()
         init_by_struct(detail_struct: detail_struct)
-        
-        if detail_struct.scene != ""
-        {
-            self.figure = "box"
-        }
-        node_by_description()
-    }
-    
-    init(detail_struct: detail_struct, folder_url: URL) //Init by detail structure
-    {
-        init_by_struct(detail_struct: detail_struct)
-        
-        if detail_struct.scene != "" //If dictionary conatains scene address get node from it.
-        {
-            do
-            {
-                self.scene_address = detail_struct.scene
-                self.node = try SCNScene(url: URL(string: folder_url.absoluteString + detail_struct.scene)!).rootNode.childNode(withName: "detail", recursively: false)
-            }
-            catch
-            {
-                print("ERROR loading scene")
-            }
-        }
-        else
-        {
-            node_by_description()
-        }
     }
     
     private func init_by_struct(detail_struct: detail_struct)
@@ -222,10 +177,14 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
         self.location = detail_struct.location
         self.rotation = detail_struct.rotation
         
+        self.scene_address = detail_struct.scene
+        
         self.image_data = detail_struct.image_data
+        
+        get_node_from_scene()
     }
     
-    private func node_by_description()
+    override func node_by_description()
     {
         node = SCNNode()
         
@@ -355,10 +314,6 @@ class Detail: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     //MARK: Detail in workspace handling
-    public var is_placed = false
-    public var location = [Float](repeating: 0, count: 3) //[0, 0, 0] x, y, z
-    public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] r, p, w
-    
     public func model_position_reset()
     {
         node?.position = SCNVector3(0, 0, 0)

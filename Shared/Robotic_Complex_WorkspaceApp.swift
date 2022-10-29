@@ -105,3 +105,12 @@ struct Robotic_Complex_WorkspaceApp: App
         #endif
     }
 }
+
+//MARK: - View element propeties
+#if os(macOS)
+let placement_trailing: ToolbarItemPlacement = .automatic
+let quaternary_label_color: Color = Color(NSColor.quaternaryLabelColor)
+#else
+let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
+let quaternary_label_color: Color = Color(UIColor.quaternaryLabel)
+#endif

@@ -499,7 +499,7 @@ class AppState : ObservableObject
                     return
                 }
                 
-                previewed_detail = Detail(name: "None", dictionary: detail_dictionary, folder_url: url)
+                previewed_detail = Detail(name: "None", dictionary: detail_dictionary)
             }
             catch
             {
