@@ -201,7 +201,7 @@ struct ComplexWorkspaceView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var add_robot_in_workspace_view_presented = false
+    @State var add_in_view_presented = false
     @State var info_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -237,7 +237,7 @@ struct ComplexWorkspaceView: View
                     Spacer()
                     VStack(spacing: 0)
                     {
-                        Button(action: { add_robot_in_workspace_view_presented.toggle() })
+                        Button(action: { add_in_view_presented.toggle() })
                         {
                             Image(systemName: "plus")
                                 .imageScale(.large)
@@ -250,9 +250,9 @@ struct ComplexWorkspaceView: View
                         #if os(iOS)
                         .foregroundColor(.black)
                         #endif
-                        .popover(isPresented: $add_robot_in_workspace_view_presented)
+                        .popover(isPresented: $add_in_view_presented)
                         {
-                            AddInWorkspaceView(document: $document, add_robot_in_workspace_view_presented: $add_robot_in_workspace_view_presented)
+                            AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
                         .disabled(base_workspace.performed)
@@ -265,7 +265,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(!base_workspace.is_selected || base_workspace.performed ? Color.secondary : Color.black)
+                                .foregroundColor(base_workspace.add_in_view_disabled ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -277,7 +277,7 @@ struct ComplexWorkspaceView: View
                             InfoView(info_view_presented: $info_view_presented, document: $document)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                         }
-                        .disabled(!base_workspace.is_selected || base_workspace.performed)
+                        .disabled(base_workspace.add_in_view_disabled)
                     }
                     .background(.thinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
@@ -293,7 +293,7 @@ struct ComplexWorkspaceView: View
         }
         .onDisappear
         { 
-            base_workspace.deselect_robot()
+            base_workspace.deselect_object()
         }
     }
 }
@@ -387,6 +387,10 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                     result = hit_results[0]
                     
                     workspace.select_object_in_scene(result: hit_results[0])
+                }
+                else
+                {
+                    workspace.deselect_object_for_edit()
                 }
             }
         }
@@ -499,6 +503,10 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                     
                     workspace.select_object_in_scene(result: hit_results[0])
                 }
+                else
+                {
+                    workspace.deselect_object_for_edit()
+                }
             }
         }
     }
@@ -530,7 +538,7 @@ struct AddInWorkspaceView: View
     @State var selected_detail_name = String()
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    @Binding var add_robot_in_workspace_view_presented: Bool
+    @Binding var add_in_view_presented: Bool
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -724,6 +732,7 @@ struct AddInWorkspaceView: View
         }
         .onAppear
         {
+            base_workspace.add_in_view_dismissed = false
             base_workspace.is_editing = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
@@ -733,6 +742,11 @@ struct AddInWorkspaceView: View
         .onDisappear
         {
             base_workspace.dismiss_object()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+            {
+                base_workspace.add_in_view_dismissed = true
+                base_workspace.update_view()
+            }
         }
     }
     
@@ -755,7 +769,7 @@ struct AddInWorkspaceView: View
             break
         }
         
-        add_robot_in_workspace_view_presented.toggle()
+        add_in_view_presented.toggle()
     }
 }
 
@@ -1956,7 +1970,7 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             #endif
-            /*AddRobotInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_robot_in_workspace_view_presented: .constant(true))
+            /*AddRobotInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_in_view_presented: .constant(true))
                 .environmentObject(Workspace())*/
             InfoView(info_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())

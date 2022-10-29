@@ -240,6 +240,8 @@ class Workspace: ObservableObject
         }
         
         is_editing = false
+        deselect_object()
+        //update_view()
     }
     
     public var selected_object_unavaliable: Bool?
@@ -289,10 +291,6 @@ class Workspace: ObservableObject
         //var object_name = ""
         var object_node: SCNNode?
         
-        //Disconnect from edited node
-        edited_object_node = SCNNode() //Remove old reference
-        edited_object_node?.removeFromParentNode() //Remove old node
-        
         switch result.node.categoryBitMask //Switch object node bit mask
         {
         case 2:
@@ -327,30 +325,7 @@ class Workspace: ObservableObject
             
             select_object_for_edit(node: object_node!, type: .detail)
         default:
-            //Deselect selected object by type
-            if is_selected
-            {
-                update_view()
-                hide_object_poiner()
-                
-                switch selected_object_type
-                {
-                case .robot:
-                    deselect_robot()
-                case .tool:
-                    deselect_tool()
-                case .detail:
-                    if selected_detail.is_placed
-                    {
-                        detail_node?.physicsBody = selected_detail.physics
-                        //workspace.detail_node = nil
-                    }
-                    deselect_detail()
-                    //workspace.detail_node = nil
-                default:
-                    break
-                }
-            }
+            deselect_object_for_edit()
         }
         update_view()
     }
@@ -409,6 +384,7 @@ class Workspace: ObservableObject
                 else
                 {
                     //Deselect already selected detail
+                    edited_object_node?.physicsBody = selected_detail.physics
                     deselect_detail()
                     hide_object_poiner()
                 }
@@ -425,11 +401,52 @@ class Workspace: ObservableObject
             case .detail:
                 select_detail(name: node.name!)
                 edited_object_node?.physicsBody = .none
+                
+                //Get detail node position after physics calculation
+                #if os(macOS)
+                selected_detail.location = [Float((edited_object_node?.presentation.worldPosition.x)!), Float((edited_object_node?.presentation.worldPosition.z)!), Float((edited_object_node?.presentation.worldPosition.y)!)]
+                selected_detail.rotation = [Float((edited_object_node?.presentation.eulerAngles.z)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.x)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.y)!).to_deg]
+                #else
+                selected_detail.location = [(edited_object_node?.presentation.worldPosition.x)!, (edited_object_node?.presentation.worldPosition.z)!, (edited_object_node?.presentation.worldPosition.y)!]
+                selected_detail.rotation = [(edited_object_node?.presentation.eulerAngles.z.to_deg)!, (edited_object_node?.presentation.eulerAngles.x.to_deg)!, (edited_object_node?.presentation.eulerAngles.y.to_deg)!]
+                #endif
             }
             
             //Unhide pointer and move to object position
             object_pointer_node?.isHidden = false
             update_pointer()
+        }
+    }
+    
+    public func deselect_object_for_edit()
+    {
+        //Deselect selected object by type
+        if is_selected
+        {
+            update_view()
+            hide_object_poiner()
+            
+            switch selected_object_type
+            {
+            case .robot:
+                deselect_robot()
+            case .tool:
+                deselect_tool()
+            case .detail:
+                if selected_detail.is_placed
+                {
+                    edited_object_node?.physicsBody = selected_detail.physics
+                    //workspace.detail_node = nil
+                }
+                deselect_detail()
+                //workspace.detail_node = nil
+            default:
+                break
+            }
+            
+            //Disconnect from edited node
+            edited_object_node = SCNNode() //Remove old reference
+            edited_object_node?.removeFromParentNode() //Remove old node
         }
     }
     
@@ -458,6 +475,21 @@ class Workspace: ObservableObject
         edited_object_node = SCNNode() //Remove old reference
         
         hide_object_poiner()
+    }
+    
+    public func deselect_object()
+    {
+        switch selected_object_type
+        {
+        case .robot:
+            deselect_robot()
+        case .tool:
+            deselect_tool()
+        case .detail:
+            deselect_detail()
+        default:
+            break
+        }
     }
     
     //MARK: - Robots handling functions
@@ -1088,12 +1120,25 @@ class Workspace: ObservableObject
         return SCNAction.group([SCNAction.move(to: camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: camera_node!.rotation, duration: 0.5)])
     }
     
+    public var add_in_view_dismissed = true //If add in view presented or not dismissed state
+    public var add_in_view_disabled: Bool
+    {
+        if !is_selected || !add_in_view_dismissed || performed
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
+    
     //MARK: - Visual functions
     public var camera_node: SCNNode? //Camera
     public var workcells_node: SCNNode? //Workcells
     public var details_node: SCNNode? //Details
     public var unit_node: SCNNode? //Selected robot cell node
-    public var detail_node: SCNNode? //Selected detail mode
+    //public var detail_node: SCNNode? //Selected detail mode
     public var object_pointer_node: SCNNode?
     
     public func place_objects(scene: SCNScene)
