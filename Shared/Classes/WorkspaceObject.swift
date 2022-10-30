@@ -54,7 +54,6 @@ class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     public var node: SCNNode? //Object scene node
     
     public static var scene_node_name: String?
-    public static var folder_url: URL?
     public static var folder_bookmark: Data?
     
     public func get_node_from_scene()
