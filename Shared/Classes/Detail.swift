@@ -184,6 +184,7 @@ class Detail: WorkspaceObject
         get_node_from_scene()
     }
     
+    //MARK: - Visual build functions
     override func node_by_description()
     {
         node = SCNNode()

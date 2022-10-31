@@ -9,21 +9,8 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class Robot: Identifiable, Equatable, Hashable, ObservableObject
+class Robot: WorkspaceObject
 {
-    static func == (lhs: Robot, rhs: Robot) -> Bool
-    {
-        return lhs.name == rhs.name //Identity condition by names
-    }
-    
-    func hash(into hasher: inout Hasher)
-    {
-        hasher.combine(name)
-    }
-    
-    var id = UUID()
-    
-    public var name: String?
     private var manufacturer: String?
     private var model: String?
     
@@ -32,23 +19,26 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     @Published private var programs = [PositionsProgram]()
     
     //MARK: - Robot init functions
-    init()
+    override init()
     {
+        super.init()
         robot_init(name: "None", manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
-    init(name: String)
+    override init(name: String)
     {
+        super.init()
         robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
-    init(name: String, kinematic: KinematicType)
+    /*init(name: String, kinematic: KinematicType)
     {
         robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
-    }
+    }*/
     
     init(name: String, manufacturer: String, dictionary: [String: Any]) //Init robot by dictionary
     {
+        super.init()
         var kinematic: KinematicType
         switch dictionary["Kinematic"] as? String ?? "" //Determination of the type of kinematics by string in the property
         {
@@ -76,6 +66,7 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     
     init(robot_struct: robot_struct) //Init by robot structure
     {
+        super.init()
         robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
         read_programs(robot_struct: robot_struct)
     }
@@ -696,11 +687,8 @@ class Robot: Identifiable, Equatable, Hashable, ObservableObject
     private var details_positions_update: ((_ nodes: inout [SCNNode], _ values: [Float]) -> Void)? = nil //Update robot details positions function
     
     //MARK: Robot in workspace handling
-    public var is_placed = false
-    public var location = [Float](repeating: 0, count: 3) //[0, 0, 0] x, y, z
-    public var rotation = [Float](repeating: 0, count: 3) //[0, 0, 0] r, p, w
     
-    //MARK: Robot chart functions
+    //MARK: - Robot chart functions
     public var get_statistics = false
     public var chart_data = (robot_details_angles: [PositionChartInfo](), tool_location: [PositionChartInfo](), tool_rotation: [PositionChartInfo]())
     
