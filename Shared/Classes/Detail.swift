@@ -324,7 +324,6 @@ class Detail: WorkspaceObject
     }
     
     //MARK: - UI functions
-    private var image_data = Data()
     public var color: Color
     {
         get
@@ -354,38 +353,14 @@ class Detail: WorkspaceObject
     }
     
     #if os(macOS)
-    public var image: NSImage
+    override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
-        get
-        {
-            return NSImage(data: image_data) ?? NSImage()
-        }
-        set
-        {
-            image_data = newValue.tiffRepresentation ?? Data()
-        }
-    }
-    
-    public func card_info() -> (title: String, color: Color, image: NSImage) //Get info for robot card view (in RobotsView)
-    {
-        return("\(self.name ?? "Detail")", self.color, self.image)
+        return("\(self.name ?? "Detail")", "Subtitle", self.color, self.image)
     }
     #else
-    public var image: UIImage
+    override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
-        get
-        {
-            return UIImage(data: image_data) ?? UIImage()
-        }
-        set
-        {
-            image_data = newValue.pngData() ?? Data()
-        }
-    }
-    
-    public func card_info() -> (title: String, color: Color, image: UIImage) //Get info for robot card view
-    {
-        return("\(self.name ?? "Detail")", Color(red: Double(figure_color?[0] ?? 0) / 255, green: Double(figure_color?[1] ?? 0) / 255, blue: Double(figure_color?[2] ?? 0) / 255), self.image)
+        return("\(self.name ?? "Detail")", "Subtitle", self.color, self.image)
     }
     #endif
     

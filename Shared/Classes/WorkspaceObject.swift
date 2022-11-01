@@ -7,6 +7,7 @@
 
 import Foundation
 import SceneKit
+import SwiftUI
 
 class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
 {
@@ -44,12 +45,12 @@ class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         //node_by_description()
     }*/
     
-    //MARK: Object in workspace handling
+    //MARK: - Object in workspace handling
     public var is_placed = false
     public var location = [Float](repeating: 0, count: 3) //Position by axis – x, y, z
     public var rotation = [Float](repeating: 0, count: 3) //Rotation in postion by angles – r, p, w
     
-    //MARK: Visual functions
+    //MARK: - Visual functions
     public var scene_address = "" //Addres of object scene. If empty – this object used defult model.
     public var node: SCNNode? //Object scene node
     
@@ -101,4 +102,43 @@ class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
             self.node = SCNScene(named: scene_address)!.rootNode.childNode(withName: "detail", recursively: false)!
         }*/
     }
+    
+    //MARK: - UI functions
+    public var image_data = Data()
+    
+    #if os(macOS)
+    public var image: NSImage
+    {
+        get
+        {
+            return NSImage(data: image_data) ?? NSImage()
+        }
+        set
+        {
+            image_data = newValue.tiffRepresentation ?? Data()
+        }
+    }
+    
+    public var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view (in RobotsView)
+    {
+        return("Title", "Subtitle", Color.clear, NSImage())
+    }
+    #else
+    public var image: UIImage
+    {
+        get
+        {
+            return UIImage(data: image_data) ?? UIImage()
+        }
+        set
+        {
+            image_data = newValue.pngData() ?? Data()
+        }
+    }
+    
+    public var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view (in RobotsView)
+    {
+        return("Title", "Subtitle", Color.clear, UIImage())
+    }
+    #endif
 }

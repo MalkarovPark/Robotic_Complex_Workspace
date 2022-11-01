@@ -22,18 +22,18 @@ class Robot: WorkspaceObject
     override init()
     {
         super.init()
-        robot_init(name: "None", manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
+        robot_init(name: "None", manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     override init(name: String)
     {
         super.init()
-        robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: .vi_dof, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     /*init(name: String, kinematic: KinematicType)
     {
-        robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), kinematic: kinematic, scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }*/
     
     init(name: String, manufacturer: String, dictionary: [String: Any]) //Init robot by dictionary
@@ -61,17 +61,17 @@ class Robot: WorkspaceObject
             }
         }
         
-        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lengths: lengths, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, robot_image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
+        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lengths: lengths, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
     }
     
     init(robot_struct: robot_struct) //Init by robot structure
     {
         super.init()
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, robot_image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
         read_programs(robot_struct: robot_struct)
     }
     
-    func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], kinematic: KinematicType, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, robot_image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
+    func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], kinematic: KinematicType, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
     {
         self.name = name
         self.manufacturer = manufacturer
@@ -123,7 +123,7 @@ class Robot: WorkspaceObject
         
         self.get_statistics = get_statistics
         
-        self.robot_image_data = robot_image_data
+        self.image_data = image_data
         self.origin_location = origin_location
         self.origin_rotation = origin_rotation
         self.space_scale = space_scale
@@ -732,22 +732,10 @@ class Robot: WorkspaceObject
     }
     
     //MARK: - UI functions
-    private var robot_image_data = Data()
+    //private var image_data = Data()
     
     #if os(macOS)
-    public var image: NSImage
-    {
-        get
-        {
-            return NSImage(data: robot_image_data) ?? NSImage()
-        }
-        set
-        {
-            robot_image_data = newValue.tiffRepresentation ?? Data()
-        }
-    }
-    
-    public func card_info() -> (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view (in RobotsView)
+    override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
         let color: Color
         switch self.manufacturer
@@ -767,19 +755,7 @@ class Robot: WorkspaceObject
         return("\(self.name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color, self.image)
     }
     #else
-    public var image: UIImage
-    {
-        get
-        {
-            return UIImage(data: robot_image_data) ?? UIImage()
-        }
-        set
-        {
-            robot_image_data = newValue.pngData() ?? Data()
-        }
-    }
-    
-    public func card_info() -> (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
+    override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
         let color: Color
         switch self.manufacturer
@@ -813,7 +789,7 @@ class Robot: WorkspaceObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lengths: with_lengths ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, image_data: self.robot_image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
+        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lengths: with_lengths ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, image_data: self.image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
     }
     
     private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs

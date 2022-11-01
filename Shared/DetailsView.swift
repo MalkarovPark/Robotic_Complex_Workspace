@@ -37,16 +37,12 @@ struct DetailsView: View
                         {
                             ForEach(base_workspace.details)
                             { detail_item in
-                                ZStack
-                                {
-                                    DetailCardView(document: $document, detail_item: detail_item, card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
-                                    DetailDeleteButton(details: $base_workspace.details, detail_item: detail_item, on_delete: remove_details)
-                                }
+                                DetailCardView(document: $document, detail_item: detail_item)
                                 .onDrag({
                                     self.dragged_detail = detail_item
                                     return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    DetailCardViewPreview(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
+                                    SmallCardViewPreview(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
                                 })
                                 .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
                                 .transition(AnyTransition.scale)
@@ -65,16 +61,12 @@ struct DetailsView: View
                         {
                             ForEach(base_workspace.details)
                             { detail_item in
-                                ZStack
-                                {
-                                    DetailCardView(document: $document, detail_item: detail_item, card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
-                                    DetailDeleteButton(details: $base_workspace.details, detail_item: detail_item, on_delete: remove_details)
-                                }
+                                DetailCardView(document: $document, detail_item: detail_item)
                                 .onDrag({
                                     self.dragged_detail = detail_item
                                     return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    DetailCardViewPreview(card_color: detail_item.card_info().color, card_image: detail_item.card_info().image, card_title: detail_item.card_info().title)
+                                    SmallCardViewPreview(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
                                 })
                                 .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
                                 .transition(AnyTransition.scale)
@@ -586,178 +578,33 @@ struct DetailCardView: View
     @State var detail_item: Detail
     @State private var detail_view_presented = false
     
-    @State var card_color: Color
-    #if os(macOS)
-    @State var card_image: NSImage
-    #else
-    @State var card_image: UIImage
-    #endif
-    @State var card_title: String
-    
-    var body: some View
-    {
-        ZStack
-        {
-            VStack
-            {
-                HStack(spacing: 0)
-                {
-                    HStack(spacing: 0)
-                    {
-                        Text(card_title)
-                            .font(.headline)
-                            .padding()
-                        
-                        Spacer()
-                        
-                        Rectangle()
-                            .fill(.clear)
-                            .overlay
-                        {
-                            #if os(macOS)
-                            Image(nsImage: card_image)
-                                .resizable()
-                                .scaledToFill()
-                            #else
-                            Image(uiImage: card_image)
-                                .resizable()
-                                .scaledToFill()
-                            #endif
-                        }
-                        .frame(width: 64, height: 64)
-                        .background(Color.clear)
-                    }
-                    .onTapGesture
-                    {
-                        detail_view_presented = true
-                    }
-                    .popover(isPresented: $detail_view_presented)
-                    {
-                        DetailView(document: $document, detail_item: $detail_item)
-                            .onDisappear()
-                        {
-                            detail_view_presented = false
-                        }
-                    }
-                    
-                    Rectangle()
-                        .foregroundColor(card_color)
-                        .frame(width: 32, height: 64)
-                }
-            }
-            .background(.thinMaterial)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .shadow(radius: 8.0)
-    }
-}
-
-struct DetailDeleteButton: View
-{
-    @Binding var details: [Detail]
-    
-    @State private var delete_detail_alert_presented = false
-    
     @EnvironmentObject var base_workspace: Workspace
     
-    let detail_item: Detail
-    let on_delete: (IndexSet) -> ()
-    
     var body: some View
     {
-        HStack
-        {
-            Spacer()
-            VStack
+        SmallCardView(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
+            .modifier(BorderlessDeleteButton(workspace: base_workspace, object_item: detail_item, objects: base_workspace.details, on_delete: remove_details, object_type_name: "detail"))
+            .onTapGesture
             {
-                ZStack
-                {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.white)
-                        .padding(4.0)
-                }
-                .frame(width: 24, height: 24)
-                .onTapGesture
-                {
-                    delete_detail_alert_presented = true
-                }
-                .padding(4.0)
+                detail_view_presented = true
             }
-        }
-        .alert(isPresented: $delete_detail_alert_presented)
-        {
-            Alert(
-                title: Text("Delete detail?"),
-                message: Text("Do you wand to delete this detail – \(detail_item.card_info().title)"),
-                primaryButton: .destructive(Text("Yes"), action: delete_detail),
-                secondaryButton: .cancel(Text("No"))
-            )
-        }
-    }
-    
-    func delete_detail()
-    {
-        if let index = details.firstIndex(of: detail_item)
-        {
-            self.on_delete(IndexSet(integer: index))
-            base_workspace.elements_check()
-        }
-    }
-}
-
-//MARK: - Robot card preview for drag
-struct DetailCardViewPreview: View
-{
-    @State var card_color: Color
-    #if os(macOS)
-    @State var card_image: NSImage
-    #else
-    @State var card_image: UIImage
-    #endif
-    @State var card_title: String
-    
-    var body: some View
-    {
-        ZStack
-        {
-            VStack
+            .popover(isPresented: $detail_view_presented)
             {
-                HStack(spacing: 0)
+                DetailView(document: $document, detail_item: $detail_item)
+                    .onDisappear()
                 {
-                    HStack(spacing: 0)
-                    {
-                        Text(card_title)
-                            .font(.headline)
-                            .padding()
-                        
-                        Spacer()
-                        
-                        Rectangle()
-                            .fill(.clear)
-                            .overlay
-                        {
-                            #if os(macOS)
-                            Image(nsImage: card_image)
-                                .resizable()
-                                .scaledToFill()
-                            #else
-                            Image(uiImage: card_image)
-                                .resizable()
-                                .scaledToFill()
-                            #endif
-                        }
-                        .frame(width: 64, height: 64)
-                        .background(Color.clear)
-                    }
-                    
-                    Rectangle()
-                        .foregroundColor(card_color)
-                        .frame(width: 32, height: 64)
+                    detail_view_presented = false
                 }
             }
-            .background(.thinMaterial)
+    }
+    
+    func remove_details(at offsets: IndexSet)
+    {
+        withAnimation
+        {
+            base_workspace.details.remove(atOffsets: offsets)
+            document.preset.details = base_workspace.file_data().details
         }
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
     }
 }
 
@@ -810,7 +657,7 @@ struct DetailsView_Previews: PreviewProvider
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
             #if os(macOS)
-            DetailCardView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: Detail(name: "None", dictionary: ["String" : "Any"]), card_color: Color.green, card_image: NSImage(), card_title: "Detail")
+            //DetailCardView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: Detail(name: "None", dictionary: ["String" : "Any"]), card_color: Color.green, card_image: NSImage(), card_title: "Detail")
             #else
             DetailCardView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: Detail(name: "None", dictionary: ["String" : "Any"]), card_color: Color.green, card_image: UIImage(), card_title: "Detail")
             #endif

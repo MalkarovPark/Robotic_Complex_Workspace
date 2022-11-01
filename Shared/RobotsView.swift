@@ -67,11 +67,8 @@ struct RobotsTableView: View
                     {
                         ForEach(base_workspace.robots)
                         { robot_item in
-                            ZStack
-                            {
-                                RobotCardView(card_color: robot_item.card_info().color, card_image: robot_item.card_info().image, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
-                                RobotDeleteButton(robots: $base_workspace.robots, robot_item: robot_item, on_delete: remove_robots)
-                            }
+                            LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
+                                .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
                             .onTapGesture
                             {
                                 view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
@@ -80,7 +77,7 @@ struct RobotsTableView: View
                                 self.dragged_robot = robot_item
                                 return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
                             }, preview: {
-                                RobotCardViewPreview(card_color: robot_item.card_info().color, card_image: robot_item.card_info().image, card_title: robot_item.card_info().title, card_subtitle: robot_item.card_info().subtitle)
+                                LargeCardViewPreview(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
                             })
                             .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, document: $document, workspace_robots: base_workspace.file_data().robots, robot: robot_item))
                             .transition(AnyTransition.scale)
@@ -132,7 +129,7 @@ struct RobotsTableView: View
         self.robot_view_presented = true
     }
     
-    func remove_robots(at offsets: IndexSet)
+    func delete_robots(at offsets: IndexSet)
     {
         withAnimation
         {
@@ -175,185 +172,6 @@ struct RobotDropDelegate : DropDelegate
                 self.robots.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
             }
         }
-    }
-}
-
-//MARK: - Robots card view
-struct RobotCardView: View
-{
-    @State var card_color: Color
-    #if os(macOS)
-    @State var card_image: NSImage
-    #else
-    @State var card_image: UIImage
-    #endif
-    @State var card_title: String
-    @State var card_subtitle: String
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    var body: some View
-    {
-        ZStack
-        {
-            Rectangle()
-                .foregroundColor(card_color)
-                .overlay
-            {
-                #if os(macOS)
-                Image(nsImage: card_image)
-                    .resizable()
-                    .scaledToFill()
-                #else
-                Image(uiImage: card_image)
-                    .resizable()
-                    .scaledToFill()
-                #endif
-            }
-            
-            VStack
-            {
-                Spacer()
-                HStack
-                {
-                    VStack(alignment: .leading)
-                    {
-                        Text(card_title)
-                            .font(.headline)
-                            .padding(.top, 8)
-                            .padding(.leading, 4)
-                        
-                        Text(card_subtitle)
-                            .foregroundColor(.gray)
-                            .padding(.bottom, 8)
-                            .padding(.leading, 4)
-                    }
-                    .padding(.horizontal, 8)
-                    Spacer()
-                }
-                .background(card_color.opacity(0.2))
-                .background(.thinMaterial)
-            }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .frame(height: 192)
-        .shadow(radius: 8.0)
-    }
-}
-
-struct RobotDeleteButton: View
-{
-    @Binding var robots: [Robot]
-    
-    @State private var delete_robot_alert_presented = false
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    let robot_item: Robot
-    let on_delete: (IndexSet) -> ()
-    
-    var body: some View
-    {
-        VStack
-        {
-            HStack
-            {
-                Spacer()
-                
-                ZStack
-                {
-                    Image(systemName: "xmark")
-                        .padding(4.0)
-                }
-                .frame(width: 24, height: 24)
-                .background(.thinMaterial)
-                .clipShape(Circle())
-                .onTapGesture
-                {
-                    delete_robot_alert_presented = true
-                }
-                .padding(8.0)
-            }
-            Spacer()
-        }
-        .alert(isPresented: $delete_robot_alert_presented)
-        {
-            Alert(
-                title: Text("Delete robot?"),
-                message: Text("Do you wand to delete this robot – \(robot_item.card_info().title)"),
-                primaryButton: .destructive(Text("Yes"), action: delete_robot),
-                secondaryButton: .cancel(Text("No"))
-            )
-        }
-    }
-    
-    func delete_robot()
-    {
-        if let index = robots.firstIndex(of: robot_item)
-        {
-            self.on_delete(IndexSet(integer: index))
-            base_workspace.elements_check()
-        }
-    }
-}
-
-//MARK: - Robot card preview for drag
-struct RobotCardViewPreview: View
-{
-    @State var card_color: Color
-    #if os(macOS)
-    @State var card_image: NSImage
-    #else
-    @State var card_image: UIImage
-    #endif
-    @State var card_title: String
-    @State var card_subtitle: String
-    
-    var body: some View
-    {
-        ZStack
-        {
-            Rectangle()
-                .foregroundColor(card_color)
-                .overlay
-            {
-                #if os(macOS)
-                Image(nsImage: card_image)
-                    .resizable()
-                    .scaledToFill()
-                #else
-                Image(uiImage: card_image)
-                    .resizable()
-                    .scaledToFill()
-                #endif
-            }
-            
-            VStack
-            {
-                Spacer()
-                HStack
-                {
-                    VStack(alignment: .leading)
-                    {
-                        Text(card_title)
-                            .font(.headline)
-                            .padding(.top, 8)
-                            .padding(.leading, 4)
-                        
-                        Text(card_subtitle)
-                            .foregroundColor(.gray)
-                            .padding(.bottom, 8)
-                            .padding(.leading, 4)
-                    }
-                    .padding(.horizontal, 8)
-                    Spacer()
-                }
-                .background(card_color.opacity(0.2))
-                .background(.thinMaterial)
-            }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .frame(height: 192)
     }
 }
 
@@ -2087,11 +1905,6 @@ struct RobotsView_Previews: PreviewProvider
                 .environmentObject(Workspace())
             AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
-            #if os(macOS)
-            RobotCardView(card_color: .green, card_image: NSImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
-            #else
-            RobotCardView(card_color: .green, card_image: UIImage(), card_title: "Robot Name", card_subtitle: "Fanuc")
-            #endif
             
             RobotView(robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
