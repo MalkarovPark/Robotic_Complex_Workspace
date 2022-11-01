@@ -358,7 +358,7 @@ class Detail: WorkspaceObject
         return("\(self.name ?? "Detail")", "Subtitle", self.color, self.image)
     }
     #else
-    override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
+    override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
         return("\(self.name ?? "Detail")", "Subtitle", self.color, self.image)
     }

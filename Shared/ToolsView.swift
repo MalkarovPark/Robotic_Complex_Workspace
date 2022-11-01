@@ -80,54 +80,50 @@ struct AddToolView:View
     {
         VStack(spacing: 0)
         {
-            Text("Add Tool")
-                .font(.title2)
-                .padding([.top, .leading, .trailing])
-            
             #if os(macOS)
             ToolSceneView_macOS()
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                .padding(.vertical, 8.0)
-                .padding(.horizontal)
+                .overlay(alignment: .top)
+                {
+                    Text("Add Tool")
+                        .font(.title2)
+                        .padding(8.0)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .padding([.top, .leading, .trailing])
+                }
+            #else
+            ToolSceneView_iOS()
+                .overlay(alignment: .top)
+                {
+                    Text("Add Tool")
+                        .font(.title2)
+                        .padding(8.0)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                        .padding([.top, .leading, .trailing])
+                }
+            #endif
+            
+            Divider()
+            Spacer()
             
             HStack
             {
                 Text("Name")
                     .bold()
                 TextField("None", text: $new_tool_name)
+                #if os(iOS)
+                    .textFieldStyle(.roundedBorder)
+                #endif
             }
-            .padding(.vertical, 8.0)
+            .padding(.top, 8.0)
             .padding(.horizontal)
             
-            Picker(selection: $app_state.tool_name, label: Text("Model")
-                    .bold())
+            HStack(spacing: 0)
             {
-                ForEach(app_state.tools, id: \.self)
-                {
-                    Text($0)
-                }
-            }
-            .textFieldStyle(.roundedBorder)
-            .padding(.vertical, 8.0)
-            .padding(.horizontal)
-            #else
-            ToolSceneView_iOS()
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                .padding(.vertical, 8.0)
-                .padding(.horizontal)
-            
-            HStack
-            {
-                HStack
-                {
-                    Text("Name")
-                        .bold()
-                    TextField("None", text: $new_tool_name)
-                        .textFieldStyle(.roundedBorder)
-                }
-                .padding(.vertical, 8.0)
-                .padding(.leading)
-                
+                #if os(iOS)
+                Spacer()
+                #endif
                 Picker(selection: $app_state.tool_name, label: Text("Model")
                         .bold())
                 {
@@ -139,18 +135,7 @@ struct AddToolView:View
                 .textFieldStyle(.roundedBorder)
                 .buttonStyle(.bordered)
                 .padding(.vertical, 8.0)
-                .padding(.leading, 8.0)
-                .padding(.trailing)
-            }
-            #endif
-            
-            Spacer()
-            Divider()
-            
-            //MARK: Cancel and Save buttons
-            HStack(spacing: 0)
-            {
-                Spacer()
+                .padding(.leading)
                 
                 Button("Cancel", action: { add_tool_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)

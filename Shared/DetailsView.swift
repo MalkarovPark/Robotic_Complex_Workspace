@@ -139,54 +139,50 @@ struct AddDetailView: View
     {
         VStack(spacing: 0)
         {
-            Text("Add Detail")
-                .font(.title2)
-                .padding([.top, .leading, .trailing])
-            
             #if os(macOS)
             DetailSceneView_macOS()
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                .padding(.vertical, 8.0)
-                .padding(.horizontal)
+                .overlay(alignment: .top)
+                {
+                    Text("Add Detail")
+                        .font(.title2)
+                        .padding(8.0)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                        .padding([.top, .leading, .trailing])
+                }
+            #else
+            DetailSceneView_iOS()
+                .overlay(alignment: .top)
+                {
+                    Text("Add Detail")
+                        .font(.title2)
+                        .padding(8.0)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                        .padding([.top, .leading, .trailing])
+                }
+            #endif
+            
+            Divider()
+            Spacer()
             
             HStack
             {
                 Text("Name")
                     .bold()
                 TextField("None", text: $new_detail_name)
+                #if os(iOS)
+                    .textFieldStyle(.roundedBorder)
+                #endif
             }
-            .padding(.vertical, 8.0)
+            .padding(.top, 8.0)
             .padding(.horizontal)
             
-            Picker(selection: $app_state.detail_name, label: Text("Model")
-                    .bold())
+            HStack(spacing: 0)
             {
-                ForEach(app_state.details, id: \.self)
-                {
-                    Text($0)
-                }
-            }
-            .textFieldStyle(.roundedBorder)
-            .padding(.vertical, 8.0)
-            .padding(.horizontal)
-            #else
-            DetailSceneView_iOS()
-                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                .padding(.vertical, 8.0)
-                .padding(.horizontal)
-            
-            HStack
-            {
-                HStack
-                {
-                    Text("Name")
-                        .bold()
-                    TextField("None", text: $new_detail_name)
-                        .textFieldStyle(.roundedBorder)
-                }
-                .padding(.vertical, 8.0)
-                .padding(.leading)
-                
+                #if os(iOS)
+                Spacer()
+                #endif
                 Picker(selection: $app_state.detail_name, label: Text("Model")
                         .bold())
                 {
@@ -198,18 +194,7 @@ struct AddDetailView: View
                 .textFieldStyle(.roundedBorder)
                 .buttonStyle(.bordered)
                 .padding(.vertical, 8.0)
-                .padding(.leading, 8.0)
-                .padding(.trailing)
-            }
-            #endif
-            
-            Spacer()
-            Divider()
-            
-            //MARK: Cancel and Save buttons
-            HStack(spacing: 0)
-            {
-                Spacer()
+                .padding(.leading)
                 
                 Button("Cancel", action: { add_detail_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
@@ -250,7 +235,7 @@ struct AddDetailView: View
 
 struct DetailView: View
 {
-    //@Binding var detail_view_presented: Bool
+    @Binding var detail_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var detail_item: Detail
     
@@ -322,8 +307,21 @@ struct DetailView: View
             }
             .padding(.vertical)
         }
+        .overlay(alignment: .topTrailing)
+        {
+            Button(action: { detail_view_presented.toggle() })
+            {
+                Label("Folder", systemImage: "xmark")
+                    .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.bordered)
+            .keyboardShortcut(.cancelAction)
+            .padding()
+        }
         .controlSize(.regular)
+        #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
+        #endif
         .onAppear()
         {
             app_state.previewed_detail = detail_item
@@ -588,9 +586,9 @@ struct DetailCardView: View
             {
                 detail_view_presented = true
             }
-            .popover(isPresented: $detail_view_presented)
+            .sheet(isPresented: $detail_view_presented)
             {
-                DetailView(document: $document, detail_item: $detail_item)
+                DetailView(detail_view_presented: $detail_view_presented, document: $document, detail_item: $detail_item)
                     .onDisappear()
                 {
                     detail_view_presented = false
@@ -656,12 +654,7 @@ struct DetailsView_Previews: PreviewProvider
             AddDetailView(add_detail_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
-            #if os(macOS)
-            //DetailCardView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: Detail(name: "None", dictionary: ["String" : "Any"]), card_color: Color.green, card_image: NSImage(), card_title: "Detail")
-            #else
-            DetailCardView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: Detail(name: "None", dictionary: ["String" : "Any"]), card_color: Color.green, card_image: UIImage(), card_title: "Detail")
-            #endif
-            DetailView(document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: .constant(Detail(name: "None", dictionary: ["String" : "Any"])), new_physics: .ph_none)
+            DetailView(detail_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: .constant(Detail(name: "None", dictionary: ["String" : "Any"])), new_physics: .ph_none)
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
         }
