@@ -125,6 +125,81 @@ struct DetailsView: View
     }
 }
 
+//MARK: - Details card view
+struct DetailCardView: View
+{
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var detail_item: Detail
+    @State private var detail_view_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        SmallCardView(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
+            .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: detail_item, objects: base_workspace.details, on_delete: remove_details, object_type_name: "detail"))
+            .onTapGesture
+            {
+                detail_view_presented = true
+            }
+            .sheet(isPresented: $detail_view_presented)
+            {
+                DetailView(detail_view_presented: $detail_view_presented, document: $document, detail_item: $detail_item)
+                    .onDisappear()
+                {
+                    detail_view_presented = false
+                }
+            }
+    }
+    
+    func remove_details(at offsets: IndexSet)
+    {
+        withAnimation
+        {
+            base_workspace.details.remove(atOffsets: offsets)
+            document.preset.details = base_workspace.file_data().details
+        }
+    }
+}
+
+//MARK: - Drag and Drop delegate
+struct DetailDropDelegate : DropDelegate
+{
+    @Binding var details : [Detail]
+    @Binding var dragged_detail : Detail?
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var workspace_details: [detail_struct]
+    
+    let detail: Detail
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        document.preset.details = workspace_details //Update file after elements reordering
+        return true
+    }
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragged_detail = self.dragged_detail else
+        {
+            return
+        }
+        
+        if dragged_detail != detail
+        {
+            let from = details.firstIndex(of: dragged_detail)!
+            let to = details.firstIndex(of: detail)!
+            withAnimation(.default)
+            {
+                self.details.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
+        }
+    }
+}
+
+//MARK: - Add detail view
 struct AddDetailView: View
 {
     @Binding var add_detail_view_presented: Bool
@@ -225,8 +300,8 @@ struct AddDetailView: View
         }
         
         app_state.get_scene_image = true
-        app_state.previewed_detail?.name = new_detail_name
-        base_workspace.add_detail(app_state.previewed_detail!)
+        app_state.previewed_object?.name = new_detail_name
+        base_workspace.add_detail(app_state.previewed_object! as! Detail)
         document.preset.details = base_workspace.file_data().details
         
         add_detail_view_presented.toggle()
@@ -324,12 +399,13 @@ struct DetailView: View
         #endif
         .onAppear()
         {
-            app_state.previewed_detail = detail_item
+            app_state.previewed_object = detail_item
             app_state.preview_update_scene = true
             
-            app_state.previewed_detail?.node?.position = SCNVector3(x: 0, y: 0, z: 0)
-            app_state.previewed_detail?.node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
-            app_state.previewed_detail?.enable_physics = false
+            app_state.previewed_object?.node?.position = SCNVector3(x: 0, y: 0, z: 0)
+            app_state.previewed_object?.node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
+            let previewed_detail = app_state.previewed_object as? Detail
+            previewed_detail?.enable_physics = false
             
             new_physics = detail_item.physics_type
             new_gripable = detail_item.gripable ?? false
@@ -368,6 +444,7 @@ struct DetailView: View
     }
 }
 
+//MARK: - Scene views
 #if os(macOS)
 struct DetailSceneView_macOS: NSViewRepresentable
 {
@@ -412,7 +489,7 @@ struct DetailSceneView_macOS: NSViewRepresentable
         if app_state.get_scene_image == true
         {
             app_state.get_scene_image = false
-            app_state.previewed_detail?.image = ui_view.snapshot()
+            app_state.previewed_object?.image = ui_view.snapshot()
         }
     }
     
@@ -462,8 +539,8 @@ struct DetailSceneView_macOS: NSViewRepresentable
             let remove_node = scene_view.scene?.rootNode.childNode(withName: "Figure", recursively: true)
             remove_node?.removeFromParentNode()
             
-            scene_view.scene?.rootNode.addChildNode(app_state.previewed_detail?.node ?? SCNNode())
-            app_state.previewed_detail?.node?.name = "Figure"
+            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
+            app_state.previewed_object?.node?.name = "Figure"
             app_state.preview_update_scene = false
         }
     }
@@ -510,7 +587,7 @@ struct DetailSceneView_iOS: UIViewRepresentable
         if app_state.get_scene_image == true
         {
             app_state.get_scene_image = false
-            app_state.previewed_detail?.image = ui_view.snapshot()
+            app_state.previewed_object?.image = ui_view.snapshot()
         }
     }
     
@@ -560,87 +637,13 @@ struct DetailSceneView_iOS: UIViewRepresentable
             let remove_node = scene_view.scene?.rootNode.childNode(withName: "Figure", recursively: true)
             remove_node?.removeFromParentNode()
             
-            scene_view.scene?.rootNode.addChildNode(app_state.previewed_detail?.node ?? SCNNode())
-            app_state.previewed_detail?.node?.name = "Figure"
+            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
+            app_state.previewed_object?.node?.name = "Figure"
             app_state.preview_update_scene = false
         }
     }
 }
 #endif
-
-//MARK: - Details card view
-struct DetailCardView: View
-{
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
-    @State var detail_item: Detail
-    @State private var detail_view_presented = false
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    var body: some View
-    {
-        SmallCardView(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
-            .modifier(BorderlessDeleteButton(workspace: base_workspace, object_item: detail_item, objects: base_workspace.details, on_delete: remove_details, object_type_name: "detail"))
-            .onTapGesture
-            {
-                detail_view_presented = true
-            }
-            .sheet(isPresented: $detail_view_presented)
-            {
-                DetailView(detail_view_presented: $detail_view_presented, document: $document, detail_item: $detail_item)
-                    .onDisappear()
-                {
-                    detail_view_presented = false
-                }
-            }
-    }
-    
-    func remove_details(at offsets: IndexSet)
-    {
-        withAnimation
-        {
-            base_workspace.details.remove(atOffsets: offsets)
-            document.preset.details = base_workspace.file_data().details
-        }
-    }
-}
-
-//MARK: - Drag and Drop delegate
-struct DetailDropDelegate : DropDelegate
-{
-    @Binding var details : [Detail]
-    @Binding var dragged_detail : Detail?
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
-    @State var workspace_details: [detail_struct]
-    
-    let detail: Detail
-    
-    func performDrop(info: DropInfo) -> Bool
-    {
-        document.preset.details = workspace_details //Update file after elements reordering
-        return true
-    }
-    
-    func dropEntered(info: DropInfo)
-    {
-        guard let dragged_detail = self.dragged_detail else
-        {
-            return
-        }
-        
-        if dragged_detail != detail
-        {
-            let from = details.firstIndex(of: dragged_detail)!
-            let to = details.firstIndex(of: detail)!
-            withAnimation(.default)
-            {
-                self.details.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
-            }
-        }
-    }
-}
 
 //MARK: - Previews
 struct DetailsView_Previews: PreviewProvider

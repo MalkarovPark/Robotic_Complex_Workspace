@@ -97,6 +97,9 @@ struct SidebarContent: View
                     case "Robots":
                         Label(selection.localizedName, systemImage: selection.image_name)
                             .badge(document.preset.robots.count)
+                    case "Tools":
+                        Label(selection.localizedName, systemImage: selection.image_name)
+                            .badge(document.preset.tools.count)
                     case "Details":
                         Label(selection.localizedName, systemImage: selection.image_name)
                             .badge(document.preset.details.count)

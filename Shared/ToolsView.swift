@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import UniformTypeIdentifiers
 
 struct ToolsView: View
 {
@@ -26,7 +27,27 @@ struct ToolsView: View
         {
             if base_workspace.tools.count > 0
             {
-                Text("?")
+                //MARK: Scroll view for robots
+                ScrollView(.vertical, showsIndicators: true)
+                {
+                    LazyVGrid(columns: columns, spacing: 24)
+                    {
+                        ForEach(base_workspace.tools)
+                        { tool_item in
+                            ToolCardView(document: $document, tool_item: tool_item)
+                            .onDrag({
+                                self.dragged_tool = tool_item
+                                return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
+                            }, preview: {
+                                LargeCardViewPreview(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
+                            })
+                            .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, document: $document, workspace_tools: base_workspace.file_data().tools, tool: tool_item))
+                            .transition(AnyTransition.scale)
+                        }
+                    }
+                    .padding(20)
+                }
+                .animation(.spring(), value: base_workspace.robots)
             }
             else
             {
@@ -66,6 +87,82 @@ struct ToolsView: View
     }
 }
 
+//MARK: - Tools card view
+struct ToolCardView: View
+{
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var tool_item: Tool
+    @State private var tool_view_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        LargeCardView(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
+            .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: tool_item, objects: base_workspace.tools, on_delete: remove_tools, object_type_name: "tool"))
+            .onTapGesture
+            {
+                tool_view_presented = true
+            }
+            .sheet(isPresented: $tool_view_presented)
+            {
+                Text("ToolView")
+                //ToolView(tool_view_presented: $tool_view_presented, document: $document, tool_item: $tool_item)
+                    .onDisappear()
+                {
+                    tool_view_presented = false
+                }
+            }
+    }
+    
+    func remove_tools(at offsets: IndexSet)
+    {
+        withAnimation
+        {
+            base_workspace.tools.remove(atOffsets: offsets)
+            document.preset.tools = base_workspace.file_data().tools
+        }
+    }
+}
+
+//MARK: - Drag and Drop delegate
+struct ToolDropDelegate : DropDelegate
+{
+    @Binding var tools : [Tool]
+    @Binding var dragged_tool : Tool?
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var workspace_tools: [tool_struct]
+    
+    let tool: Tool
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        document.preset.tools = workspace_tools //Update file after elements reordering
+        return true
+    }
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragged_tool = self.dragged_tool else
+        {
+            return
+        }
+        
+        if dragged_tool != tool
+        {
+            let from = tools.firstIndex(of: dragged_tool)!
+            let to = tools.firstIndex(of: tool)!
+            withAnimation(.default)
+            {
+                self.tools.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
+        }
+    }
+}
+
+//MARK: - Add tool view
 struct AddToolView:View
 {
     @Binding var add_tool_view_presented: Bool
@@ -154,7 +251,7 @@ struct AddToolView:View
         #endif
         .onAppear()
         {
-            //app_state.update_tool_info()
+            app_state.update_tool_info()
         }
     }
     
@@ -166,14 +263,16 @@ struct AddToolView:View
         }
         
         app_state.get_scene_image = true
-        //app_state.previewed_detail?.name = new_detail_name
-        base_workspace.add_detail(app_state.previewed_detail!)
-        document.preset.details = base_workspace.file_data().details
+        app_state.previewed_object?.name = new_tool_name
+        base_workspace.add_tool(app_state.previewed_object! as! Tool)
+        
+        document.preset.tools = base_workspace.file_data().tools
         
         add_tool_view_presented.toggle()
     }
 }
 
+//MARK: - Scene views
 #if os(macOS)
 struct ToolSceneView_macOS: NSViewRepresentable
 {
@@ -195,6 +294,8 @@ struct ToolSceneView_macOS: NSViewRepresentable
     
     func makeNSView(context: Context) -> SCNView
     {
+        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
+        
         //Add gesture recognizer
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
@@ -210,28 +311,12 @@ struct ToolSceneView_macOS: NSViewRepresentable
 
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        if base_workspace.selected_robot.programs_count > 0
-        {
-            if base_workspace.selected_robot.selected_program.points_count > 0
-            {
-                base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
-            }
-        }
-        
-        if app_state.reset_view && app_state.reset_view_enabled
-        {
-            app_state.reset_view = false
-            app_state.reset_view_enabled = false
-            
-            ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
-        }
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
         if app_state.get_scene_image == true
         {
             app_state.get_scene_image = false
-            
-            base_workspace.selected_robot.image = ui_view.snapshot()
+            app_state.previewed_object?.image = ui_view.snapshot()
         }
     }
     
@@ -276,21 +361,14 @@ struct ToolSceneView_macOS: NSViewRepresentable
     
     func scene_check() //Render functions
     {
-        base_workspace.selected_robot.update_robot()
-        if base_workspace.selected_robot.moving_completed == true
+        if app_state.preview_update_scene
         {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                base_workspace.selected_robot.moving_completed = false
-                base_workspace.update_view()
-            }
-        }
-        if base_workspace.selected_robot.performed == true
-        {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                base_workspace.update_view()
-            }
+            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Tool", recursively: true)
+            remove_node?.removeFromParentNode()
+            
+            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
+            app_state.previewed_object?.node?.name = "Tool"
+            app_state.preview_update_scene = false
         }
     }
 }
@@ -301,20 +379,21 @@ struct ToolSceneView_iOS: UIViewRepresentable
     @EnvironmentObject var app_state: AppState
     
     let scene_view = SCNView(frame: .zero)
-    let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
+    let viewed_scene = SCNScene(named: "Components.scnassets/View.scn")!
     
     func scn_scene(context: Context) -> SCNView
     {
         app_state.reset_view = false
+        app_state.reset_view_enabled = true
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
+        scene_view.scene?.background.contents = NSColor.clear
         return scene_view
     }
     
     func makeUIView(context: Context) -> SCNView
     {
-        //Connect workcell box and pointer
-        base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
+        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
@@ -322,34 +401,21 @@ struct ToolSceneView_iOS: UIViewRepresentable
         
         scene_view.allowsCameraControl = true
         scene_view.rendersContinuously = true
+        scene_view.autoenablesDefaultLighting = true
+        
+        scene_view.backgroundColor = NSColor.clear
         
         return scn_scene(context: context)
     }
 
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
-        if base_workspace.selected_robot.programs_count > 0
-        {
-            if base_workspace.selected_robot.selected_program.points_count > 0
-            {
-                base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
-            }
-        }
-        
-        if app_state.reset_view && app_state.reset_view_enabled
-        {
-            app_state.reset_view = false
-            app_state.reset_view_enabled = false
-            
-            ui_view.defaultCameraController.pointOfView?.runAction(
-                SCNAction.group([SCNAction.move(to: base_workspace.selected_robot.camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: base_workspace.selected_robot.camera_node!.rotation, duration: 0.5)]), completionHandler: { app_state.reset_view_enabled = true })
-        }
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
         if app_state.get_scene_image == true
         {
             app_state.get_scene_image = false
-            
-            base_workspace.selected_robot.image = ui_view.snapshot()
+            app_state.previewed_object?.image = ui_view.snapshot()
         }
     }
     
@@ -394,26 +460,20 @@ struct ToolSceneView_iOS: UIViewRepresentable
     
     func scene_check()
     {
-        base_workspace.selected_robot.update_robot()
-        if base_workspace.selected_robot.moving_completed == true
+        if app_state.preview_update_scene
         {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                base_workspace.selected_robot.moving_completed = false
-                base_workspace.update_view()
-            }
-        }
-        if base_workspace.selected_robot.performed == true
-        {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                base_workspace.update_view()
-            }
+            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Tool", recursively: true)
+            remove_node?.removeFromParentNode()
+            
+            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
+            app_state.previewed_object?.node?.name = "Tool"
+            app_state.preview_update_scene = false
         }
     }
 }
 #endif
 
+//MARK: - Previews
 struct ToolsView_Previews: PreviewProvider
 {
     static var previews: some View

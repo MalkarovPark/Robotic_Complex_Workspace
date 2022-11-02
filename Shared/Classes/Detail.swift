@@ -69,18 +69,6 @@ class Detail: WorkspaceObject
         }
     }
     
-    /*init(name: String, dictionary: [String: Any]) //Init detail by dictionary
-    {
-        super.init()
-        init_by_dictionary(name: name, dictionary: dictionary)
-        
-        if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
-        {
-            self.figure = "box"
-        }
-        node_by_description()
-    }*/
-    
     init(name: String, dictionary: [String: Any]) //Init detail by dictionary and use models folder
     {
         super.init()
@@ -285,7 +273,6 @@ class Detail: WorkspaceObject
             geometry = SCNBox(width: 4, height: 4, length: 4, chamferRadius: 1)
         }
         node?.geometry = geometry
-        node?.name = "Figure"
         
         //Set color by components
         #if os(macOS)
@@ -312,6 +299,8 @@ class Detail: WorkspaceObject
         default:
             node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
         }
+        
+        node?.name = "Figure"
     }
     
     //MARK: Detail in workspace handling

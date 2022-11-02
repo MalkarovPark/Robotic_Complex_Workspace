@@ -324,7 +324,7 @@ struct CircleDeleteButtonModifier: ViewModifier
 }
 
 //For small card
-struct BorderlessDeleteButton: ViewModifier
+struct BorderlessDeleteButtonModifier: ViewModifier
 {
     @State private var delete_alert_presented = false
     

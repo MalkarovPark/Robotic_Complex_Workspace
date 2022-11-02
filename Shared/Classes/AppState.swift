@@ -36,7 +36,7 @@ class AppState : ObservableObject
     #endif
     
     public var workspace_scene = SCNScene() //Link to viewed workspace scene
-    public var previewed_detail: Detail? //Detail for preview view
+    public var previewed_object: WorkspaceObject? //Detail for preview view
     public var preview_update_scene = false //Flag for update previewed detail node in scene
     
     @Published var view_update_state = false //Flag for update details view grid
@@ -472,20 +472,14 @@ class AppState : ObservableObject
     }
     
     //MARK: Get tools
-    private func update_tool_info()
+    public func update_tool_info()
     {
         tool_dictionary = tools_dictionary[tool_name]!
-    }
-    
-    //MARK: Get details
-    public func update_detail_info()
-    {
-        detail_dictionary = details_dictionary[detail_name]!
         
-        //Get detail model by selected item for preview
-        if details_empty ?? true
+        //Get tool model by selected item for preview
+        if tools_empty ?? true
         {
-            previewed_detail = Detail(name: "None", dictionary: detail_dictionary)
+            previewed_object = Detail(name: "None")
         }
         else
         {
@@ -499,7 +493,39 @@ class AppState : ObservableObject
                     return
                 }
                 
-                previewed_detail = Detail(name: "None", dictionary: detail_dictionary)
+                previewed_object = Tool(name: "None", dictionary: tool_dictionary)
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+        preview_update_scene = true
+    }
+    
+    //MARK: Get details
+    public func update_detail_info()
+    {
+        detail_dictionary = details_dictionary[detail_name]!
+        
+        //Get detail model by selected item for preview
+        if details_empty ?? true
+        {
+            previewed_object = Detail(name: "None")
+        }
+        else
+        {
+            do
+            {
+                var is_stale = false
+                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                
+                guard !is_stale else
+                {
+                    return
+                }
+                
+                previewed_object = Detail(name: "None", dictionary: detail_dictionary)
             }
             catch
             {
