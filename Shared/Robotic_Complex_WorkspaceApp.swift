@@ -63,6 +63,7 @@ struct Robotic_Complex_WorkspaceApp: App
         {
             file in ContentView(document: file.$document, file_name: "\(file.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled")", file_url: file.fileURL!)
                 .environmentObject(app_state)
+                //.toolbarRole(.automatic)
                 .onAppear
             {
                 if first_loaded

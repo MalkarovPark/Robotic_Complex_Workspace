@@ -515,7 +515,7 @@ struct ToolSceneView_iOS: UIViewRepresentable
         app_state.reset_view_enabled = true
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
-        scene_view.scene?.background.contents = NSColor.clear
+        scene_view.scene?.background.contents = UIColor.clear
         return scene_view
     }
     
@@ -531,7 +531,7 @@ struct ToolSceneView_iOS: UIViewRepresentable
         scene_view.rendersContinuously = true
         scene_view.autoenablesDefaultLighting = true
         
-        scene_view.backgroundColor = NSColor.clear
+        scene_view.backgroundColor = UIColor.clear
         
         return scn_scene(context: context)
     }
