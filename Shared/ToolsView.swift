@@ -18,6 +18,7 @@ struct ToolsView: View
     @State private var dragged_tool: Tool?
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
     
@@ -47,7 +48,8 @@ struct ToolsView: View
                     }
                     .padding(20)
                 }
-                .animation(.spring(), value: base_workspace.robots)
+                .animation(.spring(), value: base_workspace.tools)
+                .modifier(DoubleModifier(update_toggle: $app_state.view_update_state))
             }
             else
             {
@@ -107,8 +109,7 @@ struct ToolCardView: View
             }
             .sheet(isPresented: $tool_view_presented)
             {
-                Text("ToolView")
-                //ToolView(tool_view_presented: $tool_view_presented, document: $document, tool_item: $tool_item)
+                ToolView(tool_view_presented: $tool_view_presented, document: $document, tool_item: $tool_item)
                     .onDisappear()
                 {
                     tool_view_presented = false
@@ -269,6 +270,133 @@ struct AddToolView:View
         document.preset.tools = base_workspace.file_data().tools
         
         add_tool_view_presented.toggle()
+    }
+}
+
+//MARK: - Tool view
+struct ToolView: View
+{
+    @Binding var tool_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var tool_item: Tool
+    
+    //@State var new_physics: PhysicsType = .ph_none
+    
+    @State private var ready_for_save = false
+    @State private var is_document_updated = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    var body: some View
+    {
+        HStack(spacing: 0)
+        {
+            #if os(macOS)
+            ToolSceneView_macOS()
+            #else
+            ToolSceneView_iOS()
+            #endif
+            
+            Divider()
+            
+            VStack
+            {
+                Text("Tool View")
+                    .padding()
+                
+                Spacer()
+                
+                HStack(spacing: 0) //(spacing: 12.0)
+                {
+                    #if os(iOS)
+                    Text("Program")
+                        .font(.subheadline)
+                    #endif
+                    
+                    Picker("Program", selection: $base_workspace.selected_robot.selected_program_index)
+                    {
+                        if base_workspace.selected_robot.programs_names.count > 0
+                        {
+                            ForEach(0 ..< base_workspace.selected_robot.programs_names.count, id: \.self)
+                            {
+                                Text(base_workspace.selected_robot.programs_names[$0])
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                    .frame(maxWidth: .infinity)
+                    #if os(iOS)
+                    .buttonStyle(.borderedProminent)
+                    #endif
+                    
+                    Button("-")
+                    {
+                        //delete_position_program()
+                    }
+                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                    .padding(.horizontal)
+                    
+                    Button("+")
+                    {
+                        //add_program_view_presented.toggle()
+                    }
+                    /*.popover(isPresented: $add_program_view_presented)
+                    {
+                        AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
+                        #if os(macOS)
+                            .frame(height: 72.0)
+                        #else
+                            .presentationDetents([.height(96.0)])
+                        #endif
+                    }*/
+                }
+                .padding()
+            }
+            .frame(width: 256)
+        }
+        .overlay(alignment: .topLeading)
+        {
+            Button(action: { tool_view_presented.toggle() })
+            {
+                Label("Close", systemImage: "xmark")
+                    .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.bordered)
+            .keyboardShortcut(.cancelAction)
+            .padding()
+        }
+        .controlSize(.regular)
+        #if os(macOS)
+        .frame(minWidth: 400, idealWidth: 640, maxWidth: 800, minHeight: 400, idealHeight: 480, maxHeight: 600)
+        #endif
+        .onDisappear()
+        {
+            if is_document_updated
+            {
+                app_state.view_update_state.toggle()
+            }
+        }
+    }
+    
+    func update_data()
+    {
+        if ready_for_save
+        {
+            app_state.get_scene_image = true
+            //tool_item.physics_type = new_physics
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                document.preset.tools = base_workspace.file_data().tools
+            }
+            is_document_updated = true
+        }
     }
 }
 
@@ -483,11 +611,12 @@ struct ToolsView_Previews: PreviewProvider
             ToolsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            
             AddToolView(add_tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
+            ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), tool_item: .constant(Tool(name: "None")))
+                .environmentObject(Workspace())
+                .environmentObject(AppState())
         }
-        
     }
 }

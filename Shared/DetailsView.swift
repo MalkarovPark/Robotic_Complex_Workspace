@@ -28,54 +28,27 @@ struct DetailsView: View
         {
             if base_workspace.details.count > 0
             {
-                if app_state.view_update_state
+                //MARK: Scroll view for details
+                ScrollView(.vertical, showsIndicators: true)
                 {
-                    //MARK: Scroll view for details
-                    ScrollView(.vertical, showsIndicators: true)
+                    LazyVGrid(columns: columns, spacing: 24)
                     {
-                        LazyVGrid(columns: columns, spacing: 24)
-                        {
-                            ForEach(base_workspace.details)
-                            { detail_item in
-                                DetailCardView(document: $document, detail_item: detail_item)
-                                .onDrag({
-                                    self.dragged_detail = detail_item
-                                    return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
-                                }, preview: {
-                                    SmallCardViewPreview(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
-                                })
-                                .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
-                                .transition(AnyTransition.scale)
-                            }
+                        ForEach(base_workspace.details)
+                        { detail_item in
+                            DetailCardView(document: $document, detail_item: detail_item)
+                            .onDrag({
+                                self.dragged_detail = detail_item
+                                return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
+                            }, preview: {
+                                SmallCardViewPreview(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
+                            })
+                            .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
+                            .transition(AnyTransition.scale)
                         }
-                        .padding(20)
                     }
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    .padding(20)
                 }
-                else
-                {
-                    //MARK: Scroll view for details
-                    ScrollView(.vertical, showsIndicators: true)
-                    {
-                        LazyVGrid(columns: columns, spacing: 24)
-                        {
-                            ForEach(base_workspace.details)
-                            { detail_item in
-                                DetailCardView(document: $document, detail_item: detail_item)
-                                .onDrag({
-                                    self.dragged_detail = detail_item
-                                    return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
-                                }, preview: {
-                                    SmallCardViewPreview(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
-                                })
-                                .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
-                                .transition(AnyTransition.scale)
-                            }
-                        }
-                        .padding(20)
-                    }
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                }
+                .modifier(DoubleModifier(update_toggle: $app_state.view_update_state))
             }
             else
             {
@@ -308,6 +281,7 @@ struct AddDetailView: View
     }
 }
 
+//MARK: - Detail view
 struct DetailView: View
 {
     @Binding var detail_view_presented: Bool
@@ -382,11 +356,11 @@ struct DetailView: View
             }
             .padding(.vertical)
         }
-        .overlay(alignment: .topTrailing)
+        .overlay(alignment: .topLeading)
         {
             Button(action: { detail_view_presented.toggle() })
             {
-                Label("Folder", systemImage: "xmark")
+                Label("Close", systemImage: "xmark")
                     .labelStyle(.iconOnly)
             }
             .buttonStyle(.bordered)

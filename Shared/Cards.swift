@@ -382,27 +382,22 @@ struct BorderlessDeleteButtonModifier: ViewModifier
     }
 }
 
-//MARK: - Internal card modifier
-struct InternalCardModifier: ViewModifier
+//MARK: - Duplicator
+struct DoubleModifier: ViewModifier
 {
-    @State private var internal_view_presented = false
-    
-    var internal_view: AnyView
+    @Binding var update_toggle: Bool
     
     func body(content: Content) -> some View
     {
-        content
-        .onTapGesture
+        if update_toggle
         {
-            internal_view_presented = true
+            content
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
         }
-        .popover(isPresented: $internal_view_presented)
+        else
         {
-            internal_view
-            .onDisappear()
-            {
-                internal_view_presented = false
-            }
+            content
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
         }
     }
 }
@@ -415,9 +410,15 @@ struct Cards_Previews: PreviewProvider
         Group
         {
             #if os(macOS)
-            LargeCardView(color: .green, image: NSImage(), title: "Robot Name", subtitle: "Fanuc")
+            LargeCardView(color: .green, image: NSImage(), title: "Title", subtitle: "Subtitle")
+                .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
+            SmallCardView(color: .green, image: NSImage(), title: "Title")
+                .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
             #else
-            LargeCardView(color: .green, image: UIImage(), title: "Robot Name", subtitle: "Fanuc")
+            LargeCardView(color: .green, image: UIImage(), title: "Title", subtitle: "Subtitle")
+                .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
+            SmallCardView(color: .green, image: UIImage(), title: "Title")
+                .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
             #endif
         }
     }

@@ -1370,59 +1370,52 @@ struct RobotInspectorView: View
             Divider()
             #endif
             
-            Section
+            HStack(spacing: 0) //(spacing: 12.0)
             {
-                HStack(spacing: 0) //(spacing: 12.0)
+                #if os(iOS)
+                Text("Program")
+                    .font(.subheadline)
+                #endif
+                
+                Picker("Program", selection: $base_workspace.selected_robot.selected_program_index)
                 {
-                    #if os(iOS)
-                    Text("Program")
-                        .font(.subheadline)
-                    #endif
-                    
-                    Picker("Program", selection: $base_workspace.selected_robot.selected_program_index)
+                    if base_workspace.selected_robot.programs_names.count > 0
                     {
-                        if base_workspace.selected_robot.programs_names.count > 0
+                        ForEach(0 ..< base_workspace.selected_robot.programs_names.count, id: \.self)
                         {
-                            ForEach(0 ..< base_workspace.selected_robot.programs_names.count, id: \.self)
-                            {
-                                Text(base_workspace.selected_robot.programs_names[$0])
-                            }
-                        }
-                        else
-                        {
-                            Text("None")
+                            Text(base_workspace.selected_robot.programs_names[$0])
                         }
                     }
-                    .pickerStyle(.menu)
-                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
-                    .frame(maxWidth: .infinity)
-                    #if os(iOS)
-                    .buttonStyle(.borderedProminent)
-                    #endif
-                    
-                    Button("-")
+                    else
                     {
-                        delete_position_program()
+                        Text("None")
                     }
-                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
-                    .padding(.horizontal)
-                    
-                    Button("+")
-                    {
-                        add_program_view_presented.toggle()
-                    }
+                }
+                .pickerStyle(.menu)
+                .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                .frame(maxWidth: .infinity)
+                #if os(iOS)
+                .buttonStyle(.borderedProminent)
+                #endif
+                
+                Button("-")
+                {
+                    delete_position_program()
+                }
+                .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                .padding(.horizontal)
+                
+                Button("+")
+                {
+                    add_program_view_presented.toggle()
+                }
+                .popover(isPresented: $add_program_view_presented)
+                {
+                    AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
                     #if os(macOS)
-                    .sheet(isPresented: $add_program_view_presented)
-                    {
-                        AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
-                            .frame(height: 72.0)
-                    }
+                        .frame(height: 72.0)
                     #else
-                    .popover(isPresented: $add_program_view_presented)
-                    {
-                        AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
-                            .presentationDetents([.height(96.0)])
-                    }
+                        .presentationDetents([.height(96.0)])
                     #endif
                 }
             }
