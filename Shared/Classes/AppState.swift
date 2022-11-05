@@ -32,7 +32,6 @@ class AppState : ObservableObject
     @Published var get_scene_image = false //Flag for getting a snapshot of the scene view
     #if os(iOS)
     @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
-    @Published var is_compact_view = false //Compact view additional elements flag
     #endif
     
     public var workspace_scene = SCNScene() //Link to viewed workspace scene

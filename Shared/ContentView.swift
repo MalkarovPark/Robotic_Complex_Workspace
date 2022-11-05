@@ -38,7 +38,7 @@ struct ContentView: View
     @StateObject private var base_workspace = Workspace() //Workspace object for opened file
     
     #if os(iOS)
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     
     //MARK: Main view

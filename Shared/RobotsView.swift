@@ -347,6 +347,9 @@ struct RobotView: View
             #if os(macOS)
             RobotSceneView(document: $document)
                 .onDisappear(perform: close_robot)
+            
+            Divider()
+            
             RobotInspectorView(document: $document)
                 .disabled(base_workspace.selected_robot.performed == true)
                 .frame(width: 256)
@@ -609,6 +612,10 @@ struct RobotSceneView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
+    
     var body: some View
     {
         ZStack
@@ -616,7 +623,7 @@ struct RobotSceneView: View
             #if os(macOS)
             CellSceneView_macOS()
             #else
-            if !app_state.is_compact_view
+            if !(horizontal_size_class == .compact)
             {
                 CellSceneView_iOS()
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
@@ -1587,15 +1594,6 @@ struct AddProgramView: View
                     .textFieldStyle(.roundedBorder)
                 #endif
                 
-                #if os(macOS)
-                Button("Cancel")
-                {
-                    add_program_view_presented.toggle()
-                }
-                .fixedSize()
-                .keyboardShortcut(.cancelAction)
-                #endif
-                
                 Button("Add")
                 {
                     base_workspace.selected_robot.add_program(PositionsProgram(name: add_text))
@@ -1623,6 +1621,10 @@ struct PositionItemListView: View
     @State var position_item_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
     
     let on_delete: (IndexSet) -> ()
     
@@ -1682,6 +1684,10 @@ struct PositionItemView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
     
     let on_delete: (IndexSet) -> ()
     let button_padding = 12.0
@@ -1803,7 +1809,7 @@ struct PositionItemView: View
             }
             .padding([.top, .leading, .trailing])
             
-            if app_state.is_compact_view
+            if horizontal_size_class == .compact
             {
                 Spacer()
             }

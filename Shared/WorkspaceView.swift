@@ -47,6 +47,9 @@ struct WorkspaceView: View
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     .onDisappear(perform: stop_perform)
             }
+            
+            Divider()
+            
             ControlProgramView(document: $document)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 .frame(width: 256)
@@ -121,10 +124,6 @@ struct WorkspaceView: View
                     first_loaded = false
                 }
             }
-            
-            #if os(iOS)
-            app_state.is_compact_view = horizontal_size_class == .compact
-            #endif
         }
         
         //MARK: Toolbar
@@ -207,6 +206,10 @@ struct ComplexWorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
+    
     var body: some View
     {
         ZStack
@@ -214,7 +217,7 @@ struct ComplexWorkspaceView: View
             #if os(macOS)
             WorkspaceSceneView_macOS()
             #else
-            if !app_state.is_compact_view
+            if !(horizontal_size_class == .compact)
             {
                 WorkspaceSceneView_iOS()
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
@@ -543,6 +546,10 @@ struct AddInWorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
+    
     @State var first_select = true //This flag that specifies that the robot was not selected and disables the dismiss() function
     private let add_items: [String] = ["Add Robot", "Add Tool", "Add Detail"]
     
@@ -704,7 +711,7 @@ struct AddInWorkspaceView: View
                 Text("None")
             }
             
-            if app_state.is_compact_view
+            if horizontal_size_class == .compact
             {
                 Spacer()
             }
@@ -780,6 +787,10 @@ struct InfoView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
     
     var body: some View
     {
@@ -869,7 +880,7 @@ struct InfoView: View
             }
             .padding([.top, .leading, .trailing])
             
-            if app_state.is_compact_view
+            if horizontal_size_class == .compact
             {
                 Spacer()
             }
