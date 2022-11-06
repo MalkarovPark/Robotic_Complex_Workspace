@@ -143,7 +143,7 @@ struct DetailDropDelegate : DropDelegate
     @Binding var dragged_detail : Detail?
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var workspace_details: [detail_struct]
+    @State var workspace_details: [DetailStruct]
     
     let detail: Detail
     

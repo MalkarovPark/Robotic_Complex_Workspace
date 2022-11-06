@@ -32,7 +32,7 @@ class Tool: WorkspaceObject
         }
     }
     
-    init(tool_struct: tool_struct) //Init by detail structure
+    init(tool_struct: ToolStruct) //Init by detail structure
     {
         super.init(name: tool_struct.name!)
         self.scene_address = tool_struct.scene!
@@ -221,14 +221,14 @@ class Tool: WorkspaceObject
     #endif
     
     //MARK: - Work with file system
-    public var file_info: tool_struct
+    public var file_info: ToolStruct
     {
-        return tool_struct(name: self.name, scene: self.scene_address, programs: self.programs, image_data: self.image_data)
+        return ToolStruct(name: self.name, scene: self.scene_address, programs: self.programs, image_data: self.image_data)
     }
 }
 
 //MARK: - Tool structure for workspace preset document handling
-struct tool_struct: Codable
+struct ToolStruct: Codable
 {
     var name: String?
     var scene: String?

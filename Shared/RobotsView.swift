@@ -146,7 +146,7 @@ struct RobotDropDelegate : DropDelegate
     @Binding var dragged_robot : Robot?
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var workspace_robots: [robot_struct]
+    @State var workspace_robots: [RobotStruct]
     
     let robot: Robot
     

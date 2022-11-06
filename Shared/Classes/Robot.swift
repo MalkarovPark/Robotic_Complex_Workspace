@@ -64,7 +64,7 @@ class Robot: WorkspaceObject
         robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lengths: lengths, kinematic: kinematic, scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
     }
     
-    init(robot_struct: robot_struct) //Init by robot structure
+    init(robot_struct: RobotStruct) //Init by robot structure
     {
         super.init()
         robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, kinematic: robot_struct.kinematic, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
@@ -777,7 +777,7 @@ class Robot: WorkspaceObject
     #endif
     
     //MARK: - Work with file system
-    public var file_info: robot_struct //Convert robot data to robot_struct
+    public var file_info: RobotStruct //Convert robot data to robot_struct
     {
         //Convert robot programs set to program_struct array
         var programs_array = [program_struct]()
@@ -789,10 +789,10 @@ class Robot: WorkspaceObject
             }
         }
         
-        return robot_struct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lengths: with_lengths ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, image_data: self.image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
+        return RobotStruct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", kinematic: self.kinematic ?? .vi_dof, scene: self.robot_scene_address, lengths: with_lengths ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, image_data: self.image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
     }
     
-    private func read_programs(robot_struct: robot_struct) //Convert program_struct array to robot programs
+    private func read_programs(robot_struct: RobotStruct) //Convert program_struct array to robot programs
     {
         var viewed_program: PositionsProgram?
         
@@ -810,7 +810,7 @@ class Robot: WorkspaceObject
 }
 
 //MARK: - Robot structure for workspace preset document handling
-struct robot_struct: Codable
+struct RobotStruct: Codable
 {
     var name: String
     var manufacturer: String

@@ -1086,24 +1086,24 @@ class Workspace: ObservableObject
     }
     
     //MARK: - Work with file system
-    public func file_data() -> (robots: [robot_struct], tools: [tool_struct], details: [detail_struct], elements: [workspace_program_element_struct])
+    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], details: [DetailStruct], elements: [workspace_program_element_struct])
     {
         //Get robots info for save to file
-        var robots_file_info = [robot_struct]()
+        var robots_file_info = [RobotStruct]()
         for robot in robots
         {
             robots_file_info.append(robot.file_info)
         }
         
         //Get tools info for save to file
-        var tools_file_info = [tool_struct]()
+        var tools_file_info = [ToolStruct]()
         for tool in tools
         {
             tools_file_info.append(tool.file_info)
         }
         
         //Get details info for save to file
-        var details_file_info = [detail_struct]()
+        var details_file_info = [DetailStruct]()
         for detail in details
         {
             details_file_info.append(detail.file_info)
@@ -1357,10 +1357,10 @@ enum RotationComponents: Equatable, CaseIterable
 //MARK: - Structure for workspace preset document handling
 struct WorkspacePreset: Codable
 {
-    var robots = [robot_struct]()
+    var robots = [RobotStruct]()
     var elements = [workspace_program_element_struct]()
-    var tools = [tool_struct]()
-    var details = [detail_struct]()
+    var tools = [ToolStruct]()
+    var details = [DetailStruct]()
 }
 
 //MARK: Functions

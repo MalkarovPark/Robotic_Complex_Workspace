@@ -142,13 +142,13 @@ class Detail: WorkspaceObject
         }
     }
     
-    init(detail_struct: detail_struct) //Init by detail structure
+    init(detail_struct: DetailStruct) //Init by detail structure
     {
         super.init()
         init_by_struct(detail_struct: detail_struct)
     }
     
-    private func init_by_struct(detail_struct: detail_struct)
+    private func init_by_struct(detail_struct: DetailStruct)
     {
         self.name = detail_struct.name
         
@@ -354,9 +354,9 @@ class Detail: WorkspaceObject
     #endif
     
     //MARK: - Work with file system
-    public var file_info: detail_struct
+    public var file_info: DetailStruct
     {
-        return detail_struct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
+        return DetailStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
     }
 }
 
@@ -369,7 +369,7 @@ enum PhysicsType: String, Codable, Equatable, CaseIterable
 }
 
 //MARK: - Detail structure for workspace preset document handling
-struct detail_struct: Codable
+struct DetailStruct: Codable
 {
     var name: String
     
