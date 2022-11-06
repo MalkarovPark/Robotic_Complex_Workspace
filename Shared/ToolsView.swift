@@ -105,11 +105,12 @@ struct ToolCardView: View
             .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: tool_item, objects: base_workspace.tools, on_delete: remove_tools, object_type_name: "tool"))
             .onTapGesture
             {
+                base_workspace.select_tool(name: tool_item.name!)
                 tool_view_presented = true
             }
             .sheet(isPresented: $tool_view_presented)
             {
-                ToolView(tool_view_presented: $tool_view_presented, document: $document, tool_item: $tool_item)
+                ToolView(tool_view_presented: $tool_view_presented, document: $document)
                     .onDisappear()
                 {
                     tool_view_presented = false
@@ -278,9 +279,10 @@ struct ToolView: View
 {
     @Binding var tool_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    @Binding var tool_item: Tool
+    //@Binding var tool_item: Tool
     
     //@State var new_physics: PhysicsType = .ph_none
+    @State private var add_program_view_presented = false
     
     @State private var ready_for_save = false
     @State private var is_document_updated = false
@@ -300,27 +302,68 @@ struct ToolView: View
             
             Divider()
             
-            VStack
+            VStack(spacing: 0)
             {
-                Text("Tool View")
-                    .padding()
+                Text("Operations")
+                    .padding(.top)
                 
-                Spacer()
+                ZStack
+                {
+                    List
+                    {
+                        if base_workspace.selected_tool.programs_count > 0
+                        {
+                            if base_workspace.selected_tool.selected_program.codes_count > 0
+                            {
+                                ForEach(base_workspace.selected_tool.selected_program.codes, id: \.self)
+                                { code in
+                                    OperationItemListView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code, on_delete: remove_codes)
+                                        .onDrag
+                                    {
+                                        return NSItemProvider()
+                                    }
+                                }
+                                .onMove(perform: code_item_move)
+                                .onChange(of: base_workspace.tools)
+                                { _ in
+                                    document.preset.tools = base_workspace.file_data().tools
+                                    app_state.get_scene_image = true
+                                }
+                            }
+                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 6.0, style: .continuous))
+                    .padding()
+                    
+                    if base_workspace.selected_tool.programs_count == 0
+                    {
+                        Text("No program selected")
+                            .foregroundColor(.gray)
+                    }
+                    else
+                    {
+                        if base_workspace.selected_tool.selected_program.codes_count == 0
+                        {
+                            Text("Empty Program")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
                 
                 HStack(spacing: 0) //(spacing: 12.0)
                 {
                     #if os(iOS)
-                    Text("Program")
+                    Text("Code")
                         .font(.subheadline)
                     #endif
                     
-                    Picker("Program", selection: $base_workspace.selected_robot.selected_program_index)
+                    Picker("Code", selection: $base_workspace.selected_tool.selected_program_index)
                     {
-                        if base_workspace.selected_robot.programs_names.count > 0
+                        if base_workspace.selected_tool.programs_names.count > 0
                         {
-                            ForEach(0 ..< base_workspace.selected_robot.programs_names.count, id: \.self)
+                            ForEach(0 ..< base_workspace.selected_tool.programs_names.count, id: \.self)
                             {
-                                Text(base_workspace.selected_robot.programs_names[$0])
+                                Text(base_workspace.selected_tool.programs_names[$0])
                             }
                         }
                         else
@@ -329,7 +372,47 @@ struct ToolView: View
                         }
                     }
                     .pickerStyle(.menu)
-                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                    .frame(maxWidth: .infinity)
+                    #if os(iOS)
+                    .buttonStyle(.borderedProminent)
+                    #endif
+                    
+                    Button(action: add_operation_to_program)
+                    {
+                        Image(systemName: "chevron.up")
+                    }
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
+                    .disabled(base_workspace.selected_tool.programs_count == 0)
+                    .padding(.leading)
+                }
+                .padding([.horizontal, .bottom])
+                
+                Divider()
+                
+                HStack(spacing: 0)
+                {
+                    #if os(iOS)
+                    Text("Program")
+                        .font(.subheadline)
+                    #endif
+                    
+                    Picker("Program", selection: $base_workspace.selected_tool.selected_program_index)
+                    {
+                        if base_workspace.selected_tool.programs_names.count > 0
+                        {
+                            ForEach(0 ..< base_workspace.selected_tool.programs_names.count, id: \.self)
+                            {
+                                Text(base_workspace.selected_tool.programs_names[$0])
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .disabled(base_workspace.selected_tool.programs_names.count == 0)
                     .frame(maxWidth: .infinity)
                     #if os(iOS)
                     .buttonStyle(.borderedProminent)
@@ -337,24 +420,24 @@ struct ToolView: View
                     
                     Button("-")
                     {
-                        //delete_position_program()
+                        delete_operations_program()
                     }
-                    .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                    .disabled(base_workspace.selected_tool.programs_names.count == 0)
                     .padding(.horizontal)
                     
                     Button("+")
                     {
-                        //add_program_view_presented.toggle()
+                        add_program_view_presented.toggle()
                     }
-                    /*.popover(isPresented: $add_program_view_presented)
+                    .popover(isPresented: $add_program_view_presented)
                     {
-                        AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
+                        AddOperationProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_tool.selected_program_index)
                         #if os(macOS)
                             .frame(height: 72.0)
                         #else
                             .presentationDetents([.height(96.0)])
                         #endif
-                    }*/
+                    }
                 }
                 .padding()
             }
@@ -375,7 +458,12 @@ struct ToolView: View
         #if os(macOS)
         .frame(minWidth: 400, idealWidth: 640, maxWidth: 800, minHeight: 400, idealHeight: 480, maxHeight: 600)
         #endif
-        .onDisappear()
+        .onAppear
+        {
+            app_state.previewed_object?.node = base_workspace.selected_tool.node
+            app_state.preview_update_scene = true
+        }
+        .onDisappear
         {
             if is_document_updated
             {
@@ -397,6 +485,230 @@ struct ToolView: View
             }
             is_document_updated = true
         }
+    }
+    
+    func code_item_move(from source: IndexSet, to destination: Int)
+    {
+        base_workspace.selected_robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
+        base_workspace.selected_robot.selected_program.visual_build()
+        document.preset.robots = base_workspace.file_data().robots
+        app_state.get_scene_image = true
+    }
+    
+    func remove_codes(at offsets: IndexSet) //Remove tool operation function
+    {
+        withAnimation
+        {
+            base_workspace.selected_tool.selected_program.codes.remove(atOffsets: offsets)
+        }
+        
+        document.preset.tools = base_workspace.file_data().tools
+        app_state.get_scene_image = true
+    }
+    
+    func delete_operations_program()
+    {
+        if base_workspace.selected_robot.programs_names.count > 0
+        {
+            let current_spi = base_workspace.selected_robot.selected_program_index
+            base_workspace.selected_robot.delete_program(number: current_spi)
+            if base_workspace.selected_robot.programs_names.count > 1 && current_spi > 0
+            {
+                base_workspace.selected_robot.selected_program_index = current_spi - 1
+            }
+            else
+            {
+                base_workspace.selected_robot.selected_program_index = 0
+            }
+            
+            document.preset.robots = base_workspace.file_data().robots
+            app_state.get_scene_image = true
+            base_workspace.update_view()
+        }
+    }
+    
+    func add_operation_to_program()
+    {
+        base_workspace.selected_robot.selected_program.add_point(PositionPoint(x: base_workspace.selected_robot.pointer_location[0], y: base_workspace.selected_robot.pointer_location[1], z: base_workspace.selected_robot.pointer_location[2], r: base_workspace.selected_robot.pointer_rotation[0], p: base_workspace.selected_robot.pointer_rotation[1], w: base_workspace.selected_robot.pointer_rotation[2], move_type: .linear))
+        
+        document.preset.robots = base_workspace.file_data().robots
+        app_state.get_scene_image = true
+        base_workspace.update_view()
+    }
+}
+
+struct OperationDropDelegate: DropDelegate
+{
+    @Binding var points: [SCNNode]
+    @Binding var dragged_point: SCNNode?
+    
+    let point: SCNNode
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        return true
+    }
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragged_point = self.dragged_point else
+        {
+            return
+        }
+        
+        if dragged_point != point
+        {
+            let from = points.firstIndex(of: dragged_point)!
+            let to = points.firstIndex(of: point)!
+            withAnimation(.default)
+            {
+                self.points.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
+        }
+    }
+}
+
+//MARK: Position parameter view
+struct OperationParameterView: View
+{
+    @Binding var position_parameter_view_presented: Bool
+    @Binding var parameter_value: Float
+    @Binding var limit_min: Float
+    @Binding var limit_max: Float
+    
+    var body: some View
+    {
+        HStack(spacing: 8)
+        {
+            Button(action: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                {
+                    parameter_value = 0
+                }
+                //parameter_value = 0
+                position_parameter_view_presented.toggle()
+            })
+            {
+                Label("Reset", systemImage: "arrow.counterclockwise")
+                    .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.borderedProminent)
+            #if os(macOS)
+            .foregroundColor(Color.white)
+            #else
+            .padding(.leading, 8.0)
+            #endif
+            
+            TextField("0", value: $parameter_value, format: .number)
+                .textFieldStyle(.roundedBorder)
+            #if os(macOS)
+                .frame(width: 64.0)
+            #else
+                .frame(width: 128.0)
+            #endif
+            
+            Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
+                .labelsHidden()
+            #if os(iOS)
+                .padding(.trailing, 8.0)
+            #endif
+        }
+        .padding(8.0)
+    }
+}
+
+//MARK: Add program view
+struct AddOperationProgramView: View
+{
+    @Binding var add_program_view_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var selected_program_index: Int
+    
+    @State var add_text = ""
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    var body: some View
+    {
+        VStack
+        {
+            Text("New operations program")
+                .font(.title3)
+            #if os(macOS)
+                .padding(.top, 12.0)
+            #else
+                .padding([.leading, .top, .trailing])
+                .padding(.bottom, 8.0)
+            #endif
+            
+            HStack(spacing: 12.0)
+            {
+                TextField("Name", text: $add_text)
+                    .frame(minWidth: 128.0, maxWidth: 256.0)
+                #if os(iOS)
+                    .frame(idealWidth: 256.0)
+                    .textFieldStyle(.roundedBorder)
+                #endif
+                
+                Button("Add")
+                {
+                    base_workspace.selected_tool.add_program(OperationsProgram(name: add_text))
+                    selected_program_index = base_workspace.selected_tool.programs_names.count - 1
+                    
+                    document.preset.tools = base_workspace.file_data().tools
+                    app_state.get_scene_image = true
+                    add_program_view_presented.toggle()
+                }
+                .fixedSize()
+                .keyboardShortcut(.defaultAction)
+            }
+            .padding([.leading, .bottom, .trailing], 12.0)
+        }
+    }
+}
+
+//MARK: - Position item view for list
+struct OperationItemListView: View
+{
+    @Binding var codes: [Int]
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State var code_item: Int
+    //@State var position_item_view_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
+    
+    let on_delete: (IndexSet) -> ()
+    
+    var body: some View
+    {
+        HStack
+        {
+            Image(systemName: "circle.fill")
+                .foregroundColor(base_workspace.selected_tool.inspector_code_color(code: code_item))
+            Spacer()
+            VStack
+            {
+                Text("Code name")
+                    .font(.caption)
+            }
+            .onTapGesture
+            {
+                print("None")
+                //position_item_view_presented.toggle()
+            }
+            Spacer()
+        }
+        /*.onTapGesture
+        {
+            print("None")
+            //position_item_view_presented.toggle()
+        }*/
     }
 }
 
@@ -614,7 +926,7 @@ struct ToolsView_Previews: PreviewProvider
             AddToolView(add_tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
-            ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), tool_item: .constant(Tool(name: "None")))
+            ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
         }

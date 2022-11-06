@@ -38,6 +38,15 @@ class Tool: WorkspaceObject
         self.scene_address = tool_struct.scene!
         self.programs = tool_struct.programs
         self.image_data = tool_struct.image_data
+        
+        if scene_address != ""
+        {
+            get_node_from_scene()
+        }
+        else
+        {
+            node_by_description()
+        }
     }
     
     //MARK: - Program manage functions
@@ -50,7 +59,7 @@ class Tool: WorkspaceObject
             //Stop robot moving before program change
             performed = false
             moving_completed = false
-            target_point_index = 0
+            target_code_index = 0
         }
         didSet
         {
@@ -189,7 +198,7 @@ class Tool: WorkspaceObject
     public var move_time: Float?
     public var draw_path = false //Draw path of the robot tool point
     public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
-    public var target_point_index = 0 //Index of target point in points array
+    public var target_code_index = 0 //Index of target point in points array
     
     //MARK: - Visual build functions
     override func node_by_description()
@@ -219,6 +228,36 @@ class Tool: WorkspaceObject
         return("\(self.name ?? "Tool")", "Subtitle", Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255), self.image)
     }
     #endif
+    
+    public func inspector_code_color(code: Int) -> Color //Get point color for inspector view
+    {
+        var color = Color.gray //Gray point color if the robot is not reching the code
+        let point_number = self.selected_program.codes.firstIndex(of: code) //Number of selected code
+        
+        if performed
+        {
+            if point_number == target_code_index //Yellow color, if the tool is in the process of moving to the point
+            {
+                color = .yellow
+            }
+            else
+            {
+                if point_number ?? 0 < target_code_index //Green color, if the tool has reached this point
+                {
+                    color = .green
+                }
+            }
+        }
+        else
+        {
+            if moving_completed //Green color, if the robot has passed all points
+            {
+                color = .green
+            }
+        }
+        
+        return color
+    }
     
     //MARK: - Work with file system
     public var file_info: ToolStruct

@@ -1139,7 +1139,7 @@ struct RobotInspectorView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var add_program_view_presented = false
+    @State private var add_program_view_presented = false
     @State var ppv_presented_location = [false, false, false]
     @State var ppv_presented_rotation = [false, false, false]
     @State private var teach_selection = 0
@@ -1207,8 +1207,7 @@ struct RobotInspectorView: View
                             Spacer()
                             Button(action: add_point_to_program)
                             {
-                                Label("Add Point", systemImage: "plus")
-                                    .labelStyle(.iconOnly)
+                                Image(systemName: "plus")
                                     .padding(8.0)
                             }
                             .disabled(base_workspace.selected_robot.programs_count == 0)
@@ -1407,7 +1406,7 @@ struct RobotInspectorView: View
                 
                 Button("-")
                 {
-                    delete_position_program()
+                    delete_positions_program()
                 }
                 .disabled(base_workspace.selected_robot.programs_names.count == 0)
                 .padding(.horizontal)
@@ -1449,7 +1448,7 @@ struct RobotInspectorView: View
         app_state.get_scene_image = true
     }
     
-    func delete_position_program()
+    func delete_positions_program()
     {
         if base_workspace.selected_robot.programs_names.count > 0
         {
@@ -1642,10 +1641,6 @@ struct PositionItemListView: View
                 
                 Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
                     .font(.caption)
-            }
-            .onTapGesture
-            {
-                position_item_view_presented.toggle()
             }
             #if os(macOS)
             .popover(isPresented: $position_item_view_presented,

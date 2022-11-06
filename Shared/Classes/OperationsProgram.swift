@@ -22,6 +22,11 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
     public var name: String?
     public var codes = [Int]()
     
+    public var codes_count: Int
+    {
+        return codes.count
+    }
+    
     //MARK: - Positions program init functions
     init()
     {
