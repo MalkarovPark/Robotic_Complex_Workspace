@@ -34,7 +34,7 @@ class AppState : ObservableObject
     @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
     #endif
     
-    public var workspace_scene = SCNScene() //Link to viewed workspace scene
+    //public var workspace_scene = SCNScene() //Link to viewed workspace scene
     public var previewed_object: WorkspaceObject? //Detail for preview view
     public var preview_update_scene = false //Flag for update previewed detail node in scene
     

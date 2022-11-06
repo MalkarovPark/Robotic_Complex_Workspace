@@ -23,6 +23,8 @@ class Workspace: ObservableObject
     }
     
     //MARK: - Workspace visual handling functions
+    public var scene = SCNScene() //Link to viewed workspace scene
+    
     public var selected_object_type: WorkspaceObjectType? //Return selected object type
     {
         if selected_robot_index > -1 && selected_detail_index == -1 && selected_tool_index == -1
@@ -123,7 +125,7 @@ class Workspace: ObservableObject
             edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
             
             edited_object_node?.name = name
-            selected_robot.workcell_connect(scene: workspace_scene, name: name, connect_camera: false)
+            selected_robot.workcell_connect(scene: scene, name: name, connect_camera: false)
             selected_robot.update_robot()
         case .tool:
             //Deselect other
@@ -924,7 +926,6 @@ class Workspace: ObservableObject
     @Published var cycled = false //Cyclic program performance flag
     
     public var performed = false
-    public var workspace_scene = SCNScene()
     
     private var selected_element_index = 0
     
@@ -1015,7 +1016,7 @@ class Workspace: ObservableObject
                     select_robot(name: element.element_data.robot_name)
                     if selected_robot.programs_names.count > 0 && element.element_data.robot_program_name != ""
                     {
-                        selected_robot.workcell_connect(scene: workspace_scene, name: selected_robot.name!, connect_camera: false)
+                        selected_robot.workcell_connect(scene: scene, name: selected_robot.name!, connect_camera: false)
                         selected_robot.select_program(name: element.element_data.robot_program_name)
                         selected_robot.start_pause_moving()
                         while selected_robot.moving_completed == false && self.performed == true

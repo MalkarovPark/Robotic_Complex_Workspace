@@ -336,8 +336,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
-        app_state.workspace_scene = viewed_scene
-        base_workspace.workspace_scene = viewed_scene
+        base_workspace.scene = viewed_scene
         
         scene_view.allowsCameraControl = true
         scene_view.rendersContinuously = true
@@ -451,8 +450,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
-        app_state.workspace_scene = viewed_scene
-        base_workspace.workspace_scene = viewed_scene
+        base_workspace.scene = viewed_scene
         
         scene_view.allowsCameraControl = true
         scene_view.rendersContinuously = true
