@@ -1566,7 +1566,7 @@ struct AddProgramView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var selected_program_index: Int
     
-    @State var add_text = ""
+    @State var new_program_name = ""
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -1586,7 +1586,7 @@ struct AddProgramView: View
             
             HStack(spacing: 12.0)
             {
-                TextField("Name", text: $add_text)
+                TextField("None", text: $new_program_name)
                     .frame(minWidth: 128.0, maxWidth: 256.0)
                 #if os(iOS)
                     .frame(idealWidth: 256.0)
@@ -1595,7 +1595,12 @@ struct AddProgramView: View
                 
                 Button("Add")
                 {
-                    base_workspace.selected_robot.add_program(PositionsProgram(name: add_text))
+                    if new_program_name == ""
+                    {
+                        new_program_name = "None"
+                    }
+                    
+                    base_workspace.selected_robot.add_program(PositionsProgram(name: new_program_name))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                     
                     document.preset.robots = base_workspace.file_data().robots

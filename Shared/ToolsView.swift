@@ -283,6 +283,7 @@ struct ToolView: View
     
     //@State var new_physics: PhysicsType = .ph_none
     @State private var add_program_view_presented = false
+    @State private var new_operation_code = 0
     
     @State private var ready_for_save = false
     @State private var is_document_updated = false
@@ -357,13 +358,13 @@ struct ToolView: View
                         .font(.subheadline)
                     #endif
                     
-                    Picker("Code", selection: $base_workspace.selected_tool.selected_program_index)
+                    Picker("Code", selection: $new_operation_code)
                     {
-                        if base_workspace.selected_tool.programs_names.count > 0
+                        if base_workspace.selected_tool.codes_count > 0
                         {
-                            ForEach(0 ..< base_workspace.selected_tool.programs_names.count, id: \.self)
-                            {
-                                Text(base_workspace.selected_tool.programs_names[$0])
+                            ForEach(base_workspace.selected_tool.codes, id:\.self)
+                            { code in
+                                Text(base_workspace.selected_tool.code_info(code).label)
                             }
                         }
                         else
@@ -372,18 +373,30 @@ struct ToolView: View
                         }
                     }
                     .pickerStyle(.menu)
+                    .disabled(base_workspace.selected_tool.codes_count == 0)
                     .frame(maxWidth: .infinity)
                     #if os(iOS)
                     .buttonStyle(.borderedProminent)
                     #endif
                     
+                    /*GroupBox
+                    {
+                        base_workspace.selected_tool.code_info(new_operation_code).image
+                            .frame(width: 12, height: 12)
+                    }
+                    .padding(.leading)*/
+                    
                     Button(action: add_operation_to_program)
                     {
-                        Image(systemName: "chevron.up")
+                        //Image(systemName: "arrow.right.and.line.vertical.and.arrow.left")
+                        Text("Add –")
+                        base_workspace.selected_tool.code_info(new_operation_code).image
+                        
+                        //Image(systemName: "chevron.up")
                     }
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
-                    .disabled(base_workspace.selected_tool.programs_count == 0)
+                    .disabled(base_workspace.selected_tool.programs_count == 0 || new_operation_code == 0)
                     .padding(.leading)
                 }
                 .padding([.horizontal, .bottom])
@@ -508,20 +521,20 @@ struct ToolView: View
     
     func delete_operations_program()
     {
-        if base_workspace.selected_robot.programs_names.count > 0
+        if base_workspace.selected_tool.programs_names.count > 0
         {
-            let current_spi = base_workspace.selected_robot.selected_program_index
-            base_workspace.selected_robot.delete_program(number: current_spi)
-            if base_workspace.selected_robot.programs_names.count > 1 && current_spi > 0
+            let current_spi = base_workspace.selected_tool.selected_program_index
+            base_workspace.selected_tool.delete_program(number: current_spi)
+            if base_workspace.selected_tool.programs_names.count > 1 && current_spi > 0
             {
-                base_workspace.selected_robot.selected_program_index = current_spi - 1
+                base_workspace.selected_tool.selected_program_index = current_spi - 1
             }
             else
             {
-                base_workspace.selected_robot.selected_program_index = 0
+                base_workspace.selected_tool.selected_program_index = 0
             }
             
-            document.preset.robots = base_workspace.file_data().robots
+            document.preset.tools = base_workspace.file_data().tools
             app_state.get_scene_image = true
             base_workspace.update_view()
         }
@@ -624,7 +637,7 @@ struct AddOperationProgramView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var selected_program_index: Int
     
-    @State var add_text = ""
+    @State var new_program_name = ""
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -644,7 +657,7 @@ struct AddOperationProgramView: View
             
             HStack(spacing: 12.0)
             {
-                TextField("Name", text: $add_text)
+                TextField("None", text: $new_program_name)
                     .frame(minWidth: 128.0, maxWidth: 256.0)
                 #if os(iOS)
                     .frame(idealWidth: 256.0)
@@ -653,7 +666,12 @@ struct AddOperationProgramView: View
                 
                 Button("Add")
                 {
-                    base_workspace.selected_tool.add_program(OperationsProgram(name: add_text))
+                    if new_program_name == ""
+                    {
+                        new_program_name = "None"
+                    }
+                    
+                    base_workspace.selected_tool.add_program(OperationsProgram(name: new_program_name))
                     selected_program_index = base_workspace.selected_tool.programs_names.count - 1
                     
                     document.preset.tools = base_workspace.file_data().tools

@@ -10,12 +10,14 @@
 		<string></string>
 		<key>Operations Codes</key>
 		<dict>
-			<key>Code 1§arrow.left.and.line.vertical.and.arrow.right</key>
-			<integer>0</integer>
-			<key>Code 2§arrow.right.and.line.vertical.and.arrow.left</key>
-			<integer>0</integer>
+			<key>Code 1#arrow.left.and.line.vertical.and.arrow.right</key>
+			<integer>1</integer>
+			<key>Code 2#arrow.right.and.line.vertical.and.arrow.left</key>
+			<integer>2</integer>
+			<key>Code 2#teset_icon#</key>
+			<integer>3</integer>
 			<key>Code N</key>
-			<integer>0</integer>
+			<integer>4</integer>
 		</dict>
 	</dict>
 	<key>Tool 2</key>

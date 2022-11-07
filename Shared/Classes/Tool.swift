@@ -21,7 +21,15 @@ class Tool: WorkspaceObject
     {
         super.init()
         
-        if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
+        if dictionary.keys.contains("Operations Codes") //Import tool opcodes values from dictionary
+        {
+            var dict = dictionary["Operations Codes"] as! [String : Int]
+            
+            self.codes = dict.map { $0.value }
+            self.codes_names = dict.map { $0.key }
+        }
+        
+        if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it
         {
             self.scene_address = dictionary["Scene"] as? String ?? ""
             get_node_from_scene()
@@ -32,10 +40,14 @@ class Tool: WorkspaceObject
         }
     }
     
-    init(tool_struct: ToolStruct) //Init by detail structure
+    init(tool_struct: ToolStruct) //Init by tool structure
     {
         super.init(name: tool_struct.name!)
-        self.scene_address = tool_struct.scene!
+        
+        self.codes = tool_struct.codes ?? [Int]()
+        self.codes_names = tool_struct.names ?? [String]()
+        
+        self.scene_address = tool_struct.scene ?? ""
         self.programs = tool_struct.programs
         self.image_data = tool_struct.image_data
         
@@ -152,12 +164,14 @@ class Tool: WorkspaceObject
     }
     
     //MARK: - Control functions
-    public var operation_code: Int? = -1
+    public var codes = [Int]()
+    
+    public var operation_code: Int? = 0
     {
         didSet
         {
             //Checking for positive value of operation code number
-            if operation_code! >= 0
+            if operation_code! > 0
             {
                 //Perform function by opcode as array number
                 print("\(operation_code ?? 0) 🍩")
@@ -166,6 +180,10 @@ class Tool: WorkspaceObject
             {
                 //Reset tool perfroming by negative code
                 print("\(operation_code ?? 0) 🍷")
+                if operation_code! < 0
+                {
+                    operation_code = 0
+                }
             }
         }
     }
@@ -176,7 +194,7 @@ class Tool: WorkspaceObject
     {
         get
         {
-            if operation_code ?? 0 >= 0
+            if operation_code ?? 0 > 0
             {
                 return true
             }
@@ -187,11 +205,16 @@ class Tool: WorkspaceObject
         }
         set
         {
-            if newValue
+            if !newValue
             {
-                operation_code = -1
+                operation_code = 0
             }
         }
+    }
+    
+    public var codes_count: Int
+    {
+        return codes.count
     }
     
     //MARK: - Moving functions
@@ -259,10 +282,47 @@ class Tool: WorkspaceObject
         return color
     }
     
+    public func code_info(_ code: Int) -> (label: String, image: Image)
+    {
+        var image = Image(systemName: "questionmark")
+        
+        if codes_count > 0
+        {
+            let info_names = codes_names[codes.firstIndex(of: code) ?? 0].components(separatedBy: "#")
+            
+            if info_names.count == 2
+            {
+                image = Image(systemName: info_names[1])
+            }
+            else
+            {
+                if info_names.count == 3
+                {
+                    image = Image(info_names[1])
+                }
+            }
+            
+            if info_names.count > 0
+            {
+                return (info_names[0], image)
+            }
+            else
+            {
+                return ("Unnamed", image)
+            }
+        }
+        else
+        {
+            return ("Unnamed", image)
+        }
+    }
+    
+    private var codes_names = [String]()
+    
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, scene: self.scene_address, programs: self.programs, image_data: self.image_data)
+        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, programs: self.programs, image_data: self.image_data)
     }
 }
 
@@ -270,6 +330,9 @@ class Tool: WorkspaceObject
 struct ToolStruct: Codable
 {
     var name: String?
+    var codes: [Int]
+    var names: [String]
+    
     var scene: String?
     var programs: [OperationsProgram]
     var image_data: Data
