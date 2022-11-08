@@ -20,7 +20,7 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
     }
     
     public var name: String?
-    public var codes = [Int]()
+    public var codes = [OperationCode]()
     
     public var codes_count: Int
     {
@@ -28,13 +28,13 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
     }
     
     //MARK: - Code manage functions
-    public func add_code(_ code: Int)
+    public func add_code(_ code: OperationCode)
     {
         codes.append(code)
         new_code_check()
     }
     
-    public func update_point(number: Int, _ code: Int)
+    public func update_code(number: Int, _ code: OperationCode)
     {
         if codes.indices.contains(number) //Checking for the presence of a point with a given number to update
         {
@@ -43,7 +43,7 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
         }
     }
     
-    public func delete_point(number: Int) //Checking for the presence of a point with a given number to delete
+    public func delete_code(number: Int) //Checking for the presence of a point with a given number to delete
     {
         if codes.indices.contains(number)
         {
@@ -54,9 +54,9 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
     
     private func new_code_check()
     {
-        if codes.last ?? 0 < 1
+        if codes.last?.value ?? 0 < 1
         {
-            codes[codes.count] = 1
+            codes[codes.count].value = 1
         }
     }
     

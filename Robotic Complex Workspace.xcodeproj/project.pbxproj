@@ -47,6 +47,8 @@
 		6279ED722721A5B400EEA986 /* RobotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279ED702721A5B400EEA986 /* RobotsView.swift */; };
 		62A23C4B271C70D0008FC0CC /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A23C4A271C70D0008FC0CC /* Sidebar.swift */; };
 		62A23C4C271C70D0008FC0CC /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A23C4A271C70D0008FC0CC /* Sidebar.swift */; };
+		62BD1170291A93CA0093DDF1 /* OperationCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BD116F291A93CA0093DDF1 /* OperationCode.swift */; };
+		62BD1171291A93CA0093DDF1 /* OperationCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BD116F291A93CA0093DDF1 /* OperationCode.swift */; };
 		62C05D0427971FBB003A2F0B /* RobotsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 62C05D0327971FBB003A2F0B /* RobotsInfo.plist */; };
 		62C05D0527971FBB003A2F0B /* RobotsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 62C05D0327971FBB003A2F0B /* RobotsInfo.plist */; };
 		62C4833328F1C55B00AB6B23 /* Connector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C4833228F1C55B00AB6B23 /* Connector.swift */; };
@@ -85,6 +87,7 @@
 		6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
 		6279ED702721A5B400EEA986 /* RobotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsView.swift; sourceTree = "<group>"; };
 		62A23C4A271C70D0008FC0CC /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
+		62BD116F291A93CA0093DDF1 /* OperationCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationCode.swift; sourceTree = "<group>"; };
 		62C05D0327971FBB003A2F0B /* RobotsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RobotsInfo.plist; sourceTree = "<group>"; };
 		62C4833228F1C55B00AB6B23 /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		62DFC8E827E3841B00ABCE1E /* ToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
@@ -132,6 +135,7 @@
 				62C4833228F1C55B00AB6B23 /* Connector.swift */,
 				6240372D290C76D00085B8AC /* OperationsProgram.swift */,
 				62403730290D8E560085B8AC /* WorkspaceObject.swift */,
+				62BD116F291A93CA0093DDF1 /* OperationCode.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -318,6 +322,7 @@
 				62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
 				621AABF628BB8B0500AFD62F /* Detail.swift in Sources */,
 				624432EF2847C8A200E7BE85 /* Tool.swift in Sources */,
+				62BD1170291A93CA0093DDF1 /* OperationCode.swift in Sources */,
 				6240373429113CE50085B8AC /* Cards.swift in Sources */,
 				62C4833328F1C55B00AB6B23 /* Connector.swift in Sources */,
 				6240372E290C76D00085B8AC /* OperationsProgram.swift in Sources */,
@@ -358,6 +363,7 @@
 				621AABF728BB8B0500AFD62F /* Detail.swift in Sources */,
 				6279ED722721A5B400EEA986 /* RobotsView.swift in Sources */,
 				624DA0CF275D3FBB00918A9E /* Workspace.swift in Sources */,
+				62BD1171291A93CA0093DDF1 /* OperationCode.swift in Sources */,
 				6279ED6F2721A4F300EEA986 /* WorkspaceView.swift in Sources */,
 				621AABFA28BB997F00AFD62F /* DetailsView.swift in Sources */,
 				624432ED2847C83D00E7BE85 /* PositionPoint.swift in Sources */,

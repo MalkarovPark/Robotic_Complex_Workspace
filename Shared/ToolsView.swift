@@ -279,9 +279,7 @@ struct ToolView: View
 {
     @Binding var tool_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    //@Binding var tool_item: Tool
     
-    //@State var new_physics: PhysicsType = .ph_none
     @State private var add_program_view_presented = false
     @State private var add_operation_view_presented = false
     @State private var new_operation_code = 0
@@ -317,7 +315,7 @@ struct ToolView: View
                         {
                             if base_workspace.selected_tool.selected_program.codes_count > 0
                             {
-                                ForEach(base_workspace.selected_tool.selected_program.codes, id: \.self)
+                                ForEach(base_workspace.selected_tool.selected_program.codes)
                                 { code in
                                     OperationItemListView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code, on_delete: remove_codes)
                                         .onDrag
@@ -543,7 +541,6 @@ struct ToolView: View
         if ready_for_save
         {
             app_state.get_scene_image = true
-            //tool_item.physics_type = new_physics
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
@@ -595,7 +592,7 @@ struct ToolView: View
     func add_operation_to_program()
     {
         
-        base_workspace.selected_tool.selected_program.add_code(new_operation_code)
+        base_workspace.selected_tool.selected_program.add_code(OperationCode(new_operation_code))
         
         document.preset.tools = base_workspace.file_data().tools
         app_state.get_scene_image = true
@@ -742,11 +739,12 @@ struct AddOperationProgramView: View
 //MARK: - Position item view for list
 struct OperationItemListView: View
 {
-    @Binding var codes: [Int]
+    @Binding var codes: [OperationCode]
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var code_item: Int
-    //@State var position_item_view_presented = false
+    @State var code_item: OperationCode
+    @State private var new_code_value = 0
+    @State private var update_data = false
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -762,17 +760,58 @@ struct OperationItemListView: View
         {
             Image(systemName: "circle.fill")
                 .foregroundColor(base_workspace.selected_tool.inspector_code_color(code: code_item))
+            
             Spacer()
-            Text(base_workspace.selected_tool.code_info(code_item).label)
-                .font(.caption)
-            base_workspace.selected_tool.code_info(code_item).image
+            
+            //Text(base_workspace.selected_tool.code_info(code_item).label)
+                //.font(.caption)
+            Picker("Code", selection: $new_code_value)
+            {
+                if base_workspace.selected_tool.codes_count > 0
+                {
+                    ForEach(base_workspace.selected_tool.codes, id:\.self)
+                    { code in
+                        Text(base_workspace.selected_tool.code_info(code).label)
+                    }
+                }
+                else
+                {
+                    Text("None")
+                }
+            }
+            .padding()
+            .disabled(base_workspace.selected_tool.codes_count == 0)
+            .frame(maxWidth: .infinity)
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .onChange(of: new_code_value)
+            { newValue in
+                if update_data == true
+                {
+                    code_item.value = new_code_value
+                    document.preset.tools = base_workspace.file_data().tools
+                }
+            }
+            base_workspace.selected_tool.code_info(new_code_value).image
+            
             Spacer()
+            
+            Button(action: { })
+            {
+                Image(systemName: "xmark")
+            }
+            .buttonStyle(.borderless)
         }
-        /*.onTapGesture
+        .onAppear
         {
-            print("None")
-            //position_item_view_presented.toggle()
-        }*/
+            update_data = false
+            new_code_value = code_item.value
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+            {
+                update_data = true
+            }
+        }
     }
 }
 
@@ -993,6 +1032,8 @@ struct ToolsView_Previews: PreviewProvider
             ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
+            OperationItemListView(codes: .constant([OperationCode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), code_item: OperationCode(1)) { IndexSet in }
+            .environmentObject(Workspace())
         }
     }
 }

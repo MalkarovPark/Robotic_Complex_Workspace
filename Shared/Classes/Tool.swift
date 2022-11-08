@@ -252,7 +252,7 @@ class Tool: WorkspaceObject
     }
     #endif
     
-    public func inspector_code_color(code: Int) -> Color //Get point color for inspector view
+    public func inspector_code_color(code: OperationCode) -> Color //Get point color for inspector view
     {
         var color = Color.gray //Gray point color if the robot is not reching the code
         let point_number = self.selected_program.codes.firstIndex(of: code) //Number of selected code
