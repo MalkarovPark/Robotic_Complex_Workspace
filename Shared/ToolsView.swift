@@ -283,6 +283,7 @@ struct ToolView: View
     
     //@State var new_physics: PhysicsType = .ph_none
     @State private var add_program_view_presented = false
+    @State private var add_operation_view_presented = false
     @State private var new_operation_code = 0
     
     @State private var ready_for_save = false
@@ -350,56 +351,102 @@ struct ToolView: View
                         }
                     }
                 }
-                
-                HStack(spacing: 0) //(spacing: 12.0)
+                .overlay(alignment: .bottomTrailing)
                 {
-                    #if os(iOS)
-                    Text("Code")
-                        .font(.subheadline)
-                    #endif
-                    
-                    Picker("Code", selection: $new_operation_code)
+                    ZStack(alignment: .trailing)
                     {
-                        if base_workspace.selected_tool.codes_count > 0
+                        Button(action: add_operation_to_program) //Add element button
                         {
-                            ForEach(base_workspace.selected_tool.codes, id:\.self)
-                            { code in
-                                Text(base_workspace.selected_tool.code_info(code).label)
+                            HStack
+                            {
+                                Image(systemName: "plus")
                             }
+                            .padding()
                         }
-                        else
-                        {
-                            Text("None")
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .disabled(base_workspace.selected_tool.codes_count == 0)
-                    .frame(maxWidth: .infinity)
-                    #if os(iOS)
-                    .buttonStyle(.borderedProminent)
-                    #endif
-                    
-                    /*GroupBox
-                    {
-                        base_workspace.selected_tool.code_info(new_operation_code).image
-                            .frame(width: 12, height: 12)
-                    }
-                    .padding(.leading)*/
-                    
-                    Button(action: add_operation_to_program)
-                    {
-                        //Image(systemName: "arrow.right.and.line.vertical.and.arrow.left")
-                        Text("Add –")
-                        base_workspace.selected_tool.code_info(new_operation_code).image
+                        #if os(macOS)
+                        .frame(maxWidth: 80.0, alignment: .leading)
+                        #else
+                        .frame(maxWidth: 86.0, alignment: .leading)
+                        #endif
+                        .background(.thinMaterial)
+                        .cornerRadius(32)
+                        .shadow(radius: 4.0)
+                        #if os(macOS)
+                        .buttonStyle(BorderlessButtonStyle())
+                        #endif
+                        .padding()
                         
-                        //Image(systemName: "chevron.up")
+                        Button(action: { add_operation_view_presented = true }) //Configure new element button
+                        {
+                            Circle()
+                                .foregroundColor(.accentColor)
+                                .overlay(
+                                    base_workspace.selected_tool.code_info(new_operation_code).image
+                                        .foregroundColor(.white)
+                                        .animation(.easeInOut(duration: 0.2), value: base_workspace.selected_tool.code_info(new_operation_code).image)
+                                )
+                                .frame(width: 32, height: 32)
+                        }
+                        #if os(macOS)
+                        .buttonStyle(BorderlessButtonStyle())
+                        #endif
+                        .padding(.trailing, 24)
+                        .popover(isPresented: $add_operation_view_presented)
+                        {
+                            #if os(macOS)
+                            HStack
+                            {
+                                Picker("Code", selection: $new_operation_code)
+                                {
+                                    if base_workspace.selected_tool.codes_count > 0
+                                    {
+                                        ForEach(base_workspace.selected_tool.codes, id:\.self)
+                                        { code in
+                                            Text(base_workspace.selected_tool.code_info(code).label)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .padding()
+                                .disabled(base_workspace.selected_tool.codes_count == 0)
+                                .frame(maxWidth: .infinity)
+                                .pickerStyle(.menu)
+                            }
+                            #else
+                            VStack
+                            {
+                                Text("Code")
+                                    .font(.subheadline)
+                                    .padding()
+                                    //.padding(.top)
+                                
+                                Picker("Code", selection: $new_operation_code)
+                                {
+                                    if base_workspace.selected_tool.codes_count > 0
+                                    {
+                                        ForEach(base_workspace.selected_tool.codes, id:\.self)
+                                        { code in
+                                            Text(base_workspace.selected_tool.code_info(code).label)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .disabled(base_workspace.selected_tool.codes_count == 0)
+                                .pickerStyle(.wheel)
+                                .frame(maxWidth: 192)
+                                .buttonStyle(.borderedProminent)
+                            }
+                            #endif
+                        }
                     }
-                    .keyboardShortcut(.defaultAction)
-                    .buttonStyle(.borderedProminent)
-                    .disabled(base_workspace.selected_tool.programs_count == 0 || new_operation_code == 0)
-                    .padding(.leading)
+                    .padding(16)
                 }
-                .padding([.horizontal, .bottom])
                 
                 Divider()
                 
