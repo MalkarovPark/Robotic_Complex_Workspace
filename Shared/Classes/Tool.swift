@@ -284,7 +284,7 @@ class Tool: WorkspaceObject
     
     public func code_info(_ code: Int) -> (label: String, image: Image)
     {
-        var image = Image(systemName: "questionmark")
+        var image = Image("")
         
         if codes_count > 0
         {

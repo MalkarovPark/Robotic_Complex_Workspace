@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Tool 1</key>
+	<key>Gripper</key>
 	<dict>
 		<key>Scene</key>
 		<string></string>
@@ -10,17 +10,16 @@
 		<string></string>
 		<key>Operations Codes</key>
 		<dict>
-			<key>Code 1#arrow.left.and.line.vertical.and.arrow.right</key>
-			<integer>1</integer>
-			<key>Code 2#arrow.right.and.line.vertical.and.arrow.left</key>
+			<key>Grab#arrow.right.and.line.vertical.and.arrow.left</key>
 			<integer>2</integer>
-			<key>Code 2#teset_icon#</key>
-			<integer>3</integer>
-			<key>Code N</key>
-			<integer>4</integer>
+			<key>Release#arrow.left.and.line.vertical.and.arrow.right</key>
+			<integer>1</integer>
 		</dict>
 	</dict>
-	<key>Tool 2</key>
-	<dict/>
+	<key>Static Tool</key>
+	<dict>
+		<key>Scene</key>
+		<string></string>
+	</dict>
 </dict>
 </plist>

@@ -1198,30 +1198,28 @@ struct RobotInspectorView: View
                         Text("Empty Program")
                             .foregroundColor(.gray)
                     }
-                    
-                    VStack
+                }
+            }
+            .overlay(alignment: .bottomTrailing)
+            {
+                if base_workspace.selected_robot.programs_count > 0
+                {
+                    Spacer()
+                    Button(action: add_point_to_program)
                     {
-                        Spacer()
-                        HStack
-                        {
-                            Spacer()
-                            Button(action: add_point_to_program)
-                            {
-                                Image(systemName: "plus")
-                                    .padding(8.0)
-                            }
-                            .disabled(base_workspace.selected_robot.programs_count == 0)
-                            .foregroundColor(.white)
-                            .background(Color.accentColor)
-                            .clipShape(Circle())
-                            .frame(width: 24.0, height: 24.0)
-                            .shadow(radius: 4.0)
-                            #if os(macOS)
-                            .buttonStyle(BorderlessButtonStyle())
-                            #endif
-                            .padding(32.0)
-                        }
+                        Image(systemName: "plus")
+                            .padding(8.0)
                     }
+                    .disabled(base_workspace.selected_robot.programs_count == 0)
+                    .foregroundColor(.white)
+                    .background(Color.accentColor)
+                    .clipShape(Circle())
+                    .frame(width: 24.0, height: 24.0)
+                    .shadow(radius: 4.0)
+                    #if os(macOS)
+                    .buttonStyle(BorderlessButtonStyle())
+                    #endif
+                    .padding(32.0)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
             }
