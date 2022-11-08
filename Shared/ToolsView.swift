@@ -796,7 +796,7 @@ struct OperationItemListView: View
             
             Spacer()
             
-            Button(action: { })
+            Button(action: delete_code_item)
             {
                 Image(systemName: "xmark")
             }
@@ -812,6 +812,12 @@ struct OperationItemListView: View
                 update_data = true
             }
         }
+    }
+    
+    func delete_code_item()
+    {
+        base_workspace.selected_tool.selected_program.delete_code(number: base_workspace.selected_tool.selected_program.codes.firstIndex(of: code_item) ?? 0)
+        document.preset.tools = base_workspace.file_data().tools
     }
 }
 
