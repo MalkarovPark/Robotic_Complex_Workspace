@@ -390,7 +390,6 @@ struct ToolView: View
                         #if os(macOS)
                         .buttonStyle(BorderlessButtonStyle())
                         #endif
-                        .padding(.trailing, 24)
                         .popover(isPresented: $add_operation_view_presented)
                         {
                             #if os(macOS)
@@ -444,6 +443,8 @@ struct ToolView: View
                             }
                             #endif
                         }
+                        .padding(.trailing, 24)
+                        
                     }
                     .padding(16)
                 }
@@ -522,6 +523,11 @@ struct ToolView: View
         {
             app_state.previewed_object?.node = base_workspace.selected_tool.node
             app_state.preview_update_scene = true
+            
+            if base_workspace.selected_tool.codes_count > 0
+            {
+                new_operation_code = base_workspace.selected_tool.codes.first ?? 0
+            }
         }
         .onDisappear
         {
@@ -549,9 +555,8 @@ struct ToolView: View
     
     func code_item_move(from source: IndexSet, to destination: Int)
     {
-        base_workspace.selected_robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
-        base_workspace.selected_robot.selected_program.visual_build()
-        document.preset.robots = base_workspace.file_data().robots
+        base_workspace.selected_tool.selected_program.codes.move(fromOffsets: source, toOffset: destination)
+        document.preset.tools = base_workspace.file_data().tools
         app_state.get_scene_image = true
     }
     
@@ -589,11 +594,12 @@ struct ToolView: View
     
     func add_operation_to_program()
     {
-        base_workspace.selected_robot.selected_program.add_point(PositionPoint(x: base_workspace.selected_robot.pointer_location[0], y: base_workspace.selected_robot.pointer_location[1], z: base_workspace.selected_robot.pointer_location[2], r: base_workspace.selected_robot.pointer_rotation[0], p: base_workspace.selected_robot.pointer_rotation[1], w: base_workspace.selected_robot.pointer_rotation[2], move_type: .linear))
         
-        document.preset.robots = base_workspace.file_data().robots
+        base_workspace.selected_tool.selected_program.add_code(new_operation_code)
+        
+        document.preset.tools = base_workspace.file_data().tools
         app_state.get_scene_image = true
-        base_workspace.update_view()
+        //base_workspace.update_view()
     }
 }
 
@@ -757,16 +763,9 @@ struct OperationItemListView: View
             Image(systemName: "circle.fill")
                 .foregroundColor(base_workspace.selected_tool.inspector_code_color(code: code_item))
             Spacer()
-            VStack
-            {
-                Text("Code name")
-                    .font(.caption)
-            }
-            .onTapGesture
-            {
-                print("None")
-                //position_item_view_presented.toggle()
-            }
+            Text(base_workspace.selected_tool.code_info(code_item).label)
+                .font(.caption)
+            base_workspace.selected_tool.code_info(code_item).image
             Spacer()
         }
         /*.onTapGesture
