@@ -113,9 +113,6 @@ struct RobotsTableView: View
                     .sheet(isPresented: $add_robot_view_presented)
                     {
                         AddRobotView(add_robot_view_presented: $add_robot_view_presented, document: $document)
-                        #if os(iOS)
-                            .presentationDetents([.medium])
-                        #endif
                     }
                 }
             }
@@ -260,8 +257,14 @@ struct AddRobotView: View
         .controlSize(.regular)
         .frame(minWidth: 160, idealWidth: 240, maxWidth: 320, minHeight: 240, maxHeight: 300)
         #else
-        NavigationView
+        VStack(spacing: 0)
         {
+            Text("Add Robot")
+                .font(.title2)
+                .padding()
+            
+            Divider()
+            
             //MARK: Robot model selection
             Form
             {
@@ -303,15 +306,32 @@ struct AddRobotView: View
                     }
                 }
             }
-            .navigationBarTitle(Text("Add Robot"), displayMode: .inline)
-            .navigationBarItems(leading: Button("Cancel", action: { add_robot_view_presented.toggle() }), trailing: Button("Save", action: add_robot_in_workspace)
-                                    .keyboardShortcut(.defaultAction))
+            
+            Divider()
+            
+            HStack(spacing: 0)
+            {
+                Spacer()
+                
+                Button("Cancel", action: { add_robot_view_presented.toggle() })
+                    .buttonStyle(.bordered)
+                Button("Save", action: add_robot_in_workspace)
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
+                    .padding(.leading)
+            }
+            .padding()
         }
         #endif
     }
     
     func add_robot_in_workspace()
     {
+        if new_robot_name == ""
+        {
+            new_robot_name = "None"
+        }
+        
         base_workspace.add_robot(Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_dictionary))
         document.preset.robots = base_workspace.file_data().robots
         
