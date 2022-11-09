@@ -54,9 +54,12 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
     
     private func new_code_check()
     {
-        if codes.last?.value ?? 0 < 1
+        if codes.count > 0
         {
-            codes[codes.count].value = 1
+            if codes.last?.value ?? 0 < 1
+            {
+                codes[codes.count].value = 1
+            }
         }
     }
     

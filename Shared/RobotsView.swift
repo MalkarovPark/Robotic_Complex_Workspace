@@ -113,6 +113,9 @@ struct RobotsTableView: View
                     .sheet(isPresented: $add_robot_view_presented)
                     {
                         AddRobotView(add_robot_view_presented: $add_robot_view_presented, document: $document)
+                        #if os(iOS)
+                            .presentationDetents([.height(512), .large])
+                        #endif
                     }
                 }
             }
@@ -1388,11 +1391,7 @@ struct RobotInspectorView: View
                     }
                 }
             }
-            .padding([.horizontal, .bottom])
-            
-            #if os(macOS)
-            Divider()
-            #endif
+            .padding(.horizontal)
             
             HStack(spacing: 0) //(spacing: 12.0)
             {
@@ -1656,7 +1655,9 @@ struct PositionItemListView: View
         {
             Image(systemName: "circle.fill")
                 .foregroundColor(base_workspace.selected_robot.inspector_point_color(point: point_item)) //.gray)
+            
             Spacer()
+            
             VStack
             {
                 Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
@@ -1665,21 +1666,18 @@ struct PositionItemListView: View
                 Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
                     .font(.caption)
             }
-            #if os(macOS)
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .leading)
             {
+                #if os(macOS)
                 PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                #else
+                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
+                    .presentationDetents([.height(500)])
+                #endif
             }
-            #else
-            .popover(isPresented: $position_item_view_presented)
-            {
-                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
-                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                    .presentationDetents([.height(512.0)])
-            }
-            #endif
+            
             Spacer()
         }
         .onTapGesture
@@ -1704,7 +1702,8 @@ struct PositionItemView: View
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @State var is_compact = false
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     #endif
     
     let on_delete: (IndexSet) -> ()
@@ -1715,7 +1714,7 @@ struct PositionItemView: View
         VStack(spacing: 0)
         {
             #if os(macOS)
-            HStack(spacing: 16)
+            HStack(spacing: 0)
             {
                 ForEach(PositionComponents.allCases, id: \.self)
                 { position_component in
@@ -1769,86 +1768,138 @@ struct PositionItemView: View
                             }
                         }
                     }
+                    .padding([.top, .trailing])
                 }
             }
-            .padding([.top, .leading, .trailing])
+            .padding(.leading)
             #else
-            VStack(spacing: 12)
+            if !is_compact
             {
-                ForEach(PositionComponents.allCases, id: \.self)
-                { position_component in
-                    GroupBox(label: Text(position_component.rawValue)
-                        .font(.headline))
-                    {
-                        VStack(spacing: 12)
+                HStack(spacing: 0)
+                {
+                    ForEach(PositionComponents.allCases, id: \.self)
+                    { position_component in
+                        GroupBox(label: Text(position_component.rawValue)
+                            .font(.headline))
                         {
-                            switch position_component
+                            VStack(spacing: 12)
                             {
-                            case .location:
-                                ForEach(LocationComponents.allCases, id: \.self)
-                                { location_component in
-                                    HStack(spacing: 8)
-                                    {
-                                        Text(location_component.info.text)
-                                            .frame(width: 20.0)
-                                        TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
-                                            .textFieldStyle(.roundedBorder)
-                                            .keyboardType(.decimalPad)
-                                        Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
-                                            .labelsHidden()
+                                switch position_component
+                                {
+                                case .location:
+                                    ForEach(LocationComponents.allCases, id: \.self)
+                                    { location_component in
+                                        HStack(spacing: 8)
+                                        {
+                                            Text(location_component.info.text)
+                                                .frame(width: 20.0)
+                                            TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
+                                                .textFieldStyle(.roundedBorder)
+                                                .keyboardType(.decimalPad)
+                                            Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
+                                                .labelsHidden()
+                                        }
                                     }
-                                }
-                                .onChange(of: item_view_pos_location)
-                                { _ in
-                                    update_point_location()
-                                }
-                            case .rotation:
-                                ForEach(RotationComponents.allCases, id: \.self)
-                                { rotation_component in
-                                    HStack(spacing: 8)
-                                    {
-                                        Text(rotation_component.info.text)
-                                            .frame(width: 20.0)
-                                        TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
-                                            .textFieldStyle(.roundedBorder)
-                                            .keyboardType(.decimalPad)
-                                        Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
-                                            .labelsHidden()
-                                    }
-                                    .onChange(of: item_view_pos_rotation)
+                                    .onChange(of: item_view_pos_location)
                                     { _ in
-                                        update_point_rotation()
+                                        update_point_location()
+                                    }
+                                case .rotation:
+                                    ForEach(RotationComponents.allCases, id: \.self)
+                                    { rotation_component in
+                                        HStack(spacing: 8)
+                                        {
+                                            Text(rotation_component.info.text)
+                                                .frame(width: 20.0)
+                                            TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
+                                                .textFieldStyle(.roundedBorder)
+                                                .keyboardType(.decimalPad)
+                                            Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
+                                                .labelsHidden()
+                                        }
+                                        .onChange(of: item_view_pos_rotation)
+                                        { _ in
+                                            update_point_rotation()
+                                        }
                                     }
                                 }
                             }
                         }
+                        .padding([.top, .trailing])
                     }
                 }
+                .padding(.leading)
             }
-            .padding([.top, .leading, .trailing])
-            
-            if horizontal_size_class == .compact
+            else
             {
+                VStack(spacing: 0)
+                {
+                    ForEach(PositionComponents.allCases, id: \.self)
+                    { position_component in
+                        GroupBox(label: Text(position_component.rawValue)
+                            .font(.headline))
+                        {
+                            VStack(spacing: 12)
+                            {
+                                switch position_component
+                                {
+                                case .location:
+                                    ForEach(LocationComponents.allCases, id: \.self)
+                                    { location_component in
+                                        HStack(spacing: 8)
+                                        {
+                                            Text(location_component.info.text)
+                                                .frame(width: 20.0)
+                                            TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
+                                                .textFieldStyle(.roundedBorder)
+                                                .keyboardType(.decimalPad)
+                                            Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
+                                                .labelsHidden()
+                                        }
+                                    }
+                                    .onChange(of: item_view_pos_location)
+                                    { _ in
+                                        update_point_location()
+                                    }
+                                case .rotation:
+                                    ForEach(RotationComponents.allCases, id: \.self)
+                                    { rotation_component in
+                                        HStack(spacing: 8)
+                                        {
+                                            Text(rotation_component.info.text)
+                                                .frame(width: 20.0)
+                                            TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
+                                                .textFieldStyle(.roundedBorder)
+                                                .keyboardType(.decimalPad)
+                                            Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
+                                                .labelsHidden()
+                                        }
+                                        .onChange(of: item_view_pos_rotation)
+                                        { _ in
+                                            update_point_rotation()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .padding([.horizontal, .top])
+                    }
+                }
+                
                 Spacer()
             }
             #endif
             
-            HStack
+            Button(action: delete_point_from_program)
             {
-                Button(action: delete_point_from_program)
-                {
-                    Text("Delete")
-                    #if os(macOS)
-                        .frame(maxWidth: .infinity)
-                    #else
-                        .frame(maxWidth: .infinity, minHeight: 32)
-                        .background(.thinMaterial)
-                        .foregroundColor(Color.red)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    #endif
-                }
-                .padding()
+                Text("Delete")
+                    .frame(maxWidth: .infinity)
+                    .foregroundColor(Color.red)
             }
+            .padding()
+            #if os(iOS)
+            .buttonStyle(.bordered)
+            #endif
         }
         .onAppear()
         {

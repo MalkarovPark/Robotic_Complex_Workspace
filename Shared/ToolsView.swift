@@ -307,7 +307,7 @@ struct ToolView: View
                 if base_workspace.selected_tool.codes_count > 0
                 {
                     Text("Operations")
-                        .padding(.top)
+                        .padding(.vertical)
                     
                     ZStack
                     {
@@ -334,8 +334,9 @@ struct ToolView: View
                                 }
                             }
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: 6.0, style: .continuous))
-                        .padding(8)
+                        #if os(iOS)
+                        .listStyle(.plain)
+                        #endif
                         
                         if base_workspace.selected_tool.programs_count == 0
                         {
@@ -449,7 +450,7 @@ struct ToolView: View
                         .padding(8)
                     }
                     
-                    Divider()
+                    //Divider()
                     
                     HStack(spacing: 0)
                     {
@@ -767,7 +768,9 @@ struct OperationItemListView: View
         {
             Image(systemName: "circle.fill")
                 .foregroundColor(base_workspace.selected_tool.inspector_code_color(code: code_item))
+            #if os(macOS)
                 .padding(.trailing)
+            #endif
             
             Picker("Code", selection: $new_code_value)
             {
@@ -802,7 +805,9 @@ struct OperationItemListView: View
                 Image(systemName: "xmark")
             }
             .buttonStyle(.borderless)
+            #if os(macOS)
             .padding(.leading)
+            #endif
         }
         .onAppear
         {

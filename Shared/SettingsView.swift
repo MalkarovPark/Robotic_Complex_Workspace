@@ -26,6 +26,9 @@ struct SettingsView: View
         TabView
         {
             GeneralSettingsView()
+            #if os(iOS)
+                .modifier(CaptionModifier(label: "General"))
+            #endif
                 .tabItem
             {
                 Label("General", systemImage: "gear")
@@ -33,12 +36,18 @@ struct SettingsView: View
             .tag(Tabs.general)
             
             PropertiesSettingsView()
+            #if os(iOS)
+                .modifier(CaptionModifier(label: "Properties"))
+            #endif
                 .tabItem
             {
                 Label("Properties", systemImage: "doc.text")
             }
             
             AdvancedSettingsView()
+            #if os(iOS)
+                .modifier(CaptionModifier(label: "Advanced"))
+            #endif
                 .tabItem
             {
                 Label("Advanced", systemImage: "star")
@@ -50,6 +59,27 @@ struct SettingsView: View
         #endif
     }
 }
+
+#if os(iOS)
+struct CaptionModifier: ViewModifier
+{
+    var label: String
+    
+    func body(content: Content) -> some View
+    {
+        VStack(spacing: 0)
+        {
+            Text(label)
+                .font(.title2)
+                .padding()
+
+            Divider()
+            
+            content
+        }
+    }
+}
+#endif
 
 //MARK: - Settings view with tab bar
 struct GeneralSettingsView: View
