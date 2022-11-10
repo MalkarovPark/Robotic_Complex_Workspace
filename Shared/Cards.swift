@@ -276,40 +276,33 @@ struct CircleDeleteButtonModifier: ViewModifier
     
     func body(content: Content) -> some View
     {
-        ZStack
+        content
+            .overlay(alignment: .topTrailing)
         {
-            content
-            VStack
+            Spacer()
+            
+            ZStack
             {
-                HStack
-                {
-                    Spacer()
-                    
-                    ZStack
-                    {
-                        Image(systemName: "xmark")
-                            .padding(4.0)
-                    }
-                    .frame(width: 24, height: 24)
-                    .background(.thinMaterial)
-                    .clipShape(Circle())
-                    .onTapGesture
-                    {
-                        delete_alert_presented = true
-                    }
-                    .padding(8.0)
-                }
-                Spacer()
+                Image(systemName: "xmark")
+                    .padding(4.0)
             }
-            .alert(isPresented: $delete_alert_presented)
+            .frame(width: 24, height: 24)
+            .background(.thinMaterial)
+            .clipShape(Circle())
+            .onTapGesture
             {
-                Alert(
-                    title: Text("Delete \(object_type_name)?"),
-                    message: Text("Do you wand to delete this \(object_type_name) – \(object_item.name ?? "")"),
-                    primaryButton: .destructive(Text("Yes"), action: delete_object),
-                    secondaryButton: .cancel(Text("No"))
-                )
+                delete_alert_presented = true
             }
+            .padding(8.0)
+        }
+        .alert(isPresented: $delete_alert_presented)
+        {
+            Alert(
+                title: Text("Delete \(object_type_name)?"),
+                message: Text("Do you wand to delete this \(object_type_name) – \(object_item.name ?? "")"),
+                primaryButton: .destructive(Text("Yes"), action: delete_object),
+                secondaryButton: .cancel(Text("No"))
+            )
         }
     }
     

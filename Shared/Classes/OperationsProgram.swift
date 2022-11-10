@@ -31,7 +31,7 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
     public func add_code(_ code: OperationCode)
     {
         codes.append(code)
-        new_code_check()
+        new_code_check(number: codes.count - 1)
     }
     
     public func update_code(number: Int, _ code: OperationCode)
@@ -39,7 +39,7 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
         if codes.indices.contains(number) //Checking for the presence of a point with a given number to update
         {
             codes[number] = code
-            new_code_check()
+            new_code_check(number: number)
         }
     }
     
@@ -48,13 +48,12 @@ class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
         if codes.indices.contains(number)
         {
             codes.remove(at: number)
-            new_code_check()
         }
     }
     
-    private func new_code_check()
+    private func new_code_check(number: Int)
     {
-        if codes.count > 0
+        if codes.count > 0 && number < codes_count
         {
             if codes.last?.value ?? 0 < 1
             {
