@@ -331,37 +331,30 @@ struct BorderlessDeleteButtonModifier: ViewModifier
     
     func body(content: Content) -> some View
     {
-        ZStack
+        content
+            .overlay(alignment: .trailing)
         {
-            content
-            HStack
+            ZStack
             {
-                Spacer()
-                VStack
-                {
-                    ZStack
-                    {
-                        Image(systemName: "xmark")
-                            .foregroundColor(.white)
-                            .padding(4.0)
-                    }
-                    .frame(width: 24, height: 24)
-                    .onTapGesture
-                    {
-                        delete_alert_presented = true
-                    }
+                Image(systemName: "xmark")
+                    .foregroundColor(.white)
                     .padding(4.0)
-                }
             }
-            .alert(isPresented: $delete_alert_presented)
+            .frame(width: 24, height: 24)
+            .onTapGesture
             {
-                Alert(
-                    title: Text("Delete \(object_type_name)?"),
-                    message: Text("Do you wand to delete this \(object_type_name) – \(object_item.name ?? "")"),
-                    primaryButton: .destructive(Text("Yes"), action: delete_object),
-                    secondaryButton: .cancel(Text("No"))
-                )
+                delete_alert_presented = true
             }
+            .padding(4.0)
+        }
+        .alert(isPresented: $delete_alert_presented)
+        {
+            Alert(
+                title: Text("Delete \(object_type_name)?"),
+                message: Text("Do you wand to delete this \(object_type_name) – \(object_item.name ?? "")"),
+                primaryButton: .destructive(Text("Yes"), action: delete_object),
+                secondaryButton: .cancel(Text("No"))
+            )
         }
     }
     
@@ -402,17 +395,24 @@ struct Cards_Previews: PreviewProvider
     {
         Group
         {
-            #if os(macOS)
-            LargeCardView(color: .green, image: NSImage(), title: "Title", subtitle: "Subtitle")
-                .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
-            SmallCardView(color: .green, image: NSImage(), title: "Title")
-                .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
-            #else
-            LargeCardView(color: .green, image: UIImage(), title: "Title", subtitle: "Subtitle")
-                .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
-            SmallCardView(color: .green, image: UIImage(), title: "Title")
-                .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
-            #endif
+            VStack()
+            {
+                #if os(macOS)
+                LargeCardView(color: .green, image: NSImage(), title: "Title", subtitle: "Subtitle")
+                    .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
+                    .padding([.horizontal, .top])
+                SmallCardView(color: .green, image: NSImage(), title: "Title")
+                    .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
+                    .padding()
+                #else
+                LargeCardView(color: .green, image: UIImage(), title: "Title", subtitle: "Subtitle")
+                    .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
+                    .padding([.horizontal, .top])
+                SmallCardView(color: .green, image: UIImage(), title: "Title")
+                    .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
+                    .padding()
+                #endif
+            }
         }
     }
 }
