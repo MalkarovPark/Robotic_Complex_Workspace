@@ -29,6 +29,12 @@ class Tool: WorkspaceObject
             self.codes_names = dict.map { $0.key }
         }
         
+        if dictionary.keys.contains("Connector") //Select model visual controller an connector
+        {
+            self.connector_name = dictionary["Connector"] as? String ?? ""
+            select_model_connector()
+        }
+        
         if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it
         {
             self.scene_address = dictionary["Scene"] as? String ?? ""
@@ -58,6 +64,23 @@ class Tool: WorkspaceObject
         else
         {
             node_by_description()
+        }
+        
+        self.connector_name = tool_struct.connector ?? ""
+        if connector_name != ""
+        {
+            select_model_connector()
+        }
+    }
+    
+    private func select_model_connector()
+    {
+        switch connector_name
+        {
+        case "":
+            break
+        default:
+            break
         }
     }
     
@@ -223,9 +246,12 @@ class Tool: WorkspaceObject
     public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
     public var target_code_index = 0 //Index of target point in points array
     
+    private var connector_name = ""
+    
     //MARK: - Visual build functions
     override var scene_node_name: String { "tool" }
     
+    private var model_controller: ToolModelController?
     private var tool_details = [SCNNode]()
     
     override func node_by_description()
@@ -336,7 +362,7 @@ class Tool: WorkspaceObject
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, programs: self.programs, image_data: self.image_data)
+        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, programs: self.programs, image_data: self.image_data, connector: self.connector_name)
     }
 }
 
@@ -350,4 +376,6 @@ struct ToolStruct: Codable
     var scene: String?
     var programs: [OperationsProgram]
     var image_data: Data
+    
+    var connector: String?
 }
