@@ -54,7 +54,7 @@ class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     public var scene_address = "" //Addres of object scene. If empty – this object used defult model.
     public var node: SCNNode? //Object scene node
     
-    public static var scene_node_name: String?
+    public var scene_node_name: String? { nil }
     public static var folder_bookmark: Data?
     
     public func get_node_from_scene()
@@ -75,11 +75,11 @@ class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
                 do
                 {
                     //scene_node_name = "detail"
-                    self.node = try SCNScene(url: URL(string: url.absoluteString + scene_address)!).rootNode.childNode(withName: WorkspaceObject.scene_node_name ?? "", recursively: false)
+                    self.node = try SCNScene(url: URL(string: url.absoluteString + scene_address)!).rootNode.childNode(withName: scene_node_name ?? "", recursively: false)
                 }
                 catch
                 {
-                    print("ERROR loading scene")
+                    //print("ERROR loading scene")
                     node_by_description()
                 }
             }

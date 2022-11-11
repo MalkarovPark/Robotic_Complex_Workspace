@@ -2,7 +2,7 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class PositionsProgram: Identifiable, Equatable, ObservableObject
+class PositionsProgram: Identifiable, Equatable
 {
     static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
@@ -294,5 +294,5 @@ class PositionsProgram: Identifiable, Equatable, ObservableObject
 struct program_struct: Codable
 {
     var name: String
-    var points = [PositionPoint()]
+    var points = [PositionPoint]()
 }

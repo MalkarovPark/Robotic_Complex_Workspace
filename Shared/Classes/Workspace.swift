@@ -17,11 +17,6 @@ class Workspace: ObservableObject
     @Published public var tools = [Tool]()
     @Published public var details = [Detail]()
     
-    init()
-    {
-        Detail.scene_node_name = "detail"
-    }
-    
     //MARK: - Workspace visual handling functions
     public var scene = SCNScene() //Link to viewed workspace scene
     

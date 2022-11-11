@@ -173,6 +173,8 @@ class Detail: WorkspaceObject
     }
     
     //MARK: - Visual build functions
+    override var scene_node_name: String { "detail" }
+    
     override func node_by_description()
     {
         node = SCNNode()

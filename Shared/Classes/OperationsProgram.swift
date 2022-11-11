@@ -7,7 +7,7 @@
 
 import Foundation
 
-class OperationsProgram: Identifiable, Codable, ObservableObject, Hashable
+class OperationsProgram: Identifiable, Codable, Hashable
 {
     static func == (lhs: OperationsProgram, rhs: OperationsProgram) -> Bool
     {

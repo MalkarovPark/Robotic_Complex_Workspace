@@ -19,7 +19,7 @@
 	<key>Static Tool</key>
 	<dict>
 		<key>Scene</key>
-		<string></string>
+		<string>drill.scn</string>
 	</dict>
 </dict>
 </plist>

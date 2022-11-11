@@ -23,7 +23,7 @@ class Tool: WorkspaceObject
         
         if dictionary.keys.contains("Operations Codes") //Import tool opcodes values from dictionary
         {
-            var dict = dictionary["Operations Codes"] as! [String : Int]
+            let dict = dictionary["Operations Codes"] as! [String : Int]
             
             self.codes = dict.map { $0.value }
             self.codes_names = dict.map { $0.key }
@@ -44,8 +44,8 @@ class Tool: WorkspaceObject
     {
         super.init(name: tool_struct.name!)
         
-        self.codes = tool_struct.codes ?? [Int]()
-        self.codes_names = tool_struct.names ?? [String]()
+        self.codes = tool_struct.codes
+        self.codes_names = tool_struct.names
         
         self.scene_address = tool_struct.scene ?? ""
         self.programs = tool_struct.programs
@@ -224,6 +224,8 @@ class Tool: WorkspaceObject
     public var target_code_index = 0 //Index of target point in points array
     
     //MARK: - Visual build functions
+    override var scene_node_name: String { "tool" }
+    
     override func node_by_description()
     {
         node = SCNNode()
