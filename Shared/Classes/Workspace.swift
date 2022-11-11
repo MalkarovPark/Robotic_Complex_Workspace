@@ -1130,6 +1130,11 @@ class Workspace: ObservableObject
         
         //Update tools data from file
         tools.removeAll()
+        if tools_bookmark != nil
+        {
+            Tool.folder_bookmark = tools_bookmark
+        }
+        
         for tool_struct in preset.tools
         {
             tools.append(Tool(tool_struct: tool_struct))
@@ -1137,40 +1142,14 @@ class Workspace: ObservableObject
         
         //Update details data from file
         details.removeAll()
-        if details_bookmark == nil
-        {
-            //Add details without scene
-            for detail_struct in preset.details
-            {
-                details.append(Detail(detail_struct: detail_struct))
-            }
-        }
-        else
+        if details_bookmark != nil
         {
             Detail.folder_bookmark = details_bookmark
-            //Add details with scene
-            for detail_struct in preset.details
-            {
-                details.append(Detail(detail_struct: detail_struct))
-                /*do
-                {
-                    var is_stale = false
-                    let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                    
-                    guard !is_stale else
-                    {
-                        //Handle stale data here
-                        return
-                    }
-                    
-                    Detail.folder_url = url
-                    details.append(Detail(detail_struct: detail_struct))
-                }
-                catch
-                {
-                    print(error.localizedDescription)
-                }*/
-            }
+        }
+        
+        for detail_struct in preset.details
+        {
+            details.append(Detail(detail_struct: detail_struct))
         }
         
         //Update workspace program elements data from file

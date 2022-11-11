@@ -68,7 +68,7 @@ class Tool: WorkspaceObject
     {
         willSet
         {
-            //Stop robot moving before program change
+            //Stop tool moving before program change
             performed = false
             moving_completed = false
             target_code_index = 0
@@ -226,6 +226,8 @@ class Tool: WorkspaceObject
     //MARK: - Visual build functions
     override var scene_node_name: String { "tool" }
     
+    private var tool_details = [SCNNode]()
+    
     override func node_by_description()
     {
         node = SCNNode()
@@ -239,6 +241,16 @@ class Tool: WorkspaceObject
         
         node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
         node?.name = "Tool"
+    }
+    
+    public func connect_details_nodes(_ nodes: inout [SCNNode])
+    {
+        
+    }
+    
+    public func perform_operation(_ code: Int)
+    {
+        
     }
     
     //MARK: - UI functions

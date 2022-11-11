@@ -62,7 +62,7 @@ class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         do
         {
             var is_stale = false
-            let url = try URL(resolvingBookmarkData: Detail.folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            let url = try URL(resolvingBookmarkData: WorkspaceObject.folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
             
             guard !is_stale else
             {
