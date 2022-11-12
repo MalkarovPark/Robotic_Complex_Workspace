@@ -77,6 +77,8 @@ class Tool: WorkspaceObject
     {
         switch name
         {
+        case "gripper":
+            model_controller = GripperController()
         case "drill":
             model_controller = DrillController()
         default:
@@ -93,7 +95,7 @@ class Tool: WorkspaceObject
         {
             //Stop tool moving before program change
             performed = false
-            moving_completed = false
+            performing_completed = false
             target_code_index = 0
         }
         didSet
@@ -197,12 +199,12 @@ class Tool: WorkspaceObject
             if operation_code! > 0
             {
                 //Perform function by opcode as array number
-                print("\(operation_code ?? 0) 🍩")
+                //print("\(operation_code ?? 0) 🍩")
             }
             else
             {
                 //Reset tool perfroming by negative code
-                print("\(operation_code ?? 0) 🍷")
+                //print("\(operation_code ?? 0) 🍷")
                 if operation_code! < 0
                 {
                     operation_code = 0
@@ -241,11 +243,11 @@ class Tool: WorkspaceObject
     }
     
     //MARK: - Moving functions
-    public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
+    public var performing_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
     public var target_code_index = 0 //Index of target point in points array
     
     private var module_name = ""
-    public var connector = ToolConnector()
+    private var connector = ToolConnector()
     
     private var demo_work = true
     {
@@ -276,7 +278,6 @@ class Tool: WorkspaceObject
     }
     
     private var performing_finished = false
-    private var rotation_finished = false
     
     private func select_new_code() //Set new target point index
     {
@@ -295,13 +296,13 @@ class Tool: WorkspaceObject
                 //Reset target point index if all points passed
                 target_code_index = 0
                 performed = false
-                moving_completed = true
+                performing_completed = true
                 //current_pointer_position_select()
             }
         }
     }
     
-    public func start_pause_moving() //Handling robot moving
+    public func start_pause_performing() //Handling robot moving
     {
         if performed == false
         {
@@ -317,6 +318,7 @@ class Tool: WorkspaceObject
             performed = false
             if demo_work == true
             {
+                model_controller.nodes_perform(code: 0)
                 //pointer_node?.removeAllActions()
                 //tool_node?.removeAllActions()
             }
@@ -390,6 +392,12 @@ class Tool: WorkspaceObject
         //update_position() //Update robot details position on robot connection
     }
     
+    public func workcell_disconnect()
+    {
+        model_controller.nodes_perform(code: 0)
+        model_controller.nodes_disconnect()
+    }
+    
     //MARK: - UI functions
     #if os(macOS)
     override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
@@ -424,7 +432,7 @@ class Tool: WorkspaceObject
         }
         else
         {
-            if moving_completed //Green color, if the robot has passed all points
+            if performing_completed //Green color, if the robot has passed all points
             {
                 color = .green
             }

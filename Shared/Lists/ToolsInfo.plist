@@ -5,15 +5,15 @@
 	<key>Gripper</key>
 	<dict>
 		<key>Scene</key>
-		<string></string>
+		<string>gripper.scn</string>
 		<key>Module</key>
-		<string></string>
+		<string>gripper</string>
 		<key>Operations Codes</key>
 		<dict>
 			<key>Grab#arrow.right.and.line.vertical.and.arrow.left</key>
-			<integer>2</integer>
-			<key>Release#arrow.left.and.line.vertical.and.arrow.right</key>
 			<integer>1</integer>
+			<key>Release#arrow.left.and.line.vertical.and.arrow.right</key>
+			<integer>2</integer>
 		</dict>
 	</dict>
 	<key>Spatula</key>

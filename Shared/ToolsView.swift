@@ -512,14 +512,42 @@ struct ToolView: View
         }
         .overlay(alignment: .topLeading)
         {
-            Button(action: { tool_view_presented.toggle() })
+            Button(action: close_tool)
             {
-                Label("Close", systemImage: "xmark")
-                    .labelStyle(.iconOnly)
+                Image(systemName: "xmark")
             }
             .buttonStyle(.bordered)
             .keyboardShortcut(.cancelAction)
             .padding()
+        }
+        .overlay(alignment: .bottomLeading)
+        {
+            HStack(spacing: 0)
+            {
+                Button(action: {
+                    base_workspace.selected_tool.reset_performing()
+                    base_workspace.update_view()
+                })
+                {
+                    Image(systemName: "stop")
+                }
+                .buttonStyle(.bordered)
+                .padding([.vertical, .leading])
+                
+                Button(action: {
+                    base_workspace.selected_tool.start_pause_performing()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                    {
+                        base_workspace.update_view()
+                    }
+                })
+                {
+                    Image(systemName: "playpause")
+                }
+                .buttonStyle(.bordered)
+                .padding()
+            }
+            .disabled(base_workspace.selected_tool.codes_count == 0)
         }
         .controlSize(.regular)
         #if os(macOS)
@@ -528,6 +556,7 @@ struct ToolView: View
         .onAppear
         {
             app_state.previewed_object?.node = base_workspace.selected_tool.node
+            app_state.object_view_was_open = true
             app_state.preview_update_scene = true
             
             //base_workspace.selected_tool.workcell_connect(scene: <#T##SCNScene#>, name: <#T##String#>, connect_camera: <#T##Bool#>)
@@ -608,6 +637,15 @@ struct ToolView: View
         app_state.get_scene_image = true
         //base_workspace.update_view()
     }
+    
+    func close_tool()
+    {
+        base_workspace.selected_tool.reset_performing()
+        base_workspace.selected_tool.workcell_disconnect()
+        app_state.get_scene_image = true
+        app_state.object_view_was_close = true
+        tool_view_presented = false
+    }
 }
 
 struct OperationDropDelegate: DropDelegate
@@ -662,8 +700,7 @@ struct OperationParameterView: View
                 position_parameter_view_presented.toggle()
             })
             {
-                Label("Reset", systemImage: "arrow.counterclockwise")
-                    .labelStyle(.iconOnly)
+                Image(systemName: "counterclockwise")
             }
             .buttonStyle(.borderedProminent)
             #if os(macOS)
@@ -921,6 +958,8 @@ struct ToolSceneView_macOS: NSViewRepresentable
     {
         if app_state.preview_update_scene
         {
+            //base_workspace.selected_tool.workcell_disconnect()
+            
             let remove_node = scene_view.scene?.rootNode.childNode(withName: "Tool", recursively: true)
             remove_node?.removeFromParentNode()
             
@@ -928,7 +967,41 @@ struct ToolSceneView_macOS: NSViewRepresentable
             app_state.previewed_object?.node?.name = "Tool"
             app_state.preview_update_scene = false
             
+            //base_workspace.selected_tool.workcell_connect(scene: scene_view.scene!, name: "Tool")
+        }
+        
+        if app_state.object_view_was_open
+        {
             base_workspace.selected_tool.workcell_connect(scene: scene_view.scene!, name: "Tool")
+            app_state.object_view_was_open = false
+        }
+        
+        if app_state.object_view_was_close
+        {
+            base_workspace.deselect_tool()
+            app_state.object_view_was_close = false
+        }
+        
+        if base_workspace.selected_object_type == .tool
+        {
+            //base_workspace.selected_robot.update_robot()
+            if base_workspace.selected_tool.performing_completed == true
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                {
+                    base_workspace.selected_tool.performing_completed = false
+                    base_workspace.update_view()
+                }
+                //base_workspace.selected_robot.moving_completed = false
+            }
+            if base_workspace.selected_tool.performed == true
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                {
+                    base_workspace.update_view()
+                }
+                //base_workspace.update_view()
+            }
         }
     }
 }

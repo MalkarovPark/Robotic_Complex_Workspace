@@ -60,7 +60,7 @@ class ToolModelController: ModelController
         //Perform node action by operation code
     }
     
-    public func nodes_perform(code: Int, completion: () -> Void)
+    public func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
         nodes_perform(code: code)
         completion()
@@ -69,6 +69,67 @@ class ToolModelController: ModelController
     public var state: [[String: Any]]?
 }
 
+//MARK: Gripper controller
+class GripperController: ToolModelController
+{
+    override func nodes_connect(_ node: SCNNode)
+    {
+        guard let jaw_node = node.childNode(withName: "jaw", recursively: true)
+        else
+        {
+            return
+        }
+        
+        guard let jaw2_node = node.childNode(withName: "jaw2", recursively: true)
+        else
+        {
+            return
+        }
+        
+        nodes += [jaw_node, jaw2_node]
+    }
+    
+    private var closed = false
+    private var moved = false
+    
+    override func nodes_perform(code: Int, completion: @escaping () -> Void)
+    {
+        switch code
+        {
+        case 1: //Grip
+            if !closed && !moved
+            {
+                moved = true
+                nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -20), duration: 1))
+                nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 20), duration: 1))
+                {
+                    self.moved = false
+                    self.closed = true
+                    
+                    completion()
+                }
+            }
+        case 2: //Release
+            if closed && !moved
+            {
+                moved = true
+                nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 20), duration: 1))
+                nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -20), duration: 1))
+                {
+                    self.moved = false
+                    self.closed = false
+                    
+                    completion()
+                }
+            }
+        default:
+            nodes[0].removeAllActions()
+            nodes[1].removeAllActions()
+        }
+    }
+}
+
+//MARK: Drill controller
 class DrillController: ToolModelController
 {
     override func nodes_connect(_ node: SCNNode)
@@ -82,18 +143,34 @@ class DrillController: ToolModelController
         nodes.append(drill_node)
     }
     
+    private var rotated = [false, false]
+    
     override func nodes_perform(code: Int)
     {
         switch code
         {
         case 1: //Strop rotation
             nodes.first?.removeAllActions()
+            rotated[0] = false
+            rotated[1] = false
         case 2: //Clockwise rotation
-            nodes.first?.runAction(.rotateBy(x: 0, y: 1, z: 0, duration: 0.5))
+            if !rotated[0]
+            {
+                nodes.first?.removeAllActions()
+                nodes.first?.runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                rotated[0] = true
+                rotated[1] = false
+            }
         case 3: //Counter clockwise rotation
-            nodes.first?.runAction(.rotateBy(x: 0, y: -1, z: 0, duration: 0.5))
+            if !rotated[1]
+            {
+                nodes.first?.removeAllActions()
+                nodes.first?.runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                rotated[1] = true
+                rotated[0] = false
+            }
         default:
-            break
+            nodes[0].removeAllActions()
         }
     }
 }

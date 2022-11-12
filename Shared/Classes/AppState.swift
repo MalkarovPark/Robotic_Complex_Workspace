@@ -37,6 +37,8 @@ class AppState : ObservableObject
     //public var workspace_scene = SCNScene() //Link to viewed workspace scene
     public var previewed_object: WorkspaceObject? //Detail for preview view
     public var preview_update_scene = false //Flag for update previewed detail node in scene
+    public var object_view_was_open = false
+    public var object_view_was_close = false
     
     @Published var view_update_state = false //Flag for update details view grid
     @Published var add_selection = 0 //Selected item of object type for AddInWorkspace view
