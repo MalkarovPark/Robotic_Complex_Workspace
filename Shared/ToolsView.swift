@@ -530,6 +530,8 @@ struct ToolView: View
             app_state.previewed_object?.node = base_workspace.selected_tool.node
             app_state.preview_update_scene = true
             
+            //base_workspace.selected_tool.workcell_connect(scene: <#T##SCNScene#>, name: <#T##String#>, connect_camera: <#T##Bool#>)
+            
             if base_workspace.selected_tool.codes_count > 0
             {
                 new_operation_code = base_workspace.selected_tool.codes.first ?? 0
@@ -925,6 +927,8 @@ struct ToolSceneView_macOS: NSViewRepresentable
             scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
             app_state.previewed_object?.node?.name = "Tool"
             app_state.preview_update_scene = false
+            
+            base_workspace.selected_tool.workcell_connect(scene: scene_view.scene!, name: "Tool")
         }
     }
 }

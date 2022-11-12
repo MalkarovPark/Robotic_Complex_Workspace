@@ -11,9 +11,15 @@ import SceneKit
 class ModelController
 {
     public var nodes = [SCNNode]()
-    public func nodes_connect(_ node: inout SCNNode)
+    
+    public func nodes_connect(_ node: SCNNode)
     {
         //Get details nodes links from root node and pass to array
+    }
+    
+    public func nodes_disconnect()
+    {
+        nodes.removeAll()
     }
     
     /*public func nodes_update()
@@ -61,4 +67,33 @@ class ToolModelController: ModelController
     }
     
     public var state: [[String: Any]]?
+}
+
+class DrillController: ToolModelController
+{
+    override func nodes_connect(_ node: SCNNode)
+    {
+        guard let drill_node = node.childNode(withName: "drill", recursively: true)
+        else
+        {
+            return //Return if node not found
+        }
+        
+        nodes.append(drill_node)
+    }
+    
+    override func nodes_perform(code: Int)
+    {
+        switch code
+        {
+        case 1: //Strop rotation
+            nodes.first?.removeAllActions()
+        case 2: //Clockwise rotation
+            nodes.first?.runAction(.rotateBy(x: 0, y: 1, z: 0, duration: 0.5))
+        case 3: //Counter clockwise rotation
+            nodes.first?.runAction(.rotateBy(x: 0, y: -1, z: 0, duration: 0.5))
+        default:
+            break
+        }
+    }
 }

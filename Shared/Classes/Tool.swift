@@ -29,10 +29,10 @@ class Tool: WorkspaceObject
             self.codes_names = dict.map { $0.key }
         }
         
-        if dictionary.keys.contains("Connector") //Select model visual controller an connector
+        if dictionary.keys.contains("Module") //Select model visual controller an connector
         {
-            self.connector_name = dictionary["Connector"] as? String ?? ""
-            select_model_connector()
+            self.module_name = dictionary["Module"] as? String ?? ""
+            select_model_modules(name: module_name, controller: model_controller, connector: &connector)
         }
         
         if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it
@@ -66,19 +66,19 @@ class Tool: WorkspaceObject
             node_by_description()
         }
         
-        self.connector_name = tool_struct.connector ?? ""
-        if connector_name != ""
+        self.module_name = tool_struct.module ?? ""
+        if module_name != ""
         {
-            select_model_connector()
+            select_model_modules(name: module_name, controller: model_controller, connector: &connector)
         }
     }
     
-    private func select_model_connector()
+    private func select_model_modules(name: String, controller: ToolModelController, connector: inout ToolConnector) //Select model visual controller an connector
     {
-        switch connector_name
+        switch name
         {
-        case "":
-            break
+        case "drill":
+            model_controller = DrillController()
         default:
             break
         }
@@ -241,23 +241,115 @@ class Tool: WorkspaceObject
     }
     
     //MARK: - Moving functions
-    public var move_time: Float?
-    public var draw_path = false //Draw path of the robot tool point
     public var moving_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
     public var target_code_index = 0 //Index of target point in points array
     
-    private var connector_name = ""
+    private var module_name = ""
+    public var connector = ToolConnector()
+    
+    private var demo_work = true
+    {
+        didSet
+        {
+            if demo_work == false
+            {
+                reset_performing()
+            }
+        }
+    }
+    
+    public func perform_next_code()
+    {
+        if demo_work == true
+        {
+            //Move to point for virtual tool
+            model_controller.nodes_perform(code: selected_program.codes[target_code_index].value)
+            {
+                self.performing_finished = true
+                self.select_new_code()
+            }
+        }
+        else
+        {
+            //Move to point for real tool
+        }
+    }
+    
+    private var performing_finished = false
+    private var rotation_finished = false
+    
+    private func select_new_code() //Set new target point index
+    {
+        if performing_finished == true //Waiting for the target point reach
+        {
+            performing_finished = false
+            
+            if target_code_index < selected_program.codes_count - 1
+            {
+                //Select and move to next point
+                target_code_index += 1
+                perform_next_code()
+            }
+            else
+            {
+                //Reset target point index if all points passed
+                target_code_index = 0
+                performed = false
+                moving_completed = true
+                //current_pointer_position_select()
+            }
+        }
+    }
+    
+    public func start_pause_moving() //Handling robot moving
+    {
+        if performed == false
+        {
+            //clear_chart_data()
+            
+            //Move to next point if moving was stop
+            performed = true
+            perform_next_code()
+        }
+        else
+        {
+            //Remove all action if moving was perform
+            performed = false
+            if demo_work == true
+            {
+                //pointer_node?.removeAllActions()
+                //tool_node?.removeAllActions()
+            }
+            else
+            {
+                //Remove actions for real robot
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
+            {
+                //self.current_pointer_position_select()
+            }
+        }
+    }
+    
+    public func reset_performing() //Reset robot moving
+    {
+        //pointer_node?.removeAllActions()
+        node?.removeAllActions()
+        //current_pointer_position_select()
+        performed = false
+        target_code_index = 0
+    }
     
     //MARK: - Visual build functions
     override var scene_node_name: String { "tool" }
     
-    private var model_controller: ToolModelController?
+    private var model_controller = ToolModelController()
     private var tool_details = [SCNNode]()
     
     override func node_by_description()
     {
         node = SCNNode()
-        node?.geometry = SCNBox(width: 4, height: 4, length: 4, chamferRadius: 1)
+        node?.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
         
         #if os(macOS)
         node?.geometry?.firstMaterial?.diffuse.contents = NSColor.gray
@@ -279,6 +371,25 @@ class Tool: WorkspaceObject
         
     }
     
+    public func workcell_connect(scene: SCNScene, name: String)
+    {
+        //Connect tool details
+        let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
+        model_controller.nodes_disconnect()
+        model_controller.nodes_connect(unit_node ?? SCNNode()) //(node ?? SCNNode())
+        
+        //Connect robot camera
+        /*if connect_camera
+        {
+            self.camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
+        }*/
+        
+        //Place and scale cell box
+        //robot_location_place()
+        //update_space_scale() //Set space scale by connected robot parameters
+        //update_position() //Update robot details position on robot connection
+    }
+    
     //MARK: - UI functions
     #if os(macOS)
     override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
@@ -295,17 +406,17 @@ class Tool: WorkspaceObject
     public func inspector_code_color(code: OperationCode) -> Color //Get point color for inspector view
     {
         var color = Color.gray //Gray point color if the robot is not reching the code
-        let point_number = self.selected_program.codes.firstIndex(of: code) //Number of selected code
+        let code_number = self.selected_program.codes.firstIndex(of: code) //Number of selected code
         
         if performed
         {
-            if point_number == target_code_index //Yellow color, if the tool is in the process of moving to the point
+            if code_number == target_code_index //Yellow color, if the tool is in the process of moving to the code
             {
                 color = .yellow
             }
             else
             {
-                if point_number ?? 0 < target_code_index //Green color, if the tool has reached this point
+                if code_number ?? 0 < target_code_index //Green color, if the tool has reached this code
                 {
                     color = .green
                 }
@@ -362,7 +473,7 @@ class Tool: WorkspaceObject
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, programs: self.programs, image_data: self.image_data, connector: self.connector_name)
+        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, programs: self.programs, image_data: self.image_data, module: self.module_name)
     }
 }
 
@@ -377,5 +488,5 @@ struct ToolStruct: Codable
     var programs: [OperationsProgram]
     var image_data: Data
     
-    var connector: String?
+    var module: String?
 }

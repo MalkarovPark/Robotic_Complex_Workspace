@@ -128,6 +128,7 @@ class Workspace: ObservableObject
             deselect_detail()
             
             //Get new node
+            select_tool(name: name)
             edited_object_node = SCNNode()
         case .detail:
             //Deselect other

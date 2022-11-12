@@ -197,7 +197,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNPlane(width: 4, height: 4)
+                geometry = SCNPlane(width: 40, height: 40)
             }
         case "box":
             if lengths.count >= 3 && lengths.count <= 4
@@ -206,7 +206,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNBox(width: 4, height: 4, length: 4, chamferRadius: 1)
+                geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
             }
         case "sphere":
             if lengths.count == 1
@@ -215,7 +215,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNSphere(radius: 2)
+                geometry = SCNSphere(radius: 20)
             }
         case "pyramid":
             if lengths.count == 3
@@ -224,7 +224,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNPyramid(width: 4, height: 2, length: 4)
+                geometry = SCNPyramid(width: 40, height: 20, length: 40)
             }
         case "cylinder":
             if lengths.count == 2
@@ -233,7 +233,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNCylinder(radius: 2, height: 4)
+                geometry = SCNCylinder(radius: 20, height: 40)
             }
         case "cone":
             if lengths.count == 3
@@ -242,7 +242,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNCone(topRadius: 1, bottomRadius: 2, height: 4)
+                geometry = SCNCone(topRadius: 10, bottomRadius: 20, height: 40)
             }
         case "tube":
             if lengths.count == 3
@@ -251,7 +251,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNTube(innerRadius: 1, outerRadius: 2, height: 4)
+                geometry = SCNTube(innerRadius: 10, outerRadius: 20, height: 40)
             }
         case "capsule":
             if lengths.count == 2
@@ -260,7 +260,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNCapsule(capRadius: 2, height: 4)
+                geometry = SCNCapsule(capRadius: 20, height: 40)
             }
         case "torus":
             if lengths.count == 2
@@ -269,10 +269,10 @@ class Detail: WorkspaceObject
             }
             else
             {
-                geometry = SCNTorus(ringRadius: 4, pipeRadius: 2)
+                geometry = SCNTorus(ringRadius: 40, pipeRadius: 20)
             }
         default:
-            geometry = SCNBox(width: 4, height: 4, length: 4, chamferRadius: 1)
+            geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
         }
         node?.geometry = geometry
         

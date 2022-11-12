@@ -6,7 +6,7 @@
 	<dict>
 		<key>Scene</key>
 		<string></string>
-		<key>Connector</key>
+		<key>Module</key>
 		<string></string>
 		<key>Operations Codes</key>
 		<dict>
@@ -16,8 +16,26 @@
 			<integer>1</integer>
 		</dict>
 	</dict>
-	<key>Static Tool</key>
+	<key>Spatula</key>
 	<dict>
+		<key>Module</key>
+		<string></string>
+		<key>Scene</key>
+		<string>spatula.scn</string>
+	</dict>
+	<key>Drill</key>
+	<dict>
+		<key>Module</key>
+		<string>drill</string>
+		<key>Operations Codes</key>
+		<dict>
+			<key>Clockwise rotation#arrow.clockwise.circle</key>
+			<integer>2</integer>
+			<key>Counter clockwise rotation#arrow.counterclockwise.circle</key>
+			<integer>3</integer>
+			<key>Stop rotation#stop.circle</key>
+			<integer>1</integer>
+		</dict>
 		<key>Scene</key>
 		<string>drill.scn</string>
 	</dict>

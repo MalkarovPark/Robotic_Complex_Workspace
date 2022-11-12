@@ -303,12 +303,12 @@ class Robot: WorkspaceObject
     //Return robot pointer position
     public func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
-        return(SCNVector3(pointer_location[1] / 10, pointer_location[2] / 10, pointer_location[0] / 10), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
+        return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
     private func current_pointer_position_select() //Return current robot pointer position
     {
-        pointer_location = [Float(pointer_node?.position.z ?? 0) * 10, Float(pointer_node?.position.x ?? 0) * 10, Float(pointer_node?.position.y ?? 0) * 10]
+        pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
         pointer_rotation = [Float(tool_node?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
     
@@ -552,64 +552,64 @@ class Robot: WorkspaceObject
         //XY planes
         modified_node = space_node!.childNode(withName: "w0", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[0]) / 10)
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[0]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.y = -CGFloat(space_scale[2]) / 20
+        modified_node.position.y = -CGFloat(space_scale[2]) / 2
         #else
-        modified_node.position.y = -space_scale[2] / 20
+        modified_node.position.y = -space_scale[2] / 2
         #endif
         modified_node = space_node!.childNode(withName: "w1", recursively: true)!
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[0]) / 10)
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[0]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.y = CGFloat(space_scale[2]) / 20
+        modified_node.position.y = CGFloat(space_scale[2]) / 2
         #else
-        modified_node.position.y = space_scale[2] / 20
+        modified_node.position.y = space_scale[2] / 2
         #endif
         
         //YZ plane
         modified_node = space_node!.childNode(withName: "w2", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[2]) / 10)
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.z = -CGFloat(space_scale[0]) / 20
+        modified_node.position.z = -CGFloat(space_scale[0]) / 2
         #else
-        modified_node.position.z = -space_scale[0] / 20
+        modified_node.position.z = -space_scale[0] / 2
         #endif
         modified_node = space_node!.childNode(withName: "w3", recursively: true)!
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]) / 10, height: CGFloat(space_scale[2]) / 10)
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.z = CGFloat(space_scale[0]) / 20
+        modified_node.position.z = CGFloat(space_scale[0]) / 2
         #else
-        modified_node.position.z = space_scale[0] / 20
+        modified_node.position.z = space_scale[0] / 2
         #endif
         
         //XZ plane
         modified_node = space_node!.childNode(withName: "w4", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]) / 10, height: CGFloat(space_scale[2]) / 10)
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.x = -CGFloat(space_scale[1]) / 20
+        modified_node.position.x = -CGFloat(space_scale[1]) / 2
         #else
-        modified_node.position.x = -space_scale[1] / 20
+        modified_node.position.x = -space_scale[1] / 2
         #endif
         modified_node = space_node!.childNode(withName: "w5", recursively: true)!
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]) / 10, height: CGFloat(space_scale[2]) / 10)
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.x = CGFloat(space_scale[1]) / 20
+        modified_node.position.x = CGFloat(space_scale[1]) / 2
         #else
-        modified_node.position.x = space_scale[1] / 20
+        modified_node.position.x = space_scale[1] / 2
         #endif
         
         #if os(macOS)
-        space_node?.position = SCNVector3(x: CGFloat(space_scale[1]) / 20, y: CGFloat(space_scale[2]) / 20, z: CGFloat(space_scale[0]) / 20)
+        space_node?.position = SCNVector3(x: CGFloat(space_scale[1]) / 2, y: CGFloat(space_scale[2]) / 2, z: CGFloat(space_scale[0]) / 2)
         #else
-        space_node?.position = SCNVector3(x: space_scale[1] / 20, y: space_scale[2] / 20, z: space_scale[0] / 20)
+        space_node?.position = SCNVector3(x: space_scale[1] / 2, y: space_scale[2] / 2, z: space_scale[0] / 2)
         #endif
         
         position_points_spacing()
@@ -652,7 +652,7 @@ class Robot: WorkspaceObject
         //Change robot base
         modified_node = robot_node!.childNode(withName: "base", recursively: true)! //Select node to modifty
         saved_material = (modified_node.geometry?.firstMaterial)! //Save original material from node geometry
-        modified_node.geometry = SCNCylinder(radius: 8, height: CGFloat(lengths[lengths.count - 1])) //Update geometry //(lengths[6]))
+        modified_node.geometry = SCNCylinder(radius: 80, height: CGFloat(lengths[lengths.count - 1])) //Update geometry //(lengths[6]))
         modified_node.geometry?.firstMaterial = saved_material //Apply saved original material
         
         //Change position of base model
@@ -678,7 +678,7 @@ class Robot: WorkspaceObject
             return
         }
         
-        details_positions_update!(&robot_details, ik_perform!(origin_transform(pointer_location: visual_scaling(pointer_location, factor: 0.1), origin_rotation: origin_rotation), pointer_rotation, origin_location, origin_rotation, lengths)) //Update robot details position by target point position
+        details_positions_update!(&robot_details, ik_perform!(origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation, origin_location, origin_rotation, lengths)) //Update robot details position by target point position
         
         current_pointer_position_select()
     }
@@ -899,16 +899,16 @@ func update_portal_lengths(details: inout [SCNNode], lengths: [Float])
     var saved_material = SCNMaterial()
     
     modified_node = node.childNode(withName: "detail_v", recursively: true)!
-    if lengths[0] - 4 > 0
+    if lengths[0] - 40 > 0
     {
         saved_material = (modified_node.geometry?.firstMaterial)!
         
-        modified_node.geometry = SCNBox(width: 8, height: CGFloat(lengths[0]) - 4, length: 8, chamferRadius: 1)
+        modified_node.geometry = SCNBox(width: 80, height: CGFloat(lengths[0]) - 40, length: 80, chamferRadius: 10)
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[0] - 4) / 2
+        modified_node.position.y = CGFloat(lengths[0] - 40) / 2
         #else
-        modified_node.position.y = (lengths[0] - 4) / 2
+        modified_node.position.y = (lengths[0] - 40) / 2
         #endif
     }
     else
@@ -922,42 +922,42 @@ func update_portal_lengths(details: inout [SCNNode], lengths: [Float])
     #if os(macOS)
     node.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lengths[1])
     node.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lengths[5])
-    frame_element_length = CGFloat(lengths[5] - lengths[1]) + 16 //Calculate frame X length
+    frame_element_length = CGFloat(lengths[5] - lengths[1]) + 160 //Calculate frame X length
     #else
     node.childNode(withName: "limit1_min", recursively: true)!.position.z = lengths[1]
     node.childNode(withName: "limit1_max", recursively: true)!.position.z = lengths[5]
-    frame_element_length = CGFloat(lengths[5] - lengths[1] + 16) //Calculate frame X length
+    frame_element_length = CGFloat(lengths[5] - lengths[1] + 160) //Calculate frame X length
     #endif
     
     modified_node = node.childNode(withName: "detail_x", recursively: true)!
     saved_material = (modified_node.geometry?.firstMaterial)!
-    modified_node.geometry = SCNBox(width: 6, height: 6, length: frame_element_length, chamferRadius: 1) //Update frame X geometry
+    modified_node.geometry = SCNBox(width: 60, height: 60, length: frame_element_length, chamferRadius: 10) //Update frame X geometry
     modified_node.geometry?.firstMaterial = saved_material
     #if os(macOS)
-    modified_node.position.z = (frame_element_length + 8) / 2 //Frame X reposition
+    modified_node.position.z = (frame_element_length + 80) / 2 //Frame X reposition
     #else
-    modified_node.position.z = Float(frame_element_length + 8) / 2
+    modified_node.position.z = Float(frame_element_length + 80) / 2
     #endif
     
     //Y shift
     #if os(macOS)
     node.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lengths[2]) / 2
     node.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lengths[6])
-    frame_element_length = CGFloat(lengths[6] - lengths[2]) + 16 //Calculate frame Y length
+    frame_element_length = CGFloat(lengths[6] - lengths[2]) + 160 //Calculate frame Y length
     #else
     node.childNode(withName: "limit0_min", recursively: true)!.position.x = lengths[2] / 2
     node.childNode(withName: "limit0_max", recursively: true)!.position.x = lengths[6]
-    frame_element_length = CGFloat(lengths[6] - lengths[2] + 16) //Calculate frame Y length
+    frame_element_length = CGFloat(lengths[6] - lengths[2] + 160) //Calculate frame Y length
     #endif
     
     modified_node = node.childNode(withName: "detail_y", recursively: true)!
     saved_material = (modified_node.geometry?.firstMaterial)!
-    modified_node.geometry = SCNBox(width: 6, height: 6, length: frame_element_length, chamferRadius: 1) //Update frame Y geometry
+    modified_node.geometry = SCNBox(width: 60, height: 60, length: frame_element_length, chamferRadius: 10) //Update frame Y geometry
     modified_node.geometry?.firstMaterial = saved_material
     #if os(macOS)
-    modified_node.position.x = (frame_element_length + 8) / 2 //Frame Y reposition
+    modified_node.position.x = (frame_element_length + 80) / 2 //Frame Y reposition
     #else
-    modified_node.position.x = Float(frame_element_length + 8) / 2
+    modified_node.position.x = Float(frame_element_length + 80) / 2
     #endif
     
     //Z shift
@@ -973,7 +973,7 @@ func update_portal_lengths(details: inout [SCNNode], lengths: [Float])
     
     modified_node = node.childNode(withName: "detail_z", recursively: true)!
     saved_material = (modified_node.geometry?.firstMaterial)!
-    modified_node.geometry = SCNBox(width: 6, height: frame_element_length, length: 6, chamferRadius: 1) //Update frame Z geometry
+    modified_node.geometry = SCNBox(width: 60, height: frame_element_length, length: 60, chamferRadius: 10) //Update frame Z geometry
     modified_node.geometry?.firstMaterial = saved_material
     #if os(macOS)
     modified_node.position.y = (frame_element_length) / 2 //Frame Z reposition
@@ -1004,17 +1004,17 @@ func update_vidof_lengths(details: inout [SCNNode], lengths: [Float])
             modified_node = details[i].childNode(withName: "box", recursively: false)!
             if i < 3
             {
-                modified_node.geometry = SCNBox(width: 6, height: CGFloat(lengths[i]), length: 6, chamferRadius: 1) //Set geometry for 0-2 details with width 6 and chamfer
+                modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[i]), length: 60, chamferRadius: 10) //Set geometry for 0-2 details with width 6 and chamfer
             }
             else
             {
                 if i < 4
                 {
-                    modified_node.geometry = SCNBox(width: 5, height: CGFloat(lengths[i]), length: 5, chamferRadius: 1) //Set geometry for 3th detail with width 5 and chamfer
+                    modified_node.geometry = SCNBox(width: 50, height: CGFloat(lengths[i]), length: 50, chamferRadius: 10) //Set geometry for 3th detail with width 5 and chamfer
                 }
                 else
                 {
-                    modified_node.geometry = SCNBox(width: 4, height: CGFloat(lengths[i]), length: 4, chamferRadius: 0) //Set geometry for 4th detail with width 4 and without chamfer
+                    modified_node.geometry = SCNBox(width: 40, height: CGFloat(lengths[i]), length: 40, chamferRadius: 0) //Set geometry for 4th detail with width 4 and without chamfer
                 }
             }
             modified_node.geometry?.firstMaterial = saved_material //Apply saved material

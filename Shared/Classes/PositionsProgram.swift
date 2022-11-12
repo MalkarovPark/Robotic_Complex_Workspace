@@ -83,14 +83,14 @@ class PositionsProgram: Identifiable, Equatable
     private let target_point_color = NSColor.systemPurple
     private let target_point_cone_colors = [NSColor.systemIndigo, NSColor.systemPink, NSColor.systemTeal]
     private let selected_point_color = NSColor.systemIndigo
-    private let target_point_cone_pos = [[0.0, 0.0, 0.8], [0.8, 0.0, 0.0], [0.0, 0.8, 0.0]]
+    private let target_point_cone_pos = [[0.0, 0.0, 8], [8, 0.0, 0.0], [0.0, 8, 0.0]]
     private let target_point_cone_rot = [[90.0 * .pi / 180, 0.0, 0.0], [0.0, 0.0, -90 * .pi / 180], [0.0, 0.0, 0.0]]
     private let cylinder_color = NSColor.white
     #else
     private let target_point_color = UIColor.systemPurple
     private let target_point_cone_colors = [UIColor.systemIndigo, UIColor.systemPink, UIColor.systemTeal]
     private let selected_point_color = UIColor.systemIndigo
-    private let target_point_cone_pos: [[Float]] = [[0.0, 0.0, 0.8], [0.8, 0.0, 0.0], [0.0, 0.8, 0.0]]
+    private let target_point_cone_pos: [[Float]] = [[0.0, 0.0, 8], [8, 0.0, 0.0], [0.0, 8, 0.0]]
     private let target_point_cone_rot: [[Float]] = [[90.0 * .pi / 180, 0.0, 0.0], [0.0, 0.0, -90 * .pi / 180], [0.0, 0.0, 0.0]]
     private let cylinder_color = UIColor.white
     #endif
@@ -103,7 +103,7 @@ class PositionsProgram: Identifiable, Equatable
         for i in 0..<3 //Set point conical arrows for points
         {
             let cone = SCNNode()
-            cone.geometry = SCNCone(topRadius: 0, bottomRadius: 0.2, height: 0.4)
+            cone.geometry = SCNCone(topRadius: 0, bottomRadius: 2, height: 4)
             cone.geometry?.firstMaterial?.diffuse.contents = target_point_cone_colors[i]
             cone.position = SCNVector3(x: target_point_cone_pos[i][0], y: target_point_cone_pos[i][1], z: target_point_cone_pos[i][2])
             cone.eulerAngles.x = target_point_cone_rot[i][0]
@@ -173,7 +173,7 @@ class PositionsProgram: Identifiable, Equatable
             {
                 //MARK: If there is only one point
                 var visual_point = SCNNode() //Create the point node
-                visual_point.geometry = SCNSphere(radius: 0.4) //Add sphere geometry to the point node
+                visual_point.geometry = SCNSphere(radius: 4) //Add sphere geometry to the point node
                 
                 let point = points.first ?? PositionPoint() //Get first point data
                 
@@ -198,7 +198,7 @@ class PositionsProgram: Identifiable, Equatable
             let vector = to - from
             let height = simd_length(vector)
             
-            let cylinder = SCNCylinder(radius: 0.2, height: CGFloat(height))
+            let cylinder = SCNCylinder(radius: 2, height: CGFloat(height))
             
             cylinder.firstMaterial?.diffuse.contents = cylinder_color
             //cylinder.firstMaterial?.transparency = 0.5
@@ -218,13 +218,13 @@ class PositionsProgram: Identifiable, Equatable
         
         func node_by_data(node: inout SCNNode, point: PositionPoint, location: inout SCNVector3) //Add geometry for position point node by position data
         {
-            node.geometry = SCNSphere(radius: 0.4) //Add sphere geometry to the point node
+            node.geometry = SCNSphere(radius: 4) //Add sphere geometry to the point node
             
             //Set point node location
             #if os(macOS)
-            location = SCNVector3(x: CGFloat(point.y) / 10 - 10, y: CGFloat(point.z / 10) - 10, z: CGFloat(point.x / 10) - 10)
+            location = SCNVector3(x: CGFloat(point.y) - 100, y: CGFloat(point.z) - 100, z: CGFloat(point.x) - 100)
             #else
-            location = SCNVector3(x: point.y / 10 - 10, y: point.z / 10 - 10, z: point.x / 10 - 10)
+            location = SCNVector3(x: point.y - 100, y: point.z - 100, z: point.x - 100)
             #endif
             node.position = location
             
@@ -271,7 +271,7 @@ class PositionsProgram: Identifiable, Equatable
         {
             for point in points
             {
-                moving_position = SCNVector3(point.y / 10, point.z / 10, point.x / 10) //Convert location to scnvector
+                moving_position = SCNVector3(point.y, point.z, point.x) //Convert location to scnvector
                 moving_rotation = [point.p.to_rad, point.w.to_rad, 0] //Get rotation from from position point
                 
                 //Append scnactions

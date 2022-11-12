@@ -1018,7 +1018,7 @@ struct SpaceScaleView: View
                     .frame(width: 20.0)
                 TextField("0", value: $space_scale[0], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $space_scale[0], in: 2...400)
+                Stepper("Enter", value: $space_scale[0], in: 2...1000)
                     .labelsHidden()
             }
             
@@ -1028,7 +1028,7 @@ struct SpaceScaleView: View
                     .frame(width: 20.0)
                 TextField("0", value: $space_scale[1], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $space_scale[1], in: 2...400)
+                Stepper("Enter", value: $space_scale[1], in: 2...1000)
                     .labelsHidden()
             }
             
@@ -1038,7 +1038,7 @@ struct SpaceScaleView: View
                     .frame(width: 20.0)
                 TextField("0", value: $space_scale[2], format: .number)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $space_scale[2], in: 2...400)
+                Stepper("Enter", value: $space_scale[2], in: 2...1000)
                     .labelsHidden()
             }
         }
