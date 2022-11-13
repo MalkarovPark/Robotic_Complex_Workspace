@@ -215,27 +215,7 @@ class Tool: WorkspaceObject
     
     private(set) var info_code: Int? = 0
     
-    public var performed: Bool //Performing state of tool
-    {
-        get
-        {
-            if operation_code ?? 0 > 0
-            {
-                return true
-            }
-            else
-            {
-                return false
-            }
-        }
-        set
-        {
-            if !newValue
-            {
-                operation_code = 0
-            }
-        }
-    }
+    public var performed = false //Performing state of tool
     
     public var codes_count: Int
     {
@@ -243,11 +223,13 @@ class Tool: WorkspaceObject
     }
     
     //MARK: - Moving functions
-    public var performing_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI.
+    public var performing_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI
+    public var code_changed = false //This flag perform update if performed code changed
     public var target_code_index = 0 //Index of target point in points array
     
     private var module_name = ""
     private var connector = ToolConnector()
+    private var continue_selection = true
     
     private var demo_work = true
     {
@@ -267,7 +249,6 @@ class Tool: WorkspaceObject
             //Move to point for virtual tool
             model_controller.nodes_perform(code: selected_program.codes[target_code_index].value)
             {
-                self.performing_finished = true
                 self.select_new_code()
             }
         }
@@ -277,28 +258,30 @@ class Tool: WorkspaceObject
         }
     }
     
-    private var performing_finished = false
-    
     private func select_new_code() //Set new target point index
     {
-        if performing_finished == true //Waiting for the target point reach
+        if performed
         {
-            performing_finished = false
-            
-            if target_code_index < selected_program.codes_count - 1
-            {
-                //Select and move to next point
-                target_code_index += 1
-                perform_next_code()
-            }
-            else
-            {
-                //Reset target point index if all points passed
-                target_code_index = 0
-                performed = false
-                performing_completed = true
-                //current_pointer_position_select()
-            }
+            target_code_index += 1
+        }
+        else
+        {
+            return
+        }
+        
+        code_changed = true
+        
+        if target_code_index < selected_program.codes_count
+        {
+            //Select and move to next point
+            perform_next_code()
+        }
+        else
+        {
+            //Reset target point index if all points passed
+            target_code_index = 0
+            performed = false
+            performing_completed = true
         }
     }
     
@@ -306,38 +289,21 @@ class Tool: WorkspaceObject
     {
         if performed == false
         {
-            //clear_chart_data()
-            
             //Move to next point if moving was stop
             performed = true
             perform_next_code()
+            
+            code_changed = true
         }
         else
         {
-            //Remove all action if moving was perform
+            //Pause moving if tool perform
             performed = false
-            if demo_work == true
-            {
-                model_controller.nodes_perform(code: 0)
-                //pointer_node?.removeAllActions()
-                //tool_node?.removeAllActions()
-            }
-            else
-            {
-                //Remove actions for real robot
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
-            {
-                //self.current_pointer_position_select()
-            }
         }
     }
     
     public func reset_performing() //Reset robot moving
     {
-        //pointer_node?.removeAllActions()
-        node?.removeAllActions()
-        //current_pointer_position_select()
         performed = false
         target_code_index = 0
     }

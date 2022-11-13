@@ -100,8 +100,8 @@ class GripperController: ToolModelController
             if !closed && !moved
             {
                 moved = true
-                nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -20), duration: 1))
-                nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 20), duration: 1))
+                nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
+                nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
                 {
                     self.moved = false
                     self.closed = true
@@ -109,18 +109,26 @@ class GripperController: ToolModelController
                     completion()
                 }
             }
+            else
+            {
+                completion()
+            }
         case 2: //Release
             if closed && !moved
             {
                 moved = true
-                nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 20), duration: 1))
-                nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -20), duration: 1))
+                nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
+                nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
                 {
                     self.moved = false
                     self.closed = false
                     
                     completion()
                 }
+            }
+            else
+            {
+                completion()
             }
         default:
             nodes[0].removeAllActions()
@@ -157,7 +165,7 @@ class DrillController: ToolModelController
             if !rotated[0]
             {
                 nodes.first?.removeAllActions()
-                nodes.first?.runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                nodes.first?.runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
                 rotated[0] = true
                 rotated[1] = false
             }
@@ -165,7 +173,7 @@ class DrillController: ToolModelController
             if !rotated[1]
             {
                 nodes.first?.removeAllActions()
-                nodes.first?.runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                nodes.first?.runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
                 rotated[1] = true
                 rotated[0] = false
             }
