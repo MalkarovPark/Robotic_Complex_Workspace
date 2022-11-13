@@ -79,8 +79,10 @@ class Tool: WorkspaceObject
         {
         case "gripper":
             model_controller = GripperController()
+            connector = ToolConnector()
         case "drill":
             model_controller = DrillController()
+            connector = ToolConnector()
         default:
             break
         }
@@ -94,13 +96,7 @@ class Tool: WorkspaceObject
         willSet
         {
             //Stop tool moving before program change
-            performed = false
-            performing_completed = false
-            target_code_index = 0
-        }
-        didSet
-        {
-            //selected_program.visual_build()
+            reset_performing()
         }
     }
     
@@ -191,30 +187,6 @@ class Tool: WorkspaceObject
     //MARK: - Control functions
     public var codes = [Int]()
     
-    public var operation_code: Int? = 0
-    {
-        didSet
-        {
-            //Checking for positive value of operation code number
-            if operation_code! > 0
-            {
-                //Perform function by opcode as array number
-                //print("\(operation_code ?? 0) 🍩")
-            }
-            else
-            {
-                //Reset tool perfroming by negative code
-                //print("\(operation_code ?? 0) 🍷")
-                if operation_code! < 0
-                {
-                    operation_code = 0
-                }
-            }
-        }
-    }
-    
-    private(set) var info_code: Int? = 0
-    
     public var performed = false //Performing state of tool
     
     public var codes_count: Int
@@ -231,20 +203,26 @@ class Tool: WorkspaceObject
     private var connector = ToolConnector()
     private var continue_selection = true
     
-    private var demo_work = true
+    private var demo = true
     {
         didSet
         {
-            if demo_work == false
+            reset_performing()
+            
+            if demo
             {
-                reset_performing()
+                connect()
+            }
+            else
+            {
+                disconnect()
             }
         }
     }
     
     public func perform_next_code()
     {
-        if demo_work == true
+        if demo == true
         {
             //Move to point for virtual tool
             model_controller.nodes_perform(code: selected_program.codes[target_code_index].value)
@@ -255,6 +233,10 @@ class Tool: WorkspaceObject
         else
         {
             //Move to point for real tool
+            connector.perform(code: selected_program.codes[target_code_index].value)
+            {
+                self.select_new_code()
+            }
         }
     }
     
@@ -305,6 +287,7 @@ class Tool: WorkspaceObject
     public func reset_performing() //Reset robot moving
     {
         performed = false
+        performing_completed = false
         target_code_index = 0
     }
     
@@ -329,38 +312,21 @@ class Tool: WorkspaceObject
         node?.name = "Tool"
     }
     
-    public func connect_details_nodes(_ nodes: inout [SCNNode])
-    {
-        
-    }
-    
     public func perform_operation(_ code: Int)
     {
         
     }
     
-    public func workcell_connect(scene: SCNScene, name: String)
+    public func workcell_connect(scene: SCNScene, name: String) //Connect tool details from scene
     {
-        //Connect tool details
         let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         model_controller.nodes_disconnect()
-        model_controller.nodes_connect(unit_node ?? SCNNode()) //(node ?? SCNNode())
-        
-        //Connect robot camera
-        /*if connect_camera
-        {
-            self.camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
-        }*/
-        
-        //Place and scale cell box
-        //robot_location_place()
-        //update_space_scale() //Set space scale by connected robot parameters
-        //update_position() //Update robot details position on robot connection
+        model_controller.nodes_connect(unit_node ?? SCNNode())
     }
     
-    public func workcell_disconnect()
+    public func workcell_disconnect() //Disconnect tool model details
     {
-        model_controller.nodes_perform(code: 0)
+        model_controller.remove_all_model_actions()
         model_controller.nodes_disconnect()
     }
     
@@ -443,6 +409,17 @@ class Tool: WorkspaceObject
     }
     
     private var codes_names = [String]()
+    
+    //MARK: - Connection functions
+    private func connect()
+    {
+        connector.connect()
+    }
+    
+    private func disconnect()
+    {
+        connector.disconnect()
+    }
     
     //MARK: - Work with file system
     public var file_info: ToolStruct

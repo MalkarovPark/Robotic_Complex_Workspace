@@ -976,7 +976,6 @@ struct ToolSceneView_macOS: NSViewRepresentable
         
         if base_workspace.selected_object_type == .tool
         {
-            //base_workspace.selected_robot.update_robot()
             if base_workspace.selected_tool.performing_completed == true
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)

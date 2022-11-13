@@ -55,9 +55,9 @@ class OperationsProgram: Identifiable, Codable, Hashable
     {
         if codes.count > 0 && number < codes_count
         {
-            if codes.last?.value ?? 0 < 1
+            if codes.last?.value ?? 0 < 0
             {
-                codes[codes.count].value = 1
+                codes[codes.count].value = 0
             }
         }
     }

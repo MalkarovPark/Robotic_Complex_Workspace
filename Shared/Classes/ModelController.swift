@@ -22,10 +22,20 @@ class ModelController
         nodes.removeAll()
     }
     
-    /*public func nodes_update()
+    public func reset_model()
     {
+        //Reset model controller function
+    }
+    
+    public func remove_all_model_actions()
+    {
+        for node in nodes
+        {
+            node.removeAllActions()
+        }
         
-    }*/
+        reset_model()
+    }
 }
 
 //MARK: - Robot model controllers
@@ -96,7 +106,7 @@ class GripperController: ToolModelController
     {
         switch code
         {
-        case 1: //Grip
+        case 0: //Grip
             if !closed && !moved
             {
                 moved = true
@@ -113,7 +123,7 @@ class GripperController: ToolModelController
             {
                 completion()
             }
-        case 2: //Release
+        case 1: //Release
             if closed && !moved
             {
                 moved = true
@@ -131,9 +141,18 @@ class GripperController: ToolModelController
                 completion()
             }
         default:
-            nodes[0].removeAllActions()
-            nodes[1].removeAllActions()
+            remove_all_model_actions()
+            completion()
         }
+    }
+    
+    override func reset_model()
+    {
+        closed = false
+        moved = false
+        
+        nodes[0].position.z = 46
+        nodes[1].position.z = -46
     }
 }
 
@@ -157,11 +176,11 @@ class DrillController: ToolModelController
     {
         switch code
         {
-        case 1: //Strop rotation
+        case 0: //Strop rotation
             nodes.first?.removeAllActions()
             rotated[0] = false
             rotated[1] = false
-        case 2: //Clockwise rotation
+        case 1: //Clockwise rotation
             if !rotated[0]
             {
                 nodes.first?.removeAllActions()
@@ -169,7 +188,8 @@ class DrillController: ToolModelController
                 rotated[0] = true
                 rotated[1] = false
             }
-        case 3: //Counter clockwise rotation
+        case 2: //Counter clockwise rotation
+            print(rotated)
             if !rotated[1]
             {
                 nodes.first?.removeAllActions()
@@ -178,7 +198,15 @@ class DrillController: ToolModelController
                 rotated[0] = false
             }
         default:
-            nodes[0].removeAllActions()
+            remove_all_model_actions()
+            rotated[0] = false
+            rotated[1] = false
         }
+    }
+    
+    override func reset_model()
+    {
+        rotated[0] = false
+        rotated[1] = false
     }
 }

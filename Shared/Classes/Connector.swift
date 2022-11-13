@@ -7,9 +7,10 @@
 
 import Foundation
 
-class RobotConnector
+//MARK: - Workspace object connector
+class WorkspaceObjectConnector
 {
-    //MARK: - Connection functions
+    //Connection functions
     public func connect() //Connect to robot controller function
     {
         
@@ -20,51 +21,49 @@ class RobotConnector
         
     }
     
-    private(set) var connected: Bool = false
+    public var connected: Bool = false
     
-    //MARK: - Perform functions
+    //Visual model handling
+    //public var model_controller = ModelController()
+    
+    //Info
+    public var state: [String: Any]? //Connector state info
+}
+
+//MARK: - Robot connector
+class RobotConnector: WorkspaceObjectConnector
+{
+    //Perform functions
     public func move_to(point: PositionPoint)
     {
         
     }
     
-    public func move_to(point: PositionPoint, completionHandler block: (() -> Void)? = nil)
+    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
-        block!()
+        move_to(point: point)
+        completion()
     }
     
-    func perform_code(_ opcode: Int) //Perform function for robot operation code
-    {
-        
-    }
-    
-    //MARK: - Info
-    private(set) var state: [[String: Any]]? //Connector state info
-    private(set) var info_code: Int = -1 //Info code parameter for robot
+    //Visual model handling
+    public var model_controller = RobotModelController()
 }
 
-class ToolConnector
+//MARK: - Tool connector
+class ToolConnector: WorkspaceObjectConnector
 {
-    //MARK: - Connection functions
-    func connect() //Connect to tool controller function
+    //Perform functions
+    func perform(code: Int) //Perform function for tool operation code
     {
         
     }
     
-    func disconnect() //Disconnect tool function
+    func perform(code: Int, completion: @escaping () -> Void)
     {
-        
+        perform(code: code)
+        completion()
     }
     
-    private(set) var connected: Bool = false
-    
-    //MARK: - Perform functions
-    func perform_code(_ opcode: Int) //Perform function for tool operation code
-    {
-        
-    }
-    
-    //MARK: - Info
-    private(set) var state: [[String: Any]]? //Connector state info
-    private(set) var info_code: Int = -1 //Info code parameter for tool
+    //Visual model handling
+    public var model_controller = ToolModelController()
 }

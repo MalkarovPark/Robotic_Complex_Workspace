@@ -11,9 +11,9 @@
 		<key>Operations Codes</key>
 		<dict>
 			<key>Grab#arrow.right.and.line.vertical.and.arrow.left</key>
-			<integer>1</integer>
+			<integer>0</integer>
 			<key>Release#arrow.left.and.line.vertical.and.arrow.right</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 	</dict>
 	<key>Spatula</key>
@@ -30,11 +30,11 @@
 		<key>Operations Codes</key>
 		<dict>
 			<key>Clockwise rotation#arrow.clockwise.circle</key>
-			<integer>2</integer>
-			<key>Counter clockwise rotation#arrow.counterclockwise.circle</key>
-			<integer>3</integer>
-			<key>Stop rotation#stop.circle</key>
 			<integer>1</integer>
+			<key>Counter clockwise rotation#arrow.counterclockwise.circle</key>
+			<integer>2</integer>
+			<key>Stop rotation#stop.circle</key>
+			<integer>0</integer>
 		</dict>
 		<key>Scene</key>
 		<string>drill.scn</string>
