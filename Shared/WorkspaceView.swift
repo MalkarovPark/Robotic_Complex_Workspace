@@ -1789,7 +1789,7 @@ struct PerformerElementView: View
                                 }
                                 .onChange(of: robot_name)
                                 { _ in
-                                    viewed_robot = base_workspace.robot_by_name(name: robot_name)
+                                    viewed_robot = base_workspace.robot_by_name(robot_name)
                                     if viewed_robot.programs_names.count > 0
                                     {
                                         robot_program_name = viewed_robot.programs_names.first ?? ""
@@ -1804,7 +1804,7 @@ struct PerformerElementView: View
                                     }
                                     else
                                     {
-                                        viewed_robot = base_workspace.robot_by_name(name: robot_name)
+                                        viewed_robot = base_workspace.robot_by_name(robot_name)
                                         base_workspace.update_view()
                                     }
                                 }

@@ -153,8 +153,11 @@ class GripperController: ToolModelController
         closed = false
         moved = false
         
-        nodes[0].position.z = 46
-        nodes[1].position.z = -46
+        if nodes.count == 2
+        {
+            nodes[0].position.z = 46
+            nodes[1].position.z = -46
+        }
     }
 }
 

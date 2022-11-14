@@ -1092,6 +1092,32 @@ struct ToolSceneView_iOS: UIViewRepresentable
             app_state.previewed_object?.node?.name = "Tool"
             app_state.preview_update_scene = false
         }
+        
+        if app_state.object_view_was_open //Provide scene connection to model controller if tool was opened
+        {
+            base_workspace.selected_tool.workcell_connect(scene: scene_view.scene!, name: "Tool")
+            app_state.object_view_was_open = false
+        }
+        
+        if base_workspace.selected_object_type == .tool
+        {
+            if base_workspace.selected_tool.performing_completed == true
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                {
+                    base_workspace.selected_tool.performing_completed = false
+                    base_workspace.update_view()
+                }
+            }
+            if base_workspace.selected_tool.code_changed == true
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now())
+                {
+                    base_workspace.update_view()
+                    base_workspace.selected_tool.code_changed = false
+                }
+            }
+        }
     }
 }
 #endif
