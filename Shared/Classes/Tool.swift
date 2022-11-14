@@ -194,6 +194,8 @@ class Tool: WorkspaceObject
         return codes.count
     }
     
+    public var info_code = 0 //Information code
+    
     //MARK: - Moving functions
     public var performing_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI
     public var code_changed = false //This flag perform update if performed code changed
@@ -322,12 +324,14 @@ class Tool: WorkspaceObject
         let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         model_controller.nodes_disconnect()
         model_controller.nodes_connect(unit_node ?? SCNNode())
+        model_controller.info_code = self.info_code
     }
     
     public func workcell_disconnect() //Disconnect tool model details
     {
         model_controller.remove_all_model_actions()
         model_controller.nodes_disconnect()
+        model_controller.info_code = nil
     }
     
     //MARK: - UI functions

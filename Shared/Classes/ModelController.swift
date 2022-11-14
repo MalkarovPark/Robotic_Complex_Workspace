@@ -77,6 +77,8 @@ class ToolModelController: ModelController
     }
     
     public var state: [[String: Any]]?
+    
+    public var info_code: Int?
 }
 
 //MARK: Gripper controller

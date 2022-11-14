@@ -513,13 +513,13 @@ class Workspace: ObservableObject
     
     public func delete_robot(name: String)
     {
-        delete_robot(number: robot_number_by_name(name: name))
+        delete_robot(number: robot_index_by_name(name))
     }
     
     //MARK: Robot selection functions
     private var selected_robot_index = -1
     
-    private func robot_number_by_name(name: String) -> Int //Get index number of robot by name
+    private func robot_index_by_name(_ name: String) -> Int //Get index number of robot by name
     {
         return robots.firstIndex(of: Robot(name: name)) ?? -1
     }
@@ -532,7 +532,7 @@ class Workspace: ObservableObject
     public func select_robot(name: String) //Select robot by name
     {
         //selected_robot_index = robot_number_by_name(name: name)
-        select_robot(number: robot_number_by_name(name: name))
+        select_robot(number: robot_index_by_name(name))
     }
     
     public func deselect_robot()
@@ -564,9 +564,9 @@ class Workspace: ObservableObject
     }
     
     //MARK: Robots naming
-    public func robot_by_name(name: String) -> Robot //Get index number of robot by name
+    public func robot_by_name(_ name: String) -> Robot //Get index number of robot by name
     {
-        return self.robots[robot_number_by_name(name: name)]
+        return self.robots[robot_index_by_name(name)]
     }
     
     public var robots_names: [String] //Get names of all robots in workspace
@@ -654,7 +654,7 @@ class Workspace: ObservableObject
         }
     }
 
-    private func tool_number_by_name(name: String) -> Int //Get index number of robot by name
+    private func tool_index_by_name(_ name: String) -> Int //Get index number of robot by name
     {
         return tools.firstIndex(of: Tool(name: name)) ?? -1
     }
@@ -667,7 +667,7 @@ class Workspace: ObservableObject
     public func select_tool(name: String) //Select tool by name
     {
         //selected_tool_index = tool_number_by_name(name: name)
-        select_tool(number: tool_number_by_name(name: name))
+        select_tool(number: tool_index_by_name(name))
     }
 
     public func deselect_tool()
@@ -749,7 +749,7 @@ class Workspace: ObservableObject
         }
     }
     
-    private func detail_number_by_name(name: String) -> Int //Get index number of robot by name
+    private func detail_index_by_name(_ name: String) -> Int //Get index number of robot by name
     {
         return details.firstIndex(of: Detail(name: name)) ?? -1
     }
@@ -762,7 +762,7 @@ class Workspace: ObservableObject
     public func select_detail(name: String) //Select detail by name
     {
         //selected_detail_index = detail_number_by_name(name: name)
-        select_detail(number: detail_number_by_name(name: name))
+        select_detail(number: detail_index_by_name(name))
     }
     
     public func deselect_detail()
@@ -854,15 +854,15 @@ class Workspace: ObservableObject
         {
             if element.element_data.robot_name != ""
             {
-                if self.robot_by_name(name: element.element_data.robot_name).is_placed == false
+                if self.robot_by_name(element.element_data.robot_name).is_placed == false
                 {
                     if self.placed_robots_names.count > 0
                     {
                         element.element_data.robot_name = self.placed_robots_names.first!
                         
-                        if robot_by_name(name: element.element_data.robot_name).programs_count > 0
+                        if robot_by_name(element.element_data.robot_name).programs_count > 0
                         {
-                            element.element_data.robot_program_name = robot_by_name(name: element.element_data.robot_name).programs_names.first!
+                            element.element_data.robot_program_name = robot_by_name(element.element_data.robot_name).programs_names.first!
                         }
                     }
                     else
@@ -878,7 +878,7 @@ class Workspace: ObservableObject
                     element.element_data.robot_name = robots.first?.name ?? "None"
                     if robots.first?.programs_count ?? 0 > 0
                     {
-                        element.element_data.robot_program_name = robot_by_name(name: element.element_data.robot_name).programs_names.first!
+                        element.element_data.robot_program_name = robot_by_name(element.element_data.robot_name).programs_names.first!
                     }
                 }
                 else
