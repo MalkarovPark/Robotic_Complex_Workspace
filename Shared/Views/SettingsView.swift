@@ -18,7 +18,7 @@ struct SettingsView: View
     
     private enum Tabs: Hashable
     {
-        case general, properties, advanced //Settings view tab bar items
+        case general, properties, cell //Settings view tab bar items
     }
     
     var body: some View
@@ -44,15 +44,15 @@ struct SettingsView: View
                 Label("Properties", systemImage: "doc.text")
             }
             
-            AdvancedSettingsView()
+            CellSettingsView()
             #if os(iOS)
-                .modifier(CaptionModifier(label: "Advanced"))
+                .modifier(CaptionModifier(label: "Cell"))
             #endif
                 .tabItem
             {
-                Label("Advanced", systemImage: "star")
+                Label("Cell", systemImage: "cube.transparent")
             }
-            .tag(Tabs.advanced)
+            .tag(Tabs.cell)
         }
         #if os(macOS)
         .padding(20)
@@ -84,224 +84,46 @@ struct CaptionModifier: ViewModifier
 //MARK: - Settings view with tab bar
 struct GeneralSettingsView: View
 {
-    //Default robot origin location properties from user defaults
-    @AppStorage("DefaultLocation_X") private var location_x: Double = 0
-    @AppStorage("DefaultLocation_Y") private var location_y: Double = 20
-    @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
-    
-    //Default robot origion rotation properties from user defaults
-    @AppStorage("DefaultScale_X") private var scale_x: Double = 200
-    @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
-    @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
+    @AppStorage("WorkspaceVisualModeling") private var workspace_visual_modeling: Bool = true
     
     var body: some View
     {
-        VStack
+        Form
         {
-            Form
+            #if os(macOS)
+            VStack(alignment: .leading, spacing: 0)
             {
-                #if os(macOS)
-                GroupBox(label: Text("Default Values")
-                            .font(.headline))
+                GroupBox(label: Text("View").font(.headline))
                 {
-                    VStack(alignment: .leading)
+                    VStack(spacing: 4)
                     {
-                        Text("Origin location")
-                            .foregroundColor(Color.gray)
-                        
-                        HStack(spacing: 8)
+                        HStack
                         {
-                            Text("X:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $location_x, format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .labelsHidden()
-                            Stepper("Enter", value: $location_x, in: -50...50)
-                                .labelsHidden()
-                        }
-                        .onChange(of: location_x)
-                        { _ in
-                            Robot.default_origin_location[0] = Float(location_x)
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("Y:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $location_y, format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .labelsHidden()
-                            Stepper("Enter", value: $location_y, in: -50...50)
+                            Text("Use visual modeling for workspace")
+                            
+                            Spacer()
+                            
+                            Toggle("Visual", isOn: $workspace_visual_modeling)
+                                .toggleStyle(.switch)
                                 .labelsHidden()
                         }
-                        .onChange(of: location_y)
-                        { _ in
-                            Robot.default_origin_location[1] = Float(location_y)
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("Z:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $location_z, format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .labelsHidden()
-                            Stepper("Enter", value: $location_z, in: -50...50)
-                                .labelsHidden()
-                        }
-                        .onChange(of: location_z)
-                        { _ in
-                            Robot.default_origin_location[2] = Float(location_z)
-                        }
+                        .padding(4)
                     }
-                    .padding(8)
-                    
-                    VStack(alignment: .leading)
-                    {
-                        Text("Space scale")
-                            .foregroundColor(Color.gray)
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("X:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $scale_x, format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .labelsHidden()
-                            Stepper("Enter", value: $scale_x, in: 0...400)
-                                .labelsHidden()
-                        }
-                        .onChange(of: scale_x)
-                        { _ in
-                            Robot.default_space_scale[0] = Float(scale_x)
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("Y:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $scale_y, format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .labelsHidden()
-                            Stepper("Enter", value: $scale_y, in: 0...400)
-                                .labelsHidden()
-                        }
-                        .onChange(of: scale_y)
-                        { _ in
-                            Robot.default_space_scale[1] = Float(scale_y)
-                        }
-                        
-                        HStack(spacing: 8)
-                        {
-                            Text("Z:")
-                                .frame(width: 20.0)
-                            TextField("0", value: $scale_z, format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .labelsHidden()
-                            Stepper("Enter", value: $scale_z, in: 0...400)
-                                .labelsHidden()
-                        }
-                        .onChange(of: scale_z)
-                        { _ in
-                            Robot.default_space_scale[2] = Float(scale_z)
-                        }
-                    }
-                    .padding(8)
+                    .frame(minWidth: 0, maxWidth: .infinity)
                 }
-                .frame(width: 192)
-                #else
-                Section(header: Text("Origin location"))
-                {
-                    HStack(spacing: 8)
-                    {
-                        Text("X:")
-                            .frame(width: 20.0)
-                        TextField("0", value: $location_x, format: .number)
-                            .labelsHidden()
-                        Stepper("Enter", value: $location_x, in: -50...50)
-                            .labelsHidden()
-                    }
-                    .onChange(of: location_x)
-                    { _ in
-                        Robot.default_origin_location[0] = Float(location_x)
-                    }
-                    
-                    HStack(spacing: 8)
-                    {
-                        Text("Y:")
-                            .frame(width: 20.0)
-                        TextField("0", value: $location_y, format: .number)
-                            .labelsHidden()
-                        Stepper("Enter", value: $location_y, in: -50...50)
-                            .labelsHidden()
-                    }
-                    .onChange(of: location_y)
-                    { _ in
-                        Robot.default_origin_location[1] = Float(location_y)
-                    }
-                    
-                    HStack(spacing: 8)
-                    {
-                        Text("Z:")
-                            .frame(width: 20.0)
-                        TextField("0", value: $location_z, format: .number)
-                            .labelsHidden()
-                        Stepper("Enter", value: $location_z, in: -50...50)
-                            .labelsHidden()
-                    }
-                    .onChange(of: location_z)
-                    { _ in
-                        Robot.default_origin_location[2] = Float(location_z)
-                    }
-                }
-                
-                Section(header: Text("Space scale"))
-                {
-                    HStack(spacing: 8)
-                    {
-                        Text("X:")
-                            .frame(width: 20.0)
-                        TextField("0", value: $scale_x, format: .number)
-                            .labelsHidden()
-                        Stepper("Enter", value: $scale_x, in: 0...400)
-                            .labelsHidden()
-                    }
-                    .onChange(of: scale_x)
-                    { _ in
-                        Robot.default_space_scale[0] = Float(scale_x)
-                    }
-                    
-                    HStack(spacing: 8)
-                    {
-                        Text("Y:")
-                            .frame(width: 20.0)
-                        TextField("0", value: $scale_y, format: .number)
-                            .labelsHidden()
-                        Stepper("Enter", value: $scale_y, in: 0...400)
-                            .labelsHidden()
-                    }
-                    .onChange(of: scale_y)
-                    { _ in
-                        Robot.default_space_scale[1] = Float(scale_y)
-                    }
-                    
-                    HStack(spacing: 8)
-                    {
-                        Text("Z:")
-                            .frame(width: 20.0)
-                        TextField("0", value: $scale_z, format: .number)
-                            .labelsHidden()
-                        Stepper("Enter", value: $scale_z, in: 0...400)
-                            .labelsHidden()
-                    }
-                    .onChange(of: scale_z)
-                    { _ in
-                        Robot.default_space_scale[2] = Float(scale_z)
-                    }
-                }
-                #endif
+                //.padding(.bottom)
             }
+            #else
+            Section
+            {
+                Toggle("Use visual modeling for workspace", isOn: $workspace_visual_modeling)
+                    .toggleStyle(.switch)
+            }
+            #endif
         }
+        #if os(macOS)
+        .frame(width: 300)//, height: 256)
+        #endif
     }
 }
 
@@ -331,7 +153,7 @@ struct PropertiesSettingsView: View
         Form
         {
             #if os(macOS)
-            VStack(alignment: .leading)
+            VStack(alignment: .leading, spacing: 0)
             {
                 //MARK: Robots data handling view
                 GroupBox(label: Text("Robots").font(.headline))
@@ -406,7 +228,7 @@ struct PropertiesSettingsView: View
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
                 }
-                .padding(.bottom, 8.0)
+                .padding(.bottom)
                 
                 //MARK: Tools data handling view
                 GroupBox
@@ -465,7 +287,7 @@ struct PropertiesSettingsView: View
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
                 }
-                .padding(.bottom, 8.0)
+                .padding(.bottom)
                 
                 //MARK: Details data handling view
                 GroupBox
@@ -742,16 +564,226 @@ struct PropertiesSettingsView: View
 }
 
 //MARK: - Advanced settings view
-struct AdvancedSettingsView: View
+struct CellSettingsView: View
 {
+    //Default robot origin location properties from user defaults
+    @AppStorage("DefaultLocation_X") private var location_x: Double = 0
+    @AppStorage("DefaultLocation_Y") private var location_y: Double = 20
+    @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
+    
+    //Default robot origion rotation properties from user defaults
+    @AppStorage("DefaultScale_X") private var scale_x: Double = 200
+    @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
+    @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
+    
     var body: some View
     {
-        Form
+        VStack
         {
-            
+            Form
+            {
+                #if os(macOS)
+                GroupBox(label: Text("Default Values")
+                            .font(.headline))
+                {
+                    VStack(alignment: .leading)
+                    {
+                        Text("Origin location")
+                            .foregroundColor(Color.gray)
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("X:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $location_x, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .labelsHidden()
+                            Stepper("Enter", value: $location_x, in: -50...50)
+                                .labelsHidden()
+                        }
+                        .onChange(of: location_x)
+                        { _ in
+                            Robot.default_origin_location[0] = Float(location_x)
+                        }
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("Y:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $location_y, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .labelsHidden()
+                            Stepper("Enter", value: $location_y, in: -50...50)
+                                .labelsHidden()
+                        }
+                        .onChange(of: location_y)
+                        { _ in
+                            Robot.default_origin_location[1] = Float(location_y)
+                        }
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("Z:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $location_z, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .labelsHidden()
+                            Stepper("Enter", value: $location_z, in: -50...50)
+                                .labelsHidden()
+                        }
+                        .onChange(of: location_z)
+                        { _ in
+                            Robot.default_origin_location[2] = Float(location_z)
+                        }
+                    }
+                    .padding(8)
+                    
+                    VStack(alignment: .leading)
+                    {
+                        Text("Space scale")
+                            .foregroundColor(Color.gray)
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("X:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $scale_x, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .labelsHidden()
+                            Stepper("Enter", value: $scale_x, in: 0...400)
+                                .labelsHidden()
+                        }
+                        .onChange(of: scale_x)
+                        { _ in
+                            Robot.default_space_scale[0] = Float(scale_x)
+                        }
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("Y:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $scale_y, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .labelsHidden()
+                            Stepper("Enter", value: $scale_y, in: 0...400)
+                                .labelsHidden()
+                        }
+                        .onChange(of: scale_y)
+                        { _ in
+                            Robot.default_space_scale[1] = Float(scale_y)
+                        }
+                        
+                        HStack(spacing: 8)
+                        {
+                            Text("Z:")
+                                .frame(width: 20.0)
+                            TextField("0", value: $scale_z, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .labelsHidden()
+                            Stepper("Enter", value: $scale_z, in: 0...400)
+                                .labelsHidden()
+                        }
+                        .onChange(of: scale_z)
+                        { _ in
+                            Robot.default_space_scale[2] = Float(scale_z)
+                        }
+                    }
+                    .padding(8)
+                }
+                .frame(width: 192)
+                #else
+                Section(header: Text("Origin location"))
+                {
+                    HStack(spacing: 8)
+                    {
+                        Text("X:")
+                            .frame(width: 20.0)
+                        TextField("0", value: $location_x, format: .number)
+                            .labelsHidden()
+                        Stepper("Enter", value: $location_x, in: -50...50)
+                            .labelsHidden()
+                    }
+                    .onChange(of: location_x)
+                    { _ in
+                        Robot.default_origin_location[0] = Float(location_x)
+                    }
+                    
+                    HStack(spacing: 8)
+                    {
+                        Text("Y:")
+                            .frame(width: 20.0)
+                        TextField("0", value: $location_y, format: .number)
+                            .labelsHidden()
+                        Stepper("Enter", value: $location_y, in: -50...50)
+                            .labelsHidden()
+                    }
+                    .onChange(of: location_y)
+                    { _ in
+                        Robot.default_origin_location[1] = Float(location_y)
+                    }
+                    
+                    HStack(spacing: 8)
+                    {
+                        Text("Z:")
+                            .frame(width: 20.0)
+                        TextField("0", value: $location_z, format: .number)
+                            .labelsHidden()
+                        Stepper("Enter", value: $location_z, in: -50...50)
+                            .labelsHidden()
+                    }
+                    .onChange(of: location_z)
+                    { _ in
+                        Robot.default_origin_location[2] = Float(location_z)
+                    }
+                }
+                
+                Section(header: Text("Space scale"))
+                {
+                    HStack(spacing: 8)
+                    {
+                        Text("X:")
+                            .frame(width: 20.0)
+                        TextField("0", value: $scale_x, format: .number)
+                            .labelsHidden()
+                        Stepper("Enter", value: $scale_x, in: 0...400)
+                            .labelsHidden()
+                    }
+                    .onChange(of: scale_x)
+                    { _ in
+                        Robot.default_space_scale[0] = Float(scale_x)
+                    }
+                    
+                    HStack(spacing: 8)
+                    {
+                        Text("Y:")
+                            .frame(width: 20.0)
+                        TextField("0", value: $scale_y, format: .number)
+                            .labelsHidden()
+                        Stepper("Enter", value: $scale_y, in: 0...400)
+                            .labelsHidden()
+                    }
+                    .onChange(of: scale_y)
+                    { _ in
+                        Robot.default_space_scale[1] = Float(scale_y)
+                    }
+                    
+                    HStack(spacing: 8)
+                    {
+                        Text("Z:")
+                            .frame(width: 20.0)
+                        TextField("0", value: $scale_z, format: .number)
+                            .labelsHidden()
+                        Stepper("Enter", value: $scale_z, in: 0...400)
+                            .labelsHidden()
+                    }
+                    .onChange(of: scale_z)
+                    { _ in
+                        Robot.default_space_scale[2] = Float(scale_z)
+                    }
+                }
+                #endif
+            }
         }
-        .padding(20)
-        .frame(width: 400, height: 256)
     }
 }
 
@@ -772,7 +804,7 @@ struct SettingsView_Previews: PreviewProvider
             GeneralSettingsView()
             PropertiesSettingsView()
                 .environmentObject(AppState())
-            AdvancedSettingsView()
+            CellSettingsView()
         }
     }
 }

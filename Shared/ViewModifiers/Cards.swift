@@ -133,11 +133,6 @@ struct LargeCardViewPreview: View
 //MARK: - Small card view
 struct SmallCardView: View
 {
-    //@Binding var document: Robotic_Complex_WorkspaceDocument
-    
-    //@State var detail_item: Detail
-    //@State private var detail_view_presented = false
-    
     @State var color: Color
     #if os(macOS)
     @State var image: NSImage
