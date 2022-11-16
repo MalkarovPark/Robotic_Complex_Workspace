@@ -41,25 +41,50 @@ class ModelController
 //MARK: - Robot model controllers
 class RobotModelController: ModelController
 {
-    public func nodes_connect(_ lengths: inout [Float], _ node: SCNNode, _ details: inout [SCNNode], _ with_lengths: Bool)
+    public var lengths = [Float]()
+    
+    public func nodes_update(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float])
+    {
+        nodes_update(values: inverse_kinematic_calculate(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_roation, origin_location: origin_location, origin_rotation: origin_rotation))
+    }
+    
+    public func inverse_kinematic_calculate(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
+    {
+        return [Float]()
+    }
+    
+    public func nodes_update(values: [Float])
     {
         
     }
     
-    public func update_nodes_geometry(_ details: inout [SCNNode], _ lengths: [Float])
+    public func nodes_transform()
     {
         
     }
     
-    public func update_nodes_position(_ nodes: inout [SCNNode], _ values: [Float])
+    public var state: [[String: Any]]?
+}
+
+func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float] //Transform position by origin rotation
+{
+    let new_x, new_y, new_z: Float
+    if origin_rotation.reduce(0, +) > 0 //If at least one rotation angle of the origin is not equal to zero
     {
-        
+        //Calculate new values for coordinates components by origin rotation angles
+        new_x = pointer_location[0] * cos(origin_rotation[1].to_rad) * cos(origin_rotation[2].to_rad) + pointer_location[2] * sin(origin_rotation[1].to_rad) - pointer_location[1] * sin(origin_rotation[2].to_rad)
+        new_y = pointer_location[1] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[2].to_rad) - pointer_location[2] * sin(origin_rotation[0].to_rad) + pointer_location[0] * sin(origin_rotation[2].to_rad)
+        new_z = pointer_location[2] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[1].to_rad) + pointer_location[1] * sin(origin_rotation[0].to_rad) - pointer_location[0] * sin(origin_rotation[1].to_rad)
+    }
+    else
+    {
+        //Return original values
+        new_x = pointer_location[0]
+        new_y = pointer_location[1]
+        new_z = pointer_location[2]
     }
     
-    public func ik_perform(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float], lengths: [Float])
-    {
-        
-    }
+    return [new_x, new_y, new_z]
 }
 
 //MARK: - Tool model controller

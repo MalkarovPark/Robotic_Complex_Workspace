@@ -12,6 +12,10 @@
 		62061AF52923EC4F00A3B73E /* Gripper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62061AF32923EC4F00A3B73E /* Gripper.swift */; };
 		62061AF72923EC9200A3B73E /* Drill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62061AF62923EC9200A3B73E /* Drill.swift */; };
 		62061AF82923EC9200A3B73E /* Drill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62061AF62923EC9200A3B73E /* Drill.swift */; };
+		62061AFF29250D2600A3B73E /* Portal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62061AFE29250D2600A3B73E /* Portal.swift */; };
+		62061B0029250D2600A3B73E /* Portal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62061AFE29250D2600A3B73E /* Portal.swift */; };
+		62061B0229250D3800A3B73E /* 6DOF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62061B0129250D3800A3B73E /* 6DOF.swift */; };
+		62061B0329250D3800A3B73E /* 6DOF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62061B0129250D3800A3B73E /* 6DOF.swift */; };
 		6209286B28AE75F800DD220E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6209286A28AE75F700DD220E /* SettingsView.swift */; };
 		6209286C28AE75F800DD220E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6209286A28AE75F700DD220E /* SettingsView.swift */; };
 		621AABF628BB8B0500AFD62F /* Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621AABF528BB8B0500AFD62F /* Detail.swift */; };
@@ -75,6 +79,8 @@
 		6204438C2882DDC500EEB206 /* preset_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = preset_icon.png; sourceTree = "<group>"; };
 		62061AF32923EC4F00A3B73E /* Gripper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gripper.swift; sourceTree = "<group>"; };
 		62061AF62923EC9200A3B73E /* Drill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drill.swift; sourceTree = "<group>"; };
+		62061AFE29250D2600A3B73E /* Portal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Portal.swift; sourceTree = "<group>"; };
+		62061B0129250D3800A3B73E /* 6DOF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6DOF.swift; sourceTree = "<group>"; };
 		6209286A28AE75F700DD220E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		621AABF528BB8B0500AFD62F /* Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detail.swift; sourceTree = "<group>"; };
 		621AABF828BB997F00AFD62F /* DetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsView.swift; sourceTree = "<group>"; };
@@ -174,6 +180,8 @@
 		62061AF12923EBD000A3B73E /* Robots */ = {
 			isa = PBXGroup;
 			children = (
+				62061AFE29250D2600A3B73E /* Portal.swift */,
+				62061B0129250D3800A3B73E /* 6DOF.swift */,
 			);
 			path = Robots;
 			sourceTree = "<group>";
@@ -401,11 +409,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62061B0229250D3800A3B73E /* 6DOF.swift in Sources */,
 				62E0D3662719C700009D58D2 /* Robotic_Complex_WorkspaceDocument.swift in Sources */,
 				6260B73727F74EC700F72530 /* WorkspaceProgramElement.swift in Sources */,
 				62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
 				621AABF628BB8B0500AFD62F /* Detail.swift in Sources */,
 				624432EF2847C8A200E7BE85 /* Tool.swift in Sources */,
+				62061AFF29250D2600A3B73E /* Portal.swift in Sources */,
 				62BD1170291A93CA0093DDF1 /* OperationCode.swift in Sources */,
 				6240373429113CE50085B8AC /* Cards.swift in Sources */,
 				62C4833328F1C55B00AB6B23 /* Connector.swift in Sources */,
@@ -449,10 +459,12 @@
 				62A23C4C271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				62C4833428F1C55B00AB6B23 /* Connector.swift in Sources */,
 				6260B73827F74EC700F72530 /* WorkspaceProgramElement.swift in Sources */,
+				62061B0329250D3800A3B73E /* 6DOF.swift in Sources */,
 				621AABF728BB8B0500AFD62F /* Detail.swift in Sources */,
 				6279ED722721A5B400EEA986 /* RobotsView.swift in Sources */,
 				624DA0CF275D3FBB00918A9E /* Workspace.swift in Sources */,
 				62BD1171291A93CA0093DDF1 /* OperationCode.swift in Sources */,
+				62061B0029250D2600A3B73E /* Portal.swift in Sources */,
 				6279ED6F2721A4F300EEA986 /* WorkspaceView.swift in Sources */,
 				621AABFA28BB997F00AFD62F /* DetailsView.swift in Sources */,
 				6299FBD3291ED30000D24B19 /* ModelController.swift in Sources */,

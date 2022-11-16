@@ -10,7 +10,7 @@
 			<dict>
 				<key>Name</key>
 				<string>Model Without Scene</string>
-				<key>Kinematic</key>
+				<key>Module</key>
 				<string>6DOF</string>
 				<key>Details Lengths</key>
 				<array>
@@ -27,7 +27,7 @@
 			<dict>
 				<key>Name</key>
 				<string>Model With Scene</string>
-				<key>Kinematic</key>
+				<key>Module</key>
 				<string>6DOF</string>
 				<key>Scene</key>
 				<string>None</string>
@@ -39,7 +39,7 @@
 			<dict>
 				<key>Name</key>
 				<string>Model Without Scene</string>
-				<key>Kinematic</key>
+				<key>Module</key>
 				<string>Portal</string>
 				<key>Details Lengths</key>
 				<array>
@@ -58,7 +58,7 @@
 			<dict>
 				<key>Name</key>
 				<string>Model With Scene</string>
-				<key>Kinematic</key>
+				<key>Module</key>
 				<string>Portal</string>
 				<key>Scene</key>
 				<string>None</string>

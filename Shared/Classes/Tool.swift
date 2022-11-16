@@ -32,7 +32,7 @@ class Tool: WorkspaceObject
         if dictionary.keys.contains("Module") //Select model visual controller an connector
         {
             self.module_name = dictionary["Module"] as? String ?? ""
-            select_model_modules(name: module_name, controller: model_controller, connector: &connector)
+            select_modules(name: module_name)
         }
         
         if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it
@@ -69,11 +69,11 @@ class Tool: WorkspaceObject
         self.module_name = tool_struct.module ?? ""
         if module_name != ""
         {
-            select_model_modules(name: module_name, controller: model_controller, connector: &connector)
+            select_modules(name: module_name)
         }
     }
     
-    private func select_model_modules(name: String, controller: ToolModelController, connector: inout ToolConnector) //Select model visual controller an connector
+    private func select_modules(name: String) //Select model visual controller an connector
     {
         switch name
         {
@@ -286,7 +286,7 @@ class Tool: WorkspaceObject
         }
     }
     
-    public func reset_performing() //Reset robot moving
+    public func reset_performing() //Reset tool performing
     {
         performed = false
         performing_completed = false

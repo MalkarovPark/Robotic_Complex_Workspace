@@ -549,7 +549,7 @@ struct PropertiesSettingsView: View
                     app_state.update_additive_data(type: .detail)
                     details_empty = false
                 }
-            case .failure(let failure):
+            case .failure(_):
                 break
             }
         }
