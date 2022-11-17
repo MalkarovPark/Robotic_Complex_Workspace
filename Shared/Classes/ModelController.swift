@@ -11,6 +11,7 @@ import SceneKit
 class ModelController
 {
     public var nodes = [SCNNode]()
+    public var lengths = [Float]()
     
     public func nodes_connect(_ node: SCNNode)
     {
@@ -27,7 +28,7 @@ class ModelController
         //Reset model controller function
     }
     
-    public func remove_all_model_actions()
+    final func remove_all_model_actions()
     {
         for node in nodes
         {
@@ -36,14 +37,32 @@ class ModelController
         
         reset_model()
     }
+    
+    public var description_lengths_count: Int { 0 }
+    
+    final func nodes_transform()
+    {
+        guard lengths.count == description_lengths_count
+        else
+        {
+            return
+        }
+        
+        update_nodes_lengths()
+    }
+    
+    public func update_nodes_lengths()
+    {
+        
+    }
+    
+    public var state: [[String: Any]]?
 }
 
 //MARK: - Robot model controllers
 class RobotModelController: ModelController
 {
-    public var lengths = [Float]()
-    
-    public func nodes_update(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float])
+    final func nodes_update(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
         nodes_update(values: inverse_kinematic_calculate(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_roation, origin_location: origin_location, origin_rotation: origin_rotation))
     }
@@ -57,13 +76,6 @@ class RobotModelController: ModelController
     {
         
     }
-    
-    public func nodes_transform()
-    {
-        
-    }
-    
-    public var state: [[String: Any]]?
 }
 
 func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float] //Transform position by origin rotation
@@ -100,8 +112,6 @@ class ToolModelController: ModelController
         nodes_perform(code: code)
         completion()
     }
-    
-    public var state: [[String: Any]]?
     
     public var info_code: Int?
 }

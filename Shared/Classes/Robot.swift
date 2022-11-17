@@ -32,9 +32,9 @@ class Robot: WorkspaceObject
         super.init()
         
         var lengths = [Float]()
-        if dictionary.keys.contains("Details Lengths") //Checking for the availability of lengths data property
+        if dictionary.keys.contains("Lengths") //Checking for the availability of lengths data property
         {
-            let elements = dictionary["Details Lengths"] as! NSArray
+            let elements = dictionary["Lengths"] as! NSArray
             
             for element in elements //Add elements from NSArray to floats array
             {

@@ -12,7 +12,7 @@
 				<string>Model Without Scene</string>
 				<key>Module</key>
 				<string>6DOF</string>
-				<key>Details Lengths</key>
+				<key>Lengths</key>
 				<array>
 					<integer>160</integer>
 					<integer>160</integer>
@@ -41,7 +41,7 @@
 				<string>Model Without Scene</string>
 				<key>Module</key>
 				<string>Portal</string>
-				<key>Details Lengths</key>
+				<key>Lengths</key>
 				<array>
 					<integer>440</integer>
 					<integer>80</integer>

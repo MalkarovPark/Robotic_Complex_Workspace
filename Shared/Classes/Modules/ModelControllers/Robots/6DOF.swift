@@ -138,7 +138,9 @@ class _6DOFController: RobotModelController
         #endif
     }
     
-    override func nodes_transform()
+    override var description_lengths_count: Int { 7 }
+    
+    override func update_nodes_lengths()
     {
         var modified_node = SCNNode()
         var saved_material = SCNMaterial()

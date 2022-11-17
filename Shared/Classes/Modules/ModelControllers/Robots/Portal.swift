@@ -106,15 +106,11 @@ class PortalController: RobotModelController
         #endif
     }
     
-    override func nodes_transform()
+    override var description_lengths_count: Int { 9 }
+    
+    override func update_nodes_lengths()
     {
         let node = nodes.first!
-        
-        guard lengths.count > 0
-        else
-        {
-            return
-        }
         
         #if os(macOS)
         node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lengths[0]) //Set vertical position for frame portal

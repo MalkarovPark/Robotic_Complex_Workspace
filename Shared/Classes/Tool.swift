@@ -21,9 +21,9 @@ class Tool: WorkspaceObject
     {
         super.init()
         
-        if dictionary.keys.contains("Operations Codes") //Import tool opcodes values from dictionary
+        if dictionary.keys.contains("Codes") //Import tool opcodes values from dictionary
         {
-            let dict = dictionary["Operations Codes"] as! [String : Int]
+            let dict = dictionary["Codes"] as! [String : Int]
             
             self.codes = dict.map { $0.value }
             self.codes_names = dict.map { $0.key }
@@ -43,6 +43,16 @@ class Tool: WorkspaceObject
         else
         {
             node_by_description()
+        }
+        
+        if dictionary.keys.contains("Lengths") //Checking for the availability of lengths data property
+        {
+            let elements = dictionary["Lengths"] as! NSArray
+            
+            for element in elements //Add elements from NSArray to floats array
+            {
+                lengths.append((element as? Float) ?? 0)
+            }
         }
     }
     
@@ -315,6 +325,7 @@ class Tool: WorkspaceObject
     
     private var model_controller = ToolModelController()
     private var tool_details = [SCNNode]()
+    private var lengths = [Float]()
     
     override func node_by_description()
     {
@@ -336,6 +347,13 @@ class Tool: WorkspaceObject
         let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         model_controller.nodes_disconnect()
         model_controller.nodes_connect(unit_node ?? SCNNode())
+        
+        if lengths.count > 0
+        {
+            model_controller.lengths = lengths
+            model_controller.nodes_transform()
+        }
+        
         model_controller.info_code = self.info_code
     }
     
@@ -429,7 +447,7 @@ class Tool: WorkspaceObject
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, programs: self.programs, image_data: self.image_data, module: self.module_name)
+        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, programs: self.programs, image_data: self.image_data, module: self.module_name)
     }
 }
 
@@ -441,6 +459,8 @@ struct ToolStruct: Codable
     var names: [String]
     
     var scene: String?
+    var lengths: [Float]
+    
     var programs: [OperationsProgram]
     var image_data: Data
     
