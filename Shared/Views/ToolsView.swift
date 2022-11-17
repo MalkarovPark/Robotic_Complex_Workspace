@@ -612,7 +612,7 @@ struct ToolView: View
         if base_workspace.selected_tool.programs_names.count > 0
         {
             let current_spi = base_workspace.selected_tool.selected_program_index
-            base_workspace.selected_tool.delete_program(number: current_spi)
+            base_workspace.selected_tool.delete_program(index: current_spi)
             if base_workspace.selected_tool.programs_names.count > 1 && current_spi > 0
             {
                 base_workspace.selected_tool.selected_program_index = current_spi - 1

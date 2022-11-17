@@ -17,7 +17,7 @@ class Tool: WorkspaceObject
         super.init(name: name)
     }
     
-    init(name: String, dictionary: [String: Any]) //Init detail by dictionary and use models folder
+    init(name: String, dictionary: [String: Any]) //Init by dictionary
     {
         super.init()
         
@@ -95,7 +95,7 @@ class Tool: WorkspaceObject
     {
         willSet
         {
-            //Stop tool moving before program change
+            //Stop tool performing before program change
             reset_performing()
         }
     }
@@ -106,40 +106,40 @@ class Tool: WorkspaceObject
         programs.append(program)
     }
     
-    public func update_program(number: Int, _ program: OperationsProgram) //Update program by number
+    public func update_program(index: Int, _ program: OperationsProgram) //Update program by index
     {
-        if programs.indices.contains(number) //Checking for the presence of a position program with a given number to update
+        if programs.indices.contains(index) //Checking for the presence of a position program with a given number to update
         {
-            programs[number] = program
+            programs[index] = program
         }
     }
     
     public func update_program(name: String, _ program: OperationsProgram) //Update program by name
     {
-        update_program(number: number_by_name(name: name), program)
+        update_program(index: index_by_name(name: name), program)
     }
     
-    public func delete_program(number: Int) //Delete program by number
+    public func delete_program(index: Int) //Delete program by index
     {
-        if programs.indices.contains(number) //Checking for the presence of a position program with a given number to delete
+        if programs.indices.contains(index) //Checking for the presence of a position program with a given number to delete
         {
-            programs.remove(at: number)
+            programs.remove(at: index)
         }
     }
     
     public func delete_program(name: String) //Delete program by name
     {
-        delete_program(number: number_by_name(name: name))
+        delete_program(index: index_by_name(name: name))
     }
     
-    public func select_program(number: Int) //Delete program by number
+    public func select_program(index: Int) //Delete program by index
     {
-        selected_program_index = number
+        selected_program_index = index
     }
     
     public func select_program(name: String) //Select program by name
     {
-        select_program(number: number_by_name(name: name))
+        select_program(index: index_by_name(name: name))
     }
     
     public var selected_program: OperationsProgram
@@ -161,12 +161,12 @@ class Tool: WorkspaceObject
         }
     }
     
-    private func number_by_name(name: String) -> Int //Get index number of program by name
+    private func index_by_name(name: String) -> Int //Get index of program by name
     {
         return programs.firstIndex(of: OperationsProgram(name: name)) ?? -1
     }
     
-    public var programs_names: [String] //Get all names of programs in robot
+    public var programs_names: [String] //Get all names of programs in tool
     {
         var prog_names = [String]()
         if programs.count > 0
@@ -179,7 +179,7 @@ class Tool: WorkspaceObject
         return prog_names
     }
     
-    public var programs_count: Int //Get count of programs in robot
+    public var programs_count: Int //Get count of programs in tool
     {
         return programs.count
     }
@@ -196,14 +196,12 @@ class Tool: WorkspaceObject
     
     public var info_code = 0 //Information code
     
-    //MARK: - Moving functions
+    //MARK: - Performing functions
+    private var module_name = ""
+    
     public var performing_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI
     public var code_changed = false //This flag perform update if performed code changed
     public var target_code_index = 0 //Index of target point in points array
-    
-    private var module_name = ""
-    private var connector = ToolConnector()
-    private var continue_selection = true
     
     private var demo = true
     {
@@ -222,6 +220,12 @@ class Tool: WorkspaceObject
         }
     }
     
+    public func perform_operation(_ code: Int) //Single operation perform
+    {
+        
+    }
+    
+    //MARK: Performation cycle
     public func perform_next_code()
     {
         if demo == true
@@ -293,6 +297,19 @@ class Tool: WorkspaceObject
         target_code_index = 0
     }
     
+    //MARK: - Connection functions
+    private var connector = ToolConnector()
+    
+    private func connect()
+    {
+        connector.connect()
+    }
+    
+    private func disconnect()
+    {
+        connector.disconnect()
+    }
+    
     //MARK: - Visual build functions
     override var scene_node_name: String { "tool" }
     
@@ -312,11 +329,6 @@ class Tool: WorkspaceObject
         
         node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
         node?.name = "Tool"
-    }
-    
-    public func perform_operation(_ code: Int)
-    {
-        
     }
     
     public func workcell_connect(scene: SCNScene, name: String) //Connect tool details from scene
@@ -368,7 +380,7 @@ class Tool: WorkspaceObject
         }
         else
         {
-            if performing_completed //Green color, if the robot has passed all points
+            if performing_completed //Green color, if the robot has passed all codes
             {
                 color = .green
             }
@@ -413,17 +425,6 @@ class Tool: WorkspaceObject
     }
     
     private var codes_names = [String]()
-    
-    //MARK: - Connection functions
-    private func connect()
-    {
-        connector.connect()
-    }
-    
-    private func disconnect()
-    {
-        connector.disconnect()
-    }
     
     //MARK: - Work with file system
     public var file_info: ToolStruct
