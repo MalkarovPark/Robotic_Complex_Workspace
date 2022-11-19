@@ -837,10 +837,3 @@ struct PositionChartInfo: Identifiable
     var value: Float
     var type: String
 }
-
-//MARK: - Kinematic types enums
-enum KinematicType: String, Codable, Equatable, CaseIterable
-{
-    case vi_dof = "6DOF"
-    case portal = "Portal"
-}

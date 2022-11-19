@@ -34,17 +34,6 @@ class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         self.name = name
     }
     
-    /*init(name: String, dictionary: [String: Any]) //Init detail by dictionary
-    {
-        self.name = name
-        init_by_dictionary(name: name, dictionary: dictionary)
-    }
-    
-    private func init_by_dictionary(name: String, dictionary: [String: Any])
-    {
-        //node_by_description()
-    }*/
-    
     //MARK: - Object in workspace handling
     public var is_placed = false
     public var location = [Float](repeating: 0, count: 3) //Position by axis – x, y, z

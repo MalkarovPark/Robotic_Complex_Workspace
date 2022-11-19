@@ -408,6 +408,8 @@ struct Cards_Previews: PreviewProvider
                     .padding()
                 #endif
             }
+            .padding(4)
+            //.background(.white)
         }
     }
 }

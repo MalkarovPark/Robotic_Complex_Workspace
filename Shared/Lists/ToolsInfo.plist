@@ -4,8 +4,6 @@
 <dict>
 	<key>Gripper</key>
 	<dict>
-		<key>Scene</key>
-		<string>gripper.scn</string>
 		<key>Module</key>
 		<string>gripper</string>
 		<key>Codes</key>
@@ -15,6 +13,8 @@
 			<key>Release#arrow.left.and.line.vertical.and.arrow.right</key>
 			<integer>1</integer>
 		</dict>
+		<key>Scene</key>
+		<string>gripper.scn</string>
 	</dict>
 	<key>Spatula</key>
 	<dict>
