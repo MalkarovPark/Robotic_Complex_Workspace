@@ -321,16 +321,8 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func makeNSView(context: Context) -> SCNView
     {
-        //Begin commands
-        base_workspace.deselect_robot()
-        
-        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
-        base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
-        base_workspace.details_node = viewed_scene.rootNode.childNode(withName: "details", recursively: false)
-        base_workspace.object_pointer_node = viewed_scene.rootNode.childNode(withName: "object_pointer", recursively: false)
-        
-        //Add placed robots and details in workspace
-        base_workspace.place_objects(scene: viewed_scene)
+        //Connect scene to class and add placed robots and details in workspace
+        base_workspace.connect_scene(viewed_scene)
         
         //Add gesture recognizer
         let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
@@ -534,8 +526,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
 struct AddInWorkspaceView: View
 {
     @State var selected_robot_name = String()
-    @State var selected_robot_program = String()
-    
+    @State var selected_tool_name = String()
     @State var selected_detail_name = String()
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -577,67 +568,11 @@ struct AddInWorkspaceView: View
                 switch app_state.add_selection
                 {
                 case 0:
-                    if base_workspace.avaliable_robots_names.count > 0
-                    {
-                        Picker("Name", selection: $selected_robot_name) //Select robot for place in workspace
-                        {
-                            ForEach(base_workspace.avaliable_robots_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        .onAppear
-                        {
-                            base_workspace.view_object_node(type: .robot, name: selected_robot_name)
-                            
-                            selected_robot_name = base_workspace.avaliable_robots_names.first ?? "None"
-                        }
-                        .onChange(of: selected_robot_name)
-                        { _ in
-                            base_workspace.view_object_node(type: .robot, name: selected_robot_name)
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity)
-                        #if os(iOS)
-                        .buttonStyle(.bordered)
-                        #endif
-                    }
-                    else
-                    {
-                        Text("All elements placed")
-                    }
+                    ObjectPickerView(selected_object_name: $selected_robot_name, avaliable_objects_names: .constant(base_workspace.avaliable_robots_names), workspace_object_type: .constant(.robot))
                 case 1:
-                    Text("Tool")
+                    ObjectPickerView(selected_object_name: $selected_tool_name, avaliable_objects_names: .constant(base_workspace.avaliable_tools_names), workspace_object_type: .constant(.tool))
                 case 2:
-                    if base_workspace.avaliable_details_names.count > 0
-                    {
-                        Picker("Name", selection: $selected_detail_name) //Select robot for place in workspace
-                        {
-                            ForEach(base_workspace.avaliable_details_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        .onAppear
-                        {
-                            base_workspace.view_object_node(type: .detail, name: selected_detail_name)
-                            
-                            selected_detail_name = base_workspace.avaliable_details_names.first ?? "None"
-                        }
-                        .onChange(of: selected_detail_name)
-                        { _ in
-                            base_workspace.view_object_node(type: .detail, name: selected_detail_name)
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity)
-                        #if os(iOS)
-                        .buttonStyle(.bordered)
-                        #endif
-                    }
-                    else
-                    {
-                        Text("All elements placed")
-                    }
+                    ObjectPickerView(selected_object_name: $selected_detail_name, avaliable_objects_names: .constant(base_workspace.avaliable_details_names), workspace_object_type: .constant(.detail))
                 default:
                     Text("None")
                 }
@@ -663,7 +598,16 @@ struct AddInWorkspaceView: View
                 }
                 .disabled(base_workspace.avaliable_robots_names.count == 0)
             case 1:
-                Text("")
+                HStack(spacing: 16)
+                {
+                    PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                }
+                .padding([.top, .leading, .trailing])
+                .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                { _ in
+                    base_workspace.update_object_position()
+                }
+                .disabled(base_workspace.avaliable_tools_names.count == 0)
             case 2:
                 HStack(spacing: 16)
                 {
@@ -693,7 +637,16 @@ struct AddInWorkspaceView: View
                 }
                 .disabled(base_workspace.avaliable_robots_names.count == 0)
             case 1:
-                Text("")
+                VStack(spacing: 12)
+                {
+                    PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                }
+                .padding([.top, .leading, .trailing])
+                .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                { _ in
+                    base_workspace.update_object_position()
+                }
+                .disabled(base_workspace.avaliable_tools_names.count == 0)
             case 2:
                 VStack(spacing: 12)
                 {
@@ -765,9 +718,7 @@ struct AddInWorkspaceView: View
         case .robot:
             document.preset.robots = base_workspace.file_data().robots
         case .tool:
-            //location = selected_tool.location
-            //rotation = selected_tool.rotation
-            break
+            document.preset.tools = base_workspace.file_data().tools
         case.detail:
             document.preset.details = base_workspace.file_data().details
         default:
@@ -775,6 +726,48 @@ struct AddInWorkspaceView: View
         }
         
         add_in_view_presented.toggle()
+    }
+}
+
+struct ObjectPickerView: View
+{
+    @Binding var selected_object_name: String
+    @Binding var avaliable_objects_names: [String]
+    @Binding var workspace_object_type: WorkspaceObjectType
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        if avaliable_objects_names.count > 0
+        {
+            Picker("Name", selection: $selected_object_name) //Select object name for place in workspace
+            {
+                ForEach(avaliable_objects_names, id: \.self)
+                { name in
+                    Text(name)
+                }
+            }
+            .onAppear
+            {
+                base_workspace.view_object_node(type: workspace_object_type, name: selected_object_name)
+                
+                selected_object_name = avaliable_objects_names.first ?? "None"
+            }
+            .onChange(of: selected_object_name)
+            { _ in
+                base_workspace.view_object_node(type: workspace_object_type, name: selected_object_name)
+            }
+            .pickerStyle(.menu)
+            .frame(maxWidth: .infinity)
+            #if os(iOS)
+            .buttonStyle(.bordered)
+            #endif
+        }
+        else
+        {
+            Text("All elements placed")
+        }
     }
 }
 
@@ -827,11 +820,11 @@ struct InfoView: View
                             document.preset.robots = base_workspace.file_data().robots
                         }
                 case .tool:
-                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
-                        .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+                    PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                        .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
                         { _ in
                             base_workspace.update_object_position()
-                            document.preset.robots = base_workspace.file_data().robots
+                            document.preset.tools = base_workspace.file_data().tools
                         }
                 case .detail:
                     PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
@@ -1979,8 +1972,9 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             #endif
-            /*AddRobotInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_in_view_presented: .constant(true))
-                .environmentObject(Workspace())*/
+            AddInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_in_view_presented: .constant(true))
+                .environmentObject(Workspace())
+                .environmentObject(AppState())
             InfoView(info_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())

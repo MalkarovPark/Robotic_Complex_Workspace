@@ -125,7 +125,7 @@ struct RobotsTableView: View
     //MARK: Robots manage functions
     func view_robot(robot_index: Int)
     {
-        base_workspace.select_robot(number: robot_index)
+        base_workspace.select_robot(index: robot_index)
         self.robot_view_presented = true
     }
     
