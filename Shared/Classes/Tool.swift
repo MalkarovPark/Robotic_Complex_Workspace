@@ -64,6 +64,9 @@ class Tool: WorkspaceObject
         self.location = tool_struct.location
         self.rotation = tool_struct.rotation
         
+        self.is_attached = tool_struct.is_attached
+        self.attached_to = tool_struct.attached_to
+        
         self.codes = tool_struct.codes
         self.codes_names = tool_struct.names
         
@@ -368,6 +371,9 @@ class Tool: WorkspaceObject
         model_controller.info_code = nil
     }
     
+    var is_attached: Bool?
+    var attached_to: String?
+    
     //MARK: - UI functions
     #if os(macOS)
     override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
@@ -451,7 +457,7 @@ class Tool: WorkspaceObject
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, programs: self.programs, image_data: self.image_data, module: self.module_name)
+        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, is_attached: self.is_attached, attached_to: self.attached_to, programs: self.programs, image_data: self.image_data, module: self.module_name)
     }
 }
 
@@ -468,6 +474,9 @@ struct ToolStruct: Codable
     var is_placed: Bool
     var location: [Float]
     var rotation: [Float]
+    
+    var is_attached: Bool?
+    var attached_to: String?
     
     var programs: [OperationsProgram]
     var image_data: Data

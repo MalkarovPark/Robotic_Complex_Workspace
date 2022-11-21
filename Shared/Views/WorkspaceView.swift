@@ -427,16 +427,8 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func makeUIView(context: Context) -> SCNView
     {
-        //Begin commands
-        base_workspace.deselect_robot()
-        
-        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
-        base_workspace.workcells_node = viewed_scene.rootNode.childNode(withName: "workcells", recursively: true)
-        base_workspace.details_node = viewed_scene.rootNode.childNode(withName: "details", recursively: false)
-        base_workspace.object_pointer_node = viewed_scene.rootNode.childNode(withName: "object_pointer", recursively: false)
-        
-        //Add placed robots and details in workspace
-        base_workspace.place_objects(scene: viewed_scene)
+        //Connect scene to class and add placed robots and details in workspace
+        base_workspace.connect_scene(viewed_scene)
         
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
@@ -529,6 +521,9 @@ struct AddInWorkspaceView: View
     @State var selected_tool_name = String()
     @State var selected_detail_name = String()
     
+    @State var tool_attached = false
+    @State var attach_robot_name = String()
+    
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var add_in_view_presented: Bool
     
@@ -553,6 +548,10 @@ struct AddInWorkspaceView: View
                     Text(self.add_items[index]).tag(index)
                 }
             }
+            .onChange(of: app_state.add_selection)
+            { _ in
+                base_workspace.object_pointer_node?.isHidden = true
+            }
             .pickerStyle(SegmentedPickerStyle())
             .labelsHidden()
             .padding([.top, .leading, .trailing])
@@ -571,6 +570,12 @@ struct AddInWorkspaceView: View
                     ObjectPickerView(selected_object_name: $selected_robot_name, avaliable_objects_names: .constant(base_workspace.avaliable_robots_names), workspace_object_type: .constant(.robot))
                 case 1:
                     ObjectPickerView(selected_object_name: $selected_tool_name, avaliable_objects_names: .constant(base_workspace.avaliable_tools_names), workspace_object_type: .constant(.tool))
+                    
+                    Toggle(isOn: $tool_attached)
+                    {
+                        Image(systemName: "pin.fill")
+                    }
+                    .toggleStyle(.button)
                 case 2:
                     ObjectPickerView(selected_object_name: $selected_detail_name, avaliable_objects_names: .constant(base_workspace.avaliable_details_names), workspace_object_type: .constant(.detail))
                 default:
@@ -598,14 +603,58 @@ struct AddInWorkspaceView: View
                 }
                 .disabled(base_workspace.avaliable_robots_names.count == 0)
             case 1:
-                HStack(spacing: 16)
+                ZStack
                 {
-                    PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                }
-                .padding([.top, .leading, .trailing])
-                .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
-                { _ in
-                    base_workspace.update_object_position()
+                    if !tool_attached
+                    {
+                        HStack(spacing: 16)
+                        {
+                            PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                        }
+                        .padding([.top, .leading, .trailing])
+                        .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                        { _ in
+                            base_workspace.update_object_position()
+                        }
+                    }
+                    else
+                    {
+                        if base_workspace.attachable_robots_names.count > 0
+                        {
+                            Picker("Attach to", selection: $attach_robot_name) //Select object name for place in workspace
+                            {
+                                ForEach(base_workspace.attachable_robots_names, id: \.self)
+                                { name in
+                                    Text(name)
+                                }
+                            }
+                            .onAppear
+                            {
+                                attach_robot_name = base_workspace.attachable_robots_names.first ?? "None"
+                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                            }
+                            .onDisappear
+                            {
+                                base_workspace.remove_attachment()
+                                tool_attached = false
+                            }
+                            .onChange(of: attach_robot_name)
+                            { _ in
+                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                            }
+                            .pickerStyle(.menu)
+                            .frame(maxWidth: .infinity)
+                            .padding([.top, .leading, .trailing])
+                            #if os(iOS)
+                            .buttonStyle(.bordered)
+                            #endif
+                        }
+                        else
+                        {
+                            Text("No robots for attach")
+                                .padding([.top, .leading, .trailing])
+                        }
+                    }
                 }
                 .disabled(base_workspace.avaliable_tools_names.count == 0)
             case 2:
@@ -637,14 +686,58 @@ struct AddInWorkspaceView: View
                 }
                 .disabled(base_workspace.avaliable_robots_names.count == 0)
             case 1:
-                VStack(spacing: 12)
+                ZStack
                 {
-                    PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                }
-                .padding([.top, .leading, .trailing])
-                .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
-                { _ in
-                    base_workspace.update_object_position()
+                    if !tool_attached
+                    {
+                        HStack(spacing: 16)
+                        {
+                            PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                        }
+                        .padding([.top, .leading, .trailing])
+                        .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                        { _ in
+                            base_workspace.update_object_position()
+                        }
+                    }
+                    else
+                    {
+                        if base_workspace.attachable_robots_names.count > 0
+                        {
+                            Picker("Attach to", selection: $attach_robot_name) //Select object name for place in workspace
+                            {
+                                ForEach(base_workspace.attachable_robots_names, id: \.self)
+                                { name in
+                                    Text(name)
+                                }
+                            }
+                            .onAppear
+                            {
+                                attach_robot_name = base_workspace.attachable_robots_names.first ?? "None"
+                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                            }
+                            .onDisappear
+                            {
+                                base_workspace.remove_attachment()
+                                tool_attached = false
+                            }
+                            .onChange(of: attach_robot_name)
+                            { _ in
+                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                            }
+                            .pickerStyle(.menu)
+                            .frame(maxWidth: .infinity)
+                            .padding([.top, .leading, .trailing])
+                            #if os(iOS)
+                            .buttonStyle(.bordered)
+                            #endif
+                        }
+                        else
+                        {
+                            Text("No robots for attach")
+                                .padding([.top, .leading, .trailing])
+                        }
+                    }
                 }
                 .disabled(base_workspace.avaliable_tools_names.count == 0)
             case 2:
@@ -699,9 +792,10 @@ struct AddInWorkspaceView: View
         }
         .onDisappear
         {
-            base_workspace.dismiss_object()
+            //base_workspace.dismiss_object()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
+                base_workspace.dismiss_object()
                 base_workspace.add_in_view_dismissed = true
                 base_workspace.update_view()
             }
@@ -767,6 +861,10 @@ struct ObjectPickerView: View
         else
         {
             Text("All elements placed")
+                .onAppear
+            {
+                base_workspace.dismiss_object()
+            }
         }
     }
 }

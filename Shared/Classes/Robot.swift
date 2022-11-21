@@ -272,7 +272,7 @@ class Robot: WorkspaceObject
     private func current_pointer_position_select() //Return current robot pointer position
     {
         pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
-        pointer_rotation = [Float(tool_node?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
+        pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
     
     public func move_to_point(_ position: PositionPoint) //Single position perform
@@ -290,7 +290,7 @@ class Robot: WorkspaceObject
                 self.moving_finished = true
                 self.select_new_point()
             })
-            tool_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).rotation[target_point_index], completionHandler: {
+            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).rotation[target_point_index], completionHandler: {
                 self.rotation_finished = true
                 self.select_new_point()
             })
@@ -345,7 +345,7 @@ class Robot: WorkspaceObject
             if demo == true
             {
                 pointer_node?.removeAllActions()
-                tool_node?.removeAllActions()
+                pointer_node_internal?.removeAllActions()
             }
             else
             {
@@ -361,7 +361,7 @@ class Robot: WorkspaceObject
     public func reset_moving() //Reset robot moving
     {
         pointer_node?.removeAllActions()
-        tool_node?.removeAllActions()
+        pointer_node_internal?.removeAllActions()
         current_pointer_position_select()
         performed = false
         target_point_index = 0
@@ -429,10 +429,11 @@ class Robot: WorkspaceObject
     public var box_node: SCNNode? //Box bordered cell workspace
     public var camera_node: SCNNode? //Camera
     public var pointer_node: SCNNode? //Robot teach pointer
-    public var tool_node: SCNNode? //Node for tool element
+    public var pointer_node_internal: SCNNode? //Node for internal element
     public var points_node: SCNNode? //Teach points
     public var robot_node: SCNNode? //Current robot
     public var space_node:SCNNode? //Robot space
+    public var tool_node: SCNNode? //Node for tool attachment
     
     public func workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
@@ -441,10 +442,11 @@ class Robot: WorkspaceObject
         self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
         self.space_node = self.box_node?.childNode(withName: "space", recursively: true)
         self.pointer_node = self.box_node?.childNode(withName: "pointer", recursively: true)
-        self.tool_node = self.pointer_node?.childNode(withName: "tool", recursively: true)
+        self.pointer_node_internal = self.pointer_node?.childNode(withName: "internal", recursively: true)
         self.points_node = self.box_node?.childNode(withName: "points", recursively: true)
         
         //Connect robot details
+        self.tool_node = node?.childNode(withName: "tool", recursively: true)
         self.unit_node?.addChildNode(node ?? SCNNode())
         model_controller.nodes_disconnect()
         model_controller.nodes_connect(node ?? SCNNode())
@@ -482,11 +484,11 @@ class Robot: WorkspaceObject
         #if os(macOS)
         pointer_node?.eulerAngles.x = CGFloat(get_pointer_position().rot_y)
         pointer_node?.eulerAngles.y = CGFloat(get_pointer_position().rot_z)
-        tool_node?.eulerAngles.z = CGFloat(get_pointer_position().rot_x)
+        pointer_node_internal?.eulerAngles.z = CGFloat(get_pointer_position().rot_x)
         #else
         pointer_node?.eulerAngles.x = get_pointer_position().rot_y
         pointer_node?.eulerAngles.y = get_pointer_position().rot_z
-        tool_node?.eulerAngles.z = get_pointer_position().rot_x
+        pointer_node_internal?.eulerAngles.z = get_pointer_position().rot_x
         #endif
     }
     

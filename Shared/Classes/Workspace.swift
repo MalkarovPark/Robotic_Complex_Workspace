@@ -74,11 +74,6 @@ class Workspace: ObservableObject
         #endif
     }
     
-    private func hide_object_poiner()
-    {
-        object_pointer_node?.isHidden = true
-    }
-    
     public var edited_object_node: SCNNode?
     public func view_object_node(type: WorkspaceObjectType, name: String)
     {
@@ -207,7 +202,7 @@ class Workspace: ObservableObject
         case.detail:
             selected_detail.is_placed = true
             
-            edited_object_node?.categoryBitMask = Workspace.detail_bit_mask //Apply categury bit mask
+            edited_object_node?.categoryBitMask = Workspace.detail_bit_mask //Apply category bit mask
             edited_object_node?.physicsBody = selected_detail.physics //Apply physics
             
             deselect_detail()
@@ -331,12 +326,8 @@ class Workspace: ObservableObject
         }
     }
     
-    private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType)
+    private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType) //Create editable node with name
     {
-        //Create editable node with name
-        //edited_object_node?.removeFromParentNode() //Remove old node
-        //edited_object_node = SCNNode() //Remove old reference
-        
         //Connect to old detail node
         var old_detail_node = SCNNode()
         if selected_object_type == .detail
@@ -365,7 +356,7 @@ class Workspace: ObservableObject
                 {
                     //Deselect already selected robot
                     deselect_robot()
-                    hide_object_poiner()
+                    object_pointer_node?.isHidden = true
                 }
             case .tool:
                 if node.name! != selected_tool.name //If not selected robot tapped
@@ -382,7 +373,7 @@ class Workspace: ObservableObject
                 {
                     //Deselect already selected robot
                     deselect_tool()
-                    hide_object_poiner()
+                    object_pointer_node?.isHidden = true
                 }
             case .detail:
                 if node.name! != selected_detail.name //If not selected detail tapped
@@ -404,7 +395,7 @@ class Workspace: ObservableObject
                     //Deselect already selected detail
                     edited_object_node?.physicsBody = selected_detail.physics
                     deselect_detail()
-                    hide_object_poiner()
+                    object_pointer_node?.isHidden = true
                 }
             }
         }
@@ -442,7 +433,7 @@ class Workspace: ObservableObject
         if is_selected
         {
             update_view()
-            hide_object_poiner()
+            object_pointer_node?.isHidden = true
             
             switch selected_object_type
             {
@@ -492,7 +483,7 @@ class Workspace: ObservableObject
         edited_object_node?.removeFromParentNode() //Remove old node
         edited_object_node = SCNNode() //Remove old reference
         
-        hide_object_poiner()
+        object_pointer_node?.isHidden = true
     }
     
     public func deselect_object()
@@ -552,7 +543,7 @@ class Workspace: ObservableObject
     public func deselect_robot()
     {
         selected_robot_index = -1
-        //hide_object_poiner()
+        //object_pointer_node?.isHidden = true
     }
     
     public var selected_robot: Robot //Return robot by selected index
@@ -622,6 +613,28 @@ class Workspace: ObservableObject
         return names
     }
     
+    public var attachable_robots_names: [String]
+    {
+        var names = placed_robots_names
+        
+        if names.count > 0
+        {
+            //Find attached robots names by tools
+            var attached_robots_names = [String]()
+            for tool in tools
+            {
+                if tool.is_attached == true
+                {
+                    attached_robots_names.append(tool.attached_to ?? "")
+                }
+            }
+            
+            names = names.filter{ !attached_robots_names.contains($0) } //Substract attached robots names from all placed robots
+        }
+        
+        return names
+    }
+    
     //MARK: - Tools handling functions
     //MARK: Tools manage funcions
     public func add_tool(_ tool: Tool)
@@ -686,7 +699,7 @@ class Workspace: ObservableObject
     public func deselect_tool()
     {
         selected_tool_index = -1
-        //hide_object_poiner()
+        //object_pointer_node?.isHidden = true
     }
 
     //MARK: Tools naming
@@ -714,6 +727,26 @@ class Workspace: ObservableObject
             }
         }
         return names
+    }
+    
+    public func attach_tool_to(robot_name: String)
+    {
+        object_pointer_node?.isHidden = true
+        edited_object_node?.constraints = [SCNConstraint]()
+        edited_object_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(robot_name).tool_node))
+    }
+    
+    public func remove_attachment()
+    {
+        edited_object_node?.constraints?.removeAll() //Remove constraint
+        
+        //Reset position
+        edited_object_node?.position.x += 10
+        edited_object_node?.position.x -= 10
+        edited_object_node?.eulerAngles.x += 10
+        edited_object_node?.eulerAngles.x -= 10
+        
+        //object_pointer_node?.isHidden = false
     }
     
     //MARK: - Details handling functions
@@ -780,7 +813,7 @@ class Workspace: ObservableObject
     public func deselect_detail()
     {
         selected_detail_index = -1
-        //hide_object_poiner()
+        //object_pointer_node?.isHidden = true
     }
     
     //MARK: Details naming
