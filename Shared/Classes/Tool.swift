@@ -371,7 +371,7 @@ class Tool: WorkspaceObject
         model_controller.info_code = nil
     }
     
-    var is_attached: Bool?
+    var is_attached = false
     var attached_to: String?
     
     //MARK: - UI functions
@@ -475,7 +475,7 @@ struct ToolStruct: Codable
     var location: [Float]
     var rotation: [Float]
     
-    var is_attached: Bool?
+    var is_attached: Bool
     var attached_to: String?
     
     var programs: [OperationsProgram]

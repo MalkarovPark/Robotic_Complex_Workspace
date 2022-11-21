@@ -805,6 +805,13 @@ struct AddInWorkspaceView: View
     func place_object()
     {
         let type_for_save = base_workspace.selected_object_type
+        
+        if tool_attached && base_workspace.selected_object_type == .tool
+        {
+            base_workspace.selected_tool.attached_to = attach_robot_name
+            base_workspace.selected_tool.is_attached = true
+        }
+        
         base_workspace.place_viewed_object()
         
         switch type_for_save
@@ -877,6 +884,10 @@ struct InfoView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    @State var avaliable_attachments = [String]()
+    @State var attach_robot_name = String()
+    @State private var old_attachment: String?
+    
     #if os(iOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
@@ -893,9 +904,30 @@ struct InfoView: View
                     .font(.title3)
                     .padding([.top, .leading, .trailing])
             case .tool:
-                Text("\(base_workspace.selected_robot.name ?? "None")")
-                    .font(.title3)
-                    .padding([.top, .leading, .trailing])
+                HStack(spacing: 0)
+                {
+                    Text("\(base_workspace.selected_robot.name ?? "None")")
+                        .font(.title3)
+                        .padding([.top, .leading, .trailing])
+                }
+                .frame(maxWidth: .infinity)
+                .overlay(alignment: .topTrailing)
+                {
+                    Toggle(isOn: $base_workspace.selected_tool.is_attached)
+                    {
+                        Image(systemName: "pin.fill")
+                    }
+                    .toggleStyle(.button)
+                    .padding()
+                    .onChange(of: base_workspace.selected_tool.is_attached)
+                    { new_value in
+                        if !new_value
+                        {
+                            base_workspace.remove_attachment()
+                        }
+                        document.preset.tools = base_workspace.file_data().tools
+                    }
+                }
             case .detail:
                 Text("\(base_workspace.selected_detail.name ?? "None")")
                     .font(.title3)
@@ -918,12 +950,70 @@ struct InfoView: View
                             document.preset.robots = base_workspace.file_data().robots
                         }
                 case .tool:
-                    PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                        .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
-                        { _ in
-                            base_workspace.update_object_position()
-                            document.preset.tools = base_workspace.file_data().tools
+                    if !base_workspace.selected_tool.is_attached
+                    {
+                        PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                            .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                            { _ in
+                                base_workspace.update_object_position()
+                                document.preset.tools = base_workspace.file_data().tools
+                            }
+                    }
+                    else
+                    {
+                        ZStack
+                        {
+                            if avaliable_attachments.count > 0
+                            {
+                                Picker("Attach to", selection: $attach_robot_name) //Select object name for place in workspace
+                                {
+                                    ForEach(avaliable_attachments, id: \.self)
+                                    { name in
+                                        Text(name)
+                                    }
+                                }
+                                .onChange(of: attach_robot_name)
+                                { new_value in
+                                    base_workspace.attach_tool_to(robot_name: new_value)
+                                }
+                                .pickerStyle(.menu)
+                                .frame(maxWidth: .infinity)
+                                .padding([.top, .leading, .trailing])
+                                #if os(iOS)
+                                .buttonStyle(.bordered)
+                                #endif
+                            }
+                            else
+                            {
+                                Text("No robots for attach")
+                                    .padding([.top, .leading, .trailing])
+                            }
                         }
+                        .onAppear
+                        {
+                            if !base_workspace.selected_tool.is_attached
+                            {
+                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                            }
+                            else
+                            {
+                                old_attachment = base_workspace.selected_tool.attached_to
+                                base_workspace.selected_tool.attached_to = nil
+                                avaliable_attachments = base_workspace.attachable_robots_names
+                                
+                                if old_attachment == nil
+                                {
+                                    attach_robot_name = avaliable_attachments.first!
+                                    base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                                }
+                                else
+                                {
+                                    attach_robot_name = old_attachment!
+                                }
+                                //attach_robot_name = old_attachment ?? avaliable_attachments.first!
+                            }
+                        }
+                    }
                 case .detail:
                     PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
                         .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
@@ -936,7 +1026,6 @@ struct InfoView: View
                 }
             }
             .padding([.top, .leading, .trailing])
-            
             #else
             VStack(spacing: 12)
             {
@@ -950,12 +1039,70 @@ struct InfoView: View
                             document.preset.robots = base_workspace.file_data().robots
                         }
                 case .tool:
-                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
-                        .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
-                        { _ in
-                            base_workspace.update_object_position()
-                            document.preset.robots = base_workspace.file_data().robots
+                    if !base_workspace.selected_tool.is_attached
+                    {
+                        PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                            .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                            { _ in
+                                base_workspace.update_object_position()
+                                document.preset.tools = base_workspace.file_data().tools
+                            }
+                    }
+                    else
+                    {
+                        ZStack
+                        {
+                            if avaliable_attachments.count > 0
+                            {
+                                Picker("Attach to", selection: $attach_robot_name) //Select object name for place in workspace
+                                {
+                                    ForEach(avaliable_attachments, id: \.self)
+                                    { name in
+                                        Text(name)
+                                    }
+                                }
+                                .onChange(of: attach_robot_name)
+                                { new_value in
+                                    base_workspace.attach_tool_to(robot_name: new_value)
+                                }
+                                .pickerStyle(.menu)
+                                .frame(maxWidth: .infinity)
+                                .padding([.top, .leading, .trailing])
+                                #if os(iOS)
+                                .buttonStyle(.bordered)
+                                #endif
+                            }
+                            else
+                            {
+                                Text("No robots for attach")
+                                    .padding([.top, .leading, .trailing])
+                            }
                         }
+                        .onAppear
+                        {
+                            if !base_workspace.selected_tool.is_attached
+                            {
+                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                            }
+                            else
+                            {
+                                old_attachment = base_workspace.selected_tool.attached_to
+                                base_workspace.selected_tool.attached_to = nil
+                                avaliable_attachments = base_workspace.attachable_robots_names
+                                
+                                if old_attachment == nil
+                                {
+                                    attach_robot_name = avaliable_attachments.first!
+                                    base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                                }
+                                else
+                                {
+                                    attach_robot_name = old_attachment!
+                                }
+                                //attach_robot_name = old_attachment ?? avaliable_attachments.first!
+                            }
+                        }
+                    }
                 case .detail:
                     PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
                         .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
@@ -998,6 +1145,22 @@ struct InfoView: View
         }
         .onDisappear
         {
+            if base_workspace.selected_object_type == .tool
+            {
+                if base_workspace.selected_tool.is_attached
+                {
+                    if old_attachment != attach_robot_name
+                    {
+                        base_workspace.selected_tool.attached_to = attach_robot_name
+                        document.preset.tools = base_workspace.file_data().tools
+                    }
+                }
+                else
+                {
+                    base_workspace.remove_attachment()
+                }
+            }
+            
             base_workspace.is_editing = false
         }
     }
@@ -1012,9 +1175,7 @@ struct InfoView: View
         case .robot:
             document.preset.robots = base_workspace.file_data().robots
         case .tool:
-            //location = selected_tool.location
-            //rotation = selected_tool.rotation
-            break
+            document.preset.tools = base_workspace.file_data().tools
         case.detail:
             document.preset.details = base_workspace.file_data().details
         default:

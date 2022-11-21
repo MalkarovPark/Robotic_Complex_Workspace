@@ -45,33 +45,26 @@ class Workspace: ObservableObject
         switch selected_object_type
         {
         case .robot:
-            update_object_pointer_position(location: selected_robot.location, rotation: selected_robot.rotation)
+            update_object_pointer_position(by_node: selected_robot.unit_node ?? SCNNode())
         case .tool:
-            update_object_pointer_position(location: selected_tool.location, rotation: selected_tool.rotation)
-            break
+            update_object_pointer_position(by_node: selected_tool.node ?? SCNNode())
+            update_object_position()
         case .detail:
-            update_object_pointer_position(location: selected_detail.location, rotation: selected_detail.rotation)
+            update_object_pointer_position(by_node: selected_detail.node ?? SCNNode())
         default:
             break
         }
     }
     
-    private func update_object_pointer_position(location: [Float], rotation: [Float])
+    private func update_object_pointer_position(by_node: SCNNode)
     {
+        object_pointer_node?.constraints?.removeAll()
+        object_pointer_node?.constraints?.append(SCNReplicatorConstraint(target: by_node))
+        
+        object_pointer_node?.position.x += 1
+        object_pointer_node?.position.x -= 1
+        
         object_pointer_node?.isHidden = false
-        #if os(macOS)
-        object_pointer_node?.position = SCNVector3(x: CGFloat(location[1]), y: CGFloat(location[2]), z: CGFloat(location[0]))
-        
-        object_pointer_node?.eulerAngles.x = CGFloat(rotation[1].to_rad)
-        object_pointer_node?.eulerAngles.y = CGFloat(rotation[2].to_rad)
-        object_pointer_node?.eulerAngles.z = CGFloat(rotation[0].to_rad)
-        #else
-        object_pointer_node?.position = SCNVector3(x: location[1], y: location[2], z: location[0])
-        
-        object_pointer_node?.eulerAngles.x = rotation[1].to_rad
-        object_pointer_node?.eulerAngles.y = rotation[2].to_rad
-        object_pointer_node?.eulerAngles.z = rotation[0].to_rad
-        #endif
     }
     
     public var edited_object_node: SCNNode?
@@ -159,7 +152,6 @@ class Workspace: ObservableObject
         case .tool:
             location = selected_tool.location
             rotation = selected_tool.rotation
-            break
         case.detail:
             location = selected_detail.location
             rotation = selected_detail.rotation
@@ -182,7 +174,7 @@ class Workspace: ObservableObject
         edited_object_node?.eulerAngles.z = rotation[0].to_rad
         #endif
         
-        update_pointer()
+        //update_pointer()
     }
     
     public func place_viewed_object()
@@ -191,18 +183,18 @@ class Workspace: ObservableObject
         {
         case .robot:
             selected_robot.is_placed = true
-            edited_object_node?.categoryBitMask = Workspace.robot_bit_mask //Apply categury bit mask
+            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.robot_bit_mask) //Apply categury bit mask
             
             deselect_robot()
         case .tool:
             selected_tool.is_placed = true
-            edited_object_node?.categoryBitMask = Workspace.tool_bit_mask //Apply categury bit mask
+            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.tool_bit_mask) //Apply categury bit mask
             
             deselect_tool()
         case.detail:
             selected_detail.is_placed = true
             
-            edited_object_node?.categoryBitMask = Workspace.detail_bit_mask //Apply category bit mask
+            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.detail_bit_mask) //Apply categury bit mask
             edited_object_node?.physicsBody = selected_detail.physics //Apply physics
             
             deselect_detail()
@@ -731,7 +723,9 @@ class Workspace: ObservableObject
     
     public func attach_tool_to(robot_name: String)
     {
-        object_pointer_node?.isHidden = true
+        //object_pointer_node?.isHidden = true
+        update_pointer()
+        
         edited_object_node?.constraints = [SCNConstraint]()
         edited_object_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(robot_name).tool_node))
     }
@@ -747,6 +741,8 @@ class Workspace: ObservableObject
         edited_object_node?.eulerAngles.x -= 10
         
         //object_pointer_node?.isHidden = false
+        selected_tool.attached_to = nil
+        //selected_tool.is_attached = false
     }
     
     //MARK: - Details handling functions
@@ -765,10 +761,10 @@ class Workspace: ObservableObject
         }
     }
     
-    /*public func delete_detail(name: String)
+    public func delete_detail(name: String)
     {
-        delete_detail(number: number_by_name(name: name))
-    }*/
+        delete_detail(index: detail_index_by_name(name))
+    }
     
     //MARK: Details selection functions
     private var selected_detail_index = -1
@@ -1267,6 +1263,7 @@ class Workspace: ObservableObject
         tools_node = scene.rootNode.childNode(withName: "tools", recursively: false)
         details_node = scene.rootNode.childNode(withName: "details", recursively: false)
         object_pointer_node = scene.rootNode.childNode(withName: "object_pointer", recursively: false)
+        object_pointer_node?.constraints = [SCNConstraint]()
         
         place_objects(scene: scene)
     }
@@ -1322,20 +1319,28 @@ class Workspace: ObservableObject
                     tool_node?.name = tool.name
                     tools_node?.addChildNode(tool_node ?? SCNNode())
                     
-                    //Set tool node position
-                    #if os(macOS)
-                    tool_node?.position = SCNVector3(x: CGFloat(tool.location[1]), y: CGFloat(tool.location[2]), z: CGFloat(tool.location[0]))
-                    
-                    tool_node?.eulerAngles.x = CGFloat(tool.rotation[1].to_rad)
-                    tool_node?.eulerAngles.y = CGFloat(tool.rotation[2].to_rad)
-                    tool_node?.eulerAngles.z = CGFloat(tool.rotation[0].to_rad)
-                    #else
-                    tool_node?.position = SCNVector3(x: Float(tool.location[1]), y: Float(tool.location[2]), z: Float(tool.location[0]))
-                    
-                    tool_node?.eulerAngles.x = tool.rotation[1].to_rad
-                    tool_node?.eulerAngles.y = tool.rotation[2].to_rad
-                    tool_node?.eulerAngles.z = tool.rotation[0].to_rad
-                    #endif
+                    if tool.attached_to == nil
+                    {
+                        //Set tool node position
+                        #if os(macOS)
+                        tool_node?.position = SCNVector3(x: CGFloat(tool.location[1]), y: CGFloat(tool.location[2]), z: CGFloat(tool.location[0]))
+                        
+                        tool_node?.eulerAngles.x = CGFloat(tool.rotation[1].to_rad)
+                        tool_node?.eulerAngles.y = CGFloat(tool.rotation[2].to_rad)
+                        tool_node?.eulerAngles.z = CGFloat(tool.rotation[0].to_rad)
+                        #else
+                        tool_node?.position = SCNVector3(x: Float(tool.location[1]), y: Float(tool.location[2]), z: Float(tool.location[0]))
+                        
+                        tool_node?.eulerAngles.x = tool.rotation[1].to_rad
+                        tool_node?.eulerAngles.y = tool.rotation[2].to_rad
+                        tool_node?.eulerAngles.z = tool.rotation[0].to_rad
+                        #endif
+                    }
+                    else
+                    {
+                        tool_node?.constraints = [SCNConstraint]()
+                        tool_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(tool.attached_to ?? "").tool_node))
+                    }
                 }
             }
         }
@@ -1370,16 +1375,16 @@ class Workspace: ObservableObject
                 }
             }
         }
-        
-        func apply_bit_mask(node: SCNNode, _ code: Int)
-        {
-            node.categoryBitMask = code
-            
-            node.enumerateChildNodes
-            { (_node, stop) in
-                _node.categoryBitMask = code
-            }
-        }
+    }
+}
+
+func apply_bit_mask(node: SCNNode, _ code: Int)
+{
+    node.categoryBitMask = code
+    
+    node.enumerateChildNodes
+    { (_node, stop) in
+        _node.categoryBitMask = code
     }
 }
 
