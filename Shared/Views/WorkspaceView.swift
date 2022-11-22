@@ -581,7 +581,6 @@ struct AddInWorkspaceView: View
                 default:
                     Text("None")
                 }
-                
             }
             .padding()
             
@@ -978,7 +977,7 @@ struct InfoView: View
                                 }
                                 .pickerStyle(.menu)
                                 .frame(maxWidth: .infinity)
-                                .padding([.top, .leading, .trailing])
+                                .padding(.horizontal)
                                 #if os(iOS)
                                 .buttonStyle(.bordered)
                                 #endif
@@ -986,7 +985,7 @@ struct InfoView: View
                             else
                             {
                                 Text("No robots for attach")
-                                    .padding([.top, .leading, .trailing])
+                                    .padding(.horizontal)
                             }
                         }
                         .onAppear
@@ -1175,6 +1174,11 @@ struct InfoView: View
         case .robot:
             document.preset.robots = base_workspace.file_data().robots
         case .tool:
+            if base_workspace.selected_tool.is_attached
+            {
+                base_workspace.remove_attachment()
+                base_workspace.selected_tool.is_attached = false
+            }
             document.preset.tools = base_workspace.file_data().tools
         case.detail:
             document.preset.details = base_workspace.file_data().details

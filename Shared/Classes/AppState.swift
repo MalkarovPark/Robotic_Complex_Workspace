@@ -34,7 +34,6 @@ class AppState : ObservableObject
     @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
     #endif
     
-    //public var workspace_scene = SCNScene() //Link to viewed workspace scene
     public var previewed_object: WorkspaceObject? //Detail for preview view
     public var preview_update_scene = false //Flag for update previewed detail node in scene
     public var object_view_was_open = false //Flag for provide model controller for model in scene
@@ -652,5 +651,13 @@ class AppState : ObservableObject
                     }
                 })
         }
+    }
+    
+    func reset_previewed_node_position()
+    {
+        clear_constranints(node: previewed_object?.node ?? SCNNode())
+        
+        previewed_object?.node?.position = SCNVector3(x: 0, y: 0, z: 0)
+        previewed_object?.node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
     }
 }

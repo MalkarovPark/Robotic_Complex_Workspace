@@ -556,10 +556,11 @@ struct ToolView: View
         .onAppear
         {
             app_state.previewed_object?.node = base_workspace.selected_tool.node
+            
             app_state.object_view_was_open = true
             app_state.preview_update_scene = true
             
-            //base_workspace.selected_tool.workcell_connect(scene: <#T##SCNScene#>, name: <#T##String#>, connect_camera: <#T##Bool#>)
+            app_state.reset_previewed_node_position()
             
             if base_workspace.selected_tool.codes_count > 0
             {
