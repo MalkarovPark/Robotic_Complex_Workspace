@@ -34,12 +34,7 @@ class Robot: WorkspaceObject
         var lengths = [Float]()
         if dictionary.keys.contains("Lengths") //Checking for the availability of lengths data property
         {
-            let elements = dictionary["Lengths"] as! NSArray
-            
-            for element in elements //Add elements from NSArray to floats array
-            {
-                lengths.append((element as? Float) ?? 0)
-            }
+            lengths = dictionary["Lengths"] as! Array<Float> //Add elements from NSArray to floats array
         }
         
         robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lengths: lengths, module_name: dictionary["Module"] as? String ?? "", scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
@@ -645,7 +640,9 @@ class Robot: WorkspaceObject
         }
     }
     
-    //MARK: - Robot chart functions
+    //MARK: - Chart functions
+    public var state: [String: Any]?
+    
     public var get_statistics = false
     public var chart_data = (robot_details_angles: [PositionChartInfo](), tool_location: [PositionChartInfo](), tool_rotation: [PositionChartInfo]())
     

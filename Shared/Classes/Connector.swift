@@ -23,9 +23,6 @@ class WorkspaceObjectConnector
     
     public var connected: Bool = false
     
-    //Visual model handling
-    //public var model_controller = ModelController()
-    
     //Info
     public var state: [String: Any]? //Connector state info
 }

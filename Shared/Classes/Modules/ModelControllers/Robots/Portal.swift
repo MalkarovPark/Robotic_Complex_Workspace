@@ -12,8 +12,10 @@ class PortalController: RobotModelController
 {
     override func nodes_connect(_ node: SCNNode)
     {
+        let without_lengths = lengths.count == 0
+        
         //Get lengths from robot scene if they is not set in plist
-        if lengths.count == 0
+        if without_lengths
         {
             lengths = [Float]()
             
@@ -36,7 +38,7 @@ class PortalController: RobotModelController
             nodes.append(node.childNode(withName: "d\(i)", recursively: true)!)
         }
         
-        if lengths.count == 0
+        if without_lengths
         {
             lengths.append(Float(nodes[0].position.y)) //Append base height [8]
         }

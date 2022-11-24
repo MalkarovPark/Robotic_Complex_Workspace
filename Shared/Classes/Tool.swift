@@ -374,6 +374,9 @@ class Tool: WorkspaceObject
     var is_attached = false
     var attached_to: String?
     
+    //MARK: - Chart functions
+    public var state: [String: Any]?
+    
     //MARK: - UI functions
     #if os(macOS)
     override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view

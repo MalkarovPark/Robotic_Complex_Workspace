@@ -23,13 +23,18 @@ class ModelController
     ///Model nodes lengths.
     public var lengths = [Float]()
     
-    ///Gets details nodes links from model root node and pass to array.
+    /**
+     Gets details nodes links from model root node and pass to array.
+     
+     - Parameters:
+        - node: A root node of workspace object model.
+     */
     open func nodes_connect(_ node: SCNNode)
     {
         
     }
     
-    ///Removes all nodes to object model from controller.
+    ///Removes all nodes in object model from controller.
     public final func nodes_disconnect()
     {
         nodes.removeAll()
@@ -78,7 +83,7 @@ class ModelController
     }
     
     ///Retruns perfroming state info.
-    public var state: [[String: Any]]?
+    public var state: [String: Any]?
 }
 
 //MARK: - Model controller implementations
