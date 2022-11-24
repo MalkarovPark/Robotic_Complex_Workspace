@@ -70,17 +70,11 @@ struct WorkspaceView: View
                         Button(action: { program_view_presented.toggle() })
                         {
                             Text("Inspector")
-                            #if os(macOS)
                                 .frame(maxWidth: .infinity)
-                            #else
-                                .frame(maxWidth: .infinity, minHeight: 32)
-                                .background(Color.accentColor)
-                                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                            #endif
                         }
+                        .buttonStyle(.borderedProminent)
                         .keyboardShortcut(.defaultAction)
                         .padding()
-                        .foregroundColor(Color.white)
                         .popover(isPresented: $program_view_presented)
                         {
                             VStack
@@ -246,7 +240,7 @@ struct ComplexWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(base_workspace.performed ? Color.secondary : Color.black)
+                                .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -255,10 +249,15 @@ struct ComplexWorkspaceView: View
                         #endif
                         .popover(isPresented: $add_in_view_presented)
                         {
+                            #if os(macOS)
                             AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                            #else
+                            AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
+                                .frame(width: 512)
+                            #endif
                         }
-                        .disabled(base_workspace.performed)
+                        .disabled(!base_workspace.add_in_view_disabled || base_workspace.performed)
                         
                         Divider()
                         
@@ -277,8 +276,13 @@ struct ComplexWorkspaceView: View
                         #endif
                         .popover(isPresented: $info_view_presented)
                         {
+                            #if os(macOS)
                             InfoView(info_view_presented: $info_view_presented, document: $document)
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                            #else
+                            InfoView(info_view_presented: $info_view_presented, document: $document, is_compact: horizontal_size_class == .compact)
+                                .frame(width: 512)
+                            #endif
                         }
                         .disabled(base_workspace.add_in_view_disabled)
                     }
@@ -378,9 +382,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 
                 if hit_results.count > 0
                 {
-                    result = hit_results[0]
-                    
-                    workspace.select_object_in_scene(result: hit_results[0])
+                    workspace.select_object_in_scene(result: hit_results.first!)
                 }
                 else
                 {
@@ -484,9 +486,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                 
                 if hit_results.count > 0
                 {
-                    result = hit_results[0]
-                    
-                    workspace.select_object_in_scene(result: hit_results[0])
+                    workspace.select_object_in_scene(result: hit_results.first!)
                 }
                 else
                 {
@@ -531,7 +531,7 @@ struct AddInWorkspaceView: View
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @State var is_compact = false
     #endif
     
     @State var first_select = true //This flag that specifies that the robot was not selected and disables the dismiss() function
@@ -554,7 +554,7 @@ struct AddInWorkspaceView: View
             }
             .pickerStyle(SegmentedPickerStyle())
             .labelsHidden()
-            .padding([.top, .leading, .trailing])
+            .padding([.horizontal, .top])
             
             //MARK: Object popup menu
             HStack
@@ -595,7 +595,7 @@ struct AddInWorkspaceView: View
                 {
                     PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
                 }
-                .padding([.top, .leading, .trailing])
+                .padding([.horizontal, .top])
                 .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
                 { _ in
                     base_workspace.update_object_position()
@@ -610,7 +610,7 @@ struct AddInWorkspaceView: View
                         {
                             PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
                         }
-                        .padding([.top, .leading, .trailing])
+                        .padding([.horizontal, .top])
                         .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
                         { _ in
                             base_workspace.update_object_position()
@@ -643,7 +643,7 @@ struct AddInWorkspaceView: View
                             }
                             .pickerStyle(.menu)
                             .frame(maxWidth: .infinity)
-                            .padding([.top, .leading, .trailing])
+                            .padding([.horizontal, .top])
                             #if os(iOS)
                             .buttonStyle(.bordered)
                             #endif
@@ -651,7 +651,7 @@ struct AddInWorkspaceView: View
                         else
                         {
                             Text("No robots for attach")
-                                .padding([.top, .leading, .trailing])
+                                .padding([.horizontal, .top])
                         }
                     }
                 }
@@ -661,7 +661,7 @@ struct AddInWorkspaceView: View
                 {
                     PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
                 }
-                .padding([.top, .leading, .trailing])
+                .padding([.horizontal, .top])
                 .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
                 { _ in
                     base_workspace.update_object_position()
@@ -674,11 +674,10 @@ struct AddInWorkspaceView: View
             switch app_state.add_selection
             {
             case 0:
-                VStack(spacing: 12)
-                {
+                DynamicStack(content: {
                     PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
-                }
-                .padding([.top, .leading, .trailing])
+                }, is_compact: $is_compact, spacing: 12)
+                .padding([.horizontal, .top])
                 .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
                 { _ in
                     base_workspace.update_object_position()
@@ -689,11 +688,10 @@ struct AddInWorkspaceView: View
                 {
                     if !tool_attached
                     {
-                        HStack(spacing: 16)
-                        {
+                        DynamicStack(content: {
                             PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                        }
-                        .padding([.top, .leading, .trailing])
+                        }, is_compact: $is_compact, spacing: 16)
+                        .padding([.horizontal, .top])
                         .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
                         { _ in
                             base_workspace.update_object_position()
@@ -726,7 +724,7 @@ struct AddInWorkspaceView: View
                             }
                             .pickerStyle(.menu)
                             .frame(maxWidth: .infinity)
-                            .padding([.top, .leading, .trailing])
+                            .padding([.horizontal, .top])
                             #if os(iOS)
                             .buttonStyle(.bordered)
                             #endif
@@ -734,17 +732,16 @@ struct AddInWorkspaceView: View
                         else
                         {
                             Text("No robots for attach")
-                                .padding([.top, .leading, .trailing])
+                                .padding([.horizontal, .top])
                         }
                     }
                 }
                 .disabled(base_workspace.avaliable_tools_names.count == 0)
             case 2:
-                VStack(spacing: 12)
-                {
+                DynamicStack(content: {
                     PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
-                }
-                .padding([.top, .leading, .trailing])
+                }, is_compact: $is_compact, spacing: 12)
+                .padding([.horizontal, .top])
                 .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
                 { _ in
                     base_workspace.update_object_position()
@@ -754,7 +751,7 @@ struct AddInWorkspaceView: View
                 Text("None")
             }
             
-            if horizontal_size_class == .compact
+            if is_compact
             {
                 Spacer()
             }
@@ -766,17 +763,11 @@ struct AddInWorkspaceView: View
                 Button(action: place_object)
                 {
                     Text("Place")
-                    #if os(macOS)
                         .frame(maxWidth: .infinity)
-                    #else
-                        .frame(maxWidth: .infinity, minHeight: 32)
-                        .background(Color.accentColor)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    #endif
                 }
+                .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
                 .padding()
-                .foregroundColor(Color.white)
                 .disabled(base_workspace.selected_object_unavaliable ?? true)
             }
         }
@@ -888,7 +879,7 @@ struct InfoView: View
     @State private var old_attachment: String?
     
     #if os(iOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @State var is_compact = false
     #endif
     
     var body: some View
@@ -901,13 +892,13 @@ struct InfoView: View
             case .robot:
                 Text("\(base_workspace.selected_robot.name ?? "None")")
                     .font(.title3)
-                    .padding([.top, .leading, .trailing])
+                    .padding([.horizontal, .top])
             case .tool:
                 HStack(spacing: 0)
                 {
                     Text("\(base_workspace.selected_robot.name ?? "None")")
                         .font(.title3)
-                        .padding([.top, .leading, .trailing])
+                        .padding([.horizontal, .top])
                 }
                 .frame(maxWidth: .infinity)
                 .overlay(alignment: .topTrailing)
@@ -930,7 +921,7 @@ struct InfoView: View
             case .detail:
                 Text("\(base_workspace.selected_detail.name ?? "None")")
                     .font(.title3)
-                    .padding([.top, .leading, .trailing])
+                    .padding([.horizontal, .top])
             default:
                 Text("None")
             }
@@ -1024,10 +1015,9 @@ struct InfoView: View
                     Text("None")
                 }
             }
-            .padding([.top, .leading, .trailing])
+            .padding([.horizontal, .top])
             #else
-            VStack(spacing: 12)
-            {
+            DynamicStack(content: {
                 switch base_workspace.selected_object_type
                 {
                 case .robot:
@@ -1066,7 +1056,7 @@ struct InfoView: View
                                 }
                                 .pickerStyle(.menu)
                                 .frame(maxWidth: .infinity)
-                                .padding([.top, .leading, .trailing])
+                                .padding([.horizontal, .top])
                                 #if os(iOS)
                                 .buttonStyle(.bordered)
                                 #endif
@@ -1074,7 +1064,7 @@ struct InfoView: View
                             else
                             {
                                 Text("No robots for attach")
-                                    .padding([.top, .leading, .trailing])
+                                    .padding([.horizontal, .top])
                             }
                         }
                         .onAppear
@@ -1112,10 +1102,10 @@ struct InfoView: View
                 default:
                     Text("None")
                 }
-            }
-            .padding([.top, .leading, .trailing])
+            }, is_compact: $is_compact, spacing: 12)
+            .padding([.horizontal, .top])
             
-            if horizontal_size_class == .compact
+            if is_compact
             {
                 Spacer()
             }
@@ -1126,15 +1116,10 @@ struct InfoView: View
                 Button(action: remove_object)
                 {
                     Text("Remove from workspace")
-                    #if os(macOS)
                         .frame(maxWidth: .infinity)
-                    #else
-                        .frame(maxWidth: .infinity, minHeight: 32)
-                        .background(.thinMaterial)
                         .foregroundColor(Color.red)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    #endif
                 }
+                .buttonStyle(.bordered)
                 .padding()
             }
         }
@@ -1325,6 +1310,9 @@ struct ControlProgramView: View
                         .popover(isPresented: $add_element_view_presented)
                         {
                             AddElementView(add_element_view_presented: $add_element_view_presented, add_new_element_data: $add_new_element_data)
+                            #if os(iOS)
+                                .presentationDetents([.height(128.0)])
+                            #endif
                         }
                         #if os(macOS)
                         .buttonStyle(BorderlessButtonStyle())

@@ -16,8 +16,10 @@ class Detail: WorkspaceObject
     private var figure_color: [Int]? //Color for detail without scene figure
     private var material_name: String? //Material for detail without scene figure
     
-    public var gripable: Bool? //Can this detail be gripped and picked up
+    ///Possibility of picking up detail.
+    public var gripable: Bool?
     
+    ///Physics body for detail model node by physics type.
     public var physics: SCNPhysicsBody?
     {
         switch physics_type
@@ -33,8 +35,14 @@ class Detail: WorkspaceObject
         }
     }
     
+    /**
+     Physics type of detail.
+     
+     > This variable is codable.
+     */
     public var physics_type: PhysicsType = .ph_none //Physic body type
     
+    ///The state of physics calculation for detail node.
     public var enable_physics = false
     {
         didSet
@@ -45,8 +53,7 @@ class Detail: WorkspaceObject
             }
             else
             {
-                //physics = node?.physicsBody //Save original physics
-                node?.physicsBody = nil
+                node?.physicsBody = nil //Remove physic body
             }
         }
     }
@@ -55,18 +62,6 @@ class Detail: WorkspaceObject
     override init(name: String)
     {
         super.init(name: name)
-    }
-    
-    init(name: String, scene: String) //Init detail by scene_name
-    {
-        super.init(name: name)
-        
-        self.scene_address = scene
-        
-        if scene != ""
-        {
-            self.node = SCNScene(named: scene)!.rootNode.childNode(withName: "detail", recursively: false)!
-        }
     }
     
     init(name: String, dictionary: [String: Any]) //Init detail by dictionary and use models folder
@@ -315,6 +310,7 @@ class Detail: WorkspaceObject
     }
     
     //MARK: - UI functions
+    ///Detail model color.
     public var color: Color
     {
         get
@@ -356,6 +352,7 @@ class Detail: WorkspaceObject
     #endif
     
     //MARK: - Work with file system
+    ///Codable file structure of detail.
     public var file_info: DetailStruct
     {
         return DetailStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)

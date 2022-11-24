@@ -389,17 +389,11 @@ struct RobotView: View
                         Button(action: { program_view_presented.toggle() })
                         {
                             Text("Inspector")
-                            #if os(macOS)
                                 .frame(maxWidth: .infinity)
-                            #else
-                                .frame(maxWidth: .infinity, minHeight: 32)
-                                .background(Color.accentColor)
-                                .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                            #endif
                         }
+                        .buttonStyle(.borderedProminent)
                         .keyboardShortcut(.defaultAction)
                         .padding()
-                        .foregroundColor(Color.white)
                         .popover(isPresented: $program_view_presented)
                         {
                             VStack
@@ -602,17 +596,11 @@ struct ChartView: View
                 Button(action: { chart_view_presented.toggle() })
                 {
                     Text("Close")
-                    #if os(macOS)
                         .frame(maxWidth: .infinity)
-                    #else
-                        .frame(maxWidth: .infinity, minHeight: 32)
-                        .background(Color.accentColor)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    #endif
                 }
-                    .keyboardShortcut(.defaultAction)
-                    .padding()
-                    .foregroundColor(Color.white)
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .padding()
             }
         }
         #if os(macOS)
@@ -1703,7 +1691,6 @@ struct PositionItemView: View
     
     #if os(iOS)
     @State var is_compact = false
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     #endif
     
     let on_delete: (IndexSet) -> ()

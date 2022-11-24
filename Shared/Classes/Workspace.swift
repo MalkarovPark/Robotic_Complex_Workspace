@@ -303,7 +303,7 @@ class Workspace: ObservableObject
         }
     }
     
-    private var previous_selected_type: WorkspaceObjectType = .robot //Current selected object type
+    private var previous_selected_type: WorkspaceObjectType = .robot //Current selected object type for new selection
     
     private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType) //Create editable node with name
     {
@@ -394,10 +394,10 @@ class Workspace: ObservableObject
         }
         else
         {
-            select_new()
+            select_new() //If nothing object selected – select new
         }
         
-        func select_new()
+        func select_new() //Select new object by type
         {
             switch type
             {
@@ -467,6 +467,7 @@ class Workspace: ObservableObject
     {
         if is_selected
         {
+            //Toggle selection state and deselect by object type
             switch selected_object_type
             {
             case .robot:
@@ -956,7 +957,7 @@ class Workspace: ObservableObject
     
     //MARK: - Control program functions
     //MARK: Workspace program elements handling
-    var marks_names: [String] //Get names of all marks in workspace program
+    public var marks_names: [String] //Get names of all marks in workspace program
     {
         var marks_names = [String]()
         for program_element in self.elements
@@ -1085,6 +1086,8 @@ class Workspace: ObservableObject
     
     public func start_pause_performing()
     {
+        deselect_object_for_edit()
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) //Delayed update view
         {
             self.update_view()
@@ -1241,6 +1244,11 @@ class Workspace: ObservableObject
     }
     
     //MARK: - Work with file system
+    /**
+     Returns arrays of document structures by workspace objects type.
+     
+     - Returns: Codable structures for robots, tools, details and elements ordered as control program.
+     */
     public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], details: [DetailStruct], elements: [workspace_program_element_struct])
     {
         //Get robots info for save to file
@@ -1274,10 +1282,21 @@ class Workspace: ObservableObject
         return(robots_file_info, tools_file_info, details_file_info, elements_file_info)
     }
     
+    ///File bookmark for robots models.
     public var robots_bookmark: Data?
-    public var details_bookmark: Data?
+    
+    ///File bookmark for tools models.
     public var tools_bookmark: Data?
     
+    ///File bookmark for details models.
+    public var details_bookmark: Data?
+    
+    /**
+     Imports file data to workspace from preset structure.
+     
+     - Parameters:
+        - preset: Imported workspace preset.
+     */
     public func file_view(preset: WorkspacePreset)
     {
         //Update robots data from file
@@ -1320,13 +1339,16 @@ class Workspace: ObservableObject
     }
     
     //MARK: - UI Functions
-    public var is_editing = false //Determines whether the robot can be selected if it is open for editing
+    ///Determines whether the robot can be selected if it is open for editing.
+    public var is_editing = false
     
-    func update_view() //Force update SwiftUI view
+    ///Force updates SwiftUI view.
+    func update_view()
     {
         self.objectWillChange.send()
     }
     
+    ///Selection workspace object state.
     public var is_selected: Bool
     {
         if selected_robot_index == -1 && selected_detail_index == -1 && selected_tool_index == -1
@@ -1339,12 +1361,16 @@ class Workspace: ObservableObject
         }
     }
     
-    public var reset_view_action: SCNAction //Reset camera position SCNAction
+    ///Resets camera position SCNAction
+    public var reset_view_action: SCNAction
     {
         return SCNAction.group([SCNAction.move(to: camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: camera_node!.rotation, duration: 0.5)])
     }
     
-    public var add_in_view_dismissed = true //If add in view presented or not dismissed state
+    ///If add in view presented or not dismissed state.
+    public var add_in_view_dismissed = true
+    
+    ///Disabled add new object button.
     public var add_in_view_disabled: Bool
     {
         if !is_selected || !add_in_view_dismissed || performed
@@ -1358,17 +1384,31 @@ class Workspace: ObservableObject
     }
     
     //MARK: - Visual functions
-    public var camera_node: SCNNode? //Camera
-    public var workcells_node: SCNNode? //Robots workcells
-    public var tools_node: SCNNode? //Tools
-    public var details_node: SCNNode? //Details
-    public var object_pointer_node: SCNNode? //Pointer
+    ///Scene camera node.
+    public var camera_node: SCNNode?
     
-    //Category bit masks
+    ///Robots workcells node.
+    public var workcells_node: SCNNode?
+    
+    ///Tools node.
+    public var tools_node: SCNNode?
+    
+    ///Details node.
+    public var details_node: SCNNode?
+    
+    ///Viusal object pointer node.
+    public var object_pointer_node: SCNNode?
+    
+    ///Robot node category bit mask.
     public static var robot_bit_mask = 2
+    
+    ///Tool node category bit mask.
     public static var tool_bit_mask = 4
+    
+    ///Detail node category bit mask.
     public static var detail_bit_mask = 6
     
+    ///Connects and places objects to workspace scene.
     public func connect_scene(_ scene: SCNScene)
     {
         deselect_robot()
@@ -1505,36 +1545,6 @@ class Workspace: ObservableObject
     }
 }
 
-func apply_bit_mask(node: SCNNode, _ code: Int)
-{
-    node.categoryBitMask = code
-    
-    node.enumerateChildNodes
-    { (_node, stop) in
-        _node.categoryBitMask = code
-    }
-}
-
-func clear_constranints(node: SCNNode)
-{
-    guard node.constraints != nil
-    else
-    {
-        return
-    }
-    
-    if node.constraints?.count ?? 0 > 0
-    {
-        node.constraints?.removeAll() //Remove constraint
-        
-        //Update position
-        node.position.x += 1
-        node.position.x -= 1
-        node.rotation.x += 1
-        node.rotation.x -= 1
-    }
-}
-
 enum WorkspaceObjectType: String, Equatable, CaseIterable
 {
     case robot = "Robot"
@@ -1595,44 +1605,4 @@ struct WorkspacePreset: Codable
     var elements = [workspace_program_element_struct]()
     var tools = [ToolStruct]()
     var details = [DetailStruct]()
-}
-
-//MARK: Functions
-func mismatched_name(name: String, names: [String]) -> String
-{
-    var name_count = 1
-    var name_postfix: String
-    {
-        return name_count > 1 ? " \(name_count)" : ""
-    }
-    
-    if names.count > 0
-    {
-        for _ in 0..<names.count
-        {
-            for viewed_name in names
-            {
-                if viewed_name == name + name_postfix
-                {
-                    name_count += 1
-                }
-            }
-        }
-    }
-    
-    return name + name_postfix
-}
-
-//MARK: - Angles convertion extension
-extension Float
-{
-    var to_deg: Float
-    {
-        return self * 180 / .pi
-    }
-    
-    var to_rad: Float
-    {
-        return self * .pi / 180
-    }
 }

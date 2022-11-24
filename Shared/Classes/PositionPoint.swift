@@ -11,7 +11,7 @@ class PositionPoint: Identifiable, Codable, Hashable
 {
     static func == (lhs: PositionPoint, rhs: PositionPoint) -> Bool
     {
-        lhs.id == rhs.id //Identity condition by id
+        lhs.id == rhs.id
     }
     
     func hash(into hasher: inout Hasher)
@@ -19,12 +19,19 @@ class PositionPoint: Identifiable, Codable, Hashable
         hasher.combine(id)
     }
     
-    public var x, y, z: Float //Point location
-    public var r, p, w: Float //Point rotation
-    public var move_type: MoveType //Move type to point
-    public var move_speed: Float //Move speed to point
+    ///Point location components.
+    public var x, y, z: Float
     
-    //MARK: - Initialization
+    ///Point rotation components.
+    public var r, p, w: Float
+    
+    ///Type of moving to point.
+    public var move_type: MoveType
+    
+    ///Moving to point speed.
+    public var move_speed: Float
+    
+    //MARK: - Init functions
     init()
     {
         self.x = 0
