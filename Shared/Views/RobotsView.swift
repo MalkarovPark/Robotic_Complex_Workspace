@@ -423,6 +423,7 @@ struct RobotView: View
         }
         .onAppear()
         {
+            base_workspace.selected_robot.clear_finish_handler()
             if base_workspace.selected_robot.programs_count > 0
             {
                 base_workspace.selected_robot.select_program(index: 0)

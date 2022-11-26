@@ -407,6 +407,15 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
                 }
             }
         }
+        
+        if base_workspace.element_changed
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now())
+            {
+                base_workspace.update_view()
+                base_workspace.element_changed = false
+            }
+        }
     }
 }
 #else
@@ -1344,7 +1353,7 @@ struct ControlProgramView: View
                     
                     if base_workspace.selected_robot.programs_count > 0
                     {
-                        new_program_element.element_data.robot_program_name = base_workspace.selected_robot.programs_names.first!
+                        new_program_element.element_data.program_name = base_workspace.selected_robot.programs_names.first!
                     }
                     base_workspace.deselect_robot()
                 }
@@ -1527,24 +1536,16 @@ struct ElementCardView: View
         {
             ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, document: $document, new_element_item_data: element_item.element_data, on_delete: on_delete)
         }
-        .overlay
+        .overlay(alignment: .topTrailing)
         {
-            if element_item.is_selected
+            if base_workspace.is_current_element(element: element_item)
             {
-                VStack
-                {
-                    HStack
-                    {
-                        Spacer()
-                        Circle()
-                            .foregroundColor(Color.yellow)
-                            .frame(width: 16, height: 16)
-                            .padding()
-                            .shadow(radius: 8.0)
-                            .transition(AnyTransition.scale)
-                    }
-                    Spacer()
-                }
+                Circle()
+                    .foregroundColor(Color.yellow)
+                    .frame(width: 16, height: 16)
+                    .padding()
+                    .shadow(radius: 8.0)
+                    .transition(AnyTransition.scale)
             }
         }
     }
@@ -1875,7 +1876,7 @@ struct ElementView: View
                 switch new_element_item_data.element_type
                 {
                 case .perofrmer:
-                    PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, robot_program_name: $new_element_item_data.robot_program_name, tool_name: $new_element_item_data.tool_name)
+                    PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, robot_program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
                 case .modificator:
                     ModificatorElementView(modificator_type: $new_element_item_data.modificator_type)
                 case .logic:

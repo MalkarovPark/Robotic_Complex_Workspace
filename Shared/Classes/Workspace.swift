@@ -777,18 +777,29 @@ class Workspace: ObservableObject
         return tools.firstIndex(of: Tool(name: name)) ?? -1
     }
     
+    /**
+     Returns index number of robot by name.
+     
+     - Parameters:
+        - name: A name of tobot for index find.
+     */
+    public func tool_by_name(_ name: String) -> Tool
+    {
+        return self.tools[tool_index_by_name(name)]
+    }
+    
     ///Names of all tools in workspace.
     public var tools_names: [String] //Get names of all tools in workspace
     {
-        var tools_names = [String]()
+        var names = [String]()
         if tools.count > 0
         {
             for tool in tools
             {
-                tools_names.append(tool.name ?? "None")
+                names.append(tool.name ?? "None")
             }
         }
-        return tools_names
+        return names
     }
     
     ///Names of tools avaliable to place in workspace.
@@ -798,6 +809,20 @@ class Workspace: ObservableObject
         for tool in tools
         {
             if tool.name != nil && !tool.is_placed
+            {
+                names.append(tool.name!)
+            }
+        }
+        return names
+    }
+    
+    ///Names of tools placed in workspace.
+    public var placed_tools_names: [String] //Array of robots names added to workspace
+    {
+        var names = [String]()
+        for tool in tools
+        {
+            if tool.name != nil && tool.is_placed
             {
                 names.append(tool.name!)
             }
@@ -990,7 +1015,7 @@ class Workspace: ObservableObject
                 switch element.element_data.performer_type
                 {
                 case .robot:
-                    element_robot_check(element: element)
+                    robot_element_check(element: element)
                 case .tool:
                     break
                 }
@@ -1000,14 +1025,16 @@ class Workspace: ObservableObject
                 switch element.element_data.logic_type
                 {
                 case .jump:
-                    element_jump_check(element: element)
+                    jump_element_check(element: element)
+                case .mark:
+                    break
                 default:
                     break
                 }
             }
         }
         
-        func element_robot_check(element: WorkspaceProgramElement) //Check element by selected robot exists
+        func robot_element_check(element: WorkspaceProgramElement) //Check element by selected robot exists
         {
             if element.element_data.robot_name != ""
             {
@@ -1019,7 +1046,7 @@ class Workspace: ObservableObject
                         
                         if robot_by_name(element.element_data.robot_name).programs_count > 0
                         {
-                            element.element_data.robot_program_name = robot_by_name(element.element_data.robot_name).programs_names.first!
+                            element.element_data.program_name = robot_by_name(element.element_data.robot_name).programs_names.first!
                         }
                     }
                     else
@@ -1035,7 +1062,7 @@ class Workspace: ObservableObject
                     element.element_data.robot_name = robots.first?.name ?? "None"
                     if robots.first?.programs_count ?? 0 > 0
                     {
-                        element.element_data.robot_program_name = robot_by_name(element.element_data.robot_name).programs_names.first!
+                        element.element_data.program_name = robot_by_name(element.element_data.robot_name).programs_names.first!
                     }
                 }
                 else
@@ -1045,7 +1072,45 @@ class Workspace: ObservableObject
             }
         }
         
-        func element_jump_check(element: WorkspaceProgramElement) //Check element by selected mark exists
+        func tool_element_check(element: WorkspaceProgramElement)
+        {
+            if element.element_data.tool_name != ""
+            {
+                if self.tool_by_name(element.element_data.tool_name).is_placed == false
+                {
+                    if self.placed_tools_names.count > 0
+                    {
+                        element.element_data.tool_name = self.placed_tools_names.first!
+                        
+                        if robot_by_name(element.element_data.tool_name).programs_count > 0
+                        {
+                            element.element_data.program_name = tool_by_name(element.element_data.tool_name).programs_names.first!
+                        }
+                    }
+                    else
+                    {
+                        element.element_data.tool_name = ""
+                    }
+                }
+            }
+            else
+            {
+                if self.placed_tools_names.count > 0
+                {
+                    element.element_data.tool_name = tools.first?.name ?? "None"
+                    if tools.first?.programs_count ?? 0 > 0
+                    {
+                        element.element_data.program_name = tool_by_name(element.element_data.tool_name).programs_names.first!
+                    }
+                }
+                else
+                {
+                    element.element_data.tool_name = ""
+                }
+            }
+        }
+        
+        func jump_element_check(element: WorkspaceProgramElement) //Check element by selected mark exists
         {
             if marks_names.count > 0
             {
@@ -1076,6 +1141,7 @@ class Workspace: ObservableObject
         }
     }
     
+    //MARK: Performation functions
     ///Program performating cycle state.
     @Published var cycled = false
     
@@ -1084,36 +1150,193 @@ class Workspace: ObservableObject
     
     private var selected_element_index = 0
     
+    public var element_changed = false //This flag perform update if performed element changed
+    
     public func start_pause_performing()
     {
         deselect_object_for_edit()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) //Delayed update view
+        prepare_program()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) //Delayed view update
         {
             self.update_view()
         }
         
-        if performed == false
+        if !performed
         {
             //Move to next point if moving was stop
             performed = true
-            selected_robot_index = -1
             
-            defining_elements_indexes()
-            
-            let queue = DispatchQueue.global(qos: .utility)
-            queue.async
-            {
-                self.perfom_next_element()
-            }
+            perform_next_element()
+            element_changed = true
         }
         else
         {
             //Remove all action if moving was perform
             performed = false
-            selected_robot.start_pause_moving()
-            selected_robot_index = -1
+            
+            //Stop perfomed objects
+            pause_performing()
+            //selected_robot.start_pause_moving()
         }
+    }
+    
+    private var selected_program_element: WorkspaceProgramElement
+    {
+        return elements[selected_element_index]
+    }
+    
+    public func perform_next_element()
+    {
+        let element = selected_program_element
+        
+        switch element.element_data.element_type
+        {
+        case .perofrmer:
+            switch element.element_data.performer_type
+            {
+            case .robot:
+                perform_robot(name: element.element_data.robot_name, program: element.element_data.program_name)
+                {
+                    self.select_new_element()
+                }
+            case .tool:
+                perform_tool(name: element.element_data.tool_name, program: element.element_data.program_name)
+                {
+                    self.select_new_element()
+                }
+            }
+        case .modificator:
+            break
+        case .logic:
+            switch element.element_data.logic_type
+            {
+            case .jump:
+                jump_to(index: element.target_element_index)
+            case .mark:
+                select_new_element()
+            default:
+                break
+            }
+        }
+    }
+    
+    private func select_new_element()
+    {
+        if performed
+        {
+            selected_element_index += 1
+        }
+        else
+        {
+            return
+        }
+        
+        element_changed = true
+        
+        if selected_element_index < elements.count
+        {
+            //Select and move to next point
+            perform_next_element()
+        }
+        else
+        {
+            selected_element_index = 0
+            
+            if cycled == true
+            {
+                perform_next_element()
+            }
+            else
+            {
+                performed = false
+                //update_view()
+            }
+        }
+    }
+    
+    public func pause_performing()
+    {
+        let element = selected_program_element
+        
+        switch element.element_data.element_type
+        {
+        case .perofrmer:
+            switch element.element_data.performer_type
+            {
+            case .robot:
+                break
+            case .tool:
+                break
+            }
+        case .modificator:
+            break
+        case .logic:
+            switch element.element_data.logic_type
+            {
+            case .jump:
+                break
+            default:
+                break
+            }
+        }
+    }
+    
+    private func jump_to(index: Int)
+    {
+        selected_element_index = index
+        perform_next_element()
+        
+        /*if element.element_data.target_mark_name != ""
+        {
+            jumped = true
+        }
+        
+        if jumped == false
+        {
+            selected_element_index += 1
+        }
+        else
+        {
+            selected_element_index = element.target_element_index
+        }*/
+    }
+    
+    private func mark_step()
+    {
+        if selected_element_index < elements.count
+        {
+            selected_element_index += 1
+        }
+        else
+        {
+            if cycled
+            {
+                selected_element_index = 0
+            }
+            else
+            {
+                
+            }
+        }
+        select_new_element()
+    }
+    
+    ///Resets workspace performing.
+    public func reset_performing()
+    {
+        //selected_robot.reset_moving()
+        //deselect_robot()
+        
+        performed = false //Enable workspace program edit
+        selected_element_index = 0 //Select firs program element
+    }
+    
+    private func prepare_program()
+    {
+        defining_elements_indexes()
+        models_connect()
     }
     
     private func defining_elements_indexes()
@@ -1152,96 +1375,99 @@ class Workspace: ObservableObject
         }
     }
     
-    public func perfom_next_element()
+    private func models_connect()
     {
-        if selected_element_index < elements.count
+        for element in elements
         {
-            update_view()
-            
-            let element = elements[selected_element_index]
-            var jumped = false
-            
-            element.is_selected = true
-            
-            switch element.element_data.element_type
+            if element.element_data.element_type == .perofrmer
             {
-            case .perofrmer:
                 switch element.element_data.performer_type
                 {
                 case .robot:
-                    select_robot(name: element.element_data.robot_name)
-                    if selected_robot.programs_names.count > 0 && element.element_data.robot_program_name != ""
-                    {
-                        selected_robot.workcell_connect(scene: scene, name: selected_robot.name!, connect_camera: false)
-                        selected_robot.select_program(name: element.element_data.robot_program_name)
-                        selected_robot.start_pause_moving()
-                        while selected_robot.moving_completed == false && self.performed == true
-                        {
-                            
-                        }
-                    }
-                    break
-                case .tool:
-                    break
+                    robot_by_name(element.element_data.robot_name).workcell_connect(scene: scene, name: element.element_data.robot_name, connect_camera: false)
+                case.tool:
+                    tool_by_name(element.element_data.tool_name).workcell_connect(scene: scene, name: element.element_data.tool_name)
                 }
-            case .modificator:
-                break
-            case .logic:
-                switch element.element_data.logic_type
-                {
-                case .jump:
-                    if element.element_data.target_mark_name != ""
-                    {
-                        jumped = true
-                    }
-                default:
-                    break
-                }
-            }
-            
-            if performed == true
-            {
-                update_view()
-                elements[selected_element_index].is_selected = false
-                
-                if jumped == false
-                {
-                    selected_element_index += 1
-                }
-                else
-                {
-                    selected_element_index = element.target_element_index
-                }
-                
-                perfom_next_element()
-            }
-        }
-        else
-        {
-            selected_element_index = 0
-            selected_robot_index = -1
-            
-            if cycled == true
-            {
-                perfom_next_element()
-            }
-            else
-            {
-                performed = false
-                update_view()
             }
         }
     }
     
-    ///Resets workspace performing.
-    public func reset_performing()
+    //MARK: Elements processing
+    private func perform_robot(name: String, program: String, completion: @escaping () -> Void)
     {
-        elements[selected_element_index].is_selected = false //Deselect performed program element
-        selected_robot.reset_moving()
-        selected_element_index = 0 //Select firs program element
-        deselect_robot()
-        performed = false //Enable workspace program edit
+        select_robot(name: name)
+        selected_robot.finish_handler = completion
+        
+        selected_robot.start_pause_moving()
     }
+    
+    private func perform_tool(name: String, program: String, completion: @escaping () -> Void)
+    {
+        completion()
+    }
+    
+    /*private func element_definition()
+    {
+        //update_view()
+        
+        let element = elements[selected_element_index]
+        var jumped = false
+        
+        element.is_selected = true
+        
+        switch element.element_data.element_type
+        {
+        case .perofrmer:
+            switch element.element_data.performer_type
+            {
+            case .robot:
+                select_robot(name: element.element_data.robot_name)
+                if selected_robot.programs_names.count > 0 && element.element_data.program_name != ""
+                {
+                    selected_robot.workcell_connect(scene: scene, name: selected_robot.name!, connect_camera: false)
+                    selected_robot.select_program(name: element.element_data.program_name)
+                    selected_robot.start_pause_moving()
+                    while selected_robot.moving_completed == false && self.performed == true
+                    {
+                        
+                    }
+                }
+                break
+            case .tool:
+                break
+            }
+        case .modificator:
+            break
+        case .logic:
+            switch element.element_data.logic_type
+            {
+            case .jump:
+                if element.element_data.target_mark_name != ""
+                {
+                    jumped = true
+                }
+            default:
+                break
+            }
+        }
+        
+        if performed == true
+        {
+            update_view()
+            elements[selected_element_index].is_selected = false
+            
+            if jumped == false
+            {
+                selected_element_index += 1
+            }
+            else
+            {
+                selected_element_index = element.target_element_index
+            }
+            
+            perform_next_element()
+        }
+    }*/
     
     //MARK: - Work with file system
     /**
@@ -1381,6 +1607,22 @@ class Workspace: ObservableObject
         {
             return false
         }
+    }
+    
+    public func is_current_element(element: WorkspaceProgramElement) -> Bool //Get point color for inspector view
+    {
+        var flag = false
+        let element_index = self.elements.firstIndex(of: element) //Number of selected code
+        
+        if performed
+        {
+            if element_index == selected_element_index //Yellow color, if the tool is in the process of moving to the code
+            {
+                flag = true
+            }
+        }
+        
+        return flag
     }
     
     //MARK: - Visual functions

@@ -136,7 +136,7 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
         return info
     }
     
-    public var is_selected = false //Flag that determines the selection of the program element card during performing
+    //public var is_selected = false //Flag that determines the selection of the program element card during performing
     public var target_element_index = 0 //The index of the target mark element for the jump element.
 }
 
@@ -149,8 +149,9 @@ struct workspace_program_element_struct: Codable, Hashable
     var performer_type: PerformerType = .robot
     
     var robot_name = String()
-    var robot_program_name = String()
     var tool_name = String()
+    
+    var program_name = String()
     
     //MARK: For Modififcator
     var modificator_type: ModificatorType = .observer

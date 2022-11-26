@@ -299,6 +299,12 @@ class Robot: WorkspaceObject
     private var moving_finished = false
     private var rotation_finished = false
     
+    public var finish_handler: (() -> Void) = {}
+    public func clear_finish_handler()
+    {
+        finish_handler = {}
+    }
+    
     private func select_new_point() //Set new target point index
     {
         if moving_finished == true && rotation_finished == true //Waiting for the target point reach
@@ -319,6 +325,8 @@ class Robot: WorkspaceObject
                 performed = false
                 moving_completed = true
                 current_pointer_position_select()
+                
+                finish_handler()
             }
         }
     }

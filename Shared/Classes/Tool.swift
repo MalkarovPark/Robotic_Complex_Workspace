@@ -217,10 +217,10 @@ class Tool: WorkspaceObject
     private var module_name = ""
     
     public var performing_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI
+    public var selected_code_index = 0 //Index of target point in points array
     public var code_changed = false //This flag perform update if performed code changed
-    public var target_code_index = 0 //Index of target point in points array
     
-    private var demo = true
+    public var demo = true
     {
         didSet
         {
@@ -237,62 +237,15 @@ class Tool: WorkspaceObject
         }
     }
     
-    public func perform_operation(_ code: Int) //Single operation perform
+    open func perform_operation(_ code: Int) //Single operation perform
     {
         
     }
     
     //MARK: Performation cycle
-    public func perform_next_code()
-    {
-        if demo == true
-        {
-            //Move to point for virtual tool
-            model_controller.nodes_perform(code: selected_program.codes[target_code_index].value)
-            {
-                self.select_new_code()
-            }
-        }
-        else
-        {
-            //Move to point for real tool
-            connector.perform(code: selected_program.codes[target_code_index].value)
-            {
-                self.select_new_code()
-            }
-        }
-    }
-    
-    private func select_new_code() //Set new target point index
-    {
-        if performed
-        {
-            target_code_index += 1
-        }
-        else
-        {
-            return
-        }
-        
-        code_changed = true
-        
-        if target_code_index < selected_program.codes_count
-        {
-            //Select and move to next point
-            perform_next_code()
-        }
-        else
-        {
-            //Reset target point index if all points passed
-            target_code_index = 0
-            performed = false
-            performing_completed = true
-        }
-    }
-    
     public func start_pause_performing() //Handling robot moving
     {
-        if performed == false
+        if !performed
         {
             //Move to next point if moving was stop
             performed = true
@@ -307,11 +260,66 @@ class Tool: WorkspaceObject
         }
     }
     
+    public func perform_next_code()
+    {
+        if demo
+        {
+            //Move to point for virtual tool
+            model_controller.nodes_perform(code: selected_program.codes[selected_code_index].value)
+            {
+                self.select_new_code()
+            }
+        }
+        else
+        {
+            //Move to point for real tool
+            connector.perform(code: selected_program.codes[selected_code_index].value)
+            {
+                self.select_new_code()
+            }
+        }
+    }
+    
+    public var finish_handler: (() -> Void) = {}
+    public func clear_finish_handler()
+    {
+        finish_handler = {}
+    }
+    
+    private func select_new_code() //Set new target point index
+    {
+        if performed
+        {
+            selected_code_index += 1
+        }
+        else
+        {
+            return
+        }
+        
+        code_changed = true
+        
+        if selected_code_index < selected_program.codes_count
+        {
+            //Select and move to next point
+            perform_next_code()
+        }
+        else
+        {
+            //Reset target point index if all points passed
+            selected_code_index = 0
+            performed = false
+            performing_completed = true
+            
+            finish_handler()
+        }
+    }
+    
     public func reset_performing() //Reset tool performing
     {
         performed = false
         performing_completed = false
-        target_code_index = 0
+        selected_code_index = 0
     }
     
     //MARK: - Connection functions
@@ -393,17 +401,17 @@ class Tool: WorkspaceObject
     public func inspector_code_color(code: OperationCode) -> Color //Get point color for inspector view
     {
         var color = Color.gray //Gray point color if the robot is not reching the code
-        let code_number = self.selected_program.codes.firstIndex(of: code) //Number of selected code
+        let code_index = self.selected_program.codes.firstIndex(of: code) //Number of selected code
         
         if performed
         {
-            if code_number == target_code_index //Yellow color, if the tool is in the process of moving to the code
+            if code_index == selected_code_index //Yellow color, if the tool is in the process of moving to the code
             {
                 color = .yellow
             }
             else
             {
-                if code_number ?? 0 < target_code_index //Green color, if the tool has reached this code
+                if code_index ?? 0 < selected_code_index //Green color, if the tool has reached this code
                 {
                     color = .green
                 }
