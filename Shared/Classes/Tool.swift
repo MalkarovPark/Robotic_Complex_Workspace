@@ -12,6 +12,11 @@ import SwiftUI
 class Tool: WorkspaceObject
 {
     //MARK: - Init functions
+    override init()
+    {
+        super.init()
+    }
+    
     override init(name: String)
     {
         super.init(name: name)
@@ -359,9 +364,19 @@ class Tool: WorkspaceObject
     
     public func workcell_connect(scene: SCNScene, name: String) //Connect tool details from scene
     {
-        let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
+        //let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
+        var unit_node = SCNNode()
+        scene.rootNode.enumerateChildNodes
+        { (_node, stop) in
+            if _node.name == name, _node.categoryBitMask == Workspace.tool_bit_mask
+            {
+                unit_node = _node
+                //print((_node.name ?? "") + "is tool")
+            }
+        }
+        
         model_controller.nodes_disconnect()
-        model_controller.nodes_connect(unit_node ?? SCNNode())
+        model_controller.nodes_connect(unit_node)// ?? SCNNode())
         
         if lengths.count > 0
         {

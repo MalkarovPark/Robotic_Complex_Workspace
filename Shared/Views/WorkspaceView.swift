@@ -520,6 +520,15 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
                 }
             }
         }
+        
+        if base_workspace.element_changed
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now())
+            {
+                base_workspace.update_view()
+                base_workspace.element_changed = false
+            }
+        }
     }
 }
 #endif
@@ -1876,7 +1885,7 @@ struct ElementView: View
                 switch new_element_item_data.element_type
                 {
                 case .perofrmer:
-                    PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, robot_program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
+                    PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
                 case .modificator:
                     ModificatorElementView(modificator_type: $new_element_item_data.modificator_type)
                 case .logic:
@@ -1940,12 +1949,13 @@ struct PerformerElementView: View
 {
     @Binding var performer_type: PerformerType
     @Binding var robot_name: String
-    @Binding var robot_program_name: String
+    @Binding var program_name: String
     @Binding var tool_name: String
     
     @EnvironmentObject var base_workspace: Workspace
     
-    @State var viewed_robot = Robot()
+    @State private var viewed_robot: Robot?
+    @State private var viewed_tool: Tool?
     
     var body: some View
     {
@@ -1954,30 +1964,24 @@ struct PerformerElementView: View
             switch performer_type
             {
             case .robot:
+                //MARK: Robot subview
                 if base_workspace.placed_robots_names.count > 0
                 {
                     //MARK: Robot subview
                     #if os(macOS)
                     Picker("Name", selection: $robot_name) //Robot picker
                     {
-                        if base_workspace.placed_robots_names.count > 0
-                        {
-                            ForEach(base_workspace.placed_robots_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        else
-                        {
-                            Text("None")
+                        ForEach(base_workspace.placed_robots_names, id: \.self)
+                        { name in
+                            Text(name)
                         }
                     }
                     .onChange(of: robot_name)
                     { _ in
                         viewed_robot = base_workspace.robot_by_name(robot_name)
-                        if viewed_robot.programs_names.count > 0
+                        if viewed_robot?.programs_names.count ?? 0 > 0
                         {
-                            robot_program_name = viewed_robot.programs_names.first ?? ""
+                            program_name = viewed_robot?.programs_names.first ?? ""
                         }
                         base_workspace.update_view()
                     }
@@ -1996,11 +2000,11 @@ struct PerformerElementView: View
                     .disabled(base_workspace.placed_robots_names.count == 0)
                     .frame(maxWidth: .infinity)
                     
-                    Picker("Program", selection: $robot_program_name) //Robot program picker
+                    Picker("Program", selection: $program_name) //Robot program picker
                     {
-                        if viewed_robot.programs_names.count > 0
+                        if viewed_robot?.programs_names.count ?? 0 > 0
                         {
-                            ForEach(viewed_robot.programs_names, id: \.self)
+                            ForEach(viewed_robot!.programs_names, id: \.self)
                             { name in
                                 Text(name)
                             }
@@ -2010,7 +2014,7 @@ struct PerformerElementView: View
                             Text("None")
                         }
                     }
-                    .disabled(viewed_robot.programs_names.count == 0)
+                    .disabled(viewed_robot?.programs_names.count == 0)
                     #else
                     VStack
                     {
@@ -2035,9 +2039,9 @@ struct PerformerElementView: View
                                 .onChange(of: robot_name)
                                 { _ in
                                     viewed_robot = base_workspace.robot_by_name(robot_name)
-                                    if viewed_robot.programs_names.count > 0
+                                    if viewed_robot?.programs_names.count ?? 0 > 0
                                     {
-                                        robot_program_name = viewed_robot.programs_names.first ?? ""
+                                        program_name = viewed_robot?.programs_names.first ?? ""
                                     }
                                     base_workspace.update_view()
                                 }
@@ -2059,11 +2063,11 @@ struct PerformerElementView: View
                                 .compositingGroup()
                                 .clipped()
                                 
-                                Picker("Program", selection: $robot_program_name) //Robot program picker
+                                Picker("Program", selection: $program_name) //Robot program picker
                                 {
-                                    if viewed_robot.programs_names.count > 0
+                                    if viewed_robot?.programs_names.count ?? 0 > 0
                                     {
-                                        ForEach(viewed_robot.programs_names, id: \.self)
+                                        ForEach(viewed_robot!.programs_names, id: \.self)
                                         { name in
                                             Text(name)
                                         }
@@ -2073,7 +2077,7 @@ struct PerformerElementView: View
                                         Text("None")
                                     }
                                 }
-                                .disabled(viewed_robot.programs_names.count == 0)
+                                .disabled(viewed_robot?.programs_names.count == 0)
                                 .pickerStyle(.wheel)
                                 .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                                 .compositingGroup()
@@ -2090,7 +2094,133 @@ struct PerformerElementView: View
                 }
             case .tool:
                 //MARK: Tool subview
-                Text("Tool")
+                if base_workspace.placed_tools_names.count > 0
+                {
+                    //MARK: tool subview
+                    #if os(macOS)
+                    Picker("Name", selection: $tool_name) //tool picker
+                    {
+                        ForEach(base_workspace.placed_tools_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    .onChange(of: tool_name)
+                    { _ in
+                        viewed_tool = base_workspace.tool_by_name(tool_name)
+                        if viewed_tool?.programs_names.count ?? 0 > 0
+                        {
+                            program_name = viewed_tool?.programs_names.first ?? ""
+                        }
+                        base_workspace.update_view()
+                    }
+                    .onAppear
+                    {
+                        if tool_name == ""
+                        {
+                            tool_name = base_workspace.placed_tools_names.first!
+                        }
+                        else
+                        {
+                            viewed_tool = base_workspace.tool_by_name(tool_name)
+                            base_workspace.update_view()
+                        }
+                    }
+                    .disabled(base_workspace.placed_tools_names.count == 0)
+                    .frame(maxWidth: .infinity)
+                    
+                    Picker("Program", selection: $program_name) //tool program picker
+                    {
+                        if viewed_tool?.programs_names.count ?? 0 > 0
+                        {
+                            ForEach(viewed_tool!.programs_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .disabled(viewed_tool?.programs_names.count == 0)
+                    #else
+                    VStack
+                    {
+                        GeometryReader
+                        { geometry in
+                            HStack(spacing: 0)
+                            {
+                                Picker("Name", selection: $tool_name) //tool picker
+                                {
+                                    if base_workspace.placed_tools_names.count > 0
+                                    {
+                                        ForEach(base_workspace.placed_tools_names, id: \.self)
+                                        { name in
+                                            Text(name)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .onChange(of: tool_name)
+                                { _ in
+                                    viewed_tool = base_workspace.tool_by_name(tool_name)
+                                    if viewed_tool?.programs_names.count ?? 0 > 0
+                                    {
+                                        program_name = viewed_tool?.programs_names.first ?? ""
+                                    }
+                                    base_workspace.update_view()
+                                }
+                                .onAppear
+                                {
+                                    if tool_name == ""
+                                    {
+                                        tool_name = base_workspace.placed_tools_names[0]
+                                    }
+                                    else
+                                    {
+                                        viewed_tool = base_workspace.tool_by_name(tool_name)
+                                        base_workspace.update_view()
+                                    }
+                                }
+                                .disabled(base_workspace.placed_tools_names.count == 0)
+                                .pickerStyle(.wheel)
+                                .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
+                                .compositingGroup()
+                                .clipped()
+                                
+                                Picker("Program", selection: $program_name) //tool program picker
+                                {
+                                    if viewed_tool?.programs_names.count ?? 0 > 0
+                                    {
+                                        ForEach(viewed_tool!.programs_names, id: \.self)
+                                        { name in
+                                            Text(name)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .disabled(viewed_tool?.programs_names.count == 0)
+                                .pickerStyle(.wheel)
+                                .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
+                                .compositingGroup()
+                                .clipped()
+                            }
+                        }
+                    }
+                    .frame(height: 128)
+                    #endif
+                }
+                else
+                {
+                    Text("No tools placed in this workspace")
+                }
             }
         }
     }
@@ -2231,6 +2361,7 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
+                .environmentObject(Workspace())
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
             LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))

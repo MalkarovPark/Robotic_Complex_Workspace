@@ -1251,6 +1251,9 @@ class Workspace: ObservableObject
             else
             {
                 performed = false
+                
+                deselect_robot()
+                deselect_tool()
                 //update_view()
             }
         }
@@ -1287,40 +1290,6 @@ class Workspace: ObservableObject
     {
         selected_element_index = index
         perform_next_element()
-        
-        /*if element.element_data.target_mark_name != ""
-        {
-            jumped = true
-        }
-        
-        if jumped == false
-        {
-            selected_element_index += 1
-        }
-        else
-        {
-            selected_element_index = element.target_element_index
-        }*/
-    }
-    
-    private func mark_step()
-    {
-        if selected_element_index < elements.count
-        {
-            selected_element_index += 1
-        }
-        else
-        {
-            if cycled
-            {
-                selected_element_index = 0
-            }
-            else
-            {
-                
-            }
-        }
-        select_new_element()
     }
     
     ///Resets workspace performing.
@@ -1396,6 +1365,7 @@ class Workspace: ObservableObject
     private func perform_robot(name: String, program: String, completion: @escaping () -> Void)
     {
         select_robot(name: name)
+        selected_robot.select_program(name: program)
         selected_robot.finish_handler = completion
         
         selected_robot.start_pause_moving()
@@ -1403,71 +1373,12 @@ class Workspace: ObservableObject
     
     private func perform_tool(name: String, program: String, completion: @escaping () -> Void)
     {
-        completion()
+        select_tool(name: name)
+        selected_tool.select_program(name: program)
+        selected_tool.finish_handler = completion
+        
+        selected_tool.start_pause_performing()
     }
-    
-    /*private func element_definition()
-    {
-        //update_view()
-        
-        let element = elements[selected_element_index]
-        var jumped = false
-        
-        element.is_selected = true
-        
-        switch element.element_data.element_type
-        {
-        case .perofrmer:
-            switch element.element_data.performer_type
-            {
-            case .robot:
-                select_robot(name: element.element_data.robot_name)
-                if selected_robot.programs_names.count > 0 && element.element_data.program_name != ""
-                {
-                    selected_robot.workcell_connect(scene: scene, name: selected_robot.name!, connect_camera: false)
-                    selected_robot.select_program(name: element.element_data.program_name)
-                    selected_robot.start_pause_moving()
-                    while selected_robot.moving_completed == false && self.performed == true
-                    {
-                        
-                    }
-                }
-                break
-            case .tool:
-                break
-            }
-        case .modificator:
-            break
-        case .logic:
-            switch element.element_data.logic_type
-            {
-            case .jump:
-                if element.element_data.target_mark_name != ""
-                {
-                    jumped = true
-                }
-            default:
-                break
-            }
-        }
-        
-        if performed == true
-        {
-            update_view()
-            elements[selected_element_index].is_selected = false
-            
-            if jumped == false
-            {
-                selected_element_index += 1
-            }
-            else
-            {
-                selected_element_index = element.target_element_index
-            }
-            
-            perform_next_element()
-        }
-    }*/
     
     //MARK: - Work with file system
     /**

@@ -136,7 +136,6 @@ class WorkspaceProgramElement: Codable, Hashable, Identifiable
         return info
     }
     
-    //public var is_selected = false //Flag that determines the selection of the program element card during performing
     public var target_element_index = 0 //The index of the target mark element for the jump element.
 }
 

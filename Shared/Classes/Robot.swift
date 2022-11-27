@@ -442,6 +442,15 @@ class Robot: WorkspaceObject
     {
         //Find nodes from scene by names
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
+        /*scene.rootNode.enumerateChildNodes
+        { (_node, stop) in
+            if _node.name == name, _node.categoryBitMask == Workspace.robot_bit_mask
+            {
+                unit_node = _node
+                //print((_node.name ?? "") + "is tool")
+            }
+        }*/
+        
         self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
         self.space_node = self.box_node?.childNode(withName: "space", recursively: true)
         self.pointer_node = self.box_node?.childNode(withName: "pointer", recursively: true)
