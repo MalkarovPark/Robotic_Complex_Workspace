@@ -1154,7 +1154,10 @@ class Workspace: ObservableObject
     
     public func start_pause_performing()
     {
-        deselect_object_for_edit()
+        if !(object_pointer_node?.isHidden ?? false)
+        {
+            deselect_object_for_edit()
+        }
         
         prepare_program()
         
@@ -1220,6 +1223,25 @@ class Workspace: ObservableObject
                 break
             }
         }
+        
+        //MARK: Elements processing
+        func perform_robot(name: String, program: String, completion: @escaping () -> Void)
+        {
+            select_robot(name: name)
+            selected_robot.select_program(name: program)
+            selected_robot.finish_handler = completion
+            
+            selected_robot.start_pause_moving()
+        }
+        
+        func perform_tool(name: String, program: String, completion: @escaping () -> Void)
+        {
+            select_tool(name: name)
+            selected_tool.select_program(name: program)
+            selected_tool.finish_handler = completion
+            
+            selected_tool.start_pause_performing()
+        }
     }
     
     private func select_new_element()
@@ -1269,7 +1291,7 @@ class Workspace: ObservableObject
             switch element.element_data.performer_type
             {
             case .robot:
-                break
+                pause_robot()
             case .tool:
                 break
             }
@@ -1283,6 +1305,11 @@ class Workspace: ObservableObject
             default:
                 break
             }
+        }
+        
+        func pause_robot()
+        {
+            selected_robot.start_pause_moving()
         }
     }
     
@@ -1305,7 +1332,6 @@ class Workspace: ObservableObject
     private func prepare_program()
     {
         defining_elements_indexes()
-        models_connect()
     }
     
     private func defining_elements_indexes()
@@ -1342,42 +1368,6 @@ class Workspace: ObservableObject
                 }
             }
         }
-    }
-    
-    private func models_connect()
-    {
-        for element in elements
-        {
-            if element.element_data.element_type == .perofrmer
-            {
-                switch element.element_data.performer_type
-                {
-                case .robot:
-                    robot_by_name(element.element_data.robot_name).workcell_connect(scene: scene, name: element.element_data.robot_name, connect_camera: false)
-                case.tool:
-                    tool_by_name(element.element_data.tool_name).workcell_connect(scene: scene, name: element.element_data.tool_name)
-                }
-            }
-        }
-    }
-    
-    //MARK: Elements processing
-    private func perform_robot(name: String, program: String, completion: @escaping () -> Void)
-    {
-        select_robot(name: name)
-        selected_robot.select_program(name: program)
-        selected_robot.finish_handler = completion
-        
-        selected_robot.start_pause_moving()
-    }
-    
-    private func perform_tool(name: String, program: String, completion: @escaping () -> Void)
-    {
-        select_tool(name: name)
-        selected_tool.select_program(name: program)
-        selected_tool.finish_handler = completion
-        
-        selected_tool.start_pause_performing()
     }
     
     //MARK: - Work with file system
@@ -1635,6 +1625,7 @@ class Workspace: ObservableObject
                     apply_bit_mask(node: tool_node ?? SCNNode(), Workspace.tool_bit_mask)
                     tool_node?.name = tool.name
                     tools_node?.addChildNode(tool_node ?? SCNNode())
+                    tool.workcell_connect(scene: scene, name: tool.name!) //Connect to robot model, place manipulator
                     
                     if !tool.is_attached
                     {

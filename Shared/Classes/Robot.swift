@@ -281,14 +281,16 @@ class Robot: WorkspaceObject
         if demo == true
         {
             //Move to point for virtual robot
-            pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index], completionHandler: {
+            pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
+            {
                 self.moving_finished = true
                 self.select_new_point()
-            })
-            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).rotation[target_point_index], completionHandler: {
+            }
+            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).rotation[target_point_index])
+            {
                 self.rotation_finished = true
                 self.select_new_point()
-            })
+            }
         }
         else
         {
@@ -300,6 +302,7 @@ class Robot: WorkspaceObject
     private var rotation_finished = false
     
     public var finish_handler: (() -> Void) = {}
+    
     public func clear_finish_handler()
     {
         finish_handler = {}
@@ -354,6 +357,7 @@ class Robot: WorkspaceObject
             {
                 //Remove actions for real robot
             }
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
             {
                 self.current_pointer_position_select()

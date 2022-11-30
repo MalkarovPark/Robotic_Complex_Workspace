@@ -985,6 +985,7 @@ struct ToolSceneView_macOS: NSViewRepresentable
                     base_workspace.update_view()
                 }
             }
+            
             if base_workspace.selected_tool.code_changed
             {
                 DispatchQueue.main.asyncAfter(deadline: .now())
@@ -1110,6 +1111,7 @@ struct ToolSceneView_iOS: UIViewRepresentable
                     base_workspace.update_view()
                 }
             }
+            
             if base_workspace.selected_tool.code_changed
             {
                 DispatchQueue.main.asyncAfter(deadline: .now())

@@ -1905,7 +1905,7 @@ struct ElementView: View
                 
                 Spacer()
                 
-                Button("Save", action: update_program_element)
+                Button("Update", action: update_program_element)
                     .keyboardShortcut(.defaultAction)
                     .padding()
                 #if os(macOS)
