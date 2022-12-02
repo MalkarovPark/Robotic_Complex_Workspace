@@ -1190,7 +1190,7 @@ class Workspace: ObservableObject
         return elements[selected_element_index]
     }
     
-    public func perform_next_element()
+    private func perform_next_element()
     {
         let element = selected_program_element
         
@@ -1293,7 +1293,7 @@ class Workspace: ObservableObject
             case .robot:
                 pause_robot()
             case .tool:
-                break
+                pause_tool()
             }
         case .modificator:
             break
@@ -1311,6 +1311,11 @@ class Workspace: ObservableObject
         {
             selected_robot.start_pause_moving()
         }
+        
+        func pause_tool()
+        {
+            selected_tool.start_pause_performing()
+        }
     }
     
     private func jump_to(index: Int)
@@ -1324,6 +1329,15 @@ class Workspace: ObservableObject
     {
         //selected_robot.reset_moving()
         //deselect_robot()
+        switch selected_object_type
+        {
+        case .robot:
+            selected_tool.reset_performing()
+        case .tool:
+            selected_tool.reset_performing()
+        default:
+            break
+        }
         
         performed = false //Enable workspace program edit
         selected_element_index = 0 //Select firs program element

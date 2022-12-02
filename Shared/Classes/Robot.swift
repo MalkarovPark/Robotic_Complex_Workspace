@@ -348,6 +348,11 @@ class Robot: WorkspaceObject
         {
             //Remove all action if moving was perform
             performed = false
+            pause_handler()
+        }
+        
+        func pause_handler()
+        {
             if demo == true
             {
                 pointer_node?.removeAllActions()

@@ -262,6 +262,19 @@ class Tool: WorkspaceObject
         {
             //Pause moving if tool perform
             performed = false
+            pause_handler()
+        }
+        
+        func pause_handler()
+        {
+            if demo == true
+            {
+                model_controller.reset_model()
+            }
+            else
+            {
+                //Remove actions for real tool
+            }
         }
     }
     
