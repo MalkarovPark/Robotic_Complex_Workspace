@@ -433,14 +433,6 @@ struct RobotView: View
         .toolbar
         {
             //MARK: Toolbar items
-            /*ToolbarItem(placement: .navigation)
-            {
-                Button(action: close_robot)
-                {
-                    Label("Close", systemImage: "chevron.backward")
-                }
-            }*/
-            
             ToolbarItem(placement: placement_trailing)
             {
                 HStack(alignment: .center)
@@ -458,7 +450,7 @@ struct RobotView: View
                     }
                     .sheet(isPresented: $chart_view_presented)
                     {
-                        ChartView(chart_view_presented: $chart_view_presented, document: $document)
+                        RobotChartsView(is_presented: $chart_view_presented, document: $document)
                     }
                     
                     Button(action: { base_workspace.selected_robot.reset_moving()
@@ -489,9 +481,9 @@ struct RobotView: View
     }
 }
 
-struct ChartView: View
+struct RobotChartsView: View
 {
-    @Binding var chart_view_presented: Bool
+    @Binding var is_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     //Picker data for chart view
@@ -504,76 +496,16 @@ struct ChartView: View
     {
         VStack(spacing: 0)
         {
-            Text("Statistics")
-                .font(.title2)
-                .padding([.top, .leading, .trailing])
-            
             if base_workspace.selected_robot.get_statistics
             {
-                Picker("Statistics", selection: $sd_selection)
-                {
-                    ForEach(0..<sd_items.count, id: \.self)
-                    { index in
-                        Text(self.sd_items[index]).tag(index)
-                    }
-                }
-                .controlSize(.regular)
-                .pickerStyle(SegmentedPickerStyle())
-                .labelsHidden()
-                .padding()
-                
-                switch sd_selection
-                {
-                case 0:
-                    Chart
-                    {
-                        ForEach(base_workspace.selected_robot.chart_data.robot_details_angles)
-                        {
-                            LineMark(
-                                x: .value("Mount", $0.index),
-                                y: .value("Value", $0.value)
-                            )
-                            .foregroundStyle(by: .value("Type", $0.type))
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                case 1:
-                    Chart
-                    {
-                        ForEach(base_workspace.selected_robot.chart_data.tool_location)
-                        {
-                            LineMark(
-                                x: .value("Mount", $0.index),
-                                y: .value("Value", $0.value)
-                            )
-                            .foregroundStyle(by: .value("Type", $0.type))
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                case 2:
-                    Chart
-                    {
-                        ForEach(base_workspace.selected_robot.chart_data.tool_rotation)
-                        {
-                            LineMark(
-                                x: .value("Mount", $0.index),
-                                y: .value("Value", $0.value)
-                            )
-                            .foregroundStyle(by: .value("Type", $0.type))
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                default:
-                    Spacer()
-                    Text("None")
-                    Spacer()
-                }
+                ChartsView(charts_data: base_workspace.selected_robot.charts_data ?? [WorkspaceObjectChart]())
             }
             else
             {
+                Text("Statistics")
+                    .font(.title2)
+                    .padding([.top, .leading, .trailing])
+                
                 Spacer()
                 Text("None")
                     .font(.largeTitle)
@@ -594,7 +526,7 @@ struct ChartView: View
             
             HStack
             {
-                Button(action: { chart_view_presented.toggle() })
+                Button(action: { is_presented.toggle() })
                 {
                     Text("Close")
                         .frame(maxWidth: .infinity)
@@ -1965,7 +1897,7 @@ struct RobotsView_Previews: PreviewProvider
             RobotView(robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            ChartView(chart_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            RobotChartsView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
             OriginRotateView(origin_rotate_view_presented: .constant(true), origin_view_pos_rotation: .constant([0.0, 0.0, 0.0]))
             OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0.0, 0.0, 0.0]))

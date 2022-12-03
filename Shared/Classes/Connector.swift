@@ -23,8 +23,17 @@ class WorkspaceObjectConnector
     
     public var connected: Bool = false
     
-    //Info
-    public var state: [String: Any]? //Connector state info
+    ///Retruns perfroming state info.
+    open func state() -> [String: Any]?
+    {
+        return [String: Any]()
+    }
+    
+    ///Returns chart data.
+    open func charts_data() -> [WorkspaceObjectChart]?
+    {
+        return [WorkspaceObjectChart]()
+    }
 }
 
 //MARK: - Robot connector

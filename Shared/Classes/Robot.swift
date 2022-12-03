@@ -18,13 +18,13 @@ class Robot: WorkspaceObject
     override init()
     {
         super.init()
-        robot_init(name: "None", manufacturer: "Default", model: "Model", lengths: [Float](), module_name: "None", scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
+        robot_init(name: "None", manufacturer: "Default", model: "Model", lengths: [Float](), module_name: "None", scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, charts_data: nil, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     override init(name: String)
     {
         super.init()
-        robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), module_name: "None", scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
+        robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), module_name: "None", scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, charts_data: nil, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
     init(name: String, manufacturer: String, dictionary: [String: Any]) //Init by model dictionary
@@ -37,17 +37,17 @@ class Robot: WorkspaceObject
             lengths = dictionary["Lengths"] as! Array<Float> //Add elements from NSArray to floats array
         }
         
-        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lengths: lengths, module_name: dictionary["Module"] as? String ?? "", scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
+        robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lengths: lengths, module_name: dictionary["Module"] as? String ?? "", scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], get_statistics: false, charts_data: nil, image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
     }
     
     init(robot_struct: RobotStruct) //Init by robot structure
     {
         super.init()
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, module_name: robot_struct.module, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, module_name: robot_struct.module, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, get_statistics: robot_struct.get_statistics, charts_data: robot_struct.charts_data, image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
         read_programs(robot_struct: robot_struct) //Import programs if robot init by structure (from document file)
     }
     
-    private func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], module_name: String, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float]) //Common init function
+    private func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], module_name: String, scene: String, is_placed: Bool, location: [Float], rotation: [Float], get_statistics: Bool, charts_data: [WorkspaceObjectChart]?, image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float]) //Common init function
     {
         //Robot model names
         self.name = name
@@ -61,6 +61,7 @@ class Robot: WorkspaceObject
         
         //Statistic value
         self.get_statistics = get_statistics
+        self.charts_data = charts_data
         
         self.image_data = image_data
         self.origin_location = origin_location
@@ -353,7 +354,7 @@ class Robot: WorkspaceObject
         
         func pause_handler()
         {
-            if demo == true
+            if demo
             {
                 pointer_node?.removeAllActions()
                 pointer_node_internal?.removeAllActions()
@@ -416,7 +417,7 @@ class Robot: WorkspaceObject
             node = SCNScene(named: "Components.scnassets/Robots/Default/Portal.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
         }
         
-        func vidof_model() //Usr default 6DOF manipulator model
+        func vidof_model() //Use default 6DOF manipulator model
         {
             node = SCNScene(named: "Components.scnassets/Robots/Default/6DOF.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
         }
@@ -668,9 +669,9 @@ class Robot: WorkspaceObject
     
     //MARK: - Chart functions
     public var state: [String: Any]?
+    public var charts_data: [WorkspaceObjectChart]?
     
     public var get_statistics = false
-    public var chart_data = (robot_details_angles: [PositionChartInfo](), tool_location: [PositionChartInfo](), tool_rotation: [PositionChartInfo]())
     
     private var chart_element_index = 0
     private var axis_names = ["X", "Y", "Z"]
@@ -680,6 +681,17 @@ class Robot: WorkspaceObject
     {
         if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
+            if demo
+            {
+                state = model_controller.state()
+                charts_data = model_controller.charts_data()
+            }
+            else
+            {
+                state = connector.state()
+                charts_data = connector.charts_data()
+            }
+            
             /*let ik_angles = ik_angles(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lengths: lengths)
             for i in 0...ik_angles.count - 1
             {
@@ -706,7 +718,7 @@ class Robot: WorkspaceObject
     {
         if get_statistics
         {
-            chart_data = (robot_details_angles: [PositionChartInfo](), tool_location: [PositionChartInfo](), tool_rotation: [PositionChartInfo]())
+            //chart_data = (robot_details_angles: [PositionChartInfo](), tool_location: [PositionChartInfo](), tool_rotation: [PositionChartInfo]())
             chart_element_index = 0
         }
     }
@@ -833,6 +845,7 @@ struct RobotStruct: Codable
     var rotation: [Float]
     
     var get_statistics: Bool
+    var charts_data: [WorkspaceObjectChart]?
     
     var image_data: Data
     var programs: [program_struct]
@@ -852,13 +865,4 @@ func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling leng
     }
     
     return new_numbers
-}
-
-//MARK: - Charts structures
-struct PositionChartInfo: Identifiable
-{
-    var id = UUID()
-    var index: Int
-    var value: Float
-    var type: String
 }

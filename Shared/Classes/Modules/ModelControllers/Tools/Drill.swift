@@ -43,7 +43,6 @@ class DrillController: ToolModelController
                 }
             }
         case 2: //Counter clockwise rotation
-            print(rotated)
             if !rotated[1]
             {
                 nodes.first?.removeAllActions()

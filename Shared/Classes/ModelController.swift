@@ -83,7 +83,16 @@ class ModelController
     }
     
     ///Retruns perfroming state info.
-    public var state: [String: Any]?
+    open func state() -> [String: Any]?
+    {
+        return [String: Any]()
+    }
+    
+    ///Returns chart data.
+    open func charts_data() -> [WorkspaceObjectChart]?
+    {
+        return [WorkspaceObjectChart]()
+    }
 }
 
 //MARK: - Model controller implementations

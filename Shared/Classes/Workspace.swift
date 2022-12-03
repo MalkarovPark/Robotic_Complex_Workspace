@@ -21,6 +21,18 @@ class Workspace: ObservableObject
     //MARK: - Workspace objects data
     @Published public var robots = [Robot]()
     @Published public var elements = [WorkspaceProgramElement]()
+    {
+        didSet
+        {
+            //Reset performing if elements array was changed
+            if elements.count > 0
+            {
+                performed = false //Enable workspace program edit
+                selected_element_index = 0 //Select firs program element
+            }
+        }
+    }
+    
     @Published public var tools = [Tool]()
     @Published public var details = [Detail]()
     
@@ -1327,8 +1339,8 @@ class Workspace: ObservableObject
     ///Resets workspace performing.
     public func reset_performing()
     {
-        //selected_robot.reset_moving()
-        //deselect_robot()
+        pause_performing()
+        
         switch selected_object_type
         {
         case .robot:
