@@ -101,6 +101,10 @@ class Robot: WorkspaceObject
         default:
             break
         }
+        
+        //Apply get statistics parameters
+        model_controller.get_statistics = get_statistics
+        connector.get_statistics = get_statistics
     }
     
     //MARK: - Program manage functions
@@ -339,7 +343,7 @@ class Robot: WorkspaceObject
     {
         if performed == false
         {
-            clear_chart_data()
+            //clear_chart_data()
             
             //Move to next point if moving was stop
             performed = true
@@ -378,6 +382,8 @@ class Robot: WorkspaceObject
         current_pointer_position_select()
         performed = false
         target_point_index = 0
+        
+        clear_chart_data()
     }
     
     //MARK: - Connection functions
@@ -514,9 +520,10 @@ class Robot: WorkspaceObject
         #endif
     }
     
-    public func update_robot() //Manipulator details update by
+    public func update_robot() //Manipulator details update
     {
         model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        update_chart_data()
         
         current_pointer_position_select()
     }
@@ -672,45 +679,41 @@ class Robot: WorkspaceObject
     public var charts_data: [WorkspaceObjectChart]?
     
     public var get_statistics = false
+    {
+        didSet
+        {
+            if demo
+            {
+                model_controller.get_statistics = get_statistics
+            }
+            else
+            {
+                connector.get_statistics = get_statistics
+            }
+        }
+    }
     
     private var chart_element_index = 0
-    private var axis_names = ["X", "Y", "Z"]
-    private var rotation_axis_names = ["R", "P", "W"]
     
     func update_chart_data()
     {
+        if charts_data == nil
+        {
+            charts_data = [WorkspaceObjectChart]()
+        }
+        
         if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
-            if demo
+            if demo //Get statistic from model controller
             {
                 state = model_controller.state()
                 charts_data = model_controller.charts_data()
             }
-            else
+            else //Get statistic from real robot
             {
                 state = connector.state()
                 charts_data = connector.charts_data()
             }
-            
-            /*let ik_angles = ik_angles(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation, lengths: lengths)
-            for i in 0...ik_angles.count - 1
-            {
-                chart_data.robot_details_angles.append(PositionChartInfo(index: chart_element_index, value: ik_angles[i], type: "J\(i + 1)"))
-            }
-            
-            let pointer_location_chart = [Float(((pointer_node?.position.z ?? 0)) * 10), Float(((pointer_node?.position.x ?? 0)) * 10), Float(((pointer_node?.position.y ?? 0)) * 10)]
-            for i in 0...axis_names.count - 1
-            {
-                chart_data.tool_location.append(PositionChartInfo(index: chart_element_index, value: pointer_location_chart[i], type: axis_names[i]))
-            }
-            
-            let pointer_rotation_chart = [Float(tool_node?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
-            for i in 0...rotation_axis_names.count - 1
-            {
-                chart_data.tool_rotation.append(PositionChartInfo(index: chart_element_index, value: pointer_rotation_chart[i], type: rotation_axis_names[i]))
-            }
-            
-            chart_element_index += 1*/
         }
     }
     
@@ -718,8 +721,14 @@ class Robot: WorkspaceObject
     {
         if get_statistics
         {
-            //chart_data = (robot_details_angles: [PositionChartInfo](), tool_location: [PositionChartInfo](), tool_rotation: [PositionChartInfo]())
-            chart_element_index = 0
+            if demo
+            {
+                model_controller.clear_charts_data()
+            }
+            else
+            {
+                connector.clear_charts_data()
+            }
         }
     }
     

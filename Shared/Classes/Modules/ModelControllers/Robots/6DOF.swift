@@ -10,6 +10,7 @@ import SceneKit
 
 class _6DOFController: RobotModelController
 {
+    //MARK: - 6DOF nodes connect
     override func nodes_connect(_ node: SCNNode)
     {
         let without_lengths = lengths.count == 0
@@ -39,7 +40,7 @@ class _6DOFController: RobotModelController
         }
     }
     
-    //Calculate inverse kinematic details roataion angles for 6DOF
+    //MARK: - Inverse kinematic details calculation for roataion angles of 6DOF
     override func inverse_kinematic_calculate(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
     {
         var angles = [Float]()
@@ -136,6 +137,11 @@ class _6DOFController: RobotModelController
         nodes[4].eulerAngles.z = Float(values[4])
         nodes[5].eulerAngles.y = Float(values[5])
         #endif
+        
+        if get_statistics
+        {
+            chart_ik_values = values //Store new details angles array for chart
+        }
     }
     
     override var description_lengths_count: Int { 7 }
@@ -194,4 +200,57 @@ class _6DOFController: RobotModelController
             }
         }
     }
+    
+    //MARK: - Statistics
+    private var charts = [WorkspaceObjectChart]()
+    private var chart_ik_values = [Float]()
+    private var domain_index: Float = 0
+    
+    override func charts_data() -> [WorkspaceObjectChart]?
+    {
+        if charts.count == 0
+        {
+            charts.append(WorkspaceObjectChart(name: "Details Rotation", style: .line))
+            charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
+            charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+        }
+        
+        //Update details angles rotation chart
+        for i in 0...chart_ik_values.count - 1
+        {
+            charts[0].data.append(ChartDataItem(name: "J\(i + 1)", domain: domain_index, codomain: chart_ik_values[i]))
+        }
+        
+        //Update tool location chart
+        let tool_node = nodes.last
+        
+        var axis_names = ["X", "Y", "Z"]
+        var components = [tool_node?.worldPosition.x, tool_node?.worldPosition.z, tool_node?.worldPosition.y]
+        for i in 0...axis_names.count - 1
+        {
+            charts[1].data.append(ChartDataItem(name: axis_names[i], domain: domain_index, codomain: Float(components[i] ?? 0)))
+        }
+        
+        axis_names = ["R", "P", "W"]
+        components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
+        for i in 0...axis_names.count - 1
+        {
+            charts[2].data.append(ChartDataItem(name: axis_names[i], domain: domain_index, codomain: Float(components[i] ?? 0).to_deg))
+        }
+        
+        domain_index += 1
+        
+        return charts
+    }
+    
+    override func clear_charts_data()
+    {
+        domain_index = 0
+        charts = [WorkspaceObjectChart]()
+    }
+    
+    /*override func state() -> [String : Any]?
+    {
+        <#code#>
+    }*/
 }

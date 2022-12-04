@@ -42,21 +42,29 @@ struct ChartsView: View
                     .padding([.top, .leading, .trailing])
             }
             
-            switch charts_data[chart_selection].style
+            if charts_data.count > 1
             {
-            case .line:
-                Chart
+                switch charts_data[chart_selection].style
                 {
-                    ForEach(charts_data[chart_selection].data)
+                case .line:
+                    Chart
                     {
-                        LineMark(x: .value("Mount", $0.domain), y: .value("Value", $0.codomain))
-                        .foregroundStyle(by: .value("Type", $0.name))
+                        ForEach(charts_data[chart_selection].data)
+                        {
+                            LineMark(x: .value("Mount", $0.domain), y: .value("Value", $0.codomain))
+                            .foregroundStyle(by: .value("Type", $0.name))
+                        }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                default:
+                    //Text("None")
+                    Spacer()
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding()
-            default:
-                Text("None")
+            }
+            else
+            {
+                //Text("None")
                 Spacer()
             }
             

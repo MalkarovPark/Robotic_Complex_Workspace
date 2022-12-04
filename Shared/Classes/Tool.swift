@@ -111,6 +111,10 @@ class Tool: WorkspaceObject
         default:
             break
         }
+        
+        //Apply get statistics parameters
+        model_controller.get_statistics = get_statistics
+        connector.get_statistics = get_statistics
     }
     
     //MARK: - Program manage functions
@@ -309,6 +313,8 @@ class Tool: WorkspaceObject
     
     private func select_new_code() //Set new target point index
     {
+        update_chart_data()
+        
         if performed
         {
             selected_code_index += 1
@@ -341,6 +347,8 @@ class Tool: WorkspaceObject
         performed = false
         performing_completed = false
         selected_code_index = 0
+        
+        clear_chart_data()
     }
     
     //MARK: - Connection functions
@@ -418,6 +426,58 @@ class Tool: WorkspaceObject
     public var charts_data: [WorkspaceObjectChart]?
     
     public var get_statistics = false
+    {
+        didSet
+        {
+            if demo
+            {
+                model_controller.get_statistics = get_statistics
+            }
+            else
+            {
+                connector.get_statistics = get_statistics
+            }
+        }
+    }
+    
+    private var chart_element_index = 0
+    
+    func update_chart_data()
+    {
+        if charts_data == nil
+        {
+            charts_data = [WorkspaceObjectChart]()
+        }
+        
+        if get_statistics && performed //Get data if robot is moving and statistic collection enabled
+        {
+            if demo //Get statistic from model controller
+            {
+                state = model_controller.state()
+                charts_data = model_controller.charts_data()
+            }
+            else //Get statistic from real robot
+            {
+                state = connector.state()
+                charts_data = connector.charts_data()
+            }
+        }
+    }
+    
+    func clear_chart_data()
+    {
+        if get_statistics
+        {
+            if demo
+            {
+                model_controller.clear_charts_data()
+            }
+            else
+            {
+                connector.clear_charts_data()
+            }
+        }
+    }
     
     //MARK: - UI functions
     #if os(macOS)

@@ -82,6 +82,18 @@ class ModelController
         
     }
     
+    ///A get statistics flag.
+    public var get_statistics = false
+    {
+        didSet
+        {
+            if !get_statistics
+            {
+                clear_charts_data()
+            }
+        }
+    }
+    
     ///Retruns perfroming state info.
     open func state() -> [String: Any]?
     {
@@ -92,6 +104,12 @@ class ModelController
     open func charts_data() -> [WorkspaceObjectChart]?
     {
         return [WorkspaceObjectChart]()
+    }
+    
+    ///Clears model chart data.
+    open func clear_charts_data()
+    {
+        
     }
 }
 
