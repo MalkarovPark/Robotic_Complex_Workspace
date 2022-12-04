@@ -10,6 +10,7 @@ import SceneKit
 
 class PortalController: RobotModelController
 {
+    //MARK: - Portal nodes connect
     override func nodes_connect(_ node: SCNNode)
     {
         let without_lengths = lengths.count == 0
@@ -44,7 +45,7 @@ class PortalController: RobotModelController
         }
     }
     
-    //Calculate inverse kinematic details position for portal robot
+    //MARK: - Inverse kinematic details calculation for roataion angles of portal
     override func inverse_kinematic_calculate(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
     {
         var px, py, pz: Float
@@ -206,4 +207,51 @@ class PortalController: RobotModelController
         modified_node.position.y = Float(frame_element_length) / 2
         #endif
     }
+    
+    //MARK: - Statistics
+    private var charts = [WorkspaceObjectChart]()
+    private var chart_ik_values = [Float]()
+    private var domain_index: Float = 0
+    
+    override func charts_data() -> [WorkspaceObjectChart]?
+    {
+        if charts.count == 0
+        {
+            charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
+            charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+        }
+        
+        //Update tool location chart
+        let tool_node = nodes.last
+        
+        var axis_names = ["X", "Y", "Z"]
+        var components = [tool_node?.worldPosition.x, tool_node?.worldPosition.z, tool_node?.worldPosition.y]
+        for i in 0...axis_names.count - 1
+        {
+            charts[0].data.append(ChartDataItem(name: axis_names[i], domain: domain_index, codomain: Float(components[i] ?? 0)))
+        }
+        
+        //Update tool rotation chart
+        axis_names = ["R", "P", "W"]
+        components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
+        for i in 0...axis_names.count - 1
+        {
+            charts[1].data.append(ChartDataItem(name: axis_names[i], domain: domain_index, codomain: Float(components[i] ?? 0).to_deg))
+        }
+        
+        domain_index += 1
+        
+        return charts
+    }
+    
+    override func clear_charts_data()
+    {
+        domain_index = 0
+        charts = [WorkspaceObjectChart]()
+    }
+    
+    /*override func state() -> [String : Any]?
+    {
+        <#code#>
+    }*/
 }

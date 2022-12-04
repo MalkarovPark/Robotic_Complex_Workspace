@@ -231,6 +231,7 @@ class _6DOFController: RobotModelController
             charts[1].data.append(ChartDataItem(name: axis_names[i], domain: domain_index, codomain: Float(components[i] ?? 0)))
         }
         
+        //Update tool rotation chart
         axis_names = ["R", "P", "W"]
         components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
         for i in 0...axis_names.count - 1

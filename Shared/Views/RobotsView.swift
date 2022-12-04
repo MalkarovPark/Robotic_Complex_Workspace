@@ -487,8 +487,8 @@ struct RobotChartsView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     //Picker data for chart view
-    @State private var sd_selection = 0
-    private let sd_items: [String] = ["Details Angles", "Tool Position", "Tool Rotation"]
+    @State private var stats_selection = 0
+    private let stats_items: [String] = ["Charts", "State"]
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -498,7 +498,7 @@ struct RobotChartsView: View
         {
             if base_workspace.selected_robot.get_statistics
             {
-                ChartsView(charts_data: base_workspace.selected_robot.charts_data ?? [WorkspaceObjectChart]())
+                ChartsView(charts_data: $base_workspace.selected_robot.charts_data)
             }
             else
             {
@@ -524,11 +524,35 @@ struct RobotChartsView: View
                 document.preset.robots = base_workspace.file_data().robots
             }
             
-            HStack
+            HStack(spacing: 0)
             {
+                Button(action: clear_chart_view)
+                {
+                    Image(systemName: "eraser")
+                }
+                .padding([.vertical, .leading])
+                
+                Button(action: { document.preset.robots = base_workspace.file_data().robots })
+                {
+                    Image(systemName: "arrow.down.doc")
+                }
+                .padding([.vertical, .leading])
+                
+                Picker("Statistics", selection: $stats_selection)
+                {
+                    ForEach(0..<stats_items.count, id: \.self)
+                    { index in
+                        Text(stats_items[index]).tag(index)
+                    }
+                }
+                .frame(maxWidth: 128)
+                .labelsHidden()
+                .buttonStyle(.bordered)
+                .padding([.vertical, .leading])
+                
                 Button(action: { is_presented.toggle() })
                 {
-                    Text("Close")
+                    Text("Dismiss")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -541,6 +565,12 @@ struct RobotChartsView: View
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         #endif
+    }
+    
+    private func clear_chart_view()
+    {
+        base_workspace.selected_robot.clear_chart_data()
+        base_workspace.update_view()
     }
 }
 
@@ -1899,9 +1929,11 @@ struct RobotsView_Previews: PreviewProvider
                 .environmentObject(AppState())
             RobotChartsView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
+            
             OriginRotateView(origin_rotate_view_presented: .constant(true), origin_view_pos_rotation: .constant([0.0, 0.0, 0.0]))
             OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0.0, 0.0, 0.0]))
             SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2.0, 2.0, 2.0]))
+            
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0), limit_min: .constant(0), limit_max: .constant(200))
             PositionItemListView(points: .constant([PositionPoint()]), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: PositionPoint()) { IndexSet in }
                 .environmentObject(Workspace())

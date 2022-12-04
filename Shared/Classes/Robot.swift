@@ -695,7 +695,7 @@ class Robot: WorkspaceObject
     
     private var chart_element_index = 0
     
-    func update_chart_data()
+    public func update_chart_data()
     {
         if charts_data == nil
         {
@@ -717,8 +717,10 @@ class Robot: WorkspaceObject
         }
     }
     
-    func clear_chart_data()
+    public func clear_chart_data()
     {
+        charts_data = nil
+        
         if get_statistics
         {
             if demo
