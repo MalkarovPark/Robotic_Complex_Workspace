@@ -46,22 +46,89 @@ struct ChartsView: View
                 
                 if charts_data!.count > 1
                 {
-                    switch charts_data![chart_selection].style
+                    if charts_data![chart_selection].text_domain
                     {
-                    case .line:
-                        Chart
+                        switch charts_data![chart_selection].style
                         {
-                            ForEach(charts_data![chart_selection].data)
+                        case .area:
+                            Chart
                             {
-                                LineMark(x: .value("Mount", $0.domain), y: .value("Value", $0.codomain))
-                                .foregroundStyle(by: .value("Type", $0.name))
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    AreaMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
                             }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        case .line:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    LineMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        case .bar:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    BarMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        default:
+                            //Text("None")
+                            Spacer()
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
-                    default:
-                        //Text("None")
-                        Spacer()
+                    }
+                    else
+                    {
+                        switch charts_data![chart_selection].style
+                        {
+                        case .area:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    AreaMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        case .line:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    LineMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        case .bar:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    BarMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        default:
+                            //Text("None")
+                            Spacer()
+                        }
                     }
                 }
                 else

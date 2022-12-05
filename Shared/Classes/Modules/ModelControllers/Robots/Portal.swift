@@ -228,7 +228,7 @@ class PortalController: RobotModelController
         var components = [tool_node?.worldPosition.x, tool_node?.worldPosition.z, tool_node?.worldPosition.y]
         for i in 0...axis_names.count - 1
         {
-            charts[0].data.append(ChartDataItem(name: axis_names[i], domain: domain_index, codomain: Float(components[i] ?? 0)))
+            charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0)))
         }
         
         //Update tool rotation chart
@@ -236,7 +236,7 @@ class PortalController: RobotModelController
         components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
         for i in 0...axis_names.count - 1
         {
-            charts[1].data.append(ChartDataItem(name: axis_names[i], domain: domain_index, codomain: Float(components[i] ?? 0).to_deg))
+            charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0).to_deg))
         }
         
         domain_index += 1

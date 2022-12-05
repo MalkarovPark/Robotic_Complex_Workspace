@@ -19,8 +19,24 @@ class WorkspaceObjectChart: Identifiable, Codable, Hashable
         hasher.combine(id)
     }
     
-    var name: String
-    var style: ChartStyle
+    public var name: String
+    public var style: ChartStyle
+    public var text_domain: Bool //= false
+    {
+        guard data.count > 0
+        else
+        {
+            return false
+        }
+        
+        guard let first_domain: String = data.first!.domain.keys.first
+        else
+        {
+            return false
+        }
+        
+        return first_domain == "" ? false : true
+    }
     
     var data = [ChartDataItem]()
     
@@ -47,7 +63,8 @@ struct ChartDataItem: Identifiable, Codable
 {
     var id = UUID()
     var name: String
-    var domain: Float
+    
+    var domain: [String: Float]
     var codomain: Float
 }
 
