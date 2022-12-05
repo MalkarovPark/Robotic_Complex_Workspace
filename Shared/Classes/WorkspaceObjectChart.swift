@@ -21,7 +21,7 @@ class WorkspaceObjectChart: Identifiable, Codable, Hashable
     
     public var name: String
     public var style: ChartStyle
-    public var text_domain: Bool //= false
+    public var text_domain: Bool
     {
         guard data.count > 0
         else

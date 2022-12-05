@@ -377,13 +377,16 @@ class Robot: WorkspaceObject
     
     public func reset_moving() //Reset robot moving
     {
-        pointer_node?.removeAllActions()
-        pointer_node_internal?.removeAllActions()
-        current_pointer_position_select()
-        performed = false
-        target_point_index = 0
-        
-        clear_chart_data()
+        if performed
+        {
+            pointer_node?.removeAllActions()
+            pointer_node_internal?.removeAllActions()
+            current_pointer_position_select()
+            performed = false
+            target_point_index = 0
+            
+            clear_chart_data()
+        }
     }
     
     //MARK: - Connection functions
@@ -820,7 +823,7 @@ class Robot: WorkspaceObject
             }
         }
         
-        return RobotStruct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", module: self.module_name, scene: self.scene_address, lengths: self.scene_address == "" ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, image_data: self.image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
+        return RobotStruct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", module: self.module_name, scene: self.scene_address, lengths: self.scene_address == "" ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, charts_data: self.charts_data, image_data: self.image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
     }
     
     private func read_programs(robot_struct: RobotStruct) //Convert program_struct array to robot programs

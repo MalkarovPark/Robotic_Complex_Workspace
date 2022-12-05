@@ -19,7 +19,7 @@ struct ChartsView: View
         {
             if charts_data != nil
             {
-                if charts_data!.count > 1
+                if charts_data!.count > 0
                 {
                     Text("Statistics")
                         .font(.title2)
@@ -84,7 +84,6 @@ struct ChartsView: View
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .padding()
                         default:
-                            //Text("None")
                             Spacer()
                         }
                     }
@@ -126,17 +125,30 @@ struct ChartsView: View
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .padding()
                         default:
-                            //Text("None")
                             Spacer()
                         }
                     }
                 }
                 else
                 {
-                    //Text("None")
-                    Spacer()
+                    EmptyChart()
                 }
             }
+        }
+    }
+}
+
+struct EmptyChart: View
+{
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            Spacer()
+            Text("None")
+                .font(.largeTitle)
+                .foregroundColor(quaternary_label_color)
+            Spacer()
         }
     }
 }

@@ -505,17 +505,12 @@ struct RobotChartsView: View
                 Text("Statistics")
                     .font(.title2)
                     .padding([.top, .leading, .trailing])
-                
-                Spacer()
-                Text("None")
-                    .font(.largeTitle)
-                    .foregroundColor(quaternary_label_color)
-                Spacer()
+                EmptyChart()
             }
             
             Toggle(isOn: $base_workspace.selected_robot.get_statistics)
             {
-                Text("Enabe collection")
+                Text("Enable collection")
             }
             .toggleStyle(.switch)
             .padding([.leading, .trailing])
