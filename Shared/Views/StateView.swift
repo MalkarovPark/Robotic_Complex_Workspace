@@ -15,22 +15,26 @@ struct StateView: View
     {
         VStack(spacing: 0)
         {
-            Text("Statistics")
-                .font(.title2)
-                .padding()
-            
             if state_data != nil
             {
+                Text("Statistics")
+                    .font(.title2)
+                    .padding()
+                
                 List(state_data!, children: \.children)
                 { item in
                     StateItemView(item: item)
                 }
                 .listStyle(.plain)
-                .padding(.horizontal)
+                .padding([.horizontal, .bottom])
             }
             else
             {
-                Spacer()
+                Text("Statistics")
+                    .font(.title2)
+                    .padding([.horizontal, .top])
+                
+                EmptyView()
             }
         }
     }

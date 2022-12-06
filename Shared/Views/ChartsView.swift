@@ -131,24 +131,16 @@ struct ChartsView: View
                 }
                 else
                 {
-                    EmptyChart()
+                    EmptyView()
                 }
             }
-        }
-    }
-}
-
-struct EmptyChart: View
-{
-    var body: some View
-    {
-        VStack(spacing: 0)
-        {
-            Spacer()
-            Text("None")
-                .font(.largeTitle)
-                .foregroundColor(quaternary_label_color)
-            Spacer()
+            else
+            {
+                Text("Statistics")
+                    .font(.title2)
+                    .padding([.top, .leading, .trailing])
+                EmptyView()
+            }
         }
     }
 }

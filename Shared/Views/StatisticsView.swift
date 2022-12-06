@@ -41,7 +41,7 @@ struct StatisticsView: View
                     Text("Statistics")
                         .font(.title2)
                         .padding([.top, .leading, .trailing])
-                    EmptyChart()
+                    EmptyView()
                 }
             }
             else
@@ -55,7 +55,7 @@ struct StatisticsView: View
                     Text("Statistics")
                         .font(.title2)
                         .padding([.top, .leading, .trailing])
-                    EmptyChart()
+                    EmptyView()
                 }
             }
             
@@ -126,6 +126,21 @@ struct StatisticsView: View
         }
         
         base_workspace.update_view()
+    }
+}
+
+struct EmptyView: View
+{
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            Spacer()
+            Text("None")
+                .font(.largeTitle)
+                .foregroundColor(quaternary_label_color)
+            Spacer()
+        }
     }
 }
 

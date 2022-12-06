@@ -527,7 +527,7 @@ class Robot: WorkspaceObject
     public func update_robot() //Manipulator details update
     {
         model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-        update_chart_data()
+        update_statistics_data()
         
         current_pointer_position_select()
     }
@@ -699,7 +699,7 @@ class Robot: WorkspaceObject
     
     private var chart_element_index = 0
     
-    public func update_chart_data()
+    public func update_statistics_data()
     {
         if charts_data == nil
         {

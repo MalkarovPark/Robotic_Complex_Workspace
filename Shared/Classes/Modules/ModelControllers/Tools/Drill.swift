@@ -65,4 +65,12 @@ class DrillController: ToolModelController
         rotated[0] = false
         rotated[1] = false
     }
+    
+    override func state() -> [StateItem]?
+    {
+        var state = [StateItem]()
+        state.append(StateItem(name: "Rotation frequency", value: "40 Hz", image: "arrow.triangle.2.circlepath"))
+        
+        return state
+    }
 }

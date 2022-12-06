@@ -314,7 +314,7 @@ class Tool: WorkspaceObject
     
     private func select_new_code() //Set new target point index
     {
-        update_chart_data()
+        update_statistics_data()
         
         if performed
         {
@@ -443,7 +443,7 @@ class Tool: WorkspaceObject
     
     private var chart_element_index = 0
     
-    func update_chart_data()
+    func update_statistics_data()
     {
         if charts_data == nil
         {
