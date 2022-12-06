@@ -355,7 +355,7 @@ struct ToolView: View
             }
             .sheet(isPresented: $statistics_view_presented)
             {
-                StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $base_workspace.selected_tool.state, clear_chart_data: { base_workspace.selected_tool.clear_chart_data() }, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+                StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $base_workspace.selected_tool.state_data, clear_chart_data: { base_workspace.selected_tool.clear_chart_data() }, clear_state_data: base_workspace.selected_tool.clear_state_data, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
             }
             
             Divider()

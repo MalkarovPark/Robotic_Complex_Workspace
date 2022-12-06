@@ -74,7 +74,7 @@ class Tool: WorkspaceObject
         
         self.get_statistics = tool_struct.get_statistics
         self.charts_data = tool_struct.charts_data
-        self.state = tool_struct.state
+        self.state_data = tool_struct.state
         
         self.codes = tool_struct.codes
         self.codes_names = tool_struct.names
@@ -424,7 +424,7 @@ class Tool: WorkspaceObject
     
     //MARK: - Chart functions
     public var charts_data: [WorkspaceObjectChart]?
-    public var state: [StateItem]?
+    public var state_data: [StateItem]?
     
     public var get_statistics = false
     {
@@ -454,12 +454,12 @@ class Tool: WorkspaceObject
         {
             if demo //Get statistic from model controller
             {
-                state = model_controller.state()
+                state_data = model_controller.state()
                 charts_data = model_controller.charts_data()
             }
             else //Get statistic from real robot
             {
-                state = connector.state()
+                state_data = connector.state()
                 charts_data = connector.charts_data()
             }
         }
@@ -476,6 +476,23 @@ class Tool: WorkspaceObject
             else
             {
                 connector.clear_charts_data()
+            }
+        }
+    }
+    
+    public func clear_state_data()
+    {
+        state_data = nil
+        
+        if get_statistics
+        {
+            if demo
+            {
+                model_controller.clear_state_data()
+            }
+            else
+            {
+                connector.clear_state_data()
             }
         }
     }
@@ -563,7 +580,7 @@ class Tool: WorkspaceObject
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, is_attached: self.is_attached, attached_to: self.attached_to, get_statistics: self.get_statistics, charts_data: self.charts_data, state: self.state, programs: self.programs, image_data: self.image_data, module: self.module_name)
+        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, is_attached: self.is_attached, attached_to: self.attached_to, get_statistics: self.get_statistics, charts_data: self.charts_data, state: self.state_data, programs: self.programs, image_data: self.image_data, module: self.module_name)
     }
 }
 

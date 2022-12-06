@@ -62,7 +62,7 @@ class Robot: WorkspaceObject
         //Statistic value
         self.get_statistics = get_statistics
         self.charts_data = charts_data
-        self.state = state
+        self.state_data = state
         
         self.image_data = image_data
         self.origin_location = origin_location
@@ -680,7 +680,7 @@ class Robot: WorkspaceObject
     
     //MARK: - Chart functions
     public var charts_data: [WorkspaceObjectChart]?
-    public var state: [StateItem]?
+    public var state_data: [StateItem]?
     
     public var get_statistics = false
     {
@@ -710,12 +710,12 @@ class Robot: WorkspaceObject
         {
             if demo //Get statistic from model controller
             {
-                state = model_controller.state()
+                state_data = model_controller.state()
                 charts_data = model_controller.charts_data()
             }
             else //Get statistic from real robot
             {
-                state = connector.state()
+                state_data = connector.state()
                 charts_data = connector.charts_data()
             }
         }
@@ -734,6 +734,23 @@ class Robot: WorkspaceObject
             else
             {
                 connector.clear_charts_data()
+            }
+        }
+    }
+    
+    public func clear_state_data()
+    {
+        state_data = nil
+        
+        if get_statistics
+        {
+            if demo
+            {
+                model_controller.clear_state_data()
+            }
+            else
+            {
+                connector.clear_state_data()
             }
         }
     }
@@ -824,7 +841,7 @@ class Robot: WorkspaceObject
             }
         }
         
-        return RobotStruct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", module: self.module_name, scene: self.scene_address, lengths: self.scene_address == "" ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, charts_data: self.charts_data, state: self.state, image_data: self.image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
+        return RobotStruct(name: name ?? "Robot Name", manufacturer: manufacturer ?? "Manufacturer", model: model ?? "Model", module: self.module_name, scene: self.scene_address, lengths: self.scene_address == "" ? self.lengths : [Float](), is_placed: self.is_placed, location: self.location, rotation: self.rotation, get_statistics: self.get_statistics, charts_data: self.charts_data, state: self.state_data, image_data: self.image_data, programs: programs_array, origin_location: self.origin_location, origin_rotation: self.origin_rotation, space_scale: self.space_scale)
     }
     
     private func read_programs(robot_struct: RobotStruct) //Convert program_struct array to robot programs

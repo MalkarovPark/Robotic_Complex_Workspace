@@ -23,6 +23,7 @@ struct StatisticsView: View
     @EnvironmentObject var base_workspace: Workspace
     
     var clear_chart_data: () -> Void
+    var clear_state_data: () -> Void
     var update_file_data: () -> Void
     
     var body: some View
@@ -115,8 +116,15 @@ struct StatisticsView: View
     
     private func clear_chart_view()
     {
-        //base_workspace.selected_robot.clear_chart_data()
-        clear_chart_data()
+        if stats_selection == 0
+        {
+            clear_chart_data()
+        }
+        else
+        {
+            clear_state_data()
+        }
+        
         base_workspace.update_view()
     }
 }
@@ -126,7 +134,7 @@ struct StatisticsView_Previews: PreviewProvider
     static var previews: some View
     {
         StatisticsView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), get_statistics: .constant(true), charts_data: .constant([WorkspaceObjectChart(name: "Chart 1", style: .line), WorkspaceObjectChart(name: "Chart 2", style: .line)]), state_data: .constant([
-            StateItem(name: "Temperature", image: "thermometer", children: [StateItem(name: "Base", value: "70º"), StateItem(name: "Electrode", value: "150º")])]), clear_chart_data: {}, update_file_data: {})
+            StateItem(name: "Temperature", image: "thermometer", children: [StateItem(name: "Base", value: "70º"), StateItem(name: "Electrode", value: "150º")])]), clear_chart_data: {}, clear_state_data: {}, update_file_data: {})
             .environmentObject(Workspace())
     }
 }

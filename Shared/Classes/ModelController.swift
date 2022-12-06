@@ -94,20 +94,26 @@ class ModelController
         }
     }
     
-    ///Retruns perfroming state info.
-    open func state() -> [StateItem]?
-    {
-        return [StateItem]()
-    }
-    
     ///Returns chart data.
     open func charts_data() -> [WorkspaceObjectChart]?
     {
         return [WorkspaceObjectChart]()
     }
     
+    ///Retruns perfroming state info.
+    open func state() -> [StateItem]?
+    {
+        return [StateItem]()
+    }
+    
     ///Clears model chart data.
     open func clear_charts_data()
+    {
+        
+    }
+    
+    ///Clears model state data.
+    open func clear_state_data()
     {
         
     }
