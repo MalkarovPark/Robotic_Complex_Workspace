@@ -74,6 +74,7 @@ class Tool: WorkspaceObject
         
         self.get_statistics = tool_struct.get_statistics
         self.charts_data = tool_struct.charts_data
+        self.state = tool_struct.state
         
         self.codes = tool_struct.codes
         self.codes_names = tool_struct.names
@@ -422,8 +423,8 @@ class Tool: WorkspaceObject
     var attached_to: String?
     
     //MARK: - Chart functions
-    public var state: [String: Any]?
     public var charts_data: [WorkspaceObjectChart]?
+    public var state: [StateItem]?
     
     public var get_statistics = false
     {
@@ -562,7 +563,7 @@ class Tool: WorkspaceObject
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, is_attached: self.is_attached, attached_to: self.attached_to, get_statistics: self.get_statistics, programs: self.programs, image_data: self.image_data, module: self.module_name)
+        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, is_attached: self.is_attached, attached_to: self.attached_to, get_statistics: self.get_statistics, charts_data: self.charts_data, state: self.state, programs: self.programs, image_data: self.image_data, module: self.module_name)
     }
 }
 
@@ -585,6 +586,7 @@ struct ToolStruct: Codable
     
     var get_statistics: Bool
     var charts_data: [WorkspaceObjectChart]?
+    var state: [StateItem]?
     
     var programs: [OperationsProgram]
     var image_data: Data

@@ -7,6 +7,7 @@
 
 import Foundation
 
+//MARK: - Chart class and structure
 class WorkspaceObjectChart: Identifiable, Codable, Hashable
 {
     static func == (lhs: WorkspaceObjectChart, rhs: WorkspaceObjectChart) -> Bool
@@ -21,6 +22,7 @@ class WorkspaceObjectChart: Identifiable, Codable, Hashable
     
     public var name: String
     public var style: ChartStyle
+    
     public var text_domain: Bool
     {
         guard data.count > 0
@@ -38,7 +40,7 @@ class WorkspaceObjectChart: Identifiable, Codable, Hashable
         return first_domain == "" ? false : true
     }
     
-    var data = [ChartDataItem]()
+    public var data = [ChartDataItem]()
     
     init()
     {
@@ -76,4 +78,16 @@ enum ChartStyle: Codable, Equatable, CaseIterable
     case rectange
     case rule
     case bar
+}
+
+//MARK: - State structure
+struct StateItem: Identifiable, Codable
+{
+    var id = UUID()
+    
+    var name: String
+    var value: String?
+    var image: String?
+    
+    var children: [StateItem]?
 }

@@ -95,9 +95,9 @@ class ModelController
     }
     
     ///Retruns perfroming state info.
-    open func state() -> [String: Any]?
+    open func state() -> [StateItem]?
     {
-        return [String: Any]()
+        return [StateItem]()
     }
     
     ///Returns chart data.

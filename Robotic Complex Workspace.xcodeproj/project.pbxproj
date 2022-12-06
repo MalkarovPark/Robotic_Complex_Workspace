@@ -82,6 +82,8 @@
 		62E0D3692719C700009D58D2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3522719C6FC009D58D2 /* ContentView.swift */; };
 		62E0D36A2719C700009D58D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 62E0D3532719C6FF009D58D2 /* Assets.xcassets */; };
 		62E0D36B2719C700009D58D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 62E0D3532719C6FF009D58D2 /* Assets.xcassets */; };
+		62F765EB293F854B0017CDA9 /* StateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765EA293F854B0017CDA9 /* StateView.swift */; };
+		62F765EC293F854B0017CDA9 /* StateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765EA293F854B0017CDA9 /* StateView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -130,6 +132,7 @@
 		62E0D3622719C700009D58D2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62E0D3632719C700009D58D2 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		62E0D3742719CB9D009D58D2 /* Robotic Complex Workspace (iOS).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Robotic Complex Workspace (iOS).entitlements"; sourceTree = "<group>"; };
+		62F765EA293F854B0017CDA9 /* StateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +223,7 @@
 				621AABF828BB997F00AFD62F /* DetailsView.swift */,
 				6209286A28AE75F700DD220E /* SettingsView.swift */,
 				62C0CF1E293BC195002B9A0B /* ChartsView.swift */,
+				62F765EA293F854B0017CDA9 /* StateView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -238,12 +242,12 @@
 			isa = PBXGroup;
 			children = (
 				62061AE72923EA2C00A3B73E /* Modules */,
+				624CFA632838211A00CC1D57 /* AppState.swift */,
 				624DA0CD275D3FBB00918A9E /* Workspace.swift */,
 				624DA0C1275D2EE700918A9E /* Robot.swift */,
 				624DA0C7275D3AA600918A9E /* PositionsProgram.swift */,
 				6260B73627F74EC700F72530 /* WorkspaceProgramElement.swift */,
 				621AABF528BB8B0500AFD62F /* Detail.swift */,
-				624CFA632838211A00CC1D57 /* AppState.swift */,
 				624432EB2847C83D00E7BE85 /* PositionPoint.swift */,
 				624432EE2847C8A200E7BE85 /* Tool.swift */,
 				62C4833228F1C55B00AB6B23 /* Connector.swift */,
@@ -428,6 +432,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62F765EB293F854B0017CDA9 /* StateView.swift in Sources */,
 				62061B0229250D3800A3B73E /* 6DOF.swift in Sources */,
 				62E0D3662719C700009D58D2 /* Robotic_Complex_WorkspaceDocument.swift in Sources */,
 				6260B73727F74EC700F72530 /* WorkspaceProgramElement.swift in Sources */,
@@ -474,6 +479,7 @@
 				624DA0C9275D3AA600918A9E /* PositionsProgram.swift in Sources */,
 				62061AF82923EC9200A3B73E /* Drill.swift in Sources */,
 				6240373529113CE50085B8AC /* Cards.swift in Sources */,
+				62F765EC293F854B0017CDA9 /* StateView.swift in Sources */,
 				62E0D3652719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
 				625475CF292F7A1B00F13F16 /* Functions.swift in Sources */,
 				6240372F290C76D00085B8AC /* OperationsProgram.swift in Sources */,

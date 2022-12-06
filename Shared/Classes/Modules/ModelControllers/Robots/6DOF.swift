@@ -250,8 +250,15 @@ class _6DOFController: RobotModelController
         charts = [WorkspaceObjectChart]()
     }
     
-    /*override func state() -> [String : Any]?
+    override func state() -> [StateItem]?
     {
-        <#code#>
-    }*/
+        var state = [StateItem]()
+        state.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
+        state[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
+                             StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
+        
+        state.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+        
+        return state
+    }
 }

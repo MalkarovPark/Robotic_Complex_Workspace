@@ -496,16 +496,33 @@ struct RobotChartsView: View
     {
         VStack(spacing: 0)
         {
-            if base_workspace.selected_robot.get_statistics
+            if stats_selection == 0
             {
-                ChartsView(charts_data: $base_workspace.selected_robot.charts_data)
+                if base_workspace.selected_robot.get_statistics
+                {
+                    ChartsView(charts_data: $base_workspace.selected_robot.charts_data)
+                }
+                else
+                {
+                    Text("Statistics")
+                        .font(.title2)
+                        .padding([.top, .leading, .trailing])
+                    EmptyChart()
+                }
             }
             else
             {
-                Text("Statistics")
-                    .font(.title2)
-                    .padding([.top, .leading, .trailing])
-                EmptyChart()
+                if base_workspace.selected_robot.get_statistics
+                {
+                    StateView(data: $base_workspace.selected_robot.state)
+                }
+                else
+                {
+                    Text("Statistics")
+                        .font(.title2)
+                        .padding([.top, .leading, .trailing])
+                    EmptyChart()
+                }
             }
             
             Toggle(isOn: $base_workspace.selected_robot.get_statistics)
