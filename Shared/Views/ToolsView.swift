@@ -287,6 +287,8 @@ struct ToolView: View
     @State private var ready_for_save = false
     @State private var is_document_updated = false
     
+    @State private var statistics_view_presented = false
+    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
@@ -294,11 +296,67 @@ struct ToolView: View
     {
         HStack(spacing: 0)
         {
-            #if os(macOS)
-            ToolSceneView_macOS()
-            #else
-            ToolSceneView_iOS()
-            #endif
+            HStack(spacing: 0)
+            {
+                #if os(macOS)
+                ToolSceneView_macOS()
+                #else
+                ToolSceneView_iOS()
+                #endif
+            }
+            .overlay(alignment: .topLeading)
+            {
+                Button(action: close_tool)
+                {
+                    Image(systemName: "xmark")
+                }
+                .buttonStyle(.bordered)
+                .keyboardShortcut(.cancelAction)
+                .padding()
+            }
+            .overlay(alignment: .bottomLeading)
+            {
+                HStack(spacing: 0)
+                {
+                    Button(action: {
+                        base_workspace.selected_tool.reset_performing()
+                        base_workspace.update_view()
+                    })
+                    {
+                        Image(systemName: "stop")
+                    }
+                    .buttonStyle(.bordered)
+                    .padding([.vertical, .leading])
+                    
+                    Button(action: {
+                        base_workspace.selected_tool.start_pause_performing()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                        {
+                            base_workspace.update_view()
+                        }
+                    })
+                    {
+                        Image(systemName: "playpause")
+                    }
+                    .buttonStyle(.bordered)
+                    .padding()
+                }
+                .disabled(base_workspace.selected_tool.codes_count == 0)
+            }
+            .overlay(alignment: .bottomTrailing)
+            {
+                Button(action: { statistics_view_presented.toggle() })
+                {
+                    Image(systemName: "chart.bar")
+                }
+                .buttonStyle(.bordered)
+                .keyboardShortcut(.cancelAction)
+                .padding()
+            }
+            .sheet(isPresented: $statistics_view_presented)
+            {
+                StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $base_workspace.selected_tool.state, clear_chart_data: { base_workspace.selected_tool.clear_chart_data() }, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+            }
             
             Divider()
             
@@ -509,45 +567,6 @@ struct ToolView: View
                 }
             }
             .frame(width: 256)
-        }
-        .overlay(alignment: .topLeading)
-        {
-            Button(action: close_tool)
-            {
-                Image(systemName: "xmark")
-            }
-            .buttonStyle(.bordered)
-            .keyboardShortcut(.cancelAction)
-            .padding()
-        }
-        .overlay(alignment: .bottomLeading)
-        {
-            HStack(spacing: 0)
-            {
-                Button(action: {
-                    base_workspace.selected_tool.reset_performing()
-                    base_workspace.update_view()
-                })
-                {
-                    Image(systemName: "stop")
-                }
-                .buttonStyle(.bordered)
-                .padding([.vertical, .leading])
-                
-                Button(action: {
-                    base_workspace.selected_tool.start_pause_performing()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                    {
-                        base_workspace.update_view()
-                    }
-                })
-                {
-                    Image(systemName: "playpause")
-                }
-                .buttonStyle(.bordered)
-                .padding()
-            }
-            .disabled(base_workspace.selected_tool.codes_count == 0)
         }
         .controlSize(.regular)
         #if os(macOS)
