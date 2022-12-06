@@ -350,7 +350,7 @@ struct RobotView: View
     @Binding var robot_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State private var statistics_view_presented = false
+    @State private var chart_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -443,14 +443,14 @@ struct RobotView: View
                     }
                     Divider()
                     
-                    Button(action: { statistics_view_presented.toggle()
+                    Button(action: { chart_view_presented.toggle()
                     })
                     {
-                        Label("Statistics", systemImage: "chart.bar")
+                        Label("Chart", systemImage: "chart.bar")
                     }
-                    .sheet(isPresented: $statistics_view_presented)
+                    .sheet(isPresented: $chart_view_presented)
                     {
-                        StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                        RobotChartsView(is_presented: $chart_view_presented, document: $document)
                     }
                     
                     Button(action: { base_workspace.selected_robot.reset_moving()
@@ -478,6 +478,111 @@ struct RobotView: View
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         robot_view_presented = false
+    }
+}
+
+struct RobotChartsView: View
+{
+    @Binding var is_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    //Picker data for chart view
+    @State private var stats_selection = 0
+    private let stats_items: [String] = ["Charts", "State"]
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            if stats_selection == 0
+            {
+                if base_workspace.selected_robot.get_statistics
+                {
+                    ChartsView(charts_data: $base_workspace.selected_robot.charts_data)
+                }
+                else
+                {
+                    Text("Statistics")
+                        .font(.title2)
+                        .padding([.top, .leading, .trailing])
+                    EmptyChart()
+                }
+            }
+            else
+            {
+                if base_workspace.selected_robot.get_statistics
+                {
+                    StateView(data: $base_workspace.selected_robot.state)
+                }
+                else
+                {
+                    Text("Statistics")
+                        .font(.title2)
+                        .padding([.top, .leading, .trailing])
+                    EmptyChart()
+                }
+            }
+            
+            Toggle(isOn: $base_workspace.selected_robot.get_statistics)
+            {
+                Text("Enable collection")
+            }
+            .toggleStyle(.switch)
+            .padding([.leading, .trailing])
+            .onChange(of: base_workspace.selected_robot.get_statistics)
+            { _ in
+                document.preset.robots = base_workspace.file_data().robots
+            }
+            
+            HStack(spacing: 0)
+            {
+                Button(action: clear_chart_view)
+                {
+                    Image(systemName: "eraser")
+                }
+                .padding([.vertical, .leading])
+                
+                Button(action: { document.preset.robots = base_workspace.file_data().robots })
+                {
+                    Image(systemName: "arrow.down.doc")
+                }
+                .padding([.vertical, .leading])
+                
+                Picker("Statistics", selection: $stats_selection)
+                {
+                    ForEach(0..<stats_items.count, id: \.self)
+                    { index in
+                        Text(stats_items[index]).tag(index)
+                    }
+                }
+                .frame(maxWidth: 128)
+                .labelsHidden()
+                .buttonStyle(.bordered)
+                .padding([.vertical, .leading])
+                
+                Button(action: { is_presented.toggle() })
+                {
+                    Text("Dismiss")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .padding()
+            }
+        }
+        #if os(macOS)
+        .frame(minWidth: 448, idealWidth: 480, maxWidth: 512, minHeight: 448, idealHeight: 480, maxHeight: 512)
+        #else
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #endif
+    }
+    
+    private func clear_chart_view()
+    {
+        base_workspace.selected_robot.clear_chart_data()
+        base_workspace.update_view()
     }
 }
 
@@ -1834,6 +1939,8 @@ struct RobotsView_Previews: PreviewProvider
             RobotView(robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
+            RobotChartsView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
             
             OriginRotateView(origin_rotate_view_presented: .constant(true), origin_view_pos_rotation: .constant([0.0, 0.0, 0.0]))
             OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0.0, 0.0, 0.0]))

@@ -84,12 +84,6 @@
 		62E0D36B2719C700009D58D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 62E0D3532719C6FF009D58D2 /* Assets.xcassets */; };
 		62F765EB293F854B0017CDA9 /* StateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765EA293F854B0017CDA9 /* StateView.swift */; };
 		62F765EC293F854B0017CDA9 /* StateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765EA293F854B0017CDA9 /* StateView.swift */; };
-		62F765F1293FB44E0017CDA9 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765F0293FB44E0017CDA9 /* StatisticsView.swift */; };
-		62F765F2293FB44E0017CDA9 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765F0293FB44E0017CDA9 /* StatisticsView.swift */; };
-		62F765F7293FBC5C0017CDA9 /* DeleteButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765F6293FBC5C0017CDA9 /* DeleteButtons.swift */; };
-		62F765F8293FBC5C0017CDA9 /* DeleteButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765F6293FBC5C0017CDA9 /* DeleteButtons.swift */; };
-		62F765FA293FBD1D0017CDA9 /* DoubleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765F9293FBD1D0017CDA9 /* DoubleModifier.swift */; };
-		62F765FB293FBD1D0017CDA9 /* DoubleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F765F9293FBD1D0017CDA9 /* DoubleModifier.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -139,9 +133,6 @@
 		62E0D3632719C700009D58D2 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		62E0D3742719CB9D009D58D2 /* Robotic Complex Workspace (iOS).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Robotic Complex Workspace (iOS).entitlements"; sourceTree = "<group>"; };
 		62F765EA293F854B0017CDA9 /* StateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateView.swift; sourceTree = "<group>"; };
-		62F765F0293FB44E0017CDA9 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
-		62F765F6293FBC5C0017CDA9 /* DeleteButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteButtons.swift; sourceTree = "<group>"; };
-		62F765F9293FBD1D0017CDA9 /* DoubleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleModifier.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -227,14 +218,12 @@
 				62E0D3522719C6FC009D58D2 /* ContentView.swift */,
 				62A23C4A271C70D0008FC0CC /* Sidebar.swift */,
 				6279ED6D2721A4F300EEA986 /* WorkspaceView.swift */,
-				6240373329113CE50085B8AC /* Cards.swift */,
 				6279ED702721A5B400EEA986 /* RobotsView.swift */,
 				62DFC8E827E3841B00ABCE1E /* ToolsView.swift */,
 				621AABF828BB997F00AFD62F /* DetailsView.swift */,
 				6209286A28AE75F700DD220E /* SettingsView.swift */,
 				62C0CF1E293BC195002B9A0B /* ChartsView.swift */,
 				62F765EA293F854B0017CDA9 /* StateView.swift */,
-				62F765F0293FB44E0017CDA9 /* StatisticsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -244,8 +233,7 @@
 			children = (
 				626E88E42727073F00631945 /* DismissModifier.swift */,
 				625475D2292F9F3F00F13F16 /* DynamicStack.swift */,
-				62F765F6293FBC5C0017CDA9 /* DeleteButtons.swift */,
-				62F765F9293FBD1D0017CDA9 /* DoubleModifier.swift */,
+				6240373329113CE50085B8AC /* Cards.swift */,
 			);
 			path = ViewModifiers;
 			sourceTree = "<group>";
@@ -451,7 +439,6 @@
 				625475D3292F9F3F00F13F16 /* DynamicStack.swift in Sources */,
 				62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
 				621AABF628BB8B0500AFD62F /* Detail.swift in Sources */,
-				62F765FA293FBD1D0017CDA9 /* DoubleModifier.swift in Sources */,
 				624432EF2847C8A200E7BE85 /* Tool.swift in Sources */,
 				62061AFF29250D2600A3B73E /* Portal.swift in Sources */,
 				625475CB292F79A100F13F16 /* Extensions.swift in Sources */,
@@ -461,7 +448,6 @@
 				6240372E290C76D00085B8AC /* OperationsProgram.swift in Sources */,
 				62C0CF1C293BC015002B9A0B /* WorkspaceObjectChart.swift in Sources */,
 				62403731290D8E560085B8AC /* WorkspaceObject.swift in Sources */,
-				62F765F7293FBC5C0017CDA9 /* DeleteButtons.swift in Sources */,
 				626E88E52727073F00631945 /* DismissModifier.swift in Sources */,
 				62A23C4B271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				624432EC2847C83D00E7BE85 /* PositionPoint.swift in Sources */,
@@ -477,7 +463,6 @@
 				624DA0C2275D2EE700918A9E /* Robot.swift in Sources */,
 				6299FBD2291ED30000D24B19 /* ModelController.swift in Sources */,
 				62061AF72923EC9200A3B73E /* Drill.swift in Sources */,
-				62F765F1293FB44E0017CDA9 /* StatisticsView.swift in Sources */,
 				624DA0CE275D3FBB00918A9E /* Workspace.swift in Sources */,
 				62E0D3682719C700009D58D2 /* ContentView.swift in Sources */,
 				62C0CF1F293BC195002B9A0B /* ChartsView.swift in Sources */,
@@ -500,7 +485,6 @@
 				6240372F290C76D00085B8AC /* OperationsProgram.swift in Sources */,
 				624432F02847C8A200E7BE85 /* Tool.swift in Sources */,
 				624CFA652838211A00CC1D57 /* AppState.swift in Sources */,
-				62F765FB293FBD1D0017CDA9 /* DoubleModifier.swift in Sources */,
 				624DA0C3275D2EE700918A9E /* Robot.swift in Sources */,
 				62DFC8EA27E3841B00ABCE1E /* ToolsView.swift in Sources */,
 				62A23C4C271C70D0008FC0CC /* Sidebar.swift in Sources */,
@@ -508,14 +492,12 @@
 				6260B73827F74EC700F72530 /* WorkspaceProgramElement.swift in Sources */,
 				62061B0329250D3800A3B73E /* 6DOF.swift in Sources */,
 				621AABF728BB8B0500AFD62F /* Detail.swift in Sources */,
-				62F765F2293FB44E0017CDA9 /* StatisticsView.swift in Sources */,
 				6279ED722721A5B400EEA986 /* RobotsView.swift in Sources */,
 				624DA0CF275D3FBB00918A9E /* Workspace.swift in Sources */,
 				62BD1171291A93CA0093DDF1 /* OperationCode.swift in Sources */,
 				62061B0029250D2600A3B73E /* Portal.swift in Sources */,
 				6279ED6F2721A4F300EEA986 /* WorkspaceView.swift in Sources */,
 				621AABFA28BB997F00AFD62F /* DetailsView.swift in Sources */,
-				62F765F8293FBC5C0017CDA9 /* DeleteButtons.swift in Sources */,
 				6299FBD3291ED30000D24B19 /* ModelController.swift in Sources */,
 				624432ED2847C83D00E7BE85 /* PositionPoint.swift in Sources */,
 				62403732290D8E560085B8AC /* WorkspaceObject.swift in Sources */,

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StateView: View
 {
-    @Binding var state_data: [StateItem]?
+    @Binding var data: [StateItem]?
     
     var body: some View
     {
@@ -19,9 +19,9 @@ struct StateView: View
                 .font(.title2)
                 .padding()
             
-            if state_data != nil
+            if data != nil
             {
-                List(state_data!, children: \.children)
+                List(data!, children: \.children)
                 { item in
                     StateItemView(item: item)
                 }
@@ -65,7 +65,10 @@ struct StateView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        StateView(state_data: .constant([
-            StateItem(name: "Temperature", image: "thermometer", children: [StateItem(name: "Base", value: "70º"), StateItem(name: "Electrode", value: "150º")])]))
+        StateView(data: .constant([
+            StateItem(name: "Temperature", image: "thermometer", children: [
+                        StateItem(name: "Base", value: "70º"),
+                        StateItem(name: "Electrode", value: "150º")])
+        ]))
     }
 }
