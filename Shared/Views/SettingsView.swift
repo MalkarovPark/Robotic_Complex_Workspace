@@ -133,12 +133,12 @@ struct PropertiesSettingsView: View
     //Bookmarks for the workspace objects model data
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
     @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
-    @AppStorage("DetailsBookmark") private var details_bookmark: Data?
+    @AppStorage("PartsBookmark") private var parts_bookmark: Data?
     
     //If data folder selected
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
-    @AppStorage("DetailsEmpty") private var details_empty: Bool?
+    @AppStorage("PartsEmpty") private var parts_empty: Bool?
     
     @EnvironmentObject var app_state: AppState
     
@@ -289,14 +289,14 @@ struct PropertiesSettingsView: View
                 }
                 .padding(.bottom)
                 
-                //MARK: Details data handling view
+                //MARK: Parts data handling view
                 GroupBox
                 {
                     VStack(spacing: 4)
                     {
                         HStack
                         {
-                            Text("Details")
+                            Text("Parts")
                                 .foregroundColor(Color.gray)
                             Spacer()
                             
@@ -304,7 +304,7 @@ struct PropertiesSettingsView: View
                                 .foregroundColor(Color.gray)
                             Spacer()
                             
-                            Text(app_state.property_files_info.Details)
+                            Text(app_state.property_files_info.Parts)
                                 .foregroundColor(Color.gray)
                         }
                         .padding(4)
@@ -313,29 +313,29 @@ struct PropertiesSettingsView: View
                         
                         HStack
                         {
-                            Picker(selection: $app_state.selected_plist_names.Details, label: Text(app_state.selected_folder.Details)
+                            Picker(selection: $app_state.selected_plist_names.Parts, label: Text(app_state.selected_folder.Parts)
                                     .bold())
                             {
-                                ForEach(app_state.avaliable_plist_names.Details, id: \.self)
+                                ForEach(app_state.avaliable_plist_names.Parts, id: \.self)
                                 {
                                     Text($0)
                                 }
                             }
-                            .onChange(of: app_state.selected_plist_names.Details)
+                            .onChange(of: app_state.selected_plist_names.Parts)
                             { _ in
-                                app_state.update_additive_data(type: .detail)
-                                app_state.save_selected_plist_names(type: .detail)
+                                app_state.update_additive_data(type: .part)
+                                app_state.save_selected_plist_names(type: .part)
                             }
                             Spacer()
                             
                             Button(action: {
-                                app_state.clear_additive_data(type: .detail)
+                                app_state.clear_additive_data(type: .part)
                             })
                             {
                                 Label("Clear", systemImage: "arrow.counterclockwise")
                                     .labelStyle(.iconOnly)
                             }
-                            Button(action: { show_load_panel(type: .detail) })
+                            Button(action: { show_load_panel(type: .part) })
                             {
                                 Label("Folder", systemImage: "folder")
                                     .labelStyle(.iconOnly)
@@ -450,12 +450,12 @@ struct PropertiesSettingsView: View
                 }
             }
             
-            //MARK: Details data handling view
+            //MARK: Parts data handling view
             Section
             {
                 HStack
                 {
-                    Text("Details")
+                    Text("Parts")
                         .foregroundColor(Color.gray)
                     Spacer()
                     
@@ -463,29 +463,29 @@ struct PropertiesSettingsView: View
                         .foregroundColor(Color.gray)
                     Spacer()
                     
-                    Text(app_state.property_files_info.Details)
+                    Text(app_state.property_files_info.Parts)
                         .foregroundColor(Color.gray)
                 }
                 
                 HStack
                 {
-                    Picker(selection: $app_state.selected_plist_names.Details, label: Text(app_state.selected_folder.Details)
+                    Picker(selection: $app_state.selected_plist_names.Parts, label: Text(app_state.selected_folder.Parts)
                             .bold())
                     {
-                        ForEach(app_state.avaliable_plist_names.Details, id: \.self)
+                        ForEach(app_state.avaliable_plist_names.Parts, id: \.self)
                         {
                             Text($0)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .onChange(of: app_state.selected_plist_names.Details)
+                    .onChange(of: app_state.selected_plist_names.Parts)
                     { _ in
-                        app_state.update_additive_data(type: .detail)
-                        app_state.save_selected_plist_names(type: .detail)
+                        app_state.update_additive_data(type: .part)
+                        app_state.save_selected_plist_names(type: .part)
                     }
                     Spacer()
                     
-                    Button(action: { show_load_panel(type: .detail) })
+                    Button(action: { show_load_panel(type: .part) })
                     {
                         Label("Folder", systemImage: "folder")
                             .labelStyle(.iconOnly)
@@ -508,9 +508,9 @@ struct PropertiesSettingsView: View
                 {
                     app_state.clear_additive_data(type: .tool)
                 }
-                Button("Details")
+                Button("Parts")
                 {
-                    app_state.clear_additive_data(type: .detail)
+                    app_state.clear_additive_data(type: .part)
                 }
                 Button("Cancel", role: .cancel) { }
             }
@@ -544,10 +544,10 @@ struct PropertiesSettingsView: View
                     app_state.get_additive(bookmark_data: &tools_bookmark, url: success.first)
                     app_state.update_additive_data(type: .tool)
                     tools_empty = false
-                case .detail:
-                    app_state.get_additive(bookmark_data: &details_bookmark, url: success.first)
-                    app_state.update_additive_data(type: .detail)
-                    details_empty = false
+                case .part:
+                    app_state.get_additive(bookmark_data: &parts_bookmark, url: success.first)
+                    app_state.update_additive_data(type: .part)
+                    parts_empty = false
                 }
             case .failure(_):
                 break

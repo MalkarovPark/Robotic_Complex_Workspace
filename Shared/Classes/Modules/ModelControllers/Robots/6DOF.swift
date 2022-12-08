@@ -21,7 +21,7 @@ class _6DOFController: RobotModelController
         
         for i in 0...6
         {
-            //Connect to detail nodes from robot scene
+            //Connect to part nodes from robot scene
             nodes.append(node.childNode(withName: "d\(i)", recursively: true)!)
             
             //Get lengths from robot scene if they is not set in plist
@@ -40,7 +40,7 @@ class _6DOFController: RobotModelController
         }
     }
     
-    //MARK: - Inverse kinematic details calculation for roataion angles of 6DOF
+    //MARK: - Inverse kinematic parts calculation for roataion angles of 6DOF
     override func inverse_kinematic_calculate(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
     {
         var angles = [Float]()
@@ -140,7 +140,7 @@ class _6DOFController: RobotModelController
         
         if get_statistics
         {
-            chart_ik_values = values //Store new details angles array for chart
+            chart_ik_values = values //Store new parts angles array for chart
         }
     }
     
@@ -151,11 +151,11 @@ class _6DOFController: RobotModelController
         var modified_node = SCNNode()
         var saved_material = SCNMaterial()
         
-        saved_material = (nodes[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial)! //Save material from detail box
+        saved_material = (nodes[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial)! //Save material from part box
         
         for i in 0..<nodes.count - 1
         {
-            //Get length 0 if first robot detail selected and get previous length for all next details
+            //Get length 0 if first robot part selected and get previous length for all next parts
             #if os(macOS)
             nodes[i].position.y = CGFloat(i > 0 ? lengths[i - 1] : lengths[lengths.count - 1])
             #else
@@ -164,21 +164,21 @@ class _6DOFController: RobotModelController
             
             if i < 5
             {
-                //Change box model size and move that node vertical for details 0-4
+                //Change box model size and move that node vertical for parts 0-4
                 modified_node = nodes[i].childNode(withName: "box", recursively: false)!
                 if i < 3
                 {
-                    modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[i]), length: 60, chamferRadius: 10) //Set geometry for 0-2 details with width 6 and chamfer
+                    modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[i]), length: 60, chamferRadius: 10) //Set geometry for 0-2 parts with width 6 and chamfer
                 }
                 else
                 {
                     if i < 4
                     {
-                        modified_node.geometry = SCNBox(width: 50, height: CGFloat(lengths[i]), length: 50, chamferRadius: 10) //Set geometry for 3th detail with width 5 and chamfer
+                        modified_node.geometry = SCNBox(width: 50, height: CGFloat(lengths[i]), length: 50, chamferRadius: 10) //Set geometry for 3th part with width 5 and chamfer
                     }
                     else
                     {
-                        modified_node.geometry = SCNBox(width: 40, height: CGFloat(lengths[i]), length: 40, chamferRadius: 0) //Set geometry for 4th detail with width 4 and without chamfer
+                        modified_node.geometry = SCNBox(width: 40, height: CGFloat(lengths[i]), length: 40, chamferRadius: 0) //Set geometry for 4th part with width 4 and without chamfer
                     }
                 }
                 modified_node.geometry?.firstMaterial = saved_material //Apply saved material
@@ -191,7 +191,7 @@ class _6DOFController: RobotModelController
             }
             else
             {
-                //Set tool target (d6) position for 5th detail
+                //Set tool target (d6) position for 5th part
                 #if os(macOS)
                 nodes[6].position.y = CGFloat(lengths[i])
                 #else
@@ -210,12 +210,12 @@ class _6DOFController: RobotModelController
     {
         if charts.count == 0
         {
-            charts.append(WorkspaceObjectChart(name: "Details Rotation", style: .line))
+            charts.append(WorkspaceObjectChart(name: "Parts Rotation", style: .line))
             charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
             charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
         }
         
-        //Update details angles rotation chart
+        //Update parts angles rotation chart
         for i in 0...chart_ik_values.count - 1
         {
             charts[0].data.append(ChartDataItem(name: "J\(i + 1)", domain: ["": domain_index], codomain: chart_ik_values[i]))

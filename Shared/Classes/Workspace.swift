@@ -34,7 +34,7 @@ class Workspace: ObservableObject
     }
     
     @Published public var tools = [Tool]()
-    @Published public var details = [Detail]()
+    @Published public var parts = [Part]()
     
     //MARK: - Workspace visual handling functions
     ///A SceneKit scene for complex visual model of workspace.
@@ -43,19 +43,19 @@ class Workspace: ObservableObject
     ///A selected workspace object type value in industrial complex.
     public var selected_object_type: WorkspaceObjectType?
     {
-        if selected_robot_index > -1 && selected_detail_index == -1 && selected_tool_index == -1
+        if selected_robot_index > -1 && selected_part_index == -1 && selected_tool_index == -1
         {
             return .robot
         }
         
-        if selected_tool_index > -1 && selected_robot_index == -1 && selected_detail_index == -1
+        if selected_tool_index > -1 && selected_robot_index == -1 && selected_part_index == -1
         {
             return .tool
         }
         
-        if selected_detail_index > -1 && selected_robot_index == -1 && selected_tool_index == -1
+        if selected_part_index > -1 && selected_robot_index == -1 && selected_tool_index == -1
         {
-            return .detail
+            return .part
         }
         
         return nil
@@ -97,9 +97,9 @@ class Workspace: ObservableObject
         case .tool:
             selected_tool.location = [0, 0, 0]
             selected_tool.rotation = [0, 0, 0]
-        case .detail:
-            selected_detail.location = [0, 0, 0]
-            selected_detail.rotation = [0, 0, 0]
+        case .part:
+            selected_part.location = [0, 0, 0]
+            selected_part.rotation = [0, 0, 0]
         default:
             break
         }
@@ -111,7 +111,7 @@ class Workspace: ObservableObject
         {
         case .robot:
             //Deselect other
-            deselect_detail()
+            deselect_part()
             deselect_tool()
             
             //Get new node
@@ -126,7 +126,7 @@ class Workspace: ObservableObject
         case .tool:
             //Deselect other
             deselect_robot()
-            deselect_detail()
+            deselect_part()
             
             //Get new node
             select_tool(name: name)
@@ -135,19 +135,19 @@ class Workspace: ObservableObject
             edited_object_node?.name = name
             
             tools_node?.addChildNode(edited_object_node ?? SCNNode())
-        case .detail:
+        case .part:
             //Deselect other
             deselect_robot()
             deselect_tool()
             
             //Get new node
-            select_detail(name: name)
-            selected_detail.model_position_reset()
+            select_part(name: name)
+            selected_part.model_position_reset()
             
-            edited_object_node = selected_detail.node?.clone()
+            edited_object_node = selected_part.node?.clone()
             edited_object_node?.name = name
             
-            details_node?.addChildNode(edited_object_node ?? SCNNode())
+            parts_node?.addChildNode(edited_object_node ?? SCNNode())
         }
         
         //Unhide pointer and move to object position
@@ -170,9 +170,9 @@ class Workspace: ObservableObject
         case .tool:
             location = selected_tool.location
             rotation = selected_tool.rotation
-        case.detail:
-            location = selected_detail.location
-            rotation = selected_detail.rotation
+        case.part:
+            location = selected_part.location
+            rotation = selected_part.rotation
         default:
             break
         }
@@ -208,13 +208,13 @@ class Workspace: ObservableObject
             apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.tool_bit_mask) //Apply categury bit mask
             
             deselect_tool()
-        case.detail:
-            selected_detail.is_placed = true
+        case.part:
+            selected_part.is_placed = true
             
-            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.detail_bit_mask) //Apply categury bit mask
-            edited_object_node?.physicsBody = selected_detail.physics //Apply physics
+            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.part_bit_mask) //Apply categury bit mask
+            edited_object_node?.physicsBody = selected_part.physics //Apply physics
             
-            deselect_detail()
+            deselect_part()
         default:
             break
         }
@@ -261,8 +261,8 @@ class Workspace: ObservableObject
             {
                 unavaliable = false
             }
-        case.detail:
-            if avaliable_details_names.count == 0
+        case.part:
+            if avaliable_parts_names.count == 0
             {
                 unavaliable = true
             }
@@ -292,9 +292,9 @@ class Workspace: ObservableObject
         case Workspace.tool_bit_mask:
             object_node = main_object_node(result_node: result.node, object_bit_mask: Workspace.tool_bit_mask)
             select_object_for_edit(node: object_node!, type: .tool)
-        case Workspace.detail_bit_mask:
-            object_node = main_object_node(result_node: result.node, object_bit_mask: Workspace.detail_bit_mask)
-            select_object_for_edit(node: object_node!, type: .detail)
+        case Workspace.part_bit_mask:
+            object_node = main_object_node(result_node: result.node, object_bit_mask: Workspace.part_bit_mask)
+            select_object_for_edit(node: object_node!, type: .part)
         default:
             deselect_object_for_edit()
         }
@@ -319,11 +319,11 @@ class Workspace: ObservableObject
     
     private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType) //Create editable node with name
     {
-        //Connect to old detail node
-        var old_detail_node = SCNNode()
-        if selected_object_type == .detail
+        //Connect to old part node
+        var old_part_node = SCNNode()
+        if selected_object_type == .part
         {
-            old_detail_node = edited_object_node!
+            old_part_node = edited_object_node!
         }
         edited_object_node = node //Connect to tapped node
         
@@ -373,22 +373,22 @@ class Workspace: ObservableObject
                     deselect_all()
                     select_new()
                 }
-            case .detail:
+            case .part:
                 if type == previous_selected_type
                 {
-                    if node.name! == selected_detail.name
+                    if node.name! == selected_part.name
                     {
-                        //Deselect already selected detail
-                        deselect_detail()
-                        edited_object_node?.physicsBody = selected_detail.physics
+                        //Deselect already selected part
+                        deselect_part()
+                        edited_object_node?.physicsBody = selected_part.physics
                         object_pointer_node?.isHidden = true
                     }
                     else
                     {
-                        old_detail_node.physicsBody = selected_detail.physics //Enable physics for deselctable node
+                        old_part_node.physicsBody = selected_part.physics //Enable physics for deselctable node
                         
-                        //Change selected to new detail
-                        select_detail(name: node.name!)
+                        //Change selected to new part
+                        select_part(name: node.name!)
                         update_pointer()
                         
                         edited_object_node?.physicsBody = .none //Disable physics physics for selected node
@@ -396,7 +396,7 @@ class Workspace: ObservableObject
                 }
                 else
                 {
-                    edited_object_node?.physicsBody = selected_detail.physics
+                    edited_object_node?.physicsBody = selected_part.physics
                     deselect_all()
                     select_new()
                 }
@@ -417,17 +417,17 @@ class Workspace: ObservableObject
                 select_robot(name: node.name!)
             case .tool:
                 select_tool(name: node.name!)
-            case .detail:
-                select_detail(name: node.name!)
+            case .part:
+                select_part(name: node.name!)
                 edited_object_node?.physicsBody = .none
                 
-                //Get detail node position after physics calculation
+                //Get part node position after physics calculation
                 #if os(macOS)
-                selected_detail.location = [Float((edited_object_node?.presentation.worldPosition.z)!), Float((edited_object_node?.presentation.worldPosition.x)!), Float((edited_object_node?.presentation.worldPosition.y)!)]
-                selected_detail.rotation = [Float((edited_object_node?.presentation.eulerAngles.z)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.x)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.y)!).to_deg]
+                selected_part.location = [Float((edited_object_node?.presentation.worldPosition.z)!), Float((edited_object_node?.presentation.worldPosition.x)!), Float((edited_object_node?.presentation.worldPosition.y)!)]
+                selected_part.rotation = [Float((edited_object_node?.presentation.eulerAngles.z)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.x)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.y)!).to_deg]
                 #else
-                selected_detail.location = [(edited_object_node?.presentation.worldPosition.z)!, (edited_object_node?.presentation.worldPosition.x)!, (edited_object_node?.presentation.worldPosition.y)!]
-                selected_detail.rotation = [(edited_object_node?.presentation.eulerAngles.z.to_deg)!, (edited_object_node?.presentation.eulerAngles.x.to_deg)!, (edited_object_node?.presentation.eulerAngles.y.to_deg)!]
+                selected_part.location = [(edited_object_node?.presentation.worldPosition.z)!, (edited_object_node?.presentation.worldPosition.x)!, (edited_object_node?.presentation.worldPosition.y)!]
+                selected_part.rotation = [(edited_object_node?.presentation.eulerAngles.z.to_deg)!, (edited_object_node?.presentation.eulerAngles.x.to_deg)!, (edited_object_node?.presentation.eulerAngles.y.to_deg)!]
                 #endif
             }
             
@@ -440,7 +440,7 @@ class Workspace: ObservableObject
         {
             deselect_robot()
             deselect_tool()
-            deselect_detail()
+            deselect_part()
         }
     }
     
@@ -458,12 +458,12 @@ class Workspace: ObservableObject
                 deselect_robot()
             case .tool:
                 deselect_tool()
-            case .detail:
-                if selected_detail.is_placed
+            case .part:
+                if selected_part.is_placed
                 {
-                    edited_object_node?.physicsBody = selected_detail.physics
+                    edited_object_node?.physicsBody = selected_part.physics
                 }
-                deselect_detail()
+                deselect_part()
             default:
                 break
             }
@@ -488,9 +488,9 @@ class Workspace: ObservableObject
             case .tool:
                 selected_tool.is_placed = false
                 deselect_tool()
-            case .detail:
-                selected_detail.is_placed = false
-                deselect_detail()
+            case .part:
+                selected_part.is_placed = false
+                deselect_part()
             default:
                 break
             }
@@ -512,8 +512,8 @@ class Workspace: ObservableObject
             deselect_robot()
         case .tool:
             deselect_tool()
-        case .detail:
-            deselect_detail()
+        case .part:
+            deselect_part()
         default:
             break
         }
@@ -864,129 +864,129 @@ class Workspace: ObservableObject
         selected_tool.attached_to = nil
     }
     
-    //MARK: - Details handling functions
-    //MARK: Details manage funcions
-    ///Adds detail in workspace.
-    public func add_detail(_ detail: Detail)
+    //MARK: - Parts handling functions
+    //MARK: Parts manage funcions
+    ///Adds part in workspace.
+    public func add_part(_ part: Part)
     {
-        detail.name = mismatched_name(name: detail.name!, names: details_names)
-        details.append(detail)
+        part.name = mismatched_name(name: part.name!, names: parts_names)
+        parts.append(part)
     }
     
     /**
-     Deletes detail from workspace.
+     Deletes part from workspace.
      
      - Parameters:
-        - index: An index of detail to be deleted.
+        - index: An index of part to be deleted.
      */
-    public func delete_detail(index: Int)
+    public func delete_part(index: Int)
     {
-        if details.indices.contains(index)
+        if parts.indices.contains(index)
         {
-            details.remove(at: index)
+            parts.remove(at: index)
         }
     }
     
     /**
-     Deletes detail from workspace.
+     Deletes part from workspace.
      
      - Parameters:
-        - name: A name of detail to be deleted.
+        - name: A name of part to be deleted.
      */
-    public func delete_detail(name: String)
+    public func delete_part(name: String)
     {
-        delete_detail(index: detail_index_by_name(name))
+        delete_part(index: part_index_by_name(name))
     }
     
-    //MARK: Details selection functions
-    private var selected_detail_index = -1
+    //MARK: Parts selection functions
+    private var selected_part_index = -1
     
-    ///Selected detail.
-    public var selected_detail: Detail //Return detail by selected index
+    ///Selected part.
+    public var selected_part: Part //Return part by selected index
     {
         get
         {
-            if selected_detail_index > -1
+            if selected_part_index > -1
             {
-                return details[selected_detail_index]
+                return parts[selected_part_index]
             }
             else
             {
-                return Detail(name: "None")
+                return Part(name: "None")
             }
         }
         set
         {
-            if selected_detail_index > -1
+            if selected_part_index > -1
             {
-                details[selected_detail_index] = newValue
+                parts[selected_part_index] = newValue
             }
         }
     }
     
     /**
-     Selects detail by index.
+     Selects part by index.
      
      - Parameters:
-        - index: An index of detail to be selected.
+        - index: An index of part to be selected.
      */
-    public func select_detail(index: Int)
+    public func select_part(index: Int)
     {
-        selected_detail_index = index
+        selected_part_index = index
     }
     
     /**
-     Selects detail by name.
+     Selects part by name.
      
      - Parameters:
-        - name: A name of detail to be selected.
+        - name: A name of part to be selected.
      */
-    public func select_detail(name: String)
+    public func select_part(name: String)
     {
-        select_detail(index: detail_index_by_name(name))
+        select_part(index: part_index_by_name(name))
     }
     
-    ///Deselects selected detail.
-    public func deselect_detail()
+    ///Deselects selected part.
+    public func deselect_part()
     {
-        selected_detail_index = -1
+        selected_part_index = -1
     }
     
-    //MARK: Details naming
+    //MARK: Parts naming
     /**
-     Returns index number of detail by name.
+     Returns index number of part by name.
      
      - Parameters:
-        - name: A name of detail for index find.
+        - name: A name of part for index find.
      */
-    private func detail_index_by_name(_ name: String) -> Int
+    private func part_index_by_name(_ name: String) -> Int
     {
-        return details.firstIndex(of: Detail(name: name)) ?? -1
+        return parts.firstIndex(of: Part(name: name)) ?? -1
     }
     
-    ///Names of all details in workspace.
-    public var details_names: [String]
+    ///Names of all parts in workspace.
+    public var parts_names: [String]
     {
-        var details_names = [String]()
-        if details.count > 0
+        var parts_names = [String]()
+        if parts.count > 0
         {
-            for detail in details
+            for part in parts
             {
-                details_names.append(detail.name ?? "None")
+                parts_names.append(part.name ?? "None")
             }
         }
-        return details_names
+        return parts_names
     }
     
-    ///Names of details avaliable to place in workspace.
-    public var avaliable_details_names: [String]
+    ///Names of parts avaliable to place in workspace.
+    public var avaliable_parts_names: [String]
     {
         var names = [String]()
-        for detail in details
+        for part in parts
         {
-            if detail.name != nil && !detail.is_placed
+            if part.name != nil && !part.is_placed
             {
-                names.append(detail.name!)
+                names.append(part.name!)
             }
         }
         return names
@@ -1400,9 +1400,9 @@ class Workspace: ObservableObject
     /**
      Returns arrays of document structures by workspace objects type.
      
-     - Returns: Codable structures for robots, tools, details and elements ordered as control program.
+     - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], details: [DetailStruct], elements: [workspace_program_element_struct])
+    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [workspace_program_element_struct])
     {
         //Get robots info for save to file
         var robots_file_info = [RobotStruct]()
@@ -1418,11 +1418,11 @@ class Workspace: ObservableObject
             tools_file_info.append(tool.file_info)
         }
         
-        //Get details info for save to file
-        var details_file_info = [DetailStruct]()
-        for detail in details
+        //Get parts info for save to file
+        var parts_file_info = [PartStruct]()
+        for part in parts
         {
-            details_file_info.append(detail.file_info)
+            parts_file_info.append(part.file_info)
         }
         
         //Get workspace program elements info for save to file
@@ -1432,7 +1432,7 @@ class Workspace: ObservableObject
             elements_file_info.append(element.element_data)
         }
         
-        return(robots_file_info, tools_file_info, details_file_info, elements_file_info)
+        return(robots_file_info, tools_file_info, parts_file_info, elements_file_info)
     }
     
     ///File bookmark for robots models.
@@ -1441,8 +1441,8 @@ class Workspace: ObservableObject
     ///File bookmark for tools models.
     public var tools_bookmark: Data?
     
-    ///File bookmark for details models.
-    public var details_bookmark: Data?
+    ///File bookmark for parts models.
+    public var parts_bookmark: Data?
     
     /**
      Imports file data to workspace from preset structure.
@@ -1471,16 +1471,16 @@ class Workspace: ObservableObject
             tools.append(Tool(tool_struct: tool_struct))
         }
         
-        //Update details data from file
-        details.removeAll()
-        if details_bookmark != nil
+        //Update parts data from file
+        parts.removeAll()
+        if parts_bookmark != nil
         {
-            Detail.folder_bookmark = details_bookmark
+            Part.folder_bookmark = parts_bookmark
         }
         
-        for detail_struct in preset.details
+        for part_struct in preset.parts
         {
-            details.append(Detail(detail_struct: detail_struct))
+            parts.append(Part(part_struct: part_struct))
         }
         
         //Update workspace program elements data from file
@@ -1504,7 +1504,7 @@ class Workspace: ObservableObject
     ///Selection workspace object state.
     public var is_selected: Bool
     {
-        if selected_robot_index == -1 && selected_detail_index == -1 && selected_tool_index == -1
+        if selected_robot_index == -1 && selected_part_index == -1 && selected_tool_index == -1
         {
             return false
         }
@@ -1562,8 +1562,8 @@ class Workspace: ObservableObject
     ///Tools node.
     public var tools_node: SCNNode?
     
-    ///Details node.
-    public var details_node: SCNNode?
+    ///Parts node.
+    public var parts_node: SCNNode?
     
     ///Viusal object pointer node.
     public var object_pointer_node: SCNNode?
@@ -1574,21 +1574,21 @@ class Workspace: ObservableObject
     ///Tool node category bit mask.
     public static var tool_bit_mask = 4
     
-    ///Detail node category bit mask.
-    public static var detail_bit_mask = 6
+    ///Part node category bit mask.
+    public static var part_bit_mask = 6
     
     ///Connects and places objects to workspace scene.
     public func connect_scene(_ scene: SCNScene)
     {
         deselect_robot()
         deselect_tool()
-        deselect_detail()
+        deselect_part()
         
         camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
         
         workcells_node = scene.rootNode.childNode(withName: "workcells", recursively: true)
         tools_node = scene.rootNode.childNode(withName: "tools", recursively: false)
-        details_node = scene.rootNode.childNode(withName: "details", recursively: false)
+        parts_node = scene.rootNode.childNode(withName: "parts", recursively: false)
         
         object_pointer_node = scene.rootNode.childNode(withName: "object_pointer", recursively: false)
         object_pointer_node?.constraints = [SCNConstraint]()
@@ -1601,7 +1601,7 @@ class Workspace: ObservableObject
         //Nodes for placement operations
         var unit_node: SCNNode?
         var tool_node: SCNNode?
-        var detail_node: SCNNode?
+        var part_node: SCNNode?
         
         //Place robots
         if self.avaliable_robots_names.count < self.robots.count //If there are placed robots in workspace
@@ -1682,32 +1682,32 @@ class Workspace: ObservableObject
             }
         }
         
-        //Place details
-        if self.avaliable_details_names.count < self.details.count //If there are placed details in workspace
+        //Place parts
+        if self.avaliable_parts_names.count < self.parts.count //If there are placed parts in workspace
         {
-            for detail in details
+            for part in parts
             {
-                if detail.is_placed
+                if part.is_placed
                 {
-                    detail_node = detail.node
-                    detail.enable_physics = true
-                    apply_bit_mask(node: detail_node ?? SCNNode(), Workspace.detail_bit_mask)
-                    detail_node?.name = detail.name
-                    details_node?.addChildNode(detail_node ?? SCNNode())
+                    part_node = part.node
+                    part.enable_physics = true
+                    apply_bit_mask(node: part_node ?? SCNNode(), Workspace.part_bit_mask)
+                    part_node?.name = part.name
+                    parts_node?.addChildNode(part_node ?? SCNNode())
                     
-                    //Set detail node position
+                    //Set part node position
                     #if os(macOS)
-                    detail_node?.position = SCNVector3(x: CGFloat(detail.location[1]), y: CGFloat(detail.location[2]), z: CGFloat(detail.location[0]))
+                    part_node?.position = SCNVector3(x: CGFloat(part.location[1]), y: CGFloat(part.location[2]), z: CGFloat(part.location[0]))
                     
-                    detail_node?.eulerAngles.x = CGFloat(detail.rotation[1].to_rad)
-                    detail_node?.eulerAngles.y = CGFloat(detail.rotation[2].to_rad)
-                    detail_node?.eulerAngles.z = CGFloat(detail.rotation[0].to_rad)
+                    part_node?.eulerAngles.x = CGFloat(part.rotation[1].to_rad)
+                    part_node?.eulerAngles.y = CGFloat(part.rotation[2].to_rad)
+                    part_node?.eulerAngles.z = CGFloat(part.rotation[0].to_rad)
                     #else
-                    detail_node?.position = SCNVector3(x: Float(detail.location[1]), y: Float(detail.location[2]), z: Float(detail.location[0]))
+                    part_node?.position = SCNVector3(x: Float(part.location[1]), y: Float(part.location[2]), z: Float(part.location[0]))
                     
-                    detail_node?.eulerAngles.x = detail.rotation[1].to_rad
-                    detail_node?.eulerAngles.y = detail.rotation[2].to_rad
-                    detail_node?.eulerAngles.z = detail.rotation[0].to_rad
+                    part_node?.eulerAngles.x = part.rotation[1].to_rad
+                    part_node?.eulerAngles.y = part.rotation[2].to_rad
+                    part_node?.eulerAngles.z = part.rotation[0].to_rad
                     #endif
                 }
             }
@@ -1718,7 +1718,7 @@ class Workspace: ObservableObject
 enum WorkspaceObjectType: String, Equatable, CaseIterable
 {
     case robot = "Robot"
-    case detail = "Detail"
+    case part = "Part"
     case tool = "Tool"
 }
 
@@ -1774,5 +1774,5 @@ struct WorkspacePreset: Codable
     var robots = [RobotStruct]()
     var elements = [workspace_program_element_struct]()
     var tools = [ToolStruct]()
-    var details = [DetailStruct]()
+    var parts = [PartStruct]()
 }

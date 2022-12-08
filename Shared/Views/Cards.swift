@@ -176,14 +176,14 @@ struct SmallCardView: View
                     }
                     /*.onTapGesture
                     {
-                        detail_view_presented = true
+                        part_view_presented = true
                     }
-                    .popover(isPresented: $detail_view_presented)
+                    .popover(isPresented: $part_view_presented)
                     {
-                        DetailView(document: $document, detail_item: $detail_item)
+                        PartView(document: $document, part_item: $part_item)
                             .onDisappear()
                         {
-                            detail_view_presented = false
+                            part_view_presented = false
                         }
                     }*/
                     

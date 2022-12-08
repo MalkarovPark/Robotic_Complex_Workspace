@@ -15,17 +15,17 @@ class AppState : ObservableObject
     //Bookmarks for the workspace objects model data
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
     @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
-    @AppStorage("DetailsBookmark") private var details_bookmark: Data?
+    @AppStorage("PartsBookmark") private var parts_bookmark: Data?
     
     //Saved names of property list files for workspace objects
     @AppStorage("RobotsPlistName") private var robots_plist_name: String?
     @AppStorage("ToolsPlistName") private var tools_plist_name: String?
-    @AppStorage("DetailsPlistName") private var details_plist_name: String?
+    @AppStorage("PartsPlistName") private var parts_plist_name: String?
     
     //If data folder selected
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
-    @AppStorage("DetailsEmpty") private var details_empty: Bool?
+    @AppStorage("PartsEmpty") private var parts_empty: Bool?
     
     @Published var reset_view = false //Flag for return camera position to default in scene views
     @Published var reset_view_enabled = true //Reset menu item availability flag
@@ -34,11 +34,11 @@ class AppState : ObservableObject
     @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
     #endif
     
-    public var previewed_object: WorkspaceObject? //Detail for preview view
-    public var preview_update_scene = false //Flag for update previewed detail node in scene
+    public var previewed_object: WorkspaceObject? //Part for preview view
+    public var preview_update_scene = false //Flag for update previewed part node in scene
     public var object_view_was_open = false //Flag for provide model controller for model in scene
     
-    @Published var view_update_state = false //Flag for update details view grid
+    @Published var view_update_state = false //Flag for update parts view grid
     @Published var add_selection = 0 //Selected item of object type for AddInWorkspace view
     
     @Published var manufacturer_name = "None" //Manufacturer's display string for menu
@@ -93,14 +93,14 @@ class AppState : ObservableObject
         }
     }
     
-    @Published var detail_name = "None" //Displayed model string for menu
+    @Published var part_name = "None" //Displayed model string for menu
     {
         didSet
         {
             if did_updated
             {
                 did_updated = false
-                update_detail_info()
+                update_part_info()
                 did_updated = true
             }
         }
@@ -133,15 +133,15 @@ class AppState : ObservableObject
     private var tools_data: Data //Data store from tools property list
     private var additive_tools_dictionary = [String: [String: Any]]() //Tools dictionary from plist file
     
-    //MARK: Details dictionaries
-    public var details_dictionary = [String: [String: Any]]()
-    public var detail_dictionary = [String: Any]()
+    //MARK: Parts dictionaries
+    public var parts_dictionary = [String: [String: Any]]()
+    public var part_dictionary = [String: Any]()
     
-    //Names of details models
-    public var details = [String]()
+    //Names of parts models
+    public var parts = [String]()
     
-    private var details_data: Data //Data store from details property list
-    private var additive_details_dictionary = [String: [String: Any]]() //Details dictionary from plist file
+    private var parts_data: Data //Data store from parts property list
+    private var additive_parts_dictionary = [String: [String: Any]]() //Parts dictionary from plist file
     
     //MARK: - Application state init function
     init()
@@ -154,7 +154,7 @@ class AppState : ObservableObject
         manufacturers = Array(robots_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of robots
         manufacturer_name = manufacturers.first ?? "None" //Set first array element as selected manufacturer name
         
-        //Get details data from internal propery list file
+        //Get tools data from internal propery list file
         tools_data = try! Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!)
         
         tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert tools data to dictionary
@@ -162,13 +162,13 @@ class AppState : ObservableObject
         tools = Array(tools_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of tools
         tool_name = tools.first ?? "None" //Set first array element as selected tool name
         
-        //Get tools data from internal propery list file
-        details_data = try! Data(contentsOf: Bundle.main.url(forResource: "DetailsInfo", withExtension: "plist")!)
+        //Get parts data from internal propery list file
+        parts_data = try! Data(contentsOf: Bundle.main.url(forResource: "PartsInfo", withExtension: "plist")!)
         
-        details_dictionary = try! PropertyListSerialization.propertyList(from: details_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert details data to dictionary
+        parts_dictionary = try! PropertyListSerialization.propertyList(from: parts_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert parts data to dictionary
         
-        details = Array(details_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of details
-        detail_name = details.first ?? "None" //Set first array element as selected detail name
+        parts = Array(parts_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of parts
+        part_name = parts.first ?? "None" //Set first array element as selected part name
     }
     
     //MARK: - Get additive robots data from external property list
@@ -194,7 +194,7 @@ class AppState : ObservableObject
         }
     }
     
-    @Published var selected_plist_names: (Robots: String, Tools: String, Details: String) = (Robots: "", Tools: "", Details: "") //Plist names for settings view
+    @Published var selected_plist_names: (Robots: String, Tools: String, Parts: String) = (Robots: "", Tools: "", Parts: "") //Plist names for settings view
     
     public func save_selected_plist_names(type: WorkspaceObjectType) //Save selected plist names to user defaults
     {
@@ -204,14 +204,14 @@ class AppState : ObservableObject
             robots_plist_name = selected_plist_names.Robots
         case .tool:
             tools_plist_name = selected_plist_names.Tools
-        case .detail:
-            details_plist_name = selected_plist_names.Details
+        case .part:
+            parts_plist_name = selected_plist_names.Parts
         }
     }
     
-    public var avaliable_plist_names: (Robots: [String], Tools: [String], Details: [String]) //Plist names from bookmarked folder for settings menus
+    public var avaliable_plist_names: (Robots: [String], Tools: [String], Parts: [String]) //Plist names from bookmarked folder for settings menus
     {
-        var plist_names = (Robots: [String](), Tools: [String](), Details: [String]())
+        var plist_names = (Robots: [String](), Tools: [String](), Parts: [String]())
         
         //Get robot plists names
         if !(robots_empty ?? true)
@@ -233,14 +233,14 @@ class AppState : ObservableObject
             plist_names.Tools = [String]()
         }
         
-        //Get details plists names
-        if !(details_empty ?? true)
+        //Get parts plists names
+        if !(parts_empty ?? true)
         {
-            plist_names.Details = get_plist_filenames(bookmark_data: details_bookmark)
+            plist_names.Parts = get_plist_filenames(bookmark_data: parts_bookmark)
         }
         else
         {
-            plist_names.Details = [String]()
+            plist_names.Parts = [String]()
         }
         
         func get_plist_filenames(bookmark_data: Data?) -> [String] //Return array of property list files names
@@ -251,7 +251,7 @@ class AppState : ObservableObject
             {
                 var is_stale = false
                 
-                for plist_url in directory_contents(url: try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale))
+                for plist_url in directory_contents(url: try URL(resolvingBookmarkData: parts_bookmark ?? Data(), bookmarkDataIsStale: &is_stale))
                 {
                     names.append(plist_url.lastPathComponent) //Append file name
                 }
@@ -290,8 +290,8 @@ class AppState : ObservableObject
             selected_plist_names.Robots = robots_plist_name ?? ""
         case .tool:
             selected_plist_names.Tools = tools_plist_name ?? ""
-        case .detail:
-            selected_plist_names.Details = details_plist_name ?? ""
+        case .part:
+            selected_plist_names.Parts = parts_plist_name ?? ""
         }
     }
     
@@ -309,7 +309,7 @@ class AppState : ObservableObject
                 {
                     //URL access by bookmark
                     var is_stale = false
-                    let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                    let url = try URL(resolvingBookmarkData: robots_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
                     
                     guard !is_stale else
                     {
@@ -344,7 +344,7 @@ class AppState : ObservableObject
                 do
                 {
                     var is_stale = false
-                    let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                    let url = try URL(resolvingBookmarkData: tools_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
                     
                     guard !is_stale else
                     {
@@ -369,30 +369,30 @@ class AppState : ObservableObject
                 }
             }
             update_tool_info()
-        case .detail:
-            //MARK: Details data
-            if !(details_empty ?? true)
+        case .part:
+            //MARK: Parts data
+            if !(parts_empty ?? true)
             {
                 do
                 {
                     var is_stale = false
-                    let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                    let url = try URL(resolvingBookmarkData: parts_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
                     
                     guard !is_stale else
                     {
                         return
                     }
                     
-                    let plist_url = URL(string: url.absoluteString + selected_plist_names.Details + ".plist")
+                    let plist_url = URL(string: url.absoluteString + selected_plist_names.Parts + ".plist")
                     let additive_data = try Data(contentsOf: plist_url!)
                     
-                    additive_details_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
-                    new_objects = Array(additive_details_dictionary.keys).sorted(by: <)
-                    details.append(contentsOf: new_objects)
+                    additive_parts_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
+                    new_objects = Array(additive_parts_dictionary.keys).sorted(by: <)
+                    parts.append(contentsOf: new_objects)
                     
                     for i in 0..<new_objects.count
                     {
-                        details_dictionary.updateValue(additive_details_dictionary[new_objects[i]]!, forKey: new_objects[i])
+                        parts_dictionary.updateValue(additive_parts_dictionary[new_objects[i]]!, forKey: new_objects[i])
                     }
                 }
                 catch
@@ -400,7 +400,7 @@ class AppState : ObservableObject
                     print(error.localizedDescription)
                 }
             }
-            update_detail_info()
+            update_part_info()
         }
         
         did_updated = true
@@ -416,9 +416,9 @@ class AppState : ObservableObject
         case .tool:
             clear_additive_data(type: type)
             tools_empty = false
-        case .detail:
+        case .part:
             clear_additive_data(type: type)
-            details_empty = false
+            parts_empty = false
         }
         
         get_additive_data(type: type)
@@ -438,11 +438,11 @@ class AppState : ObservableObject
             tools = Array(tools_dictionary.keys).sorted(by: <)
             tool_name = tools.first ?? "None"
             tools_empty = true
-        case .detail:
-            details_dictionary = try! PropertyListSerialization.propertyList(from: details_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
-            details = Array(details_dictionary.keys).sorted(by: <)
-            detail_name = details.first ?? "None"
-            details_empty = true
+        case .part:
+            parts_dictionary = try! PropertyListSerialization.propertyList(from: parts_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
+            parts = Array(parts_dictionary.keys).sorted(by: <)
+            part_name = parts.first ?? "None"
+            parts_empty = true
         }
     }
     
@@ -478,14 +478,14 @@ class AppState : ObservableObject
         //Get tool model by selected item for preview
         if tools_empty ?? true
         {
-            previewed_object = Detail(name: "None")
+            previewed_object = Tool(name: "None")
         }
         else
         {
             do
             {
                 var is_stale = false
-                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                let url = try URL(resolvingBookmarkData: tools_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
                 
                 guard !is_stale else
                 {
@@ -502,29 +502,29 @@ class AppState : ObservableObject
         preview_update_scene = true
     }
     
-    //MARK: Get details
-    public func update_detail_info()
+    //MARK: Get parts
+    public func update_part_info()
     {
-        detail_dictionary = details_dictionary[detail_name]!
+        part_dictionary = parts_dictionary[part_name]!
         
-        //Get detail model by selected item for preview
-        if details_empty ?? true
+        //Get part model by selected item for preview
+        if parts_empty ?? true
         {
-            previewed_object = Detail(name: "None")
+            previewed_object = Part(name: "None")
         }
         else
         {
             do
             {
                 var is_stale = false
-                let url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                let url = try URL(resolvingBookmarkData: parts_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
                 
                 guard !is_stale else
                 {
                     return
                 }
                 
-                previewed_object = Detail(name: "None", dictionary: detail_dictionary)
+                previewed_object = Part(name: "None", dictionary: part_dictionary)
             }
             catch
             {
@@ -535,14 +535,14 @@ class AppState : ObservableObject
     }
     
     //MARK: - Info for settings view
-    public var property_files_info: (Brands: String, Series: String, Models: String, Tools: String, Details: String) //Count of models by object type
+    public var property_files_info: (Brands: String, Series: String, Models: String, Tools: String, Parts: String) //Count of models by object type
     {
         var brands = 0
         var series = 0
         var models = 0
         
         var tools = 0
-        var details = 0
+        var parts = 0
         
         if !(robots_empty ?? true)
         {
@@ -563,17 +563,17 @@ class AppState : ObservableObject
             tools = additive_tools_dictionary.keys.count
         }
         
-        if !(details_empty ?? true)
+        if !(parts_empty ?? true)
         {
-            details = additive_details_dictionary.keys.count
+            parts = additive_parts_dictionary.keys.count
         }
         
-        return (Brands: String(brands), Series: String(series), Models: String(models), Tools: String(tools), Details: String(details))
+        return (Brands: String(brands), Series: String(series), Models: String(models), Tools: String(tools), Parts: String(parts))
     }
     
-    public var selected_folder: (Robots: String, Tools: String, Details: String) //Selected folder name for object data
+    public var selected_folder: (Robots: String, Tools: String, Parts: String) //Selected folder name for object data
     {
-        var folder_names = (Robots: String(), Tools: String(), Details: String())
+        var folder_names = (Robots: String(), Tools: String(), Parts: String())
         var url: URL
         
         if !(robots_empty ?? true)
@@ -612,13 +612,13 @@ class AppState : ObservableObject
             folder_names.Tools = "None"
         }
         
-        if !(details_empty ?? true)
+        if !(parts_empty ?? true)
         {
             do
             {
                 var is_stale = false
-                url = try URL(resolvingBookmarkData: details_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                folder_names.Details = url.lastPathComponent
+                url = try URL(resolvingBookmarkData: parts_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+                folder_names.Parts = url.lastPathComponent
             }
             catch
             {
@@ -627,7 +627,7 @@ class AppState : ObservableObject
         }
         else
         {
-            folder_names.Details = "None"
+            folder_names.Parts = "None"
         }
         
         return folder_names

@@ -487,7 +487,7 @@ class Robot: WorkspaceObject
         self.pointer_node_internal = self.pointer_node?.childNode(withName: "internal", recursively: true)
         self.points_node = self.box_node?.childNode(withName: "points", recursively: true)
         
-        //Connect robot details
+        //Connect robot parts
         self.tool_node = node?.childNode(withName: "tool", recursively: true)
         self.unit_node?.addChildNode(node ?? SCNNode())
         model_controller.nodes_disconnect()
@@ -507,7 +507,7 @@ class Robot: WorkspaceObject
         //Place and scale cell box
         robot_location_place()
         update_space_scale() //Set space scale by connected robot parameters
-        update_position() //Update robot details position on robot connection
+        update_position() //Update robot parts position on robot connection
     }
     
     public func update_position()
@@ -534,7 +534,7 @@ class Robot: WorkspaceObject
         #endif
     }
     
-    public func update_robot() //Manipulator details update
+    public func update_robot() //Manipulator parts update
     {
         model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
         update_statistics_data()

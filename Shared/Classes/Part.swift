@@ -1,5 +1,5 @@
 //
-//  Detail.swift
+//  Part.swift
 //  Robotic Complex Workspace
 //
 //  Created by Malkarov Park on 28.08.2022.
@@ -9,17 +9,17 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class Detail: WorkspaceObject
+class Part: WorkspaceObject
 {
-    private var figure: String? //Detail figure name
-    private var lengths: [Float]? //lengths for detail without scene figure
-    private var figure_color: [Int]? //Color for detail without scene figure
-    private var material_name: String? //Material for detail without scene figure
+    private var figure: String? //Part figure name
+    private var lengths: [Float]? //lengths for part without scene figure
+    private var figure_color: [Int]? //Color for part without scene figure
+    private var material_name: String? //Material for part without scene figure
     
-    ///Possibility of picking up detail.
+    ///Possibility of picking up part.
     public var gripable: Bool?
     
-    ///Physics body for detail model node by physics type.
+    ///Physics body for part model node by physics type.
     public var physics: SCNPhysicsBody?
     {
         switch physics_type
@@ -36,13 +36,13 @@ class Detail: WorkspaceObject
     }
     
     /**
-     Physics type of detail.
+     Physics type of part.
      
      > This variable is codable.
      */
     public var physics_type: PhysicsType = .ph_none //Physic body type
     
-    ///The state of physics calculation for detail node.
+    ///The state of physics calculation for part node.
     public var enable_physics = false
     {
         didSet
@@ -58,13 +58,13 @@ class Detail: WorkspaceObject
         }
     }
     
-    //MARK: - Detail init functions
+    //MARK: - Part init functions
     override init(name: String)
     {
         super.init(name: name)
     }
     
-    init(name: String, dictionary: [String: Any]) //Init detail by dictionary and use models folder
+    init(name: String, dictionary: [String: Any]) //Init part by dictionary and use models folder
     {
         super.init()
         init_by_dictionary(name: name, dictionary: dictionary)
@@ -137,38 +137,38 @@ class Detail: WorkspaceObject
         }
     }
     
-    init(detail_struct: DetailStruct) //Init by detail structure
+    init(part_struct: PartStruct) //Init by part structure
     {
         super.init()
-        init_by_struct(detail_struct: detail_struct)
+        init_by_struct(part_struct: part_struct)
     }
     
-    private func init_by_struct(detail_struct: DetailStruct)
+    private func init_by_struct(part_struct: PartStruct)
     {
-        self.name = detail_struct.name
+        self.name = part_struct.name
         
-        self.figure = detail_struct.figure
-        self.lengths = detail_struct.lengths
+        self.figure = part_struct.figure
+        self.lengths = part_struct.lengths
         
-        self.figure_color = detail_struct.figure_color
-        self.material_name = detail_struct.material_name
-        self.physics_type = detail_struct.physics_type
+        self.figure_color = part_struct.figure_color
+        self.material_name = part_struct.material_name
+        self.physics_type = part_struct.physics_type
         
-        self.gripable = detail_struct.gripable
+        self.gripable = part_struct.gripable
         
-        self.is_placed = detail_struct.is_placed
-        self.location = detail_struct.location
-        self.rotation = detail_struct.rotation
+        self.is_placed = part_struct.is_placed
+        self.location = part_struct.location
+        self.rotation = part_struct.rotation
         
-        self.scene_address = detail_struct.scene
+        self.scene_address = part_struct.scene
         
-        self.image_data = detail_struct.image_data
+        self.image_data = part_struct.image_data
         
         get_node_from_scene()
     }
     
     //MARK: - Visual build functions
-    override var scene_node_name: String { "detail" }
+    override var scene_node_name: String { "part" }
     
     override func node_by_description()
     {
@@ -300,7 +300,7 @@ class Detail: WorkspaceObject
         node?.name = "Figure"
     }
     
-    //MARK: Detail in workspace handling
+    //MARK: Part in workspace handling
     public func model_position_reset()
     {
         node?.position = SCNVector3(0, 0, 0)
@@ -310,7 +310,7 @@ class Detail: WorkspaceObject
     }
     
     //MARK: - UI functions
-    ///Detail model color.
+    ///Part model color.
     public var color: Color
     {
         get
@@ -342,20 +342,20 @@ class Detail: WorkspaceObject
     #if os(macOS)
     override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
-        return("\(self.name ?? "Detail")", "Subtitle", self.color, self.image)
+        return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
     }
     #else
     override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
-        return("\(self.name ?? "Detail")", "Subtitle", self.color, self.image)
+        return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
     }
     #endif
     
     //MARK: - Work with file system
-    ///Codable file structure of detail.
-    public var file_info: DetailStruct
+    ///Codable file structure of part.
+    public var file_info: PartStruct
     {
-        return DetailStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
+        return PartStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
     }
 }
 
@@ -367,8 +367,8 @@ enum PhysicsType: String, Codable, Equatable, CaseIterable
     case ph_none = "None"
 }
 
-//MARK: - Detail structure for workspace preset document handling
-struct DetailStruct: Codable
+//MARK: - Part structure for workspace preset document handling
+struct PartStruct: Codable
 {
     var name: String
     

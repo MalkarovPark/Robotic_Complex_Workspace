@@ -325,7 +325,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     
     func makeNSView(context: Context) -> SCNView
     {
-        //Connect scene to class and add placed robots and details in workspace
+        //Connect scene to class and add placed robots and parts in workspace
         base_workspace.connect_scene(viewed_scene)
         
         //Add gesture recognizer
@@ -438,7 +438,7 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     func makeUIView(context: Context) -> SCNView
     {
-        //Connect scene to class and add placed robots and details in workspace
+        //Connect scene to class and add placed robots and parts in workspace
         base_workspace.connect_scene(viewed_scene)
         
         //Add gesture recognizer
@@ -537,7 +537,7 @@ struct AddInWorkspaceView: View
 {
     @State var selected_robot_name = String()
     @State var selected_tool_name = String()
-    @State var selected_detail_name = String()
+    @State var selected_part_name = String()
     
     @State var tool_attached = false
     @State var attach_robot_name = String()
@@ -553,7 +553,7 @@ struct AddInWorkspaceView: View
     #endif
     
     @State var first_select = true //This flag that specifies that the robot was not selected and disables the dismiss() function
-    private let add_items: [String] = ["Add Robot", "Add Tool", "Add Detail"]
+    private let add_items: [String] = ["Add Robot", "Add Tool", "Add Part"]
     
     var body: some View
     {
@@ -595,7 +595,7 @@ struct AddInWorkspaceView: View
                     }
                     .toggleStyle(.button)
                 case 2:
-                    ObjectPickerView(selected_object_name: $selected_detail_name, avaliable_objects_names: .constant(base_workspace.avaliable_details_names), workspace_object_type: .constant(.detail))
+                    ObjectPickerView(selected_object_name: $selected_part_name, avaliable_objects_names: .constant(base_workspace.avaliable_parts_names), workspace_object_type: .constant(.part))
                 default:
                     Text("None")
                 }
@@ -677,14 +677,14 @@ struct AddInWorkspaceView: View
             case 2:
                 HStack(spacing: 16)
                 {
-                    PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
+                    PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
                 }
                 .padding([.horizontal, .top])
-                .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
+                .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
                 { _ in
                     base_workspace.update_object_position()
                 }
-                .disabled(base_workspace.avaliable_details_names.count == 0)
+                .disabled(base_workspace.avaliable_parts_names.count == 0)
             default:
                 Text("None")
             }
@@ -757,14 +757,14 @@ struct AddInWorkspaceView: View
                 .disabled(base_workspace.avaliable_tools_names.count == 0)
             case 2:
                 DynamicStack(content: {
-                    PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
+                    PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
                 }, is_compact: $is_compact, spacing: 12)
                 .padding([.horizontal, .top])
-                .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
+                .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
                 { _ in
                     base_workspace.update_object_position()
                 }
-                .disabled(base_workspace.avaliable_details_names.count == 0)
+                .disabled(base_workspace.avaliable_parts_names.count == 0)
             default:
                 Text("None")
             }
@@ -828,8 +828,8 @@ struct AddInWorkspaceView: View
             document.preset.robots = base_workspace.file_data().robots
         case .tool:
             document.preset.tools = base_workspace.file_data().tools
-        case.detail:
-            document.preset.details = base_workspace.file_data().details
+        case.part:
+            document.preset.parts = base_workspace.file_data().parts
         default:
             break
         }
@@ -936,8 +936,8 @@ struct InfoView: View
                         document.preset.tools = base_workspace.file_data().tools
                     }
                 }
-            case .detail:
-                Text("\(base_workspace.selected_detail.name ?? "None")")
+            case .part:
+                Text("\(base_workspace.selected_part.name ?? "None")")
                     .font(.title3)
                     .padding([.horizontal, .top])
             default:
@@ -1022,12 +1022,12 @@ struct InfoView: View
                             }
                         }
                     }
-                case .detail:
-                    PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
-                        .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
+                case .part:
+                    PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
+                        .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
                         { _ in
                             base_workspace.update_object_position()
-                            document.preset.details = base_workspace.file_data().details
+                            document.preset.parts = base_workspace.file_data().parts
                         }
                 default:
                     Text("None")
@@ -1110,12 +1110,12 @@ struct InfoView: View
                             }
                         }
                     }
-                case .detail:
-                    PositionView(location: $base_workspace.selected_detail.location, rotation: $base_workspace.selected_detail.rotation)
-                        .onChange(of: [base_workspace.selected_detail.location, base_workspace.selected_detail.rotation])
+                case .part:
+                    PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
+                        .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
                         { _ in
                             base_workspace.update_object_position()
-                            document.preset.details = base_workspace.file_data().details
+                            document.preset.parts = base_workspace.file_data().parts
                         }
                 default:
                     Text("None")
@@ -1183,8 +1183,8 @@ struct InfoView: View
                 base_workspace.selected_tool.is_attached = false
             }
             document.preset.tools = base_workspace.file_data().tools
-        case.detail:
-            document.preset.details = base_workspace.file_data().details
+        case.part:
+            document.preset.parts = base_workspace.file_data().parts
         default:
             break
         }

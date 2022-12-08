@@ -2,14 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Scene Detail</key>
+	<key>Scene Part</key>
 	<dict>
 		<key>Scene</key>
-		<string>TestDetail.scn</string>
+		<string>TestPart.scn</string>
 		<key>Gripable</key>
 		<false/>
 	</dict>
-	<key>Figure Detail</key>
+	<key>Figure Part</key>
 	<dict>
 		<key>Figure</key>
 		<string>box</string>
@@ -32,7 +32,7 @@
 		<key>Gripable</key>
 		<false/>
 	</dict>
-	<key>Figure Detail And Scene</key>
+	<key>Figure Part And Scene</key>
 	<dict>
 		<key>Scene</key>
 		<string>None</string>

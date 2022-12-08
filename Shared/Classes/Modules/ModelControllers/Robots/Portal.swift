@@ -32,7 +32,7 @@ class PortalController: RobotModelController
             lengths.append(Float(-node.childNode(withName: "limit2_max", recursively: true)!.position.y)) //Limit for Z [7]
         }
         
-        //Connect to detail nodes from robot scene
+        //Connect to part nodes from robot scene
         nodes.append(node.childNode(withName: "frame", recursively: true)!) //Base position
         for i in 0...2
         {
@@ -45,7 +45,7 @@ class PortalController: RobotModelController
         }
     }
     
-    //MARK: - Inverse kinematic details calculation for roataion angles of portal
+    //MARK: - Inverse kinematic parts calculation for roataion angles of portal
     override func inverse_kinematic_calculate(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
     {
         var px, py, pz: Float
@@ -54,7 +54,7 @@ class PortalController: RobotModelController
         py = pointer_location[1] + origin_location[1] - lengths[2]
         pz = pointer_location[2] + origin_location[2] - lengths[0] + lengths[3] + lengths[4]
         
-        //Checking X detail limit
+        //Checking X part limit
         if px < 0
         {
             px = 0
@@ -67,7 +67,7 @@ class PortalController: RobotModelController
             }
         }
         
-        //Checking Y detail limit
+        //Checking Y part limit
         if py < 0
         {
             py = 0
@@ -80,7 +80,7 @@ class PortalController: RobotModelController
             }
         }
         
-        //Checking Z detail limit
+        //Checking Z part limit
         if pz > 0
         {
             pz = 0
@@ -124,7 +124,7 @@ class PortalController: RobotModelController
         var modified_node = SCNNode()
         var saved_material = SCNMaterial()
         
-        modified_node = node.childNode(withName: "detail_v", recursively: true)!
+        modified_node = node.childNode(withName: "part_v", recursively: true)!
         if lengths[0] - 40 > 0
         {
             saved_material = (modified_node.geometry?.firstMaterial)!
@@ -155,7 +155,7 @@ class PortalController: RobotModelController
         frame_element_length = CGFloat(lengths[5] - lengths[1] + 160) //Calculate frame X length
         #endif
         
-        modified_node = node.childNode(withName: "detail_x", recursively: true)!
+        modified_node = node.childNode(withName: "part_x", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNBox(width: 60, height: 60, length: frame_element_length, chamferRadius: 10) //Update frame X geometry
         modified_node.geometry?.firstMaterial = saved_material
@@ -176,7 +176,7 @@ class PortalController: RobotModelController
         frame_element_length = CGFloat(lengths[6] - lengths[2] + 160) //Calculate frame Y length
         #endif
         
-        modified_node = node.childNode(withName: "detail_y", recursively: true)!
+        modified_node = node.childNode(withName: "part_y", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNBox(width: 60, height: 60, length: frame_element_length, chamferRadius: 10) //Update frame Y geometry
         modified_node.geometry?.firstMaterial = saved_material
@@ -197,7 +197,7 @@ class PortalController: RobotModelController
         frame_element_length = CGFloat(lengths[7])
         #endif
         
-        modified_node = node.childNode(withName: "detail_z", recursively: true)!
+        modified_node = node.childNode(withName: "part_z", recursively: true)!
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNBox(width: 60, height: frame_element_length, length: 60, chamferRadius: 10) //Update frame Z geometry
         modified_node.geometry?.firstMaterial = saved_material

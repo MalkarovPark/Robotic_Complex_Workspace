@@ -379,7 +379,7 @@ class Tool: WorkspaceObject
     
     public var update_model_by_connector = false //Update model by model controller
     
-    private var tool_details = [SCNNode]()
+    private var tool_parts = [SCNNode]()
     private var lengths = [Float]()
     
     override func node_by_description()
@@ -397,7 +397,7 @@ class Tool: WorkspaceObject
         node?.name = "Tool"
     }
     
-    public func workcell_connect(scene: SCNScene, name: String) //Connect tool details from scene
+    public func workcell_connect(scene: SCNScene, name: String) //Connect tool parts from scene
     {
         //let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         var unit_node = SCNNode()
@@ -424,7 +424,7 @@ class Tool: WorkspaceObject
         model_controller.info_code = self.info_code
     }
     
-    public func workcell_disconnect() //Disconnect tool model details
+    public func workcell_disconnect() //Disconnect tool model parts
     {
         model_controller.remove_all_model_actions()
         model_controller.nodes_disconnect()

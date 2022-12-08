@@ -24,7 +24,7 @@ class ModelController
     public var lengths = [Float]()
     
     /**
-     Gets details nodes links from model root node and pass to array.
+     Gets parts nodes links from model root node and pass to array.
      
      - Parameters:
         - node: A root node of workspace object model.

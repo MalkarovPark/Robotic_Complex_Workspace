@@ -9,7 +9,7 @@ import SwiftUI
 
 enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 {
-    case WorkspaceView, RobotsView, ToolsView, DetailsView //Sidebar items
+    case WorkspaceView, RobotsView, ToolsView, PartsView //Sidebar items
     
     var id: Int { rawValue }
     var localizedName: LocalizedStringKey //Names of sidebar items
@@ -22,8 +22,8 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
             return "Robots"
         case .ToolsView:
             return "Tools"
-        case .DetailsView:
-            return "Details"
+        case .PartsView:
+            return "Parts"
         }
     }
     
@@ -37,7 +37,7 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
             return "r.square"
         case .ToolsView:
             return "hammer"
-        case .DetailsView:
+        case .PartsView:
             return "shippingbox"
         }
     }
@@ -100,9 +100,9 @@ struct SidebarContent: View
                     case "Tools":
                         Label(selection.localizedName, systemImage: selection.image_name)
                             .badge(document.preset.tools.count)
-                    case "Details":
+                    case "Parts":
                         Label(selection.localizedName, systemImage: selection.image_name)
-                            .badge(document.preset.details.count)
+                            .badge(document.preset.parts.count)
                     default:
                         Label(selection.localizedName, systemImage: selection.image_name)
                     }
@@ -158,8 +158,8 @@ struct SidebarContent: View
                     RobotsView(document: $document)
                 case .ToolsView:
                     ToolsView(document: $document)
-                case .DetailsView:
-                    DetailsView(document: $document)
+                case .PartsView:
+                    PartsView(document: $document)
                 default:
                     VStack
                     {

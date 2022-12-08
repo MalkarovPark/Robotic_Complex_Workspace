@@ -1,5 +1,5 @@
 //
-//  DetailsView.swift
+//  PartsView.swift
 //  Robotic Complex Workspace
 //
 //  Created by Malkarov Park on 28.08.2022.
@@ -9,13 +9,13 @@ import SwiftUI
 import SceneKit
 import UniformTypeIdentifiers
 
-struct DetailsView: View
+struct PartsView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State private var add_detail_view_presented = false
-    @State private var detail_view_presented = false
-    @State private var dragged_detail: Detail?
+    @State private var add_part_view_presented = false
+    @State private var part_view_presented = false
+    @State private var dragged_part: Part?
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -26,23 +26,23 @@ struct DetailsView: View
     {
         VStack
         {
-            if base_workspace.details.count > 0
+            if base_workspace.parts.count > 0
             {
-                //MARK: Scroll view for details
+                //MARK: Scroll view for parts
                 ScrollView(.vertical, showsIndicators: true)
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
-                        ForEach(base_workspace.details)
-                        { detail_item in
-                            DetailCardView(document: $document, detail_item: detail_item)
+                        ForEach(base_workspace.parts)
+                        { part_item in
+                            PartCardView(document: $document, part_item: part_item)
                             .onDrag({
-                                self.dragged_detail = detail_item
-                                return NSItemProvider(object: detail_item.id.uuidString as NSItemProviderWriting)
+                                self.dragged_part = part_item
+                                return NSItemProvider(object: part_item.id.uuidString as NSItemProviderWriting)
                             }, preview: {
-                                SmallCardViewPreview(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
+                                SmallCardViewPreview(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
                             })
-                            .onDrop(of: [UTType.text], delegate: DetailDropDelegate(details: $base_workspace.details, dragged_detail: $dragged_detail, document: $document, workspace_details: base_workspace.file_data().details, detail: detail_item))
+                            .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, document: $document, workspace_parts: base_workspace.file_data().parts, part: part_item))
                             .transition(AnyTransition.scale)
                         }
                     }
@@ -52,7 +52,7 @@ struct DetailsView: View
             }
             else
             {
-                Text("Press «+» to add new detail")
+                Text("Press «+» to add new part")
                     .font(.largeTitle)
                     .foregroundColor(quaternary_label_color)
                     .padding(16)
@@ -74,111 +74,111 @@ struct DetailsView: View
             {
                 HStack(alignment: .center)
                 {
-                    Button (action: { add_detail_view_presented.toggle() })
+                    Button (action: { add_part_view_presented.toggle() })
                     {
-                        Label("Add Detail", systemImage: "plus")
+                        Label("Add Part", systemImage: "plus")
                     }
-                    .sheet(isPresented: $add_detail_view_presented)
+                    .sheet(isPresented: $add_part_view_presented)
                     {
-                        AddDetailView(add_detail_view_presented: $add_detail_view_presented, document: $document)
+                        AddPartView(add_part_view_presented: $add_part_view_presented, document: $document)
                     }
                 }
             }
         }
     }
     
-    //MARK: Details manage functions
-    func remove_details(at offsets: IndexSet)
+    //MARK: Parts manage functions
+    func remove_parts(at offsets: IndexSet)
     {
         withAnimation
         {
-            base_workspace.details.remove(atOffsets: offsets)
-            document.preset.details = base_workspace.file_data().details
+            base_workspace.parts.remove(atOffsets: offsets)
+            document.preset.parts = base_workspace.file_data().parts
         }
     }
 }
 
-//MARK: - Details card view
-struct DetailCardView: View
+//MARK: - Parts card view
+struct PartCardView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var detail_item: Detail
-    @State private var detail_view_presented = false
+    @State var part_item: Part
+    @State private var part_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     
     var body: some View
     {
-        SmallCardView(color: detail_item.card_info.color, image: detail_item.card_info.image, title: detail_item.card_info.title)
-            .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: detail_item, objects: base_workspace.details, on_delete: remove_details, object_type_name: "detail"))
+        SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
+            .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: part_item, objects: base_workspace.parts, on_delete: remove_parts, object_type_name: "part"))
             .onTapGesture
             {
-                detail_view_presented = true
+                part_view_presented = true
             }
-            .sheet(isPresented: $detail_view_presented)
+            .sheet(isPresented: $part_view_presented)
             {
-                DetailView(detail_view_presented: $detail_view_presented, document: $document, detail_item: $detail_item)
+                PartView(part_view_presented: $part_view_presented, document: $document, part_item: $part_item)
                     .onDisappear()
                 {
-                    detail_view_presented = false
+                    part_view_presented = false
                 }
             }
     }
     
-    func remove_details(at offsets: IndexSet)
+    func remove_parts(at offsets: IndexSet)
     {
         withAnimation
         {
-            base_workspace.details.remove(atOffsets: offsets)
-            document.preset.details = base_workspace.file_data().details
+            base_workspace.parts.remove(atOffsets: offsets)
+            document.preset.parts = base_workspace.file_data().parts
         }
     }
 }
 
 //MARK: - Drag and Drop delegate
-struct DetailDropDelegate : DropDelegate
+struct PartDropDelegate : DropDelegate
 {
-    @Binding var details : [Detail]
-    @Binding var dragged_detail : Detail?
+    @Binding var parts : [Part]
+    @Binding var dragged_part : Part?
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var workspace_details: [DetailStruct]
+    @State var workspace_parts: [PartStruct]
     
-    let detail: Detail
+    let part: Part
     
     func performDrop(info: DropInfo) -> Bool
     {
-        document.preset.details = workspace_details //Update file after elements reordering
+        document.preset.parts = workspace_parts //Update file after elements reordering
         return true
     }
     
     func dropEntered(info: DropInfo)
     {
-        guard let dragged_detail = self.dragged_detail else
+        guard let dragged_part = self.dragged_part else
         {
             return
         }
         
-        if dragged_detail != detail
+        if dragged_part != part
         {
-            let from = details.firstIndex(of: dragged_detail)!
-            let to = details.firstIndex(of: detail)!
+            let from = parts.firstIndex(of: dragged_part)!
+            let to = parts.firstIndex(of: part)!
             withAnimation(.default)
             {
-                self.details.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+                self.parts.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
             }
         }
     }
 }
 
-//MARK: - Add detail view
-struct AddDetailView: View
+//MARK: - Add part view
+struct AddPartView: View
 {
-    @Binding var add_detail_view_presented: Bool
+    @Binding var add_part_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State private var new_detail_name = ""
+    @State private var new_part_name = ""
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -188,10 +188,10 @@ struct AddDetailView: View
         VStack(spacing: 0)
         {
             #if os(macOS)
-            DetailSceneView_macOS()
+            PartSceneView_macOS()
                 .overlay(alignment: .top)
                 {
-                    Text("Add Detail")
+                    Text("Add Part")
                         .font(.title2)
                         .padding(8.0)
                         .background(.bar)
@@ -199,10 +199,10 @@ struct AddDetailView: View
                         .padding([.top, .leading, .trailing])
                 }
             #else
-            DetailSceneView_iOS()
+            PartSceneView_iOS()
                 .overlay(alignment: .top)
                 {
-                    Text("Add Detail")
+                    Text("Add Part")
                         .font(.title2)
                         .padding(8.0)
                         .background(.bar)
@@ -218,7 +218,7 @@ struct AddDetailView: View
             {
                 Text("Name")
                     .bold()
-                TextField("None", text: $new_detail_name)
+                TextField("None", text: $new_part_name)
                 #if os(iOS)
                     .textFieldStyle(.roundedBorder)
                 #endif
@@ -231,10 +231,10 @@ struct AddDetailView: View
                 #if os(iOS)
                 Spacer()
                 #endif
-                Picker(selection: $app_state.detail_name, label: Text("Model")
+                Picker(selection: $app_state.part_name, label: Text("Model")
                         .bold())
                 {
-                    ForEach(app_state.details, id: \.self)
+                    ForEach(app_state.parts, id: \.self)
                     {
                         Text($0)
                     }
@@ -244,12 +244,12 @@ struct AddDetailView: View
                 .padding(.vertical, 8.0)
                 .padding(.leading)
                 
-                Button("Cancel", action: { add_detail_view_presented.toggle() })
+                Button("Cancel", action: { add_part_view_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
                     .buttonStyle(.bordered)
                     .padding([.top, .leading, .bottom])
                 
-                Button("Save", action: add_detail_in_workspace)
+                Button("Save", action: add_part_in_workspace)
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
                     .padding()
@@ -261,34 +261,34 @@ struct AddDetailView: View
         #endif
         .onAppear()
         {
-            app_state.update_detail_info()
+            app_state.update_part_info()
         }
     }
     
-    func add_detail_in_workspace()
+    func add_part_in_workspace()
     {
-        if new_detail_name == ""
+        if new_part_name == ""
         {
-            new_detail_name = "None"
+            new_part_name = "None"
         }
         
         app_state.get_scene_image = true
-        app_state.previewed_object?.name = new_detail_name
-        base_workspace.add_detail(app_state.previewed_object! as! Detail)
-        document.preset.details = base_workspace.file_data().details
+        app_state.previewed_object?.name = new_part_name
+        base_workspace.add_part(app_state.previewed_object! as! Part)
+        document.preset.parts = base_workspace.file_data().parts
         
-        add_detail_view_presented.toggle()
+        add_part_view_presented.toggle()
     }
 }
 
-//MARK: - Detail view
-struct DetailView: View
+//MARK: - Part view
+struct PartView: View
 {
-    @Binding var detail_view_presented: Bool
+    @Binding var part_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    @Binding var detail_item: Detail
+    @Binding var part_item: Part
     
-    //@State private var new_detail_name = ""
+    //@State private var new_part_name = ""
     @State var new_physics: PhysicsType = .ph_none
     @State var new_gripable = false
     @State var new_color: Color = .accentColor
@@ -304,10 +304,10 @@ struct DetailView: View
         VStack(spacing: 0)
         {
             #if os(macOS)
-            DetailSceneView_macOS()
+            PartSceneView_macOS()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             #else
-            DetailSceneView_iOS()
+            PartSceneView_iOS()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             #endif
             
@@ -358,7 +358,7 @@ struct DetailView: View
         }
         .overlay(alignment: .topLeading)
         {
-            Button(action: { detail_view_presented.toggle() })
+            Button(action: { part_view_presented.toggle() })
             {
                 Label("Close", systemImage: "xmark")
                     .labelStyle(.iconOnly)
@@ -373,17 +373,17 @@ struct DetailView: View
         #endif
         .onAppear()
         {
-            app_state.previewed_object = detail_item
+            app_state.previewed_object = part_item
             app_state.preview_update_scene = true
             
             app_state.reset_previewed_node_position()
             
-            let previewed_detail = app_state.previewed_object as? Detail
-            previewed_detail?.enable_physics = false
+            let previewed_part = app_state.previewed_object as? Part
+            previewed_part?.enable_physics = false
             
-            new_physics = detail_item.physics_type
-            new_gripable = detail_item.gripable ?? false
-            new_color = detail_item.color
+            new_physics = part_item.physics_type
+            new_gripable = part_item.gripable ?? false
+            new_color = part_item.color
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
             {
@@ -404,15 +404,15 @@ struct DetailView: View
         if ready_for_save
         {
             app_state.get_scene_image = true
-            detail_item.physics_type = new_physics
-            detail_item.gripable = new_gripable
-            detail_item.color = new_color
+            part_item.physics_type = new_physics
+            part_item.gripable = new_gripable
+            part_item.color = new_color
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
-                document.preset.details = base_workspace.file_data().details
+                document.preset.parts = base_workspace.file_data().parts
             }
-            //document.preset.details = base_workspace.file_data().details
+            //document.preset.parts = base_workspace.file_data().parts
             is_document_updated = true
         }
     }
@@ -420,7 +420,7 @@ struct DetailView: View
 
 //MARK: - Scene views
 #if os(macOS)
-struct DetailSceneView_macOS: NSViewRepresentable
+struct PartSceneView_macOS: NSViewRepresentable
 {
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -474,9 +474,9 @@ struct DetailSceneView_macOS: NSViewRepresentable
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate
     {
-        var control: DetailSceneView_macOS
+        var control: PartSceneView_macOS
         
-        init(_ control: DetailSceneView_macOS, _ scn_view: SCNView)
+        init(_ control: PartSceneView_macOS, _ scn_view: SCNView)
         {
             self.control = control
             
@@ -520,7 +520,7 @@ struct DetailSceneView_macOS: NSViewRepresentable
     }
 }
 #else
-struct DetailSceneView_iOS: UIViewRepresentable
+struct PartSceneView_iOS: UIViewRepresentable
 {
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -572,9 +572,9 @@ struct DetailSceneView_iOS: UIViewRepresentable
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate
     {
-        var control: DetailSceneView_iOS
+        var control: PartSceneView_iOS
         
-        init(_ control: DetailSceneView_iOS, _ scn_view: SCNView)
+        init(_ control: PartSceneView_iOS, _ scn_view: SCNView)
         {
             self.control = control
             
@@ -620,18 +620,18 @@ struct DetailSceneView_iOS: UIViewRepresentable
 #endif
 
 //MARK: - Previews
-struct DetailsView_Previews: PreviewProvider
+struct PartsView_Previews: PreviewProvider
 {
     static var previews: some View
     {
         Group
         {
-            DetailsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            PartsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
-            AddDetailView(add_detail_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            AddPartView(add_part_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
-            DetailView(detail_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), detail_item: .constant(Detail(name: "None", dictionary: ["String" : "Any"])), new_physics: .ph_none)
+            PartView(part_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), part_item: .constant(Part(name: "None", dictionary: ["String" : "Any"])), new_physics: .ph_none)
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
         }
