@@ -58,6 +58,8 @@ class WorkspaceObjectConnector
     {
         
     }
+    
+    public var update_model = false
 }
 
 //MARK: - Robot connector
@@ -76,7 +78,7 @@ class RobotConnector: WorkspaceObjectConnector
     }
     
     //Visual model handling
-    public var model_controller = RobotModelController()
+    public var model_controller: RobotModelController?
 }
 
 //MARK: - Tool connector
@@ -95,5 +97,5 @@ class ToolConnector: WorkspaceObjectConnector
     }
     
     //Visual model handling
-    public var model_controller = ToolModelController()
+    public var model_controller: ToolModelController?
 }

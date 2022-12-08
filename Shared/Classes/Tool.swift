@@ -72,6 +72,9 @@ class Tool: WorkspaceObject
         self.is_attached = tool_struct.is_attached
         self.attached_to = tool_struct.attached_to
         
+        self.demo = tool_struct.demo
+        self.update_model_by_connector = tool_struct.update_model_by_connector
+        
         self.get_statistics = tool_struct.get_statistics
         self.charts_data = tool_struct.charts_data
         self.state_data = tool_struct.state
@@ -357,11 +360,15 @@ class Tool: WorkspaceObject
     
     private func connect()
     {
+        connector.update_model = update_model_by_connector
+        connector.model_controller = model_controller
         connector.connect()
     }
     
     private func disconnect()
     {
+        connector.update_model = false
+        connector.model_controller = nil
         connector.disconnect()
     }
     
@@ -369,6 +376,9 @@ class Tool: WorkspaceObject
     override var scene_node_name: String { "tool" }
     
     private var model_controller = ToolModelController()
+    
+    public var update_model_by_connector = false //Update model by model controller
+    
     private var tool_details = [SCNNode]()
     private var lengths = [Float]()
     
@@ -391,12 +401,14 @@ class Tool: WorkspaceObject
     {
         //let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         var unit_node = SCNNode()
+        var stopped = false
         scene.rootNode.enumerateChildNodes
         { (_node, stop) in
-            if _node.name == name, _node.categoryBitMask == Workspace.tool_bit_mask
+            if _node.name == name && _node.categoryBitMask == Workspace.tool_bit_mask && !stopped
             {
                 unit_node = _node
-                //print((_node.name ?? "") + "is tool")
+                stopped = true
+                print((_node.name ?? "") + " is tool")
             }
         }
         
@@ -580,7 +592,7 @@ class Tool: WorkspaceObject
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, is_attached: self.is_attached, attached_to: self.attached_to, get_statistics: self.get_statistics, charts_data: self.charts_data, state: self.state_data, programs: self.programs, image_data: self.image_data, module: self.module_name)
+        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, is_attached: self.is_attached, attached_to: self.attached_to, demo: self.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: self.get_statistics, charts_data: self.charts_data, state: self.state_data, programs: self.programs, image_data: self.image_data, module: self.module_name)
     }
 }
 
@@ -600,6 +612,9 @@ struct ToolStruct: Codable
     
     var is_attached: Bool
     var attached_to: String?
+    
+    var demo: Bool
+    var update_model_by_connector: Bool
     
     var get_statistics: Bool
     var charts_data: [WorkspaceObjectChart]?
