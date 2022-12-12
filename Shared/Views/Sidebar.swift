@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import IndustrialKit
 
 enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 {

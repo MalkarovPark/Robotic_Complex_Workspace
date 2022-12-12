@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import IndustrialKit
 
 @main
 struct Robotic_Complex_WorkspaceApp: App

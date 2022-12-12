@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Charts
+import IndustrialKit
 
 struct ChartsView: View
 {

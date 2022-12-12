@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import IndustrialKit
 
 //MARK: - Large card view
 struct LargeCardView: View

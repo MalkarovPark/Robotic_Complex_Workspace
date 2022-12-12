@@ -8,6 +8,7 @@
 import SwiftUI
 import SceneKit
 import UniformTypeIdentifiers
+import IndustrialKit
 
 struct ToolsView: View
 {

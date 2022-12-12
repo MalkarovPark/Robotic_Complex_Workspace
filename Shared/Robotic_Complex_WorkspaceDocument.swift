@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import IndustrialKit
 
 //MARK: - Extension info
 extension UTType

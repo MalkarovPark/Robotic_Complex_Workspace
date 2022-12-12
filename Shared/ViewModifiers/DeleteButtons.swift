@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import IndustrialKit
 
 //MARK: - For large card
 struct CircleDeleteButtonModifier: ViewModifier

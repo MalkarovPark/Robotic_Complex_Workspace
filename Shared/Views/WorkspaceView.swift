@@ -8,6 +8,7 @@
 import SwiftUI
 import SceneKit
 import UniformTypeIdentifiers
+import IndustrialKit
 
 struct WorkspaceView: View
 {
@@ -1251,7 +1252,7 @@ struct ControlProgramView: View
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
     @State var dragged_element: WorkspaceProgramElement?
     @State var add_element_view_presented = false
-    @State var add_new_element_data = workspace_program_element_struct()
+    @State var add_new_element_data = WorkspaceProgramElementStruct()
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -1456,7 +1457,7 @@ struct WorkspaceDropDelegate : DropDelegate
     @Binding var dragged_element : WorkspaceProgramElement?
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var workspace_elements: [workspace_program_element_struct]
+    @State var workspace_elements: [WorkspaceProgramElementStruct]
     
     let element: WorkspaceProgramElement
     
@@ -1720,7 +1721,7 @@ struct ElementCardViewPreview: View
 struct AddElementView: View
 {
     @Binding var add_element_view_presented: Bool
-    @Binding var add_new_element_data: workspace_program_element_struct
+    @Binding var add_new_element_data: WorkspaceProgramElementStruct
     
     var body: some View
     {
@@ -1798,7 +1799,7 @@ struct ElementView: View
     @Binding var element_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var new_element_item_data: workspace_program_element_struct
+    @State var new_element_item_data: WorkspaceProgramElementStruct
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -2362,7 +2363,7 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(AppState())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
-            ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: workspace_program_element_struct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
+            ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
             LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))
         }

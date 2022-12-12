@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import IndustrialKit
 
 struct StatisticsView: View
 {

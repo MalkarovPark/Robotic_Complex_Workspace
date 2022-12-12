@@ -9,6 +9,7 @@ import SwiftUI
 import SceneKit
 import Charts
 import UniformTypeIdentifiers
+import IndustrialKit
 
 struct RobotsView: View
 {

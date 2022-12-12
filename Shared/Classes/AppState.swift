@@ -8,6 +8,7 @@
 import Foundation
 import SceneKit
 import SwiftUI
+import IndustrialKit
 
 //MARK: - Class for work with various application data
 class AppState : ObservableObject

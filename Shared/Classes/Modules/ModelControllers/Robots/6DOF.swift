@@ -7,6 +7,7 @@
 
 import Foundation
 import SceneKit
+import IndustrialKit
 
 class _6DOFController: RobotModelController
 {

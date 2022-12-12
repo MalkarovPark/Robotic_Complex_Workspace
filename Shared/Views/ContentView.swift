@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import IndustrialKit
 
 struct ContentView: View
 {
@@ -49,6 +50,7 @@ struct ContentView: View
             .environmentObject(base_workspace)
             .onAppear
             {
+                set_selection_functions()
                 get_file_data()
                 update_preferences()
             }
@@ -57,10 +59,47 @@ struct ContentView: View
             .environmentObject(base_workspace)
             .onAppear
             {
+                set_selection_functions()
                 get_file_data()
                 update_preferences()
             }
         #endif
+    }
+    
+    func set_selection_functions()
+    {
+        Robot.select_modules = select_robot_modules(name:model_controller:connector:)
+        Tool.select_modules = select_tool_modules(name:model_controller:connector:)
+    }
+    
+    func select_robot_modules(name: String, model_controller: inout RobotModelController, connector: inout RobotConnector)
+    {
+        switch name
+        {
+        case "Portal":
+            model_controller = PortalController()
+            connector = RobotConnector()
+        case "6DOF":
+            model_controller = _6DOFController()
+            connector = RobotConnector()
+        default:
+            break
+        }
+    }
+    
+    func select_tool_modules(name: String, model_controller: inout ToolModelController, connector: inout ToolConnector)
+    {
+        switch name
+        {
+        case "gripper":
+            model_controller = GripperController()
+            connector = ToolConnector()
+        case "drill":
+            model_controller = DrillController()
+            connector = ToolConnector()
+        default:
+            break
+        }
     }
     
     func get_file_data() //Store preset file data into workspace

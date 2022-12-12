@@ -9,6 +9,7 @@ import SwiftUI
 #if os(iOS)
 import UniformTypeIdentifiers
 #endif
+import IndustrialKit
 
 struct SettingsView: View
 {
