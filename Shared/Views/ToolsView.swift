@@ -885,7 +885,7 @@ struct OperationItemListView: View
     
     func delete_code_item()
     {
-        base_workspace.selected_tool.selected_program.delete_code(number: base_workspace.selected_tool.selected_program.codes.firstIndex(of: code_item) ?? 0)
+        base_workspace.selected_tool.selected_program.delete_code(index: base_workspace.selected_tool.selected_program.codes.firstIndex(of: code_item) ?? 0)
         document.preset.tools = base_workspace.file_data().tools
     }
 }

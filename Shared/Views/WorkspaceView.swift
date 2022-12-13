@@ -1346,7 +1346,7 @@ struct ControlProgramView: View
     func add_new_program_element()
     {
         base_workspace.update_view()
-        //let new_program_element = WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modificator_type: add_new_element_data.modificator_type, logic_type: add_new_element_data.logic_type)
+        //let new_program_element = WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modifier_type: add_new_element_data.modifier_type, logic_type: add_new_element_data.logic_type)
         let new_program_element = WorkspaceProgramElement(element_struct: add_new_element_data)
         
         //Checking for existing workspace components for element selection
@@ -1370,7 +1370,7 @@ struct ControlProgramView: View
             case .tool:
                 break
             }
-        case .modificator:
+        case .modifier:
             break
         case .logic:
             break
@@ -1396,8 +1396,8 @@ struct ControlProgramView: View
             case .tool:
                 badge_image = Image(systemName: "hammer")
             }
-        case .modificator:
-            switch add_new_element_data.modificator_type
+        case .modifier:
+            switch add_new_element_data.modifier_type
             {
             case .observer:
                 badge_image = Image(systemName: "loupe")
@@ -1430,7 +1430,7 @@ struct ControlProgramView: View
         {
         case .perofrmer:
             badge_color = .green
-        case .modificator:
+        case .modifier:
             badge_color = .pink
         case .logic:
             badge_color = .gray
@@ -1575,8 +1575,8 @@ struct ElementCardView: View
             case .tool:
                 badge_image = Image(systemName: "hammer")
             }
-        case .modificator:
-            switch element_item.element_data.modificator_type
+        case .modifier:
+            switch element_item.element_data.modifier_type
             {
             case .observer:
                 badge_image = Image(systemName: "loupe")
@@ -1609,7 +1609,7 @@ struct ElementCardView: View
         {
         case .perofrmer:
             badge_color = .green
-        case .modificator:
+        case .modifier:
             badge_color = .pink
         case .logic:
             badge_color = .gray
@@ -1674,8 +1674,8 @@ struct ElementCardViewPreview: View
             case .tool:
                 badge_image = Image(systemName: "hammer")
             }
-        case .modificator:
-            switch element_item.element_data.modificator_type
+        case .modifier:
+            switch element_item.element_data.modifier_type
             {
             case .observer:
                 badge_image = Image(systemName: "loupe")
@@ -1707,7 +1707,7 @@ struct ElementCardViewPreview: View
         {
         case .perofrmer:
             badge_color = .green
-        case .modificator:
+        case .modifier:
             badge_color = .pink
         case .logic:
             badge_color = .gray
@@ -1762,10 +1762,10 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         .buttonStyle(.bordered)
-                    case .modificator:
-                        Picker("Type", selection: $add_new_element_data.modificator_type)
+                    case .modifier:
+                        Picker("Type", selection: $add_new_element_data.modifier_type)
                         {
-                            ForEach(ModificatorType.allCases, id: \.self)
+                            ForEach(ModifierType.allCases, id: \.self)
                             { type in
                                 Text(type.rawValue).tag(type)
                             }
@@ -1846,10 +1846,10 @@ struct ElementView: View
                         #if os(iOS)
                         .buttonStyle(.bordered)
                         #endif
-                    case .modificator:
-                        Picker("Type", selection: $new_element_item_data.modificator_type)
+                    case .modifier:
+                        Picker("Type", selection: $new_element_item_data.modifier_type)
                         {
-                            ForEach(ModificatorType.allCases, id: \.self)
+                            ForEach(ModifierType.allCases, id: \.self)
                             { type in
                                 Text(type.rawValue).tag(type)
                             }
@@ -1887,8 +1887,8 @@ struct ElementView: View
                 {
                 case .perofrmer:
                     PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
-                case .modificator:
-                    ModificatorElementView(modificator_type: $new_element_item_data.modificator_type)
+                case .modifier:
+                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type)
                 case .logic:
                     LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name)
                 }
@@ -2227,14 +2227,14 @@ struct PerformerElementView: View
     }
 }
 
-//MARK: - Modificator element view
-struct ModificatorElementView: View
+//MARK: - Modifier element view
+struct ModifierElementView: View
 {
-    @Binding var modificator_type: ModificatorType
+    @Binding var modifier_type: ModifierType
     var body: some View
     {
-        Text("Modificator")
-        switch modificator_type
+        Text("Modifier")
+        switch modifier_type
         {
         case .observer:
             //MARK: Observer subview
@@ -2363,7 +2363,7 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(AppState())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
-            ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modificator_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
+            ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modifier_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
             LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))
         }
