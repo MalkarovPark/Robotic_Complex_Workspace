@@ -576,11 +576,6 @@ struct AddInWorkspaceView: View
             //MARK: Object popup menu
             HStack
             {
-                #if os(iOS)
-                Text("Name")
-                    .font(.subheadline)
-                #endif
-                
                 switch app_state.add_selection
                 {
                 case 0:
@@ -588,11 +583,14 @@ struct AddInWorkspaceView: View
                 case 1:
                     ObjectPickerView(selected_object_name: $selected_tool_name, avaliable_objects_names: .constant(base_workspace.avaliable_tools_names), workspace_object_type: .constant(.tool))
                     
-                    Toggle(isOn: $tool_attached)
+                    if base_workspace.avaliable_tools_names.count > 0
                     {
-                        Image(systemName: "pin.fill")
+                        Toggle(isOn: $tool_attached)
+                        {
+                            Image(systemName: "pin.fill")
+                        }
+                        .toggleStyle(.button)
                     }
-                    .toggleStyle(.button)
                 case 2:
                     ObjectPickerView(selected_object_name: $selected_part_name, avaliable_objects_names: .constant(base_workspace.avaliable_parts_names), workspace_object_type: .constant(.part))
                 default:
@@ -766,6 +764,11 @@ struct ObjectPickerView: View
     {
         if avaliable_objects_names.count > 0
         {
+            #if os(iOS)
+            Text("Name")
+                .font(.subheadline)
+            #endif
+            
             Picker("Name", selection: $selected_object_name) //Select object name for place in workspace
             {
                 ForEach(avaliable_objects_names, id: \.self)
@@ -1015,56 +1018,6 @@ struct InfoView: View
         }
         
         info_view_presented.toggle()
-    }
-}
-
-struct PositionView: View
-{
-    @Binding var location: [Float]
-    @Binding var rotation: [Float]
-    
-    var body: some View
-    {
-        ForEach(PositionComponents.allCases, id: \.self)
-        { position_component in
-            GroupBox(label: Text(position_component.rawValue)
-                .font(.headline))
-            {
-                VStack(spacing: 12)
-                {
-                    switch position_component
-                    {
-                    case .location:
-                        ForEach(LocationComponents.allCases, id: \.self)
-                        { location_component in
-                            HStack(spacing: 8)
-                            {
-                                Text(location_component.info.text)
-                                    .frame(width: 20.0)
-                                TextField("0", value: $location[location_component.info.index], format: .number)
-                                    .textFieldStyle(.roundedBorder)
-                                Stepper("Enter", value: $location[location_component.info.index], in: -1000...1000)
-                                    .labelsHidden()
-                            }
-                        }
-                    case .rotation:
-                        ForEach(RotationComponents.allCases, id: \.self)
-                        { rotation_component in
-                            HStack(spacing: 8)
-                            {
-                                Text(rotation_component.info.text)
-                                    .frame(width: 20.0)
-                                TextField("0", value: $rotation[rotation_component.info.index], format: .number)
-                                    .textFieldStyle(.roundedBorder)
-                                Stepper("Enter", value: $rotation[rotation_component.info.index], in: -180...180)
-                                    .labelsHidden()
-                            }
-                        }
-                    }
-                }
-                .padding(8.0)
-            }
-        }
     }
 }
 
