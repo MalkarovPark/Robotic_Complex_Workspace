@@ -47,6 +47,8 @@
 		62C05D0527971FBB003A2F0B /* RobotsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 62C05D0327971FBB003A2F0B /* RobotsInfo.plist */; };
 		62C0CF1F293BC195002B9A0B /* ChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C0CF1E293BC195002B9A0B /* ChartsView.swift */; };
 		62C0CF20293BC195002B9A0B /* ChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C0CF1E293BC195002B9A0B /* ChartsView.swift */; };
+		62C505732951C7030071F933 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 62C505722951C7030071F933 /* IndustrialKit */; };
+		62C505742951CB4D0071F933 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625475D2292F9F3F00F13F16 /* DynamicStack.swift */; };
 		62DFC8E927E3841B00ABCE1E /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DFC8E827E3841B00ABCE1E /* ToolsView.swift */; };
 		62DFC8EA27E3841B00ABCE1E /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DFC8E827E3841B00ABCE1E /* ToolsView.swift */; };
 		62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */; };
@@ -111,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62C505732951C7030071F933 /* IndustrialKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +235,13 @@
 			path = Lists;
 			sourceTree = "<group>";
 		};
+		62C505712951C7030071F933 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		62E0D34A2719C6FC009D58D2 = {
 			isa = PBXGroup;
 			children = (
@@ -240,6 +250,7 @@
 				62E0D35A2719C700009D58D2 /* iOS */,
 				62E0D3612719C700009D58D2 /* macOS */,
 				62E0D3592719C700009D58D2 /* Products */,
+				62C505712951C7030071F933 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -303,6 +314,9 @@
 			dependencies = (
 			);
 			name = "Robotic Complex Workspace (iOS)";
+			packageProductDependencies = (
+				62C505722951C7030071F933 /* IndustrialKit */,
+			);
 			productName = "Robotic Complex Workspace (iOS)";
 			productReference = 62E0D3582719C700009D58D2 /* Robotic Complex Workspace.app */;
 			productType = "com.apple.product-type.application";
@@ -439,6 +453,7 @@
 				62F765EC293F854B0017CDA9 /* StateView.swift in Sources */,
 				62E0D3652719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
 				625475CF292F7A1B00F13F16 /* Functions.swift in Sources */,
+				62C505742951CB4D0071F933 /* DynamicStack.swift in Sources */,
 				624CFA652838211A00CC1D57 /* AppState.swift in Sources */,
 				62F765FB293FBD1D0017CDA9 /* DoubleModifier.swift in Sources */,
 				62DFC8EA27E3841B00ABCE1E /* ToolsView.swift in Sources */,
@@ -754,6 +769,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		62BD3FD929466BB500DA3167 /* IndustrialKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 62BD3FD829466BB500DA3167 /* XCRemoteSwiftPackageReference "IndustrialKit" */;
+			productName = IndustrialKit;
+		};
+		62C505722951C7030071F933 /* IndustrialKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62BD3FD829466BB500DA3167 /* XCRemoteSwiftPackageReference "IndustrialKit" */;
 			productName = IndustrialKit;
