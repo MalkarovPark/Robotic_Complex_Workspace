@@ -357,6 +357,16 @@ struct ToolView: View
             .sheet(isPresented: $statistics_view_presented)
             {
                 StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $base_workspace.selected_tool.state_data, clear_chart_data: { base_workspace.selected_tool.clear_chart_data() }, clear_state_data: base_workspace.selected_tool.clear_state_data, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+                    .onDisappear
+                    {
+                        app_state.get_scene_image = true
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                        {
+                            base_workspace.selected_tool.image = app_state.previewed_object!.image
+                        }
+                        is_document_updated = true
+                    }
             }
             
             Divider()
@@ -552,12 +562,16 @@ struct ToolView: View
                         }
                         .popover(isPresented: $add_program_view_presented)
                         {
-                            AddOperationProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_tool.selected_program_index)
+                            AddOperationProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_tool.selected_program_index)
                             #if os(macOS)
                                 .frame(height: 72.0)
                             #else
                                 .presentationDetents([.height(96.0)])
                             #endif
+                        }
+                        .onChange(of: base_workspace.selected_tool.programs_count)
+                        { _ in
+                            update_data()
                         }
                     }
                     .padding()
@@ -582,16 +596,32 @@ struct ToolView: View
             
             app_state.reset_previewed_node_position()
             
+            app_state.previewed_object?.image = base_workspace.selected_tool.image
+            
             if base_workspace.selected_tool.codes_count > 0
             {
                 new_operation_code = base_workspace.selected_tool.codes.first ?? 0
             }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
+            {
+                ready_for_save = true
+            }
         }
         .onDisappear
         {
+            app_state.object_view_was_open = false
+            app_state.preview_update_scene = false
+            
+            app_state.previewed_object = Tool()
+            
             if is_document_updated
             {
-                app_state.view_update_state.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                {
+                    app_state.view_update_state.toggle()
+                    base_workspace.update_view()
+                }
             }
         }
     }
@@ -604,6 +634,7 @@ struct ToolView: View
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
+                base_workspace.selected_tool.image = app_state.previewed_object!.image
                 document.preset.tools = base_workspace.file_data().tools
             }
             is_document_updated = true
@@ -613,8 +644,7 @@ struct ToolView: View
     func code_item_move(from source: IndexSet, to destination: Int)
     {
         base_workspace.selected_tool.selected_program.codes.move(fromOffsets: source, toOffset: destination)
-        document.preset.tools = base_workspace.file_data().tools
-        app_state.get_scene_image = true
+        update_data()
     }
     
     func remove_codes(at offsets: IndexSet) //Remove tool operation function
@@ -624,8 +654,7 @@ struct ToolView: View
             base_workspace.selected_tool.selected_program.codes.remove(atOffsets: offsets)
         }
         
-        document.preset.tools = base_workspace.file_data().tools
-        app_state.get_scene_image = true
+        update_data()
     }
     
     func delete_operations_program()
@@ -643,9 +672,7 @@ struct ToolView: View
                 base_workspace.selected_tool.selected_program_index = 0
             }
             
-            document.preset.tools = base_workspace.file_data().tools
-            app_state.get_scene_image = true
-            base_workspace.update_view()
+            update_data()
         }
     }
     
@@ -754,7 +781,6 @@ struct OperationParameterView: View
 struct AddOperationProgramView: View
 {
     @Binding var add_program_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var selected_program_index: Int
     
     @State var new_program_name = ""
@@ -794,7 +820,6 @@ struct AddOperationProgramView: View
                     base_workspace.selected_tool.add_program(OperationsProgram(name: new_program_name))
                     selected_program_index = base_workspace.selected_tool.programs_names.count - 1
                     
-                    document.preset.tools = base_workspace.file_data().tools
                     app_state.get_scene_image = true
                     add_program_view_presented.toggle()
                 }
