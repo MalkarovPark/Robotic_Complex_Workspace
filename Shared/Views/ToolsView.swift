@@ -112,10 +112,6 @@ struct ToolCardView: View
             .sheet(isPresented: $tool_view_presented)
             {
                 ToolView(tool_view_presented: $tool_view_presented, document: $document)
-                    .onDisappear()
-                {
-                    tool_view_presented = false
-                }
             }
     }
     
@@ -608,22 +604,6 @@ struct ToolView: View
                 ready_for_save = true
             }
         }
-        .onDisappear
-        {
-            app_state.object_view_was_open = false
-            app_state.preview_update_scene = false
-            
-            app_state.previewed_object = Tool()
-            
-            if is_document_updated
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-                {
-                    app_state.view_update_state.toggle()
-                    base_workspace.update_view()
-                }
-            }
-        }
     }
     
     func update_data()
@@ -690,11 +670,23 @@ struct ToolView: View
     {
         base_workspace.selected_tool.reset_performing()
         base_workspace.selected_tool.workcell_disconnect()
-        app_state.get_scene_image = true
         
         base_workspace.deselect_tool()
-        //app_state.object_view_was_close = true
         tool_view_presented = false
+        
+        app_state.object_view_was_open = false
+        app_state.preview_update_scene = false
+        
+        app_state.previewed_object = Tool()
+        
+        if is_document_updated
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                app_state.view_update_state.toggle()
+                base_workspace.update_view()
+            }
+        }
     }
 }
 
