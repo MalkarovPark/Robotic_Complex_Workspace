@@ -48,7 +48,6 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 struct Sidebar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument //Current openet document
-    @Binding var first_loaded: Bool //Delayed workspace scene fading out on firs load
     #if os(iOS)
     //Document file info for iOS/iPadOS
     @Binding var file_url: URL
@@ -58,9 +57,9 @@ struct Sidebar: View
     var body: some View
     {
         #if os(macOS)
-        SidebarContent(document: $document, first_loaded: $first_loaded).frame(minWidth: 200, idealWidth: 250)
+        SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250)
         #else
-        SidebarContent(document: $document, first_loaded: $first_loaded, file_url: $file_url, file_name: $file_name).frame(minWidth: 200, idealWidth: 250)
+        SidebarContent(document: $document, file_url: $file_url, file_name: $file_name).frame(minWidth: 200, idealWidth: 250)
         .navigationBarHidden(true)
         .modifier(DismissModifier())
         #endif
@@ -70,7 +69,6 @@ struct Sidebar: View
 struct SidebarContent: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    @Binding var first_loaded: Bool
     #if os(iOS)
     @EnvironmentObject var app_state: AppState
     
@@ -151,9 +149,9 @@ struct SidebarContent: View
                 {
                 case .WorkspaceView:
                     #if os(macOS)
-                    WorkspaceView(document: $document, first_loaded: $first_loaded)
+                    WorkspaceView(document: $document)
                     #else
-                    WorkspaceView(document: $document, first_loaded: $first_loaded, file_name: $file_name, file_url: $file_url)
+                    WorkspaceView(document: $document, file_name: $file_name, file_url: $file_url)
                     #endif
                 case .RobotsView:
                     RobotsView(document: $document)
@@ -190,11 +188,11 @@ struct Sidebar_Previews: PreviewProvider
     static var previews: some View
     {
         #if os(macOS)
-        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false))
+        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()))
             .environmentObject(Workspace())
             .environmentObject(AppState())
         #else
-        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), first_loaded: .constant(false), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
+        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
         #endif
     }
 }

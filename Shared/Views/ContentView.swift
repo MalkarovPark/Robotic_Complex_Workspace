@@ -46,7 +46,7 @@ struct ContentView: View
     @ViewBuilder var body: some View
     {
         #if os(macOS)
-        Sidebar(document: $document, first_loaded: $first_loaded)
+        Sidebar(document: $document)
             .environmentObject(base_workspace)
             .onAppear
             {
@@ -55,7 +55,7 @@ struct ContentView: View
                 update_preferences()
             }
         #else
-        Sidebar(document: $document, first_loaded: $first_loaded, file_url: $file_url, file_name: $file_name)
+        Sidebar(document: $document, file_url: $file_url, file_name: $file_name)
             .environmentObject(base_workspace)
             .onAppear
             {

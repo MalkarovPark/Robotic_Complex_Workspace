@@ -45,6 +45,8 @@
 		62C05D0527971FBB003A2F0B /* RobotsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 62C05D0327971FBB003A2F0B /* RobotsInfo.plist */; };
 		62C505732951C7030071F933 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 62C505722951C7030071F933 /* IndustrialKit */; };
 		62C505742951CB4D0071F933 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625475D2292F9F3F00F13F16 /* DynamicStack.swift */; };
+		62C505792955AA1E0071F933 /* ControlProgramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C505782955AA1E0071F933 /* ControlProgramView.swift */; };
+		62C5057A2955AA1E0071F933 /* ControlProgramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C505782955AA1E0071F933 /* ControlProgramView.swift */; };
 		62DFC8E927E3841B00ABCE1E /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DFC8E827E3841B00ABCE1E /* ToolsView.swift */; };
 		62DFC8EA27E3841B00ABCE1E /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DFC8E827E3841B00ABCE1E /* ToolsView.swift */; };
 		62E0D3642719C700009D58D2 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */; };
@@ -81,6 +83,7 @@
 		6279ED702721A5B400EEA986 /* RobotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsView.swift; sourceTree = "<group>"; };
 		62A23C4A271C70D0008FC0CC /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		62C05D0327971FBB003A2F0B /* RobotsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RobotsInfo.plist; sourceTree = "<group>"; };
+		62C505782955AA1E0071F933 /* ControlProgramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlProgramView.swift; sourceTree = "<group>"; };
 		62DFC8E827E3841B00ABCE1E /* ToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
 		62E0D3502719C6FC009D58D2 /* Robotic_Complex_WorkspaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceApp.swift; sourceTree = "<group>"; };
 		62E0D3512719C6FC009D58D2 /* Robotic_Complex_WorkspaceDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceDocument.swift; sourceTree = "<group>"; };
@@ -186,6 +189,7 @@
 				621AABF828BB997F00AFD62F /* PartsView.swift */,
 				6209286A28AE75F700DD220E /* SettingsView.swift */,
 				62F765F0293FB44E0017CDA9 /* StatisticsView.swift */,
+				62C505782955AA1E0071F933 /* ControlProgramView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -406,6 +410,7 @@
 				62061AFF29250D2600A3B73E /* Portal.swift in Sources */,
 				625475CB292F79A100F13F16 /* Extensions.swift in Sources */,
 				626E88E52727073F00631945 /* DismissModifier.swift in Sources */,
+				62C505792955AA1E0071F933 /* ControlProgramView.swift in Sources */,
 				62A23C4B271C70D0008FC0CC /* Sidebar.swift in Sources */,
 				62DFC8E927E3841B00ABCE1E /* ToolsView.swift in Sources */,
 				6209286B28AE75F800DD220E /* SettingsView.swift in Sources */,
@@ -444,6 +449,7 @@
 				621AABFA28BB997F00AFD62F /* PartsView.swift in Sources */,
 				62E0D3692719C700009D58D2 /* ContentView.swift in Sources */,
 				625475CC292F79A100F13F16 /* Extensions.swift in Sources */,
+				62C5057A2955AA1E0071F933 /* ControlProgramView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
