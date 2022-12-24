@@ -1037,31 +1037,93 @@ struct WorkspaceCardsView: View
     @EnvironmentObject var app_state: AppState
     
     @State private var viewed_object_name = String()
+    @State private var object_selection = 0
+    
+    private let objects_items: [String] = ["Robots", "Tools", "Parts"]
     
     var body: some View
     {
         VStack(spacing: 0)
         {
-            #if os(macOS)
-            WorkspaceObjectCard(object: WorkspaceObject())
-            
             HStack
             {
-                Picker("Object", selection: $viewed_object_name)
+                Picker(selection: .constant(1), label: Text("Picker"))
                 {
-                    ForEach(base_workspace.placed_robots_names, id: \.self)
-                    { name in
-                        Text(name)
-                    }
+                    Text("1").tag(1)
                 }
-                .labelsHidden()
-                .pickerStyle(.menu)
-                .buttonStyle(.borderless)
+                .pickerStyle(SegmentedPickerStyle())
+                .hidden()
             }
-            .padding([.horizontal, .bottom])
-            .onAppear
+            .padding([.horizontal, .top])
+            
+            #if os(macOS)
+            switch object_selection
             {
-                viewed_object_name = base_workspace.placed_robots_names.first ?? ""
+            case 0:
+                WorkspaceObjectCard(object: base_workspace.robot_by_name(viewed_object_name))
+                
+                HStack
+                {
+                    Picker("Object", selection: $viewed_object_name)
+                    {
+                        ForEach(base_workspace.placed_robots_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .buttonStyle(.borderless)
+                }
+                .padding([.horizontal, .bottom])
+                .onAppear
+                {
+                    viewed_object_name = base_workspace.placed_robots_names.first ?? ""
+                }
+            case 1:
+                WorkspaceObjectCard(object: base_workspace.tool_by_name(viewed_object_name))
+                
+                HStack
+                {
+                    Picker("Object", selection: $viewed_object_name)
+                    {
+                        ForEach(base_workspace.placed_tools_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .buttonStyle(.borderless)
+                }
+                .padding([.horizontal, .bottom])
+                .onAppear
+                {
+                    viewed_object_name = base_workspace.placed_tools_names.first ?? ""
+                }
+            case 2:
+                WorkspaceObjectCard(object: base_workspace.part_by_name(viewed_object_name))
+                
+                HStack
+                {
+                    Picker("Object", selection: $viewed_object_name)
+                    {
+                        ForEach(base_workspace.placed_parts_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .buttonStyle(.borderless)
+                }
+                .padding([.horizontal, .bottom])
+                .onAppear
+                {
+                    viewed_object_name = base_workspace.placed_parts_names.first ?? ""
+                }
+            default:
+                Text("None")
             }
             #else
             TabView
@@ -1079,15 +1141,43 @@ struct WorkspaceCardsView: View
             {
                 HStack
                 {
-                    PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                    switch object_selection
+                    {
+                    case 0:
+                        PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                    case 1:
+                        PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                    case 2:
+                        PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                    default:
+                        Text("None")
+                    }
                 }
                 .padding()
             }
             .background(.thinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .padding([.horizontal, .bottom])
+            .shadow(radius: 8.0)
         }
         .background(.gray)
+        .overlay(alignment: .top)
+        {
+            HStack
+            {
+                Picker("Objects", selection: $object_selection)
+                {
+                    ForEach(0..<objects_items.count, id: \.self)
+                    { index in
+                        Text(self.objects_items[index]).tag(index)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .labelsHidden()
+                .buttonStyle(.borderless)
+                .padding([.horizontal, .top])
+            }
+        }
         #if os(macOS)
         .frame(minWidth: 500, idealWidth: 800, minHeight: 480, idealHeight: 600)
         #else
@@ -1103,33 +1193,31 @@ struct WorkspaceObjectCard: View
     var object: WorkspaceObject
     var body: some View
     {
-        ZStack
-        {
-            /*HStack
-            {
-                PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
-            }
-            .padding()*/
-            
-            //Text("None")
-        }
+        Rectangle()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.thinMaterial)
+        .foregroundStyle(.thinMaterial)
         .overlay(alignment: .topLeading)
         {
             Rectangle()
-                .foregroundColor(.green)
+                .foregroundColor(.gray)
                 .overlay
                 {
-                    Image(systemName: "building.2")
-                        //.resizable()
-                        //.scaledToFill()
+                    #if os(macOS)
+                    Image(nsImage: object.image)
+                        .resizable()
+                        .scaledToFill()
+                    #else
+                    Image(uiImage: object.image)
+                        .resizable()
+                        .scaledToFill()
+                    #endif
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
-                .frame(width: 128, height: 128)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                //.frame(maxWidth: .infinity, maxHeight: 128)
                 .padding()
+                .shadow(radius: 8.0)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 16.0, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .padding()
         #if os(iOS)
         .padding(.bottom, 32)
