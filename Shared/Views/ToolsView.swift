@@ -479,15 +479,12 @@ struct ToolView: View
                                     .padding()
                                     .disabled(base_workspace.selected_tool.codes_count == 0)
                                     .frame(maxWidth: .infinity)
-                                    .pickerStyle(.menu)
+                                    .pickerStyle(.radioGroup)
+                                    .labelsHidden()
                                 }
                                 #else
                                 VStack
                                 {
-                                    Text("Code")
-                                        .font(.subheadline)
-                                        .padding()
-                                    
                                     Picker("Code", selection: $new_operation_code)
                                     {
                                         if base_workspace.selected_tool.codes_count > 0

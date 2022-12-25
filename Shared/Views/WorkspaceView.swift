@@ -731,7 +731,7 @@ struct AddInWorkspaceView: View
         }
     }
     
-    func place_object()
+    private func place_object()
     {
         let type_for_save = base_workspace.selected_object_type
         
@@ -1002,7 +1002,7 @@ struct InfoView: View
         }
     }
     
-    func remove_object()
+    private func remove_object()
     {
         let type_for_save = base_workspace.selected_object_type
         base_workspace.remove_selected_object()
@@ -1045,6 +1045,7 @@ struct WorkspaceCardsView: View
     {
         VStack(spacing: 0)
         {
+            //Placeholder
             HStack
             {
                 Picker(selection: .constant(1), label: Text("Picker"))
@@ -1055,75 +1056,89 @@ struct WorkspaceCardsView: View
                 .hidden()
             }
             .padding([.horizontal, .top])
+            //Placeholder
             
             #if os(macOS)
-            switch object_selection
+            if avaliable_for_place
             {
-            case 0:
-                WorkspaceObjectCard(object: base_workspace.robot_by_name(viewed_object_name))
-                
-                HStack
+                switch object_selection
                 {
-                    Picker("Object", selection: $viewed_object_name)
+                case 0:
+                    WorkspaceObjectCard(document: $document, object: base_workspace.robot_by_name(viewed_object_name))
+                    
+                    HStack
                     {
-                        ForEach(base_workspace.placed_robots_names, id: \.self)
-                        { name in
-                            Text(name)
+                        Picker("Object", selection: $viewed_object_name)
+                        {
+                            ForEach(base_workspace.placed_robots_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
                         }
+                        .labelsHidden()
+                        .pickerStyle(.menu)
+                        .buttonStyle(.borderless)
                     }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .buttonStyle(.borderless)
-                }
-                .padding([.horizontal, .bottom])
-                .onAppear
-                {
-                    viewed_object_name = base_workspace.placed_robots_names.first ?? ""
-                }
-            case 1:
-                WorkspaceObjectCard(object: base_workspace.tool_by_name(viewed_object_name))
-                
-                HStack
-                {
-                    Picker("Object", selection: $viewed_object_name)
+                    .padding([.horizontal, .bottom])
+                    .onAppear
                     {
-                        ForEach(base_workspace.placed_tools_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
+                        viewed_object_name = base_workspace.placed_robots_names.first ?? ""
                     }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .buttonStyle(.borderless)
-                }
-                .padding([.horizontal, .bottom])
-                .onAppear
-                {
-                    viewed_object_name = base_workspace.placed_tools_names.first ?? ""
-                }
-            case 2:
-                WorkspaceObjectCard(object: base_workspace.part_by_name(viewed_object_name))
-                
-                HStack
-                {
-                    Picker("Object", selection: $viewed_object_name)
+                case 1:
+                    WorkspaceObjectCard(document: $document, object: base_workspace.tool_by_name(viewed_object_name))
+                    
+                    HStack
                     {
-                        ForEach(base_workspace.placed_parts_names, id: \.self)
-                        { name in
-                            Text(name)
+                        Picker("Object", selection: $viewed_object_name)
+                        {
+                            ForEach(base_workspace.placed_tools_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
                         }
+                        .labelsHidden()
+                        .pickerStyle(.menu)
+                        .buttonStyle(.borderless)
                     }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .buttonStyle(.borderless)
+                    .padding([.horizontal, .bottom])
+                    .onAppear
+                    {
+                        viewed_object_name = base_workspace.placed_tools_names.first ?? ""
+                    }
+                case 2:
+                    WorkspaceObjectCard(document: $document, object: base_workspace.part_by_name(viewed_object_name))
+                    
+                    HStack
+                    {
+                        Picker("Object", selection: $viewed_object_name)
+                        {
+                            ForEach(base_workspace.placed_parts_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        .labelsHidden()
+                        .pickerStyle(.menu)
+                        .buttonStyle(.borderless)
+                    }
+                    .padding([.horizontal, .bottom])
+                    .onAppear
+                    {
+                        viewed_object_name = base_workspace.placed_parts_names.first ?? ""
+                    }
+                default:
+                    Text("None")
                 }
-                .padding([.horizontal, .bottom])
-                .onAppear
-                {
-                    viewed_object_name = base_workspace.placed_parts_names.first ?? ""
-                }
-            default:
-                Text("None")
+            }
+            else
+            {
+                Text("No objects placed")
+                    .fontWeight(.bold)
+                    .font(.system(.title, design: .rounded))
+                    .foregroundColor(.white)
+                    .shadow(radius: 8)
+                    .padding()
+                    .frame(maxHeight: .infinity)
             }
             #else
             TabView
@@ -1137,28 +1152,53 @@ struct WorkspaceCardsView: View
             .indexViewStyle(.page(backgroundDisplayMode: .automatic))
             #endif
             
-            HStack
+            HStack(spacing: 0)
             {
+                HStack
+                {
+                    HStack
+                    {
+                        switch object_selection
+                        {
+                        case 0:
+                            PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                        case 1:
+                            PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                        case 2:
+                            PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                        default:
+                            Text("None")
+                        }
+                    }
+                    .padding()
+                }
+                .background(.thinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .padding(.trailing)
+                .shadow(radius: 8.0)
+                
                 HStack
                 {
                     switch object_selection
                     {
                     case 0:
-                        PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                        ObjectPlaceButton(document: $document, workspace_object_type: .constant(WorkspaceObjectType.robot))
+                            .padding(.vertical)
+                            .disabled(base_workspace.avaliable_robots_names.count == 0)
                     case 1:
-                        PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                        ObjectPlaceButton(document: $document, workspace_object_type: .constant(WorkspaceObjectType.tool))
+                            .padding(.vertical)
+                            .disabled(base_workspace.avaliable_tools_names.count == 0)
                     case 2:
-                        PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                        ObjectPlaceButton(document: $document, workspace_object_type: .constant(WorkspaceObjectType.part))
+                            .padding(.vertical)
+                            .disabled(base_workspace.avaliable_parts_names.count == 0)
                     default:
                         Text("None")
                     }
                 }
-                .padding()
             }
-            .background(.thinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .padding([.horizontal, .bottom])
-            .shadow(radius: 8.0)
         }
         .background(.gray)
         .overlay(alignment: .top)
@@ -1186,11 +1226,35 @@ struct WorkspaceCardsView: View
         .navigationBarTitleDisplayMode(.inline)
         #endif
     }
+    
+    private var avaliable_for_place: Bool
+    {
+        var avaliable_for_place = true
+        
+        switch object_selection
+        {
+        case 0:
+            avaliable_for_place = base_workspace.placed_robots_names.count > 0
+        case 1:
+            avaliable_for_place = base_workspace.placed_tools_names.count > 0
+        case 2:
+            avaliable_for_place = base_workspace.placed_parts_names.count > 0
+        default:
+            break
+        }
+        
+        return avaliable_for_place
+    }
 }
 
 struct WorkspaceObjectCard: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
     var object: WorkspaceObject
+    
     var body: some View
     {
         Rectangle()
@@ -1203,17 +1267,37 @@ struct WorkspaceObjectCard: View
                 .overlay
                 {
                     #if os(macOS)
-                    Image(nsImage: object.image)
-                        .resizable()
-                        .scaledToFill()
+                    ZStack
+                    {
+                        Image(nsImage: object.image)
+                            .resizable()
+                            .scaledToFill()
+                    }
                     #else
                     Image(uiImage: object.image)
                         .resizable()
                         .scaledToFill()
                     #endif
                 }
+                .overlay(alignment: .topLeading)
+                {
+                    Text(object.name ?? "None")
+                        .fontWeight(.bold)
+                        //.font(.title)
+                        .font(.system(.title, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding()
+                }
+                .overlay(alignment: .topTrailing)
+                {
+                    Button(action: remove_object)
+                    {
+                        Image(systemName: "xmark")
+                    }
+                    .buttonStyle(.bordered)
+                    .padding()
+                }
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                //.frame(maxWidth: .infinity, maxHeight: 128)
                 .padding()
                 .shadow(radius: 8.0)
         }
@@ -1222,6 +1306,141 @@ struct WorkspaceObjectCard: View
         #if os(iOS)
         .padding(.bottom, 32)
         #endif
+    }
+    
+    private func remove_object()
+    {
+        object.is_placed = false
+        
+        switch object
+        {
+        case is Robot:
+            document.preset.robots = base_workspace.file_data().robots
+        case is Tool:
+            if (object as! Tool).is_attached
+            {
+                clear_constranints(node: object.node ?? SCNNode())
+                (object as! Tool).attached_to = nil
+                
+                //base_workspace.remove_attachment()
+                base_workspace.selected_tool.is_attached = false
+            }
+            document.preset.tools = base_workspace.file_data().tools
+        case is Part:
+            document.preset.parts = base_workspace.file_data().parts
+        default:
+            break
+        }
+    }
+}
+
+struct ObjectPlaceButton: View
+{
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var workspace_object_type: WorkspaceObjectType
+    
+    @State private var add_in_view_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    var body: some View
+    {
+        VStack
+        {
+            Button(action: { add_in_view_presented.toggle() })
+            {
+                Image(systemName: "plus")
+                    .imageScale(.large)
+                    .padding()
+                #if os(iOS)
+                    .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
+                #endif
+            }
+            .buttonStyle(.borderless)
+            #if os(iOS)
+            .foregroundColor(.black)
+            #endif
+            .popover(isPresented: $add_in_view_presented)
+            {
+                switch workspace_object_type
+                {
+                case .robot:
+                    AddObjectView(document: $document, add_in_view_presented: $add_in_view_presented, avaliable_objects_names: .constant(base_workspace.avaliable_robots_names), workspace_object_type: $workspace_object_type, selected_object_name: base_workspace.avaliable_robots_names.first ?? "")
+                case .tool:
+                    AddObjectView(document: $document, add_in_view_presented: $add_in_view_presented, avaliable_objects_names: .constant(base_workspace.avaliable_tools_names), workspace_object_type: $workspace_object_type, selected_object_name: base_workspace.avaliable_tools_names.first ?? "")
+                case .part:
+                    AddObjectView(document: $document, add_in_view_presented: $add_in_view_presented, avaliable_objects_names: .constant(base_workspace.avaliable_parts_names), workspace_object_type: $workspace_object_type, selected_object_name: base_workspace.avaliable_parts_names.first ?? "")
+                }
+            }
+        }
+        .background(.thinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .shadow(radius: 8.0)
+    }
+}
+
+struct AddObjectView: View
+{
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var add_in_view_presented: Bool
+    @Binding var avaliable_objects_names: [String]
+    @Binding var workspace_object_type: WorkspaceObjectType
+    
+    @State var selected_object_name = String()
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            Picker("Name", selection: $selected_object_name) //Select object name for place in workspace
+            {
+                ForEach(avaliable_objects_names, id: \.self)
+                { name in
+                    Text(name)
+                }
+            }
+            .labelsHidden()
+            .padding(.bottom)
+            .frame(maxWidth: .infinity)
+            #if os(macOS)
+            .pickerStyle(.radioGroup)
+            #else
+            .pickerStyle(.wheel)
+            #endif
+            
+            HStack
+            {
+                Button(action: place_object)
+                {
+                    Text("Place")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding()
+    }
+    
+    private func place_object()
+    {
+        switch workspace_object_type
+        {
+        case .robot:
+            base_workspace.robot_by_name(selected_object_name).is_placed = true
+            document.preset.robots = base_workspace.file_data().robots
+        case .tool:
+            base_workspace.tool_by_name(selected_object_name).is_placed = true
+            document.preset.tools = base_workspace.file_data().tools
+        case .part:
+            base_workspace.part_by_name(selected_object_name).is_placed = true
+            document.preset.parts = base_workspace.file_data().parts
+        }
+        
+        add_in_view_presented = false
     }
 }
 
@@ -1243,6 +1462,9 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             #endif
+            WorkspaceCardsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
+                .environmentObject(AppState())
             AddInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_in_view_presented: .constant(true))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
