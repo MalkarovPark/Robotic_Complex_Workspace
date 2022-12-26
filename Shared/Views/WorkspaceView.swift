@@ -1037,9 +1037,9 @@ struct WorkspaceCardsView: View
     @EnvironmentObject var app_state: AppState
     
     @State private var viewed_object_name = String()
-    @State private var object_selection = 0
+    @State private var object_selection: WorkspaceObjectType = .robot
     
-    private let objects_items: [String] = ["Robots", "Tools", "Parts"]
+    //private let objects_items: [String] = ["Robots", "Tools", "Parts"]
     
     var body: some View
     {
@@ -1058,12 +1058,12 @@ struct WorkspaceCardsView: View
             .padding([.horizontal, .top])
             //Placeholder
             
-            #if os(macOS)
             if avaliable_for_place
             {
+                #if os(macOS)
                 switch object_selection
                 {
-                case 0:
+                case .robot:
                     WorkspaceObjectCard(document: $document, object: base_workspace.robot_by_name(viewed_object_name))
                     
                     HStack
@@ -1084,7 +1084,7 @@ struct WorkspaceCardsView: View
                     {
                         viewed_object_name = base_workspace.placed_robots_names.first ?? ""
                     }
-                case 1:
+                case .tool:
                     WorkspaceObjectCard(document: $document, object: base_workspace.tool_by_name(viewed_object_name))
                     
                     HStack
@@ -1105,7 +1105,7 @@ struct WorkspaceCardsView: View
                     {
                         viewed_object_name = base_workspace.placed_tools_names.first ?? ""
                     }
-                case 2:
+                case .part:
                     WorkspaceObjectCard(document: $document, object: base_workspace.part_by_name(viewed_object_name))
                     
                     HStack
@@ -1126,9 +1126,32 @@ struct WorkspaceCardsView: View
                     {
                         viewed_object_name = base_workspace.placed_parts_names.first ?? ""
                     }
-                default:
-                    Text("None")
                 }
+                #else
+                TabView
+                {
+                    switch object_selection
+                    {
+                    case .robot:
+                        ForEach(base_workspace.placed_robots_names, id: \.self)
+                        { name in
+                            WorkspaceObjectCard(document: $document, object: base_workspace.robot_by_name(name))
+                        }
+                    case .tool:
+                        ForEach(base_workspace.placed_tools_names, id: \.self)
+                        { name in
+                            WorkspaceObjectCard(document: $document, object: base_workspace.tool_by_name(name))
+                        }
+                    case .part:
+                        ForEach(base_workspace.placed_parts_names, id: \.self)
+                        { name in
+                            WorkspaceObjectCard(document: $document, object: base_workspace.part_by_name(name))
+                        }
+                    }
+                }
+                .tabViewStyle(.page)
+                .indexViewStyle(.page(backgroundDisplayMode: .automatic))
+                #endif
             }
             else
             {
@@ -1140,17 +1163,6 @@ struct WorkspaceCardsView: View
                     .padding()
                     .frame(maxHeight: .infinity)
             }
-            #else
-            TabView
-            {
-                ForEach(base_workspace.placed_robots_names, id: \.self)
-                { name in
-                    WorkspaceObjectCard(object: base_workspace.robot_by_name(name))
-                }
-            }
-            .tabViewStyle(.page)
-            .indexViewStyle(.page(backgroundDisplayMode: .automatic))
-            #endif
             
             HStack(spacing: 0)
             {
@@ -1160,14 +1172,12 @@ struct WorkspaceCardsView: View
                     {
                         switch object_selection
                         {
-                        case 0:
+                        case .robot:
                             PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
-                        case 1:
+                        case .tool:
                             PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
-                        case 2:
+                        case .part:
                             PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
-                        default:
-                            Text("None")
                         }
                     }
                     .padding()
@@ -1181,20 +1191,18 @@ struct WorkspaceCardsView: View
                 {
                     switch object_selection
                     {
-                    case 0:
+                    case .robot:
                         ObjectPlaceButton(document: $document, workspace_object_type: .constant(WorkspaceObjectType.robot))
                             .padding(.vertical)
                             .disabled(base_workspace.avaliable_robots_names.count == 0)
-                    case 1:
+                    case .tool:
                         ObjectPlaceButton(document: $document, workspace_object_type: .constant(WorkspaceObjectType.tool))
                             .padding(.vertical)
                             .disabled(base_workspace.avaliable_tools_names.count == 0)
-                    case 2:
+                    case .part:
                         ObjectPlaceButton(document: $document, workspace_object_type: .constant(WorkspaceObjectType.part))
                             .padding(.vertical)
                             .disabled(base_workspace.avaliable_parts_names.count == 0)
-                    default:
-                        Text("None")
                     }
                 }
             }
@@ -1207,9 +1215,9 @@ struct WorkspaceCardsView: View
             {
                 Picker("Objects", selection: $object_selection)
                 {
-                    ForEach(0..<objects_items.count, id: \.self)
-                    { index in
-                        Text(self.objects_items[index]).tag(index)
+                    ForEach(WorkspaceObjectType.allCases, id: \.self)
+                    { type in
+                        Text(type.rawValue + "s").tag(type)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -1233,14 +1241,12 @@ struct WorkspaceCardsView: View
         
         switch object_selection
         {
-        case 0:
+        case .robot:
             avaliable_for_place = base_workspace.placed_robots_names.count > 0
-        case 1:
+        case .tool:
             avaliable_for_place = base_workspace.placed_tools_names.count > 0
-        case 2:
+        case .part:
             avaliable_for_place = base_workspace.placed_parts_names.count > 0
-        default:
-            break
         }
         
         return avaliable_for_place
@@ -1472,5 +1478,9 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
         }
+        #if os(iOS)
+        .previewDevice("iPad mini (6th generation)")
+        .previewInterfaceOrientation(.landscapeLeft)
+        #endif
     }
 }
