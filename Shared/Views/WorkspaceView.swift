@@ -749,7 +749,7 @@ struct AddInWorkspaceView: View
             document.preset.robots = base_workspace.file_data().robots
         case .tool:
             document.preset.tools = base_workspace.file_data().tools
-        case.part:
+        case .part:
             document.preset.parts = base_workspace.file_data().parts
         default:
             break
@@ -1039,7 +1039,11 @@ struct WorkspaceCardsView: View
     @State private var viewed_object_name = String()
     @State private var object_selection: WorkspaceObjectType = .robot
     
+    //@State private var object = WorkspaceObject()
+    @State private var update_toggle = false
+    
     //private let objects_items: [String] = ["Robots", "Tools", "Parts"]
+    @State private var is_updated = false
     
     var body: some View
     {
@@ -1136,16 +1140,31 @@ struct WorkspaceCardsView: View
                         ForEach(base_workspace.placed_robots_names, id: \.self)
                         { name in
                             WorkspaceObjectCard(document: $document, object: base_workspace.robot_by_name(name))
+                                .onAppear
+                                {
+                                    viewed_object_name = name
+                                    object = base_workspace.robot_by_name(name)
+                                }
                         }
                     case .tool:
                         ForEach(base_workspace.placed_tools_names, id: \.self)
                         { name in
                             WorkspaceObjectCard(document: $document, object: base_workspace.tool_by_name(name))
+                                .onAppear
+                                {
+                                    viewed_object_name = name
+                                    object = base_workspace.tool_by_name(name)
+                                }
                         }
                     case .part:
                         ForEach(base_workspace.placed_parts_names, id: \.self)
                         { name in
                             WorkspaceObjectCard(document: $document, object: base_workspace.part_by_name(name))
+                                .onAppear
+                                {
+                                    viewed_object_name = name
+                                    object = base_workspace.part_by_name(name)
+                                }
                         }
                     }
                 }
@@ -1164,23 +1183,26 @@ struct WorkspaceCardsView: View
                     .frame(maxHeight: .infinity)
             }
             
+            //MARK: Object edit card
             HStack(spacing: 0)
             {
                 HStack
                 {
-                    HStack
+                    if viewed_object_name != "" && avaliable_for_place
                     {
                         switch object_selection
                         {
                         case .robot:
-                            PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                            CardInfoView(document: $document, object: base_workspace.robot_by_name(viewed_object_name))
+                                .modifier(DoubleModifier(update_toggle: $update_toggle))
                         case .tool:
-                            PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                            CardInfoView(document: $document, object: base_workspace.tool_by_name(viewed_object_name))
+                                .modifier(DoubleModifier(update_toggle: $update_toggle))
                         case .part:
-                            PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                            CardInfoView(document: $document, object: base_workspace.part_by_name(viewed_object_name))
+                                .modifier(DoubleModifier(update_toggle: $update_toggle))
                         }
                     }
-                    .padding()
                 }
                 .background(.thinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -1224,6 +1246,18 @@ struct WorkspaceCardsView: View
                 .labelsHidden()
                 .buttonStyle(.borderless)
                 .padding([.horizontal, .top])
+                .onChange(of: [object_selection.rawValue, viewed_object_name])
+                { _ in
+                    if !is_updated
+                    {
+                        is_updated = true
+                        DispatchQueue.main.asyncAfter(deadline: .now())
+                        {
+                            update_toggle.toggle()
+                            is_updated = false
+                        }
+                    }
+                }
             }
         }
         #if os(macOS)
@@ -1336,6 +1370,120 @@ struct WorkspaceObjectCard: View
             document.preset.parts = base_workspace.file_data().parts
         default:
             break
+        }
+    }
+}
+
+struct CardInfoView: View
+{
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    var object: WorkspaceObject
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    @State private var avaliable_attachments = [String]()
+    @State private var attach_robot_name = String()
+    @State private var old_attachment: String?
+    
+    @State private var location: [Float] = [0, 0, 0]
+    @State private var rotation: [Float] = [0, 0, 0]
+    @State private var is_attached = false
+    
+    @State var is_compact = false
+    @State private var appeared = false
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            //Info view title
+            if object is Tool
+            {
+                /*let tool_binding = Binding<Tool>(get: {
+                    object as! Tool
+                }, set: {
+                    object = $0
+                })*/
+                
+                Toggle(isOn: $is_attached)
+                {
+                    Image(systemName: "pin.fill")
+                }
+                .toggleStyle(.button)
+                .padding()
+                .onChange(of: base_workspace.selected_tool.is_attached)
+                { new_value in
+                    if !new_value
+                    {
+                        clear_constranints(node: (object as! Tool).node ?? SCNNode())
+                        (object as! Tool).attached_to = nil
+                    }
+                    //object = tool
+                    document.preset.tools = base_workspace.file_data().tools
+                }
+            }
+            
+            //Selected object position editor
+            DynamicStack(content: {
+                //Text(object.name ?? "???")
+                PositionView(location: $location, rotation: $rotation)
+                    .onChange(of: [location, rotation])
+                    { _ in
+                        object.location = location
+                        object.rotation = rotation
+                        
+                        switch object
+                        {
+                        case is Robot:
+                            document.preset.robots = base_workspace.file_data().robots
+                        case is Tool:
+                            if (object as! Tool).is_attached
+                            {
+                                old_attachment = (object as! Tool).attached_to
+                                (object as! Tool).attached_to = nil
+                                
+                                if old_attachment == nil
+                                {
+                                    attach_robot_name = avaliable_attachments.first!
+                                    base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                                }
+                                else
+                                {
+                                    attach_robot_name = old_attachment!
+                                }
+                                
+                                avaliable_attachments = base_workspace.attachable_robots_names
+                            }
+                            
+                            document.preset.tools = base_workspace.file_data().tools
+                        case is Part:
+                            document.preset.parts = base_workspace.file_data().parts
+                        default:
+                            break
+                        }
+                    }
+            }, is_compact: $is_compact, spacing: 12)
+            .padding()
+        }
+        .onAppear
+        {
+            location = object.location
+            rotation = object.rotation
+            
+            if object is Tool
+            {
+                is_attached = (object as! Tool).is_attached
+            }
+            
+            print(object.name)
+            print(object.location)
+            print(object.rotation)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            {
+                appeared = true
+            }
         }
     }
 }
