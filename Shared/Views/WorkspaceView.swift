@@ -818,8 +818,8 @@ struct InfoView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    @State var avaliable_attachments = [String]()
-    @State var attach_robot_name = String()
+    @State private var avaliable_attachments = [String]()
+    @State private var attach_robot_name = String()
     @State private var old_attachment: String?
     
     @State var is_compact = false
@@ -838,7 +838,7 @@ struct InfoView: View
             case .tool:
                 HStack(spacing: 0)
                 {
-                    Text("\(base_workspace.selected_robot.name ?? "None")")
+                    Text("\(base_workspace.selected_tool.name ?? "None")")
                         .font(.title3)
                         .padding([.horizontal, .top])
                 }
@@ -1068,7 +1068,7 @@ struct WorkspaceCardsView: View
                 switch object_selection
                 {
                 case .robot:
-                    WorkspaceObjectCard(document: $document, object: base_workspace.robot_by_name(viewed_object_name))
+                    WorkspaceObjectCard(document: $document, object: base_workspace.robot_by_name(viewed_object_name), remove_completion: { viewed_object_name = base_workspace.placed_robots_names.last ?? "" })
                     
                     HStack
                     {
@@ -1089,7 +1089,7 @@ struct WorkspaceCardsView: View
                         viewed_object_name = base_workspace.placed_robots_names.first ?? ""
                     }
                 case .tool:
-                    WorkspaceObjectCard(document: $document, object: base_workspace.tool_by_name(viewed_object_name))
+                    WorkspaceObjectCard(document: $document, object: base_workspace.tool_by_name(viewed_object_name), remove_completion: { viewed_object_name = base_workspace.placed_tools_names.last ?? "" })
                     
                     HStack
                     {
@@ -1110,7 +1110,7 @@ struct WorkspaceCardsView: View
                         viewed_object_name = base_workspace.placed_tools_names.first ?? ""
                     }
                 case .part:
-                    WorkspaceObjectCard(document: $document, object: base_workspace.part_by_name(viewed_object_name))
+                    WorkspaceObjectCard(document: $document, object: base_workspace.part_by_name(viewed_object_name), remove_completion: { viewed_object_name = base_workspace.placed_parts_names.last ?? "" })
                     
                     HStack
                     {
@@ -1188,20 +1188,10 @@ struct WorkspaceCardsView: View
             {
                 HStack
                 {
-                    if viewed_object_name != "" && avaliable_for_place
+                    if viewed_object_name != "" && avaliable_for_place && base_workspace.selected_object != nil
                     {
-                        switch object_selection
-                        {
-                        case .robot:
-                            CardInfoView(document: $document, object: base_workspace.robot_by_name(viewed_object_name))
-                                .modifier(DoubleModifier(update_toggle: $update_toggle))
-                        case .tool:
-                            CardInfoView(document: $document, object: base_workspace.tool_by_name(viewed_object_name))
-                                .modifier(DoubleModifier(update_toggle: $update_toggle))
-                        case .part:
-                            CardInfoView(document: $document, object: base_workspace.part_by_name(viewed_object_name))
-                                .modifier(DoubleModifier(update_toggle: $update_toggle))
-                        }
+                        CardInfoView(document: $document, object: base_workspace.selected_object)
+                            .modifier(DoubleModifier(update_toggle: $update_toggle))
                     }
                 }
                 .background(.thinMaterial)
@@ -1246,20 +1236,46 @@ struct WorkspaceCardsView: View
                 .labelsHidden()
                 .buttonStyle(.borderless)
                 .padding([.horizontal, .top])
-                .onChange(of: [object_selection.rawValue, viewed_object_name])
+                .onChange(of: object_selection)
                 { _ in
-                    if !is_updated
+                    switch object_selection
                     {
-                        is_updated = true
-                        DispatchQueue.main.asyncAfter(deadline: .now())
-                        {
-                            update_toggle.toggle()
-                            is_updated = false
-                        }
+                    case .robot:
+                        base_workspace.deselect_tool()
+                        base_workspace.deselect_part()
+                    case .tool:
+                        base_workspace.deselect_robot()
+                        base_workspace.deselect_part()
+                    case .part:
+                        base_workspace.deselect_robot()
+                        base_workspace.deselect_tool()
+                    }
+                }
+                .onChange(of: viewed_object_name)
+                { _ in
+                    update_toggle.toggle()
+                    
+                    switch object_selection
+                    {
+                    case .robot:
+                        base_workspace.deselect_robot()
+                        base_workspace.select_robot(name: viewed_object_name)
+                    case .tool:
+                        base_workspace.deselect_tool()
+                        base_workspace.select_tool(name: viewed_object_name)
+                    case .part:
+                        base_workspace.deselect_part()
+                        base_workspace.select_part(name: viewed_object_name)
                     }
                 }
             }
         }
+        /*.onDisappear
+        {
+            base_workspace.deselect_robot()
+            base_workspace.deselect_tool()
+            base_workspace.deselect_part()
+        }*/
         #if os(macOS)
         .frame(minWidth: 500, idealWidth: 800, minHeight: 480, idealHeight: 600)
         #else
@@ -1294,6 +1310,7 @@ struct WorkspaceObjectCard: View
     @EnvironmentObject var base_workspace: Workspace
     
     var object: WorkspaceObject
+    var remove_completion: (() -> Void)
     
     var body: some View
     {
@@ -1371,13 +1388,15 @@ struct WorkspaceObjectCard: View
         default:
             break
         }
+        
+        remove_completion()
     }
 }
 
 struct CardInfoView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    var object: WorkspaceObject
+    @State var object: WorkspaceObject?
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -1397,88 +1416,174 @@ struct CardInfoView: View
     {
         VStack(spacing: 0)
         {
-            //Info view title
-            if object is Tool
-            {
-                /*let tool_binding = Binding<Tool>(get: {
-                    object as! Tool
-                }, set: {
-                    object = $0
-                })*/
-                
-                Toggle(isOn: $is_attached)
-                {
-                    Image(systemName: "pin.fill")
-                }
-                .toggleStyle(.button)
-                .padding()
-                .onChange(of: base_workspace.selected_tool.is_attached)
-                { new_value in
-                    if !new_value
-                    {
-                        clear_constranints(node: (object as! Tool).node ?? SCNNode())
-                        (object as! Tool).attached_to = nil
-                    }
-                    //object = tool
-                    document.preset.tools = base_workspace.file_data().tools
-                }
-            }
-            
             //Selected object position editor
             DynamicStack(content: {
-                //Text(object.name ?? "???")
-                PositionView(location: $location, rotation: $rotation)
-                    .onChange(of: [location, rotation])
-                    { _ in
-                        object.location = location
-                        object.rotation = rotation
-                        
-                        switch object
+                switch object
+                {
+                case is Robot:
+                    PositionView(location: $location, rotation: $rotation)
+                        .onChange(of: [location, rotation])
+                        { values in
+                            if appeared
+                            {
+                                object?.location = values[0]
+                                object?.rotation = values[1]
+                                
+                                document.preset.robots = base_workspace.file_data().robots
+                            }
+                        }
+                case is Tool:
+                    if !is_attached
+                    {
+                        PositionView(location: $location, rotation: $rotation)
+                            .onChange(of: [location, rotation])
+                            { values in
+                                if appeared
+                                {
+                                    object?.location = values[0]
+                                    object?.rotation = values[1]
+                                    
+                                    document.preset.tools = base_workspace.file_data().tools
+                                }
+                            }
+                    }
+                    else
+                    {
+                        ZStack
                         {
-                        case is Robot:
-                            document.preset.robots = base_workspace.file_data().robots
-                        case is Tool:
+                            if avaliable_attachments.count > 0
+                            {
+                                Picker("Attach to", selection: $attach_robot_name) //Select object name for place in workspace
+                                {
+                                    ForEach(avaliable_attachments, id: \.self)
+                                    { name in
+                                        Text(name)
+                                    }
+                                }
+                                .onChange(of: attach_robot_name)
+                                { new_value in
+                                    if appeared
+                                    {
+                                        (object as! Tool).attached_to = new_value
+                                        document.preset.tools = base_workspace.file_data().tools
+                                        
+                                        clear_constranints(node: object?.node ?? SCNNode())
+                                        object?.node?.constraints?.append(SCNReplicatorConstraint(target: base_workspace.robot_by_name(new_value).tool_node))
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical)
+                                #if os(iOS)
+                                .buttonStyle(.bordered)
+                                #endif
+                            }
+                            else
+                            {
+                                Text("No robots for attach")
+                                    .padding([.horizontal, .top])
+                            }
+                        }
+                        /*.onAppear
+                        {
                             if (object as! Tool).is_attached
                             {
-                                old_attachment = (object as! Tool).attached_to
-                                (object as! Tool).attached_to = nil
-                                
-                                if old_attachment == nil
+                                if appeared
                                 {
-                                    attach_robot_name = avaliable_attachments.first!
-                                    base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                                    if old_attachment == nil
+                                    {
+                                        avaliable_attachments = base_workspace.attachable_robots_names
+                                        attach_robot_name = avaliable_attachments.first!
+                                        
+                                        clear_constranints(node: object?.node ?? SCNNode())
+                                        object?.node?.constraints?.append(SCNReplicatorConstraint(target: base_workspace.robot_by_name(attach_robot_name).tool_node))
+                                    }
+                                    else
+                                    {
+                                        attach_robot_name = old_attachment!
+                                    }
                                 }
-                                else
-                                {
-                                    attach_robot_name = old_attachment!
-                                }
-                                
-                                avaliable_attachments = base_workspace.attachable_robots_names
                             }
-                            
+                        }*/
+                    }
+                case is Part:
+                    PositionView(location: $location, rotation: $rotation)
+                        .onChange(of: [location, rotation])
+                        { values in
+                            if appeared
+                            {
+                                object?.location = values[0]
+                                object?.rotation = values[1]
+                                
+                                document.preset.parts = base_workspace.file_data().parts
+                            }
+                        }
+                default:
+                    Text("None")
+                }
+                
+                //Tool pin view
+                if object is Tool
+                {
+                    Toggle(isOn: $is_attached)
+                    {
+                        Image(systemName: "pin.fill")
+                    }
+                    .toggleStyle(.button)
+                    .onChange(of: is_attached)
+                    { new_value in
+                        if new_value
+                        {
+                            if avaliable_attachments.count > 0
+                            {
+                                if (object as! Tool).attached_to == nil
+                                {
+                                    attach_robot_name = avaliable_attachments.first ?? ""
+                                    
+                                    object?.node?.constraints?.append(SCNReplicatorConstraint(target: base_workspace.robot_by_name(attach_robot_name).tool_node))
+                                }
+                            }
+                        }
+                        else
+                        {
+                            (object as! Tool).attached_to = nil
+                            clear_constranints(node: object?.node ?? SCNNode())
+                        }
+                        
+                        if appeared
+                        {
+                            (object as! Tool).is_attached = new_value
                             document.preset.tools = base_workspace.file_data().tools
-                        case is Part:
-                            document.preset.parts = base_workspace.file_data().parts
-                        default:
-                            break
                         }
                     }
+                }
             }, is_compact: $is_compact, spacing: 12)
             .padding()
         }
         .onAppear
         {
-            location = object.location
-            rotation = object.rotation
+            location = object!.location
+            rotation = object!.rotation
             
             if object is Tool
             {
                 is_attached = (object as! Tool).is_attached
+                
+                if is_attached
+                {
+                    (object as! Tool).is_attached = false
+                    avaliable_attachments = base_workspace.attachable_robots_names
+                    (object as! Tool).is_attached = true
+                    
+                    attach_robot_name = (object as! Tool).attached_to!
+                }
+                else
+                {
+                    avaliable_attachments = base_workspace.attachable_robots_names
+                }
+                
+                old_attachment = (object as! Tool).attached_to
             }
-            
-            print(object.name)
-            print(object.location)
-            print(object.rotation)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
