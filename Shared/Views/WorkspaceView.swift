@@ -300,10 +300,6 @@ struct ComplexWorkspaceView: View
             .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
             #endif
         }
-        .onDisappear
-        { 
-            base_workspace.deselect_object()
-        }
     }
 }
 
@@ -1039,11 +1035,11 @@ struct WorkspaceCardsView: View
     @State private var viewed_object_name = String()
     @State private var object_selection: WorkspaceObjectType = .robot
     
-    //@State private var object = WorkspaceObject()
     @State private var update_toggle = false
     
-    //private let objects_items: [String] = ["Robots", "Tools", "Parts"]
-    @State private var is_updated = false
+    #if os(iOS)
+    @State private var is_object_appeared = false
+    #endif
     
     var body: some View
     {
@@ -1132,44 +1128,43 @@ struct WorkspaceCardsView: View
                     }
                 }
                 #else
-                TabView
+                TabView(selection: $viewed_object_name)
                 {
                     switch object_selection
                     {
                     case .robot:
                         ForEach(base_workspace.placed_robots_names, id: \.self)
                         { name in
-                            WorkspaceObjectCard(document: $document, object: base_workspace.robot_by_name(name))
-                                .onAppear
-                                {
-                                    viewed_object_name = name
-                                    object = base_workspace.robot_by_name(name)
-                                }
+                            WorkspaceObjectCard(document: $document, object: base_workspace.robot_by_name(name), remove_completion: { viewed_object_name = base_workspace.placed_robots_names.last ?? "" })
+                                .tag(name)
                         }
                     case .tool:
                         ForEach(base_workspace.placed_tools_names, id: \.self)
                         { name in
-                            WorkspaceObjectCard(document: $document, object: base_workspace.tool_by_name(name))
-                                .onAppear
-                                {
-                                    viewed_object_name = name
-                                    object = base_workspace.tool_by_name(name)
-                                }
+                            WorkspaceObjectCard(document: $document, object: base_workspace.tool_by_name(name), remove_completion: { viewed_object_name = base_workspace.placed_tools_names.last ?? "" })
+                                .tag(name)
                         }
                     case .part:
                         ForEach(base_workspace.placed_parts_names, id: \.self)
                         { name in
-                            WorkspaceObjectCard(document: $document, object: base_workspace.part_by_name(name))
-                                .onAppear
-                                {
-                                    viewed_object_name = name
-                                    object = base_workspace.part_by_name(name)
-                                }
+                            WorkspaceObjectCard(document: $document, object: base_workspace.part_by_name(name), remove_completion: { viewed_object_name = base_workspace.placed_parts_names.last ?? "" }).tag(name)
                         }
                     }
                 }
                 .tabViewStyle(.page)
                 .indexViewStyle(.page(backgroundDisplayMode: .automatic))
+                .onAppear
+                {
+                    switch object_selection
+                    {
+                    case .robot:
+                        viewed_object_name = base_workspace.placed_robots_names.first ?? ""
+                    case .tool:
+                        viewed_object_name = base_workspace.placed_tools_names.first ?? ""
+                    case .part:
+                        viewed_object_name = base_workspace.placed_parts_names.first ?? ""
+                    }
+                }
                 #endif
             }
             else
@@ -1186,18 +1181,18 @@ struct WorkspaceCardsView: View
             //MARK: Object edit card
             HStack(spacing: 0)
             {
-                HStack
+                if viewed_object_name != "" && avaliable_for_place && base_workspace.selected_object != nil
                 {
-                    if viewed_object_name != "" && avaliable_for_place && base_workspace.selected_object != nil
+                    HStack
                     {
                         CardInfoView(document: $document, object: base_workspace.selected_object)
                             .modifier(DoubleModifier(update_toggle: $update_toggle))
                     }
+                    .background(.thinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .padding(.trailing)
+                    .shadow(radius: 8.0)
                 }
-                .background(.thinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .padding(.trailing)
-                .shadow(radius: 8.0)
                 
                 HStack
                 {
@@ -1243,12 +1238,18 @@ struct WorkspaceCardsView: View
                     case .robot:
                         base_workspace.deselect_tool()
                         base_workspace.deselect_part()
+                        
+                        viewed_object_name = base_workspace.placed_robots_names.first ?? ""
                     case .tool:
                         base_workspace.deselect_robot()
                         base_workspace.deselect_part()
+                        
+                        viewed_object_name = base_workspace.placed_tools_names.first ?? ""
                     case .part:
                         base_workspace.deselect_robot()
                         base_workspace.deselect_tool()
+                        
+                        viewed_object_name = base_workspace.placed_parts_names.first ?? ""
                     }
                 }
                 .onChange(of: viewed_object_name)
@@ -1270,12 +1271,6 @@ struct WorkspaceCardsView: View
                 }
             }
         }
-        /*.onDisappear
-        {
-            base_workspace.deselect_robot()
-            base_workspace.deselect_tool()
-            base_workspace.deselect_part()
-        }*/
         #if os(macOS)
         .frame(minWidth: 500, idealWidth: 800, minHeight: 480, idealHeight: 600)
         #else
@@ -1484,27 +1479,6 @@ struct CardInfoView: View
                                     .padding([.horizontal, .top])
                             }
                         }
-                        /*.onAppear
-                        {
-                            if (object as! Tool).is_attached
-                            {
-                                if appeared
-                                {
-                                    if old_attachment == nil
-                                    {
-                                        avaliable_attachments = base_workspace.attachable_robots_names
-                                        attach_robot_name = avaliable_attachments.first!
-                                        
-                                        clear_constranints(node: object?.node ?? SCNNode())
-                                        object?.node?.constraints?.append(SCNReplicatorConstraint(target: base_workspace.robot_by_name(attach_robot_name).tool_node))
-                                    }
-                                    else
-                                    {
-                                        attach_robot_name = old_attachment!
-                                    }
-                                }
-                            }
-                        }*/
                     }
                 case is Part:
                     PositionView(location: $location, rotation: $rotation)
