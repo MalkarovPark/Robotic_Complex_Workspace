@@ -1030,7 +1030,6 @@ struct WorkspaceCardsView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
     
     @State private var viewed_object_name = String()
     @State private var object_selection: WorkspaceObjectType = .robot
@@ -1394,7 +1393,6 @@ struct CardInfoView: View
     @State var object: WorkspaceObject?
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
     
     @State private var avaliable_attachments = [String]()
     @State private var attach_robot_name = String()
@@ -1575,7 +1573,6 @@ struct ObjectPlaceButton: View
     @State private var add_in_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
