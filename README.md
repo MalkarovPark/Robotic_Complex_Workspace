@@ -24,7 +24,7 @@ IndustrialKit is an open source software platform for creating applications that
     * [Parts](#industrialkitui-swiftui)
 * [Visual Modeling](#visual-modeling)
 * [Connecting Objects](#connecting-objects)
-* [Get Statistics](#getting-statistics)
+* [Handling Statistics](#handling-statistics)
 * [Getting Help](#getting-help)
 * [License](#license)
 
@@ -73,7 +73,7 @@ Text...
 
 Text...
 
-# Getting Statistics <a name="getting-statistics">
+# Handling Statistics <a name="handling-statistics">
 
 Text...
 
