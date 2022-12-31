@@ -42,11 +42,13 @@ The application codebase supports macOS, iOS/iPadOS and requires Xcode 14.1 or n
 CareKit is the overarching package that provides view controllers to tie CareKitUI and CareKitStore together. When importing CareKit, CareKitUI and CareKitStore will be imported under the hood.
 
 macOS...
+
 iOS & iPadOS...
 
 ### Project Editing <a name="project-editing"></a>
 
 macOS...
+
 iOS & iPadOS...
 
 # Working With Document <a name="working-with-document"></a>
