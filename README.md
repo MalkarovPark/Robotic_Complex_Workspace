@@ -1,4 +1,4 @@
-![IndustiralKit](https://user-images.githubusercontent.com/62340924/206910209-87495b62-2a9b-42c2-b825-85830a1d2623.png)
+![RCWorkspace](https://user-images.githubusercontent.com/62340924/210179279-8fb05e47-9268-457d-902f-4f07f9ae12e9.png)
 <!--- (https://user-images.githubusercontent.com/62340924/206910169-3009a0da-eeeb-475b-9983-4a2fffa58f9a.png) -->
 
 # Robotic Complex Workspace
