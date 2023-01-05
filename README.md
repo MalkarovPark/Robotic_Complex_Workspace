@@ -35,9 +35,11 @@ The application codebase supports macOS, iOS/iPadOS and requires Xcode 14.1 or n
 Download an image from the *releases* and use application package for the appropriate platform.
 
 *macOS*
+
 [Copy](https://support.apple.com/guide/mac-help/mh35835/mac) a package with the *app* extension to the Applications folder. [Confirm launch](https://support.apple.com/guide/mac-help/mh40616/13.0/mac/13.0).
 
 *iOS & iPadOS*
+
 Official installation method coming in the 17th versions of iOS and iPadOS. Also you may install application package by your own developer profile and special installers.
 
 ### Project Editing <a name="project-editing"></a>
