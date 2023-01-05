@@ -1,5 +1,4 @@
 ![RCWorkspace](https://user-images.githubusercontent.com/62340924/210179279-8fb05e47-9268-457d-902f-4f07f9ae12e9.png)
-<!--- (https://user-images.githubusercontent.com/62340924/206910169-3009a0da-eeeb-475b-9983-4a2fffa58f9a.png) -->
 
 # Robotic Complex Workspace
 
@@ -33,17 +32,21 @@ The application codebase supports macOS, iOS/iPadOS and requires Xcode 14.1 or n
 
 ### Application Installation <a name="application-installation"></a>
 
-CareKit is the overarching package that provides view controllers to tie CareKitUI and CareKitStore together. When importing CareKit, CareKitUI and CareKitStore will be imported under the hood.
+Download an image from the *releases* and use application package for the appropriate platform.
 
-macOS...
+*macOS*
+[Copy](https://support.apple.com/guide/mac-help/mh35835/mac) a package with the *app* extension to the Applications folder. [Confirm launch](https://support.apple.com/guide/mac-help/mh40616/13.0/mac/13.0).
 
-iOS & iPadOS...
+*iOS & iPadOS*
+Official installation method coming in the 17th versions of iOS and iPadOS. Also you may install application package by your own developer profile and special installers.
 
 ### Project Editing <a name="project-editing"></a>
 
-macOS...
+You may view and edit this application project by two ways:
+* Clone this repository;
+* Download ZIP archive from this page.
 
-iOS & iPadOS...
+Open downloaded project in the Xcode and confirm trust.
 
 # Working With Document <a name="working-with-document"></a>
 
