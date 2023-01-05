@@ -36,6 +36,8 @@ The application codebase supports macOS, iOS/iPadOS and requires Xcode 14.1 or n
 
 Download an image from the *releases* and use application package for the appropriate platform.
 
+Connect the necessary property list files in the application settings for robots, tools and parts.
+
 *macOS*
 
 [Copy](https://support.apple.com/guide/mac-help/mh35835/mac) a package with the *app* extension to the Applications folder. [Confirm launch](https://support.apple.com/guide/mac-help/mh40616/13.0/mac/13.0).
@@ -53,6 +55,10 @@ You may view and edit this application project by two ways:
 Open downloaded project in the Xcode and confirm trust.
 
 # Working With Document <a name="working-with-document"></a>
+
+RCWorkspace is the document based app. Thus, each production complex is a separate document.
+
+You can create a new or open an existing document that has a *preset* extension.
 
 ### Robots <a name="robots">
 
