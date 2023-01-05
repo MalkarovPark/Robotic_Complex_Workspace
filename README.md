@@ -56,13 +56,9 @@ Open downloaded project in the Xcode and confirm trust.
 
 # Working With Document <a name="working-with-document"></a>
 
-RCWorkspace is the document based app. Thus, each production complex is a separate document.
+RCWorkspace is the document based app. Thus, each production complex is a separate document. You can create a new or open an existing document that has a *preset* extension.
 
-You can create a new or open an existing document that has a *preset* extension.
-
-Objects are created in the relevant items available through the sidebar.
-
-All created objects can be placed and positioned in the workspace.
+Objects are created in the relevant items available through the sidebar. All created objects can be placed and positioned in the workspace.
 
 ### Robots <a name="robots">
 
