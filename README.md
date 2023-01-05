@@ -14,9 +14,9 @@ Robotic Complex Workspace is an open source application for designing and contro
     * [Application Installation](#application-installation)
     * [Project Edititing](#project-editing)
 * [Working With Document](#working-with-document)
-    * [Robots](#industrialkitui-swiftui)
-    * [Tools](#industrialkitui-swiftui)
-    * [Parts](#industrialkitui-swiftui)
+    * [Robots](#robots)
+    * [Tools](#tools)
+    * [Parts](#parts)
 * [Visual Modeling](#visual-modeling)
 * [Connecting Objects](#connecting-objects)
 * [Handling Statistics](#handling-statistics)
@@ -60,17 +60,21 @@ RCWorkspace is the document based app. Thus, each production complex is a separa
 
 You can create a new or open an existing document that has a *preset* extension.
 
+Objects are created in the relevant items available through the sidebar.
+
+All created objects can be placed and positioned in the workspace.
+
 ### Robots <a name="robots">
 
-Text...
+When creating a robot, in addition to the *name*, the *manufacturer*, *series* and *model* are specified. The *model* parameter determines how the visual model is controlled and direct connector.
 
 ### Tools <a name="tools">
 
-Text...
+When creating, the *name* of the tool and its *model* are specified. Likewise robot, the *model* defines a model controller and direct connector.
 
 ### Parts <a name="parts">
 
-Text...
+When creating a part, its *name* and *model* are specified.
 
 # Visual Modeling <a name="visual-modeling">
 
