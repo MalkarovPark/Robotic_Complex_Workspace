@@ -351,6 +351,7 @@ struct RobotView: View
     @Binding var robot_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    @State private var connector_view_presented = false
     @State private var statistics_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -440,14 +441,23 @@ struct RobotView: View
                 {
                     Button(action: close_robot)
                     {
-                        Label("Close", systemImage: "rectangle.grid.2x2")
+                        Image(systemName: "rectangle.grid.2x2")
                     }
                     Divider()
+                    
+                    Button(action: { connector_view_presented.toggle() })
+                    {
+                        Image(systemName: "link")
+                    }
                     
                     Button(action: { statistics_view_presented.toggle()
                     })
                     {
-                        Label("Statistics", systemImage: "chart.bar")
+                        Image(systemName: "chart.bar")
+                    }
+                    .sheet(isPresented: $connector_view_presented)
+                    {
+                        Text("Connect")
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
@@ -458,7 +468,7 @@ struct RobotView: View
                         base_workspace.update_view()
                     })
                     {
-                        Label("Stop", systemImage: "stop")
+                        Image(systemName: "stop")
                     }
                     Button(action: { base_workspace.selected_robot.start_pause_moving()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
@@ -467,7 +477,7 @@ struct RobotView: View
                         }
                     })
                     {
-                        Label("Play Pause", systemImage: "playpause")
+                        Image(systemName: "playpause")
                     }
                 }
             }

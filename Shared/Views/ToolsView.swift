@@ -284,6 +284,7 @@ struct ToolView: View
     @State private var ready_for_save = false
     @State private var is_document_updated = false
     
+    @State private var connector_view_presented = false
     @State private var statistics_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -342,13 +343,28 @@ struct ToolView: View
             }
             .overlay(alignment: .bottomTrailing)
             {
-                Button(action: { statistics_view_presented.toggle() })
+                HStack(spacing: 0)
                 {
-                    Image(systemName: "chart.bar")
+                    Button(action: { connector_view_presented.toggle() })
+                    {
+                        Image(systemName: "link")
+                    }
+                    .buttonStyle(.bordered)
+                    .keyboardShortcut(.cancelAction)
+                    .padding([.vertical, .leading])
+                    
+                    Button(action: { statistics_view_presented.toggle() })
+                    {
+                        Image(systemName: "chart.bar")
+                    }
+                    .buttonStyle(.bordered)
+                    .keyboardShortcut(.cancelAction)
+                    .padding()
                 }
-                .buttonStyle(.bordered)
-                .keyboardShortcut(.cancelAction)
-                .padding()
+            }
+            .sheet(isPresented: $connector_view_presented)
+            {
+                Text("Connect")
             }
             .sheet(isPresented: $statistics_view_presented)
             {

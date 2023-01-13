@@ -33,7 +33,7 @@ struct StatisticsView: View
         {
             if stats_selection == 0
             {
-                if get_statistics
+                if get_statistics && charts_data?.count ?? 0 > 0
                 {
                     ChartsView(charts_data: $charts_data)
                 }
@@ -47,7 +47,7 @@ struct StatisticsView: View
             }
             else
             {
-                if get_statistics
+                if get_statistics && state_data?.count ?? 0 > 0
                 {
                     StateView(state_data: $state_data)
                 }
