@@ -41,7 +41,7 @@ struct StatisticsView: View
                 {
                     Text("Statistics")
                         .font(.title2)
-                        .padding([.top, .leading, .trailing])
+                        .padding([.top, .horizontal])
                     EmptyView()
                 }
             }
@@ -55,7 +55,7 @@ struct StatisticsView: View
                 {
                     Text("Statistics")
                         .font(.title2)
-                        .padding([.top, .leading, .trailing])
+                        .padding([.top, .horizontal])
                     EmptyView()
                 }
             }
