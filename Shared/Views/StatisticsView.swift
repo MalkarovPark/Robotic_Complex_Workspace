@@ -60,16 +60,36 @@ struct StatisticsView: View
                 }
             }
             
+            #if os(macOS)
             Toggle(isOn: $get_statistics)
             {
                 Text("Enable collection")
             }
             .toggleStyle(.switch)
-            .padding([.leading, .trailing])
+            .padding(.horizontal)
             .onChange(of: get_statistics)
             { _ in
                 update_file_data()
             }
+            #else
+            HStack(spacing: 0)
+            {
+                Text("Enable collection")
+                    .padding(.trailing)
+                Toggle(isOn: $get_statistics)
+                {
+                    Text("Enable collection")
+                }
+                .toggleStyle(.switch)
+                .tint(.accentColor)
+                .labelsHidden()
+            }
+            .padding(.horizontal)
+            .onChange(of: get_statistics)
+            { _ in
+                update_file_data()
+            }
+            #endif
             
             HStack(spacing: 0)
             {
@@ -77,12 +97,14 @@ struct StatisticsView: View
                 {
                     Image(systemName: "eraser")
                 }
+                .buttonStyle(.bordered)
                 .padding([.vertical, .leading])
                 
                 Button(action: update_file_data)
                 {
                     Image(systemName: "arrow.down.doc")
                 }
+                .buttonStyle(.bordered)
                 .padding([.vertical, .leading])
                 
                 Picker("Statistics", selection: $stats_selection)
@@ -107,8 +129,8 @@ struct StatisticsView: View
                 .padding()
             }
         }
-        .controlSize(.large)
         #if os(macOS)
+        .controlSize(.large)
         .frame(minWidth: 448, idealWidth: 480, maxWidth: 512, minHeight: 448, idealHeight: 480, maxHeight: 512)
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)

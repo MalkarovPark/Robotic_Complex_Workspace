@@ -119,6 +119,7 @@ struct GeneralSettingsView: View
             {
                 Toggle("Use visual modeling for workspace", isOn: $workspace_visual_modeling)
                     .toggleStyle(.switch)
+                    .tint(.accentColor)
             }
             #endif
         }

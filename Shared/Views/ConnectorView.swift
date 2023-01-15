@@ -21,6 +21,7 @@ struct ConnectorView: View
     var update_file_data: () -> Void
     
     @State var connected = false
+    @State var text = ""
     
     var body: some View
     {
@@ -30,40 +31,44 @@ struct ConnectorView: View
                 .font(.title2)
                 .padding([.top, .horizontal])
             
-            HStack(spacing: 0)
+            VStack(spacing: 0)
             {
                 GroupBox(label: Text("Parameters"))
                 {
-                    VStack
+                    List
                     {
                         //Spacer()
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
+                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    //.padding()
                 }
-                .padding(.horizontal)
+                .padding([.horizontal, .bottom])
                 
-                GroupBox(label: Text("Output"))
-                {
-                    VStack
-                    {
-                        //Spacer()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                }
-                .padding(.trailing)
+                TextEditor(text: $text)
+                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    .frame(maxWidth: .infinity, maxHeight: 128)
+                    .shadow(radius: 1)
+                    .padding(.horizontal)
             }
             .padding(.vertical)
             
             HStack(spacing: 0)
             {
+                #if os(iOS)
+                Text("Demo")
+                    .padding(.trailing)
+                #endif
+                
                 Toggle(isOn: $demo)
                 {
                     Text("Demo")
                 }
                 .toggleStyle(.switch)
-                .padding()
+                #if os(iOS)
+                .tint(.accentColor)
+                .labelsHidden()
+                #endif
                 
                 Spacer()
                 
@@ -87,15 +92,15 @@ struct ConnectorView: View
                 }
                 .disabled(demo)
                 .toggleStyle(.button)
-                .padding()
+                #if os(iOS)
+                .buttonStyle(.bordered)
+                #endif
             }
+            .padding([.bottom, .horizontal])
         }
-        .controlSize(.large)
         #if os(macOS)
-        .frame(minWidth: 448, idealWidth: 480, maxWidth: 512, minHeight: 448, idealHeight: 480, maxHeight: 512)
-        #else
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        #endif
+        .controlSize(.large)
+        .frame(minWidth: 320, idealWidth: 400, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
         .overlay(alignment: .topLeading)
         {
             Button(action: close_connector)
@@ -106,6 +111,9 @@ struct ConnectorView: View
             .keyboardShortcut(.cancelAction)
             .padding()
         }
+        #else
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #endif
     }
     
     private func close_connector()

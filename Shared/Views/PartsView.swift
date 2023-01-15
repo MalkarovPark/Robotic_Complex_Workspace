@@ -344,16 +344,33 @@ struct PartView: View
                     .frame(width: 112)
                 #endif
                 
+                #if os(macOS)
                 Toggle("Gripable", isOn: $new_gripable)
-                    .toggleStyle(SwitchToggleStyle())
-                    #if os(iOS)
-                    .frame(maxWidth: 128)
-                    #endif
+                    .toggleStyle(.switch)
                     .padding(.trailing)
                     .onChange(of: new_gripable)
                     { _ in
                         update_data()
                     }
+                #else
+                HStack(spacing: 0)
+                {
+                    Text("Gripable")
+                        .padding(.trailing)
+                    Toggle(isOn: $new_gripable)
+                    {
+                        Text("Gripable")
+                    }
+                    .toggleStyle(.switch)
+                    .tint(.accentColor)
+                    .labelsHidden()
+                }
+                .padding(.trailing)
+                .onChange(of: new_gripable)
+                { _ in
+                    update_data()
+                }
+                #endif
             }
             .padding(.vertical)
         }
