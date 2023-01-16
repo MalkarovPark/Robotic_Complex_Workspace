@@ -38,7 +38,7 @@ struct ConnectorView: View
                 {
                     if connector.parameters.count > 0
                     {
-                        List(connector.parameters)
+                        List($connector.parameters)
                         { item in
                             ConnectionParameterView(parameter: item)
                         }
@@ -59,14 +59,13 @@ struct ConnectorView: View
                 {
                     Rectangle()
                         .foregroundColor(.white)
-                        //.frame(maxWidth: .infinity, maxHeight: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                         .shadow(radius: 1)
                     GroupBox(label: Text("Parameters"))
                     {
                         if connector.parameters.count > 0
                         {
-                            List(connector.parameters)
+                            List($connector.parameters)
                             { item in
                                 ConnectionParameterView(parameter: item)
                             }
@@ -93,6 +92,11 @@ struct ConnectorView: View
                     .padding(.horizontal)
             }
             .padding(.vertical)
+            /*.onChange(of: connector.parameters)
+            { parameters in
+                connector.parameters = parameters
+                print(connector.parameters)
+            }*/
             
             HStack(spacing: 0)
             {
@@ -165,7 +169,12 @@ struct ConnectorView: View
 
 struct ConnectionParameterView: View
 {
-    @State var parameter: ConnectionParameter
+    @Binding var parameter: ConnectionParameter
+    
+    @State private var new_string_value = String()
+    @State private var new_int_value = Int()
+    @State private var new_float_value = Float()
+    @State private var new_bool_value = Bool()
     
     var body: some View
     {
@@ -178,55 +187,59 @@ struct ConnectionParameterView: View
             switch parameter.value
             {
             case is String:
-                let to_string_binding = Binding(
-                    get: { parameter.value as! String },
-                    set: { parameter.value = $0 }
-                )
-                
-                TextField(parameter.name, text: to_string_binding)
+                TextField(parameter.name, text: $new_string_value)
                 #if os(macOS)
                     .textFieldStyle(.squareBorder)
                 #endif
                     .labelsHidden()
+                    .onAppear
+                {
+                    new_string_value = parameter.value as! String
+                }
+                .onChange(of: new_string_value)
+                { newValue in
+                    parameter.value = newValue
+                }
             case is Int:
-                let to_int_binding = Binding(
-                    get: { parameter.value as! Int },
-                    set: { parameter.value = $0 }
-                )
-                
-                TextField("0", value: to_int_binding, format: .number)
+                TextField("0", value: $new_int_value, format: .number)
                 #if os(macOS)
                     .textFieldStyle(.roundedBorder)
                 #endif
-                Stepper("Enter", value: to_int_binding, in: -1000...1000)
+                Stepper("Enter", value: $new_int_value, in: -1000...1000)
                     .labelsHidden()
                     .padding(.leading, 8)
                 #if os(macOS)
                     .padding(.trailing, 2)
                 #endif
+                    .onAppear
+                {
+                    new_int_value = parameter.value as! Int
+                }
+                .onChange(of: new_int_value)
+                { newValue in
+                    parameter.value = newValue
+                }
             case is Float:
-                let to_float_binding = Binding(
-                    get: { parameter.value as! Float },
-                    set: { parameter.value = $0 }
-                )
-                
-                TextField("0", value: to_float_binding, format: .number)
+                TextField("0", value: $new_float_value, format: .number)
                 #if os(macOS)
                     .textFieldStyle(.roundedBorder)
                 #endif
-                Stepper("Enter", value: to_float_binding, in: -1000...1000)
+                Stepper("Enter", value: $new_float_value, in: -1000...1000)
                     .labelsHidden()
                     .padding(.leading, 8)
                 #if os(macOS)
                     .padding(.trailing, 2)
                 #endif
+                    .onAppear
+                {
+                    new_float_value = parameter.value as! Float
+                }
+                .onChange(of: new_float_value)
+                { newValue in
+                    parameter.value = newValue
+                }
             case is Bool:
-                let to_bool_binding = Binding(
-                    get: { parameter.value as! Bool },
-                    set: { parameter.value = $0 }
-                )
-                
-                Toggle(isOn: to_bool_binding)
+                Toggle(isOn: $new_bool_value)
                 {
                     Text("Bool")
                 }
@@ -234,6 +247,14 @@ struct ConnectionParameterView: View
                 .tint(.accentColor)
                 #endif
                 .labelsHidden()
+                .onAppear
+            {
+                new_bool_value = parameter.value as! Bool
+            }
+            .onChange(of: new_bool_value)
+            { newValue in
+                parameter.value = newValue
+            }
             default:
                 Text("Unknown parameter")
             }
@@ -249,10 +270,10 @@ struct ConnectorView_Previews: PreviewProvider
         {
             ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), connector: .constant(PortalConnector()), update_file_data: {})
             
-            ConnectionParameterView(parameter: ConnectionParameter(name: "String", value: "Text"))
-            ConnectionParameterView(parameter: ConnectionParameter(name: "Int", value: 8))
-            ConnectionParameterView(parameter: ConnectionParameter(name: "Float", value: Float(6.0)))
-            ConnectionParameterView(parameter: ConnectionParameter(name: "Bool", value: true))
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")))
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Int", value: 8)))
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Float", value: Float(6.0))))
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Bool", value: true)))
         }
     }
 }
