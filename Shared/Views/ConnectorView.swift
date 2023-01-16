@@ -33,17 +33,58 @@ struct ConnectorView: View
             
             VStack(spacing: 0)
             {
+                #if os(macOS)
                 GroupBox(label: Text("Parameters"))
                 {
-                    List
+                    if connector.parameters.count > 0
                     {
-                        //Spacer()
+                        List(connector.parameters)
+                        { item in
+                            ConnectionParameterView(parameter: item)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                        .controlSize(.regular)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                    //.padding()
+                    else
+                    {
+                        Text("Connector without parameters")
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
                 .padding([.horizontal, .bottom])
+                #else
+                ZStack
+                {
+                    Rectangle()
+                        .foregroundColor(.white)
+                        //.frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                        .shadow(radius: 1)
+                    GroupBox(label: Text("Parameters"))
+                    {
+                        if connector.parameters.count > 0
+                        {
+                            List(connector.parameters)
+                            { item in
+                                ConnectionParameterView(parameter: item)
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .listStyle(.plain)
+                            .controlSize(.regular)
+                        }
+                        else
+                        {
+                            Text("Connector without parameters")
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        }
+                    }
+                    .backgroundStyle(.white)
+                }
+                .padding([.horizontal, .bottom])
+                #endif
                 
                 TextEditor(text: $text)
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
@@ -122,10 +163,96 @@ struct ConnectorView: View
     }
 }
 
+struct ConnectionParameterView: View
+{
+    @State var parameter: ConnectionParameter
+    
+    var body: some View
+    {
+        HStack(spacing: 0)
+        {
+            Text(parameter.name)
+            
+            Spacer()
+            
+            switch parameter.value
+            {
+            case is String:
+                let to_string_binding = Binding(
+                    get: { parameter.value as! String },
+                    set: { parameter.value = $0 }
+                )
+                
+                TextField(parameter.name, text: to_string_binding)
+                #if os(macOS)
+                    .textFieldStyle(.squareBorder)
+                #endif
+                    .labelsHidden()
+            case is Int:
+                let to_int_binding = Binding(
+                    get: { parameter.value as! Int },
+                    set: { parameter.value = $0 }
+                )
+                
+                TextField("0", value: to_int_binding, format: .number)
+                #if os(macOS)
+                    .textFieldStyle(.roundedBorder)
+                #endif
+                Stepper("Enter", value: to_int_binding, in: -1000...1000)
+                    .labelsHidden()
+                    .padding(.leading, 8)
+                #if os(macOS)
+                    .padding(.trailing, 2)
+                #endif
+            case is Float:
+                let to_float_binding = Binding(
+                    get: { parameter.value as! Float },
+                    set: { parameter.value = $0 }
+                )
+                
+                TextField("0", value: to_float_binding, format: .number)
+                #if os(macOS)
+                    .textFieldStyle(.roundedBorder)
+                #endif
+                Stepper("Enter", value: to_float_binding, in: -1000...1000)
+                    .labelsHidden()
+                    .padding(.leading, 8)
+                #if os(macOS)
+                    .padding(.trailing, 2)
+                #endif
+            case is Bool:
+                let to_bool_binding = Binding(
+                    get: { parameter.value as! Bool },
+                    set: { parameter.value = $0 }
+                )
+                
+                Toggle(isOn: to_bool_binding)
+                {
+                    Text("Bool")
+                }
+                #if os(iOS)
+                .tint(.accentColor)
+                #endif
+                .labelsHidden()
+            default:
+                Text("Unknown parameter")
+            }
+        }
+    }
+}
+
 struct ConnectorView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), connector: .constant(WorkspaceObjectConnector()), update_file_data: {})
+        Group
+        {
+            ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), connector: .constant(PortalConnector()), update_file_data: {})
+            
+            ConnectionParameterView(parameter: ConnectionParameter(name: "String", value: "Text"))
+            ConnectionParameterView(parameter: ConnectionParameter(name: "Int", value: 8))
+            ConnectionParameterView(parameter: ConnectionParameter(name: "Float", value: Float(6.0)))
+            ConnectionParameterView(parameter: ConnectionParameter(name: "Bool", value: true))
+        }
     }
 }

@@ -78,10 +78,10 @@ struct ContentView: View
         {
         case "Portal":
             model_controller = PortalController()
-            connector = RobotConnector()
+            connector = PortalConnector()
         case "6DOF":
             model_controller = _6DOFController()
-            connector = RobotConnector()
+            connector = _6DOFConnector()
         default:
             break
         }
@@ -93,10 +93,10 @@ struct ContentView: View
         {
         case "gripper":
             model_controller = GripperController()
-            connector = ToolConnector()
+            connector = GripperConnector()
         case "drill":
             model_controller = DrillController()
-            connector = ToolConnector()
+            connector = DrillConnector()
         default:
             break
         }
