@@ -21,6 +21,7 @@ struct ConnectorView: View
     var update_file_data: () -> Void
     
     @State var connected = false
+    @State var output = true
     @State var text = ""
     
     var body: some View
@@ -44,7 +45,7 @@ struct ConnectorView: View
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                        .controlSize(.regular)
+                        //.controlSize(.regular)
                     }
                     else
                     {
@@ -71,7 +72,7 @@ struct ConnectorView: View
                             }
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .listStyle(.plain)
-                            .controlSize(.regular)
+                            //.controlSize(.regular)
                         }
                         else
                         {
@@ -87,16 +88,37 @@ struct ConnectorView: View
                 
                 TextEditor(text: $text)
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                    .frame(maxWidth: .infinity, maxHeight: 128)
                     .shadow(radius: 1)
+                    .frame(maxWidth: .infinity, maxHeight: 128)
+                    .overlay(alignment: .bottomTrailing)
+                    {
+                        VStack(spacing: 0)
+                        {
+                            Toggle(isOn: $output)
+                            {
+                                Image(systemName: "scroll")
+                            }
+                            .toggleStyle(.button)
+                            #if os(iOS)
+                            .buttonStyle(.bordered)
+                            #endif
+                            .padding([.horizontal, .leading])
+                            
+                            Button(action: {
+                                connector.clear_output()
+                            })
+                            {
+                                Image(systemName: "eraser")
+                            }
+                            .buttonStyle(.bordered)
+                            .padding()
+                        }
+                    }
+                    //.shadow(radius: 1)
                     .padding(.horizontal)
             }
+            .controlSize(.regular)
             .padding(.vertical)
-            /*.onChange(of: connector.parameters)
-            { parameters in
-                connector.parameters = parameters
-                print(connector.parameters)
-            }*/
             
             HStack(spacing: 0)
             {
