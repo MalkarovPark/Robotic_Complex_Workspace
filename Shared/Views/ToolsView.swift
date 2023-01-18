@@ -364,10 +364,6 @@ struct ToolView: View
             }
             .sheet(isPresented: $connector_view_presented)
             {
-                let connector_binding = Binding(
-                    get: { base_workspace.selected_tool.connector as WorkspaceObjectConnector },
-                    set: { base_workspace.selected_tool.connector = $0 as! ToolConnector }
-                )
                 ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_tool.demo, connector: base_workspace.selected_tool.connector as WorkspaceObjectConnector, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
             }
             .sheet(isPresented: $statistics_view_presented)
@@ -680,7 +676,6 @@ struct ToolView: View
         
         document.preset.tools = base_workspace.file_data().tools
         app_state.get_scene_image = true
-        //base_workspace.update_view()
     }
     
     func close_tool()

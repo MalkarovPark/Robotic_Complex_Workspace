@@ -23,13 +23,14 @@ class PortalConnector: RobotConnector
     
     override func connection_process() async -> Bool
     {
-        //output += "\nConnected"
+        output += "\nConnecting..."
         sleep(4)
+        output += "\nConnected"
         return true
     }
     
     override func disconnection_process() async
     {
-        //output += "\nDisconnected"
+        output += "\nDisconnected"
     }
 }

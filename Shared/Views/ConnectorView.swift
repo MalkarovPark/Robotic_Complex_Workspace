@@ -21,8 +21,7 @@ struct ConnectorView: View
     var update_file_data: () -> Void
     
     @State private var connected = false
-    @State var output = true
-    @State var text = ""
+    @State private var first_loaded = true
     
     var body: some View
     {
@@ -86,7 +85,7 @@ struct ConnectorView: View
                 .padding([.horizontal, .bottom])
                 #endif
                 
-                TextEditor(text: $text)
+                TextEditor(text: $connector.output)
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     .shadow(radius: 1)
                     .frame(maxWidth: .infinity, maxHeight: 96)
@@ -94,7 +93,7 @@ struct ConnectorView: View
                     {
                         VStack(spacing: 0)
                         {
-                            Toggle(isOn: $output)
+                            Toggle(isOn: $connector.get_output)
                             {
                                 Image(systemName: "scroll")
                             }
@@ -161,13 +160,16 @@ struct ConnectorView: View
                 #endif
                 .onChange(of: connected)
                 { newValue in
-                    if newValue
+                    if !first_loaded
                     {
-                        connector.connect()
-                    }
-                    else
-                    {
-                        connector.disconnect()
+                        if newValue
+                        {
+                            connector.connect()
+                        }
+                        else
+                        {
+                            connector.disconnect()
+                        }
                     }
                 }
             }
@@ -189,6 +191,11 @@ struct ConnectorView: View
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         #endif
+        .onAppear
+        {
+            connected = connector.connected
+            first_loaded = false
+        }
     }
     
     private func close_connector()

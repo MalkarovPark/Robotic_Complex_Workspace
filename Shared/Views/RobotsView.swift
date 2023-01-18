@@ -457,10 +457,6 @@ struct RobotView: View
                     }
                     .sheet(isPresented: $connector_view_presented)
                     {
-                        let connector_binding = Binding(
-                            get: { base_workspace.selected_robot.connector as WorkspaceObjectConnector },
-                            set: { base_workspace.selected_robot.connector = $0 as! RobotConnector }
-                        )
                         ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_robot.demo, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
                     }
                     .sheet(isPresented: $statistics_view_presented)
@@ -469,16 +465,11 @@ struct RobotView: View
                     }
                     
                     Button(action: { base_workspace.selected_robot.reset_moving()
-                        base_workspace.update_view()
                     })
                     {
                         Image(systemName: "stop")
                     }
                     Button(action: { base_workspace.selected_robot.start_pause_moving()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                        {
-                            base_workspace.update_view()
-                        }
                     })
                     {
                         Image(systemName: "playpause")
@@ -558,7 +549,6 @@ struct RobotSceneView: View
                                 .onChange(of: base_workspace.selected_robot.origin_rotation)
                             { _ in
                                 base_workspace.selected_robot.robot_location_place()
-                                //base_workspace.selected_robot.update_position()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
                                 app_state.get_scene_image = true
@@ -586,7 +576,6 @@ struct RobotSceneView: View
                                 .onChange(of: base_workspace.selected_robot.origin_location)
                             { _ in
                                 base_workspace.selected_robot.robot_location_place()
-                                //base_workspace.selected_robot.update_position()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
                                 app_state.get_scene_image = true
@@ -612,7 +601,6 @@ struct RobotSceneView: View
                             SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
                                 .onChange(of: base_workspace.selected_robot.space_scale)
                             { _ in
-                                //base_workspace.selected_robot.robot_location_place()
                                 base_workspace.selected_robot.update_space_scale()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
@@ -743,7 +731,6 @@ struct CellSceneView_macOS: NSViewRepresentable
                 base_workspace.selected_robot.moving_completed = false
                 base_workspace.update_view()
             }
-            //base_workspace.selected_robot.moving_completed = false
         }
         if base_workspace.selected_robot.performed == true
         {
@@ -751,7 +738,6 @@ struct CellSceneView_macOS: NSViewRepresentable
             {
                 base_workspace.update_view()
             }
-            //base_workspace.update_view()
         }
     }
 }
@@ -857,7 +843,6 @@ struct CellSceneView_iOS: UIViewRepresentable
                 base_workspace.selected_robot.moving_completed = false
                 base_workspace.update_view()
             }
-            //base_workspace.selected_robot.moving_completed = false
         }
         if base_workspace.selected_robot.performed == true
         {
@@ -865,7 +850,6 @@ struct CellSceneView_iOS: UIViewRepresentable
             {
                 base_workspace.update_view()
             }
-            //base_workspace.update_view()
         }
     }
 }
