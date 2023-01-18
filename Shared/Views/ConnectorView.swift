@@ -14,13 +14,13 @@ struct ConnectorView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @Binding var demo: Bool
-    @Binding var connector: WorkspaceObjectConnector
+    @StateObject var connector: WorkspaceObjectConnector
     
     @EnvironmentObject var base_workspace: Workspace
     
     var update_file_data: () -> Void
     
-    @State var connected = false
+    @State private var connected = false
     @State var output = true
     @State var text = ""
     
@@ -89,7 +89,7 @@ struct ConnectorView: View
                 TextEditor(text: $text)
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     .shadow(radius: 1)
-                    .frame(maxWidth: .infinity, maxHeight: 128)
+                    .frame(maxWidth: .infinity, maxHeight: 96)
                     .overlay(alignment: .bottomTrailing)
                     {
                         VStack(spacing: 0)
@@ -136,6 +136,10 @@ struct ConnectorView: View
                 .tint(.accentColor)
                 .labelsHidden()
                 #endif
+                .onChange(of: demo)
+                { _ in
+                    update_file_data()
+                }
                 
                 Spacer()
                 
@@ -143,30 +147,33 @@ struct ConnectorView: View
                 {
                     HStack
                     {
-                        if !connected
-                        {
-                            Text("Connect")
-                            Image(systemName: "circle.fill")
-                                .foregroundColor(.gray)
-                        }
-                        else
-                        {
-                            Text("Disconnect")
-                            Image(systemName: "circle.fill")
-                                .foregroundColor(.green)
-                        }
+                        Text(connector.connection_button.label)
+                        Image(systemName: "circle.fill")
+                            .foregroundColor(connector.connection_button.color)
                     }
                 }
                 .disabled(demo)
                 .toggleStyle(.button)
-                #if os(iOS)
+                #if os(macOS)
+                .controlSize(.large)
+                #else
                 .buttonStyle(.bordered)
                 #endif
+                .onChange(of: connected)
+                { newValue in
+                    if newValue
+                    {
+                        connector.connect()
+                    }
+                    else
+                    {
+                        connector.disconnect()
+                    }
+                }
             }
             .padding([.bottom, .horizontal])
         }
         #if os(macOS)
-        .controlSize(.large)
         .frame(minWidth: 320, idealWidth: 400, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
         .overlay(alignment: .topLeading)
         {
@@ -178,6 +185,7 @@ struct ConnectorView: View
             .keyboardShortcut(.cancelAction)
             .padding()
         }
+        .controlSize(.regular)
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         #endif
@@ -290,7 +298,7 @@ struct ConnectorView_Previews: PreviewProvider
     {
         Group
         {
-            ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), connector: .constant(PortalConnector()), update_file_data: {})
+            ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), connector: PortalConnector(), update_file_data: {})
             
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")))
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Int", value: 8)))
