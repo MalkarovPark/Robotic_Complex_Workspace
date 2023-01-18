@@ -21,7 +21,7 @@ struct ConnectorView: View
     var update_file_data: () -> Void
     
     @State private var connected = false
-    @State private var first_loaded = true
+    @State private var toggle_enabled = true
     
     var body: some View
     {
@@ -44,7 +44,6 @@ struct ConnectorView: View
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                        //.controlSize(.regular)
                     }
                     else
                     {
@@ -85,36 +84,43 @@ struct ConnectorView: View
                 .padding([.horizontal, .bottom])
                 #endif
                 
-                TextEditor(text: $connector.output)
-                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                    .shadow(radius: 1)
-                    .frame(maxWidth: .infinity, maxHeight: 96)
-                    .overlay(alignment: .bottomTrailing)
+                HStack(spacing: 8)
+                {
+                    TextEditor(text: $connector.output)
+                        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                        .shadow(radius: 1)
+                    
+                    VStack(spacing: 0)
                     {
-                        VStack(spacing: 0)
+                        Toggle(isOn: $connector.get_output)
                         {
-                            Toggle(isOn: $connector.get_output)
-                            {
-                                Image(systemName: "scroll")
-                            }
-                            .toggleStyle(.button)
-                            #if os(iOS)
-                            .buttonStyle(.bordered)
-                            #endif
-                            .padding([.horizontal, .leading])
-                            
-                            Button(action: {
-                                connector.clear_output()
-                            })
-                            {
-                                Image(systemName: "eraser")
-                            }
-                            .buttonStyle(.bordered)
-                            .padding()
+                            Image(systemName: "scroll")
                         }
+                        .frame(maxHeight: .infinity)
+                        #if os(iOS)
+                        .buttonStyle(.bordered)
+                        #endif
+                        .toggleStyle(.button)
+                        
+                        Button(action: {
+                            connector.clear_output()
+                        })
+                        {
+                            Image(systemName: "eraser")
+                        }
+                        .frame(maxHeight: .infinity)
+                        .buttonStyle(.bordered)
                     }
-                    //.shadow(radius: 1)
+                    //.padding(.leading)
+                    .controlSize(.large)
+                }
+                #if os(macOS)
+                    .frame(maxWidth: .infinity, maxHeight: 96)
+                #else
+                    .frame(maxWidth: .infinity, maxHeight: 128)
+                #endif
                     .padding(.horizontal)
+                    
             }
             .controlSize(.regular)
             .padding(.vertical)
@@ -160,7 +166,7 @@ struct ConnectorView: View
                 #endif
                 .onChange(of: connected)
                 { newValue in
-                    if !first_loaded
+                    if !toggle_enabled
                     {
                         if newValue
                         {
@@ -170,6 +176,15 @@ struct ConnectorView: View
                         {
                             connector.disconnect()
                         }
+                    }
+                }
+                .onChange(of: connector.connection_failure)
+                { newValue in
+                    if newValue
+                    {
+                        toggle_enabled = true
+                        connected = false
+                        toggle_enabled = false
                     }
                 }
             }
@@ -194,7 +209,7 @@ struct ConnectorView: View
         .onAppear
         {
             connected = connector.connected
-            first_loaded = false
+            toggle_enabled = false
         }
     }
     
