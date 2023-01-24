@@ -110,7 +110,7 @@ class AppState : ObservableObject
     private var did_updated = false //Objects data from property lists update state
     
     //MARK: Robots models dictionaries
-    private var robots_dictionary: [String: [String: [String: [String: Any]]]]
+    private var robots_dictionary = [String: [String: [String: [String: Any]]]]()
     private var series_dictionary = [String: [String: [String: Any]]]()
     private var models_dictionary = [String: [String: Any]]()
     public var robot_dictionary = [String: Any]()
@@ -118,7 +118,7 @@ class AppState : ObservableObject
     private var additive_robots_dictionary = [String: [String: [String: [String: Any]]]]()
     
     //Names of robots manufacturers, series and models
-    public var manufacturers: [String]
+    public var manufacturers = [String]()
     public var series = [String]()
     public var models = [String]()
     
@@ -147,29 +147,47 @@ class AppState : ObservableObject
     //MARK: - Application state init function
     init()
     {
+        robots_data = Data()
+        tools_data = Data()
+        parts_data = Data()
+        
+        var viewed_info: URL?
+        
         //Get robots data from internal propery list file
-        robots_data = try! Data(contentsOf: Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")!)
-        
-        robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]] //Convert robots data to dictionary
-        
-        manufacturers = Array(robots_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of robots
-        manufacturer_name = manufacturers.first ?? "None" //Set first array element as selected manufacturer name
+        viewed_info = Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")
+        if viewed_info != nil
+        {
+            robots_data = try! Data(contentsOf: Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")!)
+            
+            robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]] //Convert robots data to dictionary
+            
+            manufacturers = Array(robots_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of robots
+            manufacturer_name = manufacturers.first ?? "None" //Set first array element as selected manufacturer name
+        }
         
         //Get tools data from internal propery list file
-        tools_data = try! Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!)
-        
-        tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert tools data to dictionary
-        
-        tools = Array(tools_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of tools
-        tool_name = tools.first ?? "None" //Set first array element as selected tool name
+        viewed_info = Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")
+        if viewed_info != nil
+        {
+            tools_data = try! Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!)
+            
+            tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert tools data to dictionary
+            
+            tools = Array(tools_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of tools
+            tool_name = tools.first ?? "None" //Set first array element as selected tool name
+        }
         
         //Get parts data from internal propery list file
-        parts_data = try! Data(contentsOf: Bundle.main.url(forResource: "PartsInfo", withExtension: "plist")!)
-        
-        parts_dictionary = try! PropertyListSerialization.propertyList(from: parts_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert parts data to dictionary
-        
-        parts = Array(parts_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of parts
-        part_name = parts.first ?? "None" //Set first array element as selected part name
+        viewed_info = Bundle.main.url(forResource: "PartsInfo", withExtension: "plist")
+        if viewed_info != nil
+        {
+            parts_data = try! Data(contentsOf: Bundle.main.url(forResource: "PartsInfo", withExtension: "plist")!)
+            
+            parts_dictionary = try! PropertyListSerialization.propertyList(from: parts_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert parts data to dictionary
+            
+            parts = Array(parts_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of parts
+            part_name = parts.first ?? "None" //Set first array element as selected part name
+        }
     }
     
     //MARK: - Get additive robots data from external property list
