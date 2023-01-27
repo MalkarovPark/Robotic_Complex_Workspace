@@ -26,38 +26,41 @@ class DrillController: ToolModelController
     
     override func nodes_perform(code: Int)
     {
-        switch code
+        if nodes.count == 1 //Drill has one rotated node
         {
-        case 0: //Strop rotation
-            nodes.first?.removeAllActions()
-            rotated[0] = false
-            rotated[1] = false
-        case 1: //Clockwise rotation
-            if !rotated[0]
+            switch code
             {
+            case 0: //Strop rotation
                 nodes.first?.removeAllActions()
-                DispatchQueue.main.asyncAfter(deadline: .now())
+                rotated[0] = false
+                rotated[1] = false
+            case 1: //Clockwise rotation
+                if !rotated[0]
                 {
-                    self.nodes.first?.runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
-                    self.rotated[0] = true
-                    self.rotated[1] = false
+                    nodes.first?.removeAllActions()
+                    DispatchQueue.main.asyncAfter(deadline: .now())
+                    {
+                        self.nodes.first?.runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                        self.rotated[0] = true
+                        self.rotated[1] = false
+                    }
                 }
-            }
-        case 2: //Counter clockwise rotation
-            if !rotated[1]
-            {
-                nodes.first?.removeAllActions()
-                DispatchQueue.main.asyncAfter(deadline: .now())
+            case 2: //Counter clockwise rotation
+                if !rotated[1]
                 {
-                    self.nodes.first?.runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
-                    self.rotated[1] = true
-                    self.rotated[0] = false
+                    nodes.first?.removeAllActions()
+                    DispatchQueue.main.asyncAfter(deadline: .now())
+                    {
+                        self.nodes.first?.runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                        self.rotated[1] = true
+                        self.rotated[0] = false
+                    }
                 }
+            default:
+                remove_all_model_actions()
+                rotated[0] = false
+                rotated[1] = false
             }
-        default:
-            remove_all_model_actions()
-            rotated[0] = false
-            rotated[1] = false
         }
     }
     

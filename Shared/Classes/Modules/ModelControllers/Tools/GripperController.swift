@@ -33,45 +33,48 @@ class GripperController: ToolModelController
     
     override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
-        switch code
+        if nodes.count == 2 //Gripper model has two nodes of jaws
         {
-        case 0: //Grip
-            if !closed && !moved
+            switch code
             {
-                moved = true
-                nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
-                nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
+            case 0: //Grip
+                if !closed && !moved
                 {
-                    self.moved = false
-                    self.closed = true
-                    
+                    moved = true
+                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
+                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
+                    {
+                        self.moved = false
+                        self.closed = true
+                        
+                        completion()
+                    }
+                }
+                else
+                {
                     completion()
                 }
-            }
-            else
-            {
-                completion()
-            }
-        case 1: //Release
-            if closed && !moved
-            {
-                moved = true
-                nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
-                nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
+            case 1: //Release
+                if closed && !moved
                 {
-                    self.moved = false
-                    self.closed = false
-                    
+                    moved = true
+                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
+                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
+                    {
+                        self.moved = false
+                        self.closed = false
+                        
+                        completion()
+                    }
+                }
+                else
+                {
                     completion()
                 }
-            }
-            else
-            {
+            default:
+                remove_all_model_actions()
                 completion()
             }
-        default:
-            remove_all_model_actions()
-            completion()
         }
     }
     

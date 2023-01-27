@@ -50,6 +50,7 @@ struct ContentView: View
             .environmentObject(base_workspace)
             .onAppear
             {
+                set_internal_scenes_adress()
                 set_selection_functions()
                 get_file_data()
                 update_preferences()
@@ -59,6 +60,7 @@ struct ContentView: View
             .environmentObject(base_workspace)
             .onAppear
             {
+                set_internal_scenes_adress()
                 set_selection_functions()
                 get_file_data()
                 update_preferences()
@@ -66,13 +68,22 @@ struct ContentView: View
         #endif
     }
     
-    func set_selection_functions()
+    private func set_internal_scenes_adress()
+    {
+        Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
+        
+        Robot.scene_folder = "Components.scnassets/Robots/Default"
+        Tool.scene_folder = "Components.scnassets/Tool"
+        Part.scene_folder = "Components.scnassets/Part"
+    }
+    
+    private func set_selection_functions()
     {
         Robot.select_modules = select_robot_modules(name:model_controller:connector:)
         Tool.select_modules = select_tool_modules(name:model_controller:connector:)
     }
     
-    func select_robot_modules(name: String, model_controller: inout RobotModelController, connector: inout RobotConnector)
+    private func select_robot_modules(name: String, model_controller: inout RobotModelController, connector: inout RobotConnector)
     {
         switch name
         {
@@ -87,7 +98,7 @@ struct ContentView: View
         }
     }
     
-    func select_tool_modules(name: String, model_controller: inout ToolModelController, connector: inout ToolConnector)
+    private func select_tool_modules(name: String, model_controller: inout ToolModelController, connector: inout ToolConnector)
     {
         switch name
         {
@@ -102,7 +113,7 @@ struct ContentView: View
         }
     }
     
-    func get_file_data() //Store preset file data into workspace
+    private func get_file_data() //Store preset file data into workspace
     {
         //Pass bookmarks data into workspace for the models access
         base_workspace.robots_bookmark = robots_empty ?? true ? nil : robots_bookmark
@@ -112,7 +123,7 @@ struct ContentView: View
         base_workspace.file_view(preset: document.preset) //Get file data from document
     }
     
-    func update_preferences() //Pass default parameters from preferences
+    private func update_preferences() //Pass default parameters from preferences
     {
         Robot.default_origin_location[0] = Float(location_x)
         Robot.default_origin_location[1] = Float(location_y)
