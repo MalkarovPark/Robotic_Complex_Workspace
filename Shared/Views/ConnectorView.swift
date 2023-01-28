@@ -40,7 +40,7 @@ struct ConnectorView: View
                     {
                         List($connector.parameters)
                         { item in
-                            ConnectionParameterView(parameter: item)
+                            ConnectionParameterView(parameter: item, update_file_data: update_file_data)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
@@ -228,6 +228,9 @@ struct ConnectionParameterView: View
     @State private var new_float_value = Float()
     @State private var new_bool_value = Bool()
     
+    var update_file_data: () -> Void
+    @State private var appeared = false
+    
     var body: some View
     {
         HStack(spacing: 0)
@@ -247,10 +250,20 @@ struct ConnectionParameterView: View
                     .onAppear
                 {
                     new_string_value = parameter.value as! String
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                    {
+                        appeared = true
+                    }
                 }
                 .onChange(of: new_string_value)
                 { newValue in
                     parameter.value = newValue
+                    
+                    if appeared
+                    {
+                        update_file_data()
+                    }
                 }
             case is Int:
                 TextField("0", value: $new_int_value, format: .number)
@@ -266,10 +279,20 @@ struct ConnectionParameterView: View
                     .onAppear
                 {
                     new_int_value = parameter.value as! Int
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                    {
+                        appeared = true
+                    }
                 }
                 .onChange(of: new_int_value)
                 { newValue in
                     parameter.value = newValue
+                    
+                    if appeared
+                    {
+                        update_file_data()
+                    }
                 }
             case is Float:
                 TextField("0", value: $new_float_value, format: .number)
@@ -285,10 +308,20 @@ struct ConnectionParameterView: View
                     .onAppear
                 {
                     new_float_value = parameter.value as! Float
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                    {
+                        appeared = true
+                    }
                 }
                 .onChange(of: new_float_value)
                 { newValue in
                     parameter.value = newValue
+                    
+                    if appeared
+                    {
+                        update_file_data()
+                    }
                 }
             case is Bool:
                 Toggle(isOn: $new_bool_value)
@@ -300,13 +333,23 @@ struct ConnectionParameterView: View
                 #endif
                 .labelsHidden()
                 .onAppear
-            {
-                new_bool_value = parameter.value as! Bool
-            }
-            .onChange(of: new_bool_value)
-            { newValue in
-                parameter.value = newValue
-            }
+                {
+                    new_bool_value = parameter.value as! Bool
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                    {
+                        appeared = true
+                    }
+                }
+                .onChange(of: new_bool_value)
+                { newValue in
+                    parameter.value = newValue
+                    
+                    if appeared
+                    {
+                        update_file_data()
+                    }
+                }
             default:
                 Text("Unknown parameter")
             }
@@ -322,10 +365,10 @@ struct ConnectorView_Previews: PreviewProvider
         {
             ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), connector: PortalConnector(), update_file_data: {})
             
-            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")))
-            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Int", value: 8)))
-            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Float", value: Float(6.0))))
-            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Bool", value: true)))
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")), update_file_data: {})
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Int", value: 8)), update_file_data: {})
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Float", value: Float(6.0))), update_file_data: {})
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Bool", value: true)), update_file_data: {})
         }
     }
 }
