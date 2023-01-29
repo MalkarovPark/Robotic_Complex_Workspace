@@ -66,7 +66,7 @@ struct ConnectorView: View
                         {
                             List($connector.parameters)
                             { item in
-                                ConnectionParameterView(parameter: item)
+                                ConnectionParameterView(parameter: item, update_file_data: update_file_data)
                             }
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .listStyle(.plain)
