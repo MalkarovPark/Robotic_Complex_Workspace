@@ -76,6 +76,10 @@ class GripperController: ToolModelController
                 completion()
             }
         }
+        else
+        {
+            completion()
+        }
     }
     
     override func reset_model()
