@@ -62,10 +62,6 @@ class DrillController: ToolModelController
                 rotated[1] = false
             }
         }
-        else
-        {
-            completion()
-        }
     }
     
     override func reset_model()
