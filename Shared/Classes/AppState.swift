@@ -157,7 +157,7 @@ class AppState : ObservableObject
         viewed_info = Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")
         if viewed_info != nil
         {
-            robots_data = try! Data(contentsOf: Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")!)
+            robots_data = try! Data(contentsOf: viewed_info!)
             
             robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]] //Convert robots data to dictionary
             
@@ -169,7 +169,7 @@ class AppState : ObservableObject
         viewed_info = Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")
         if viewed_info != nil
         {
-            tools_data = try! Data(contentsOf: Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")!)
+            tools_data = try! Data(contentsOf: viewed_info!)
             
             tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert tools data to dictionary
             
@@ -181,7 +181,7 @@ class AppState : ObservableObject
         viewed_info = Bundle.main.url(forResource: "PartsInfo", withExtension: "plist")
         if viewed_info != nil
         {
-            parts_data = try! Data(contentsOf: Bundle.main.url(forResource: "PartsInfo", withExtension: "plist")!)
+            parts_data = try! Data(contentsOf: viewed_info!)
             
             parts_dictionary = try! PropertyListSerialization.propertyList(from: parts_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert parts data to dictionary
             
@@ -190,7 +190,7 @@ class AppState : ObservableObject
         }
     }
     
-    //MARK: - Get additive robots data from external property list
+    //MARK: - Get additive workspace objects data from external property list
     //MARK: Data functions
     func get_additive(bookmark_data: inout Data?, url: URL?)
     {
@@ -199,12 +199,10 @@ class AppState : ObservableObject
             return
         }
         
-        // Make sure you release the security-scoped resource when you finish.
         defer { url?.stopAccessingSecurityScopedResource() }
         
         do
         {
-            //Make sure the bookmark is minimal!
             bookmark_data = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
         }
         catch

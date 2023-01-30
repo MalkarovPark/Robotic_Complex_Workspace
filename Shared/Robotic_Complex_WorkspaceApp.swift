@@ -15,8 +15,6 @@ struct Robotic_Complex_WorkspaceApp: App
     @StateObject var app_state = AppState() //Init application state
     @State var first_loaded = true //First flag for fade in workspace scene if app first loaded
     
-    @AppStorage("RobotsPlistURL") private var plist_url: URL? //Robot property list location URL from user defaults
-    
     var body: some Scene
     {
         #if os(macOS)
@@ -65,18 +63,18 @@ struct Robotic_Complex_WorkspaceApp: App
             file in ContentView(document: file.$document, file_name: "\(file.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled")", file_url: file.fileURL!)
                 .environmentObject(app_state)
                 .onAppear
-            {
-                if first_loaded
                 {
-                    for type in WorkspaceObjectType.allCases
+                    if first_loaded
                     {
-                        app_state.get_defaults_plist_names(type: type) //Get plist names from user defaults
-                        app_state.get_additive_data(type: type) //Get models data from property lists
+                        for type in WorkspaceObjectType.allCases
+                        {
+                            app_state.get_defaults_plist_names(type: type) //Get plist names from user defaults
+                            app_state.get_additive_data(type: type) //Get models data from property lists
+                        }
+                        
+                        first_loaded = false
                     }
-                    
-                    first_loaded = false
                 }
-            }
         }
         .commands
         {
