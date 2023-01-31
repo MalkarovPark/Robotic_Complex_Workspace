@@ -211,6 +211,8 @@ struct PropertiesSettingsView: View
                                 app_state.update_additive_data(type: .robot)
                                 app_state.save_selected_plist_names(type: .robot)
                             }
+                            .disabled(robots_empty ?? true)
+                            
                             Spacer()
                             
                             Button(action: {
@@ -269,6 +271,8 @@ struct PropertiesSettingsView: View
                                 app_state.update_additive_data(type: .tool)
                                 app_state.save_selected_plist_names(type: .tool)
                             }
+                            .disabled(tools_empty ?? true)
+                            
                             Spacer()
                             
                             Button(action: {
@@ -328,6 +332,8 @@ struct PropertiesSettingsView: View
                                 app_state.update_additive_data(type: .part)
                                 app_state.save_selected_plist_names(type: .part)
                             }
+                            .disabled(parts_empty ?? true)
+                            
                             Spacer()
                             
                             Button(action: {
@@ -385,20 +391,24 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Picker(selection: $app_state.selected_plist_names.Robots, label: Text(app_state.selected_folder.Robots)
-                            .bold())
+                    if !(robots_empty ?? true)
                     {
-                        ForEach(app_state.avaliable_plist_names.Robots, id: \.self)
+                        Picker(selection: $app_state.selected_plist_names.Robots, label: Text(app_state.selected_folder.Robots)
+                                .bold())
                         {
-                            Text($0)
+                            ForEach(app_state.avaliable_plist_names.Robots, id: \.self)
+                            {
+                                Text($0)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: app_state.selected_plist_names.Robots)
+                        { _ in
+                            app_state.update_additive_data(type: .robot)
+                            app_state.save_selected_plist_names(type: .robot)
                         }
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .onChange(of: app_state.selected_plist_names.Robots)
-                    { _ in
-                        app_state.update_additive_data(type: .robot)
-                        app_state.save_selected_plist_names(type: .robot)
-                    }
+                    
                     Spacer()
                     
                     Button(action: { show_load_panel(type: .robot) })
@@ -428,20 +438,24 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Picker(selection: $app_state.selected_plist_names.Tools, label: Text(app_state.selected_folder.Tools)
-                            .bold())
+                    if !(tools_empty ?? true)
                     {
-                        ForEach(app_state.avaliable_plist_names.Tools, id: \.self)
+                        Picker(selection: $app_state.selected_plist_names.Tools, label: Text(app_state.selected_folder.Tools)
+                                .bold())
                         {
-                            Text($0)
+                            ForEach(app_state.avaliable_plist_names.Tools, id: \.self)
+                            {
+                                Text($0)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: app_state.selected_plist_names.Tools)
+                        { _ in
+                            app_state.update_additive_data(type: .tool)
+                            app_state.save_selected_plist_names(type: .tool)
                         }
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .onChange(of: app_state.selected_plist_names.Tools)
-                    { _ in
-                        app_state.update_additive_data(type: .tool)
-                        app_state.save_selected_plist_names(type: .tool)
-                    }
+                    
                     Spacer()
                     
                     Button(action: { show_load_panel(type: .tool) })
@@ -471,20 +485,24 @@ struct PropertiesSettingsView: View
                 
                 HStack
                 {
-                    Picker(selection: $app_state.selected_plist_names.Parts, label: Text(app_state.selected_folder.Parts)
-                            .bold())
+                    if !(parts_empty ?? true)
                     {
-                        ForEach(app_state.avaliable_plist_names.Parts, id: \.self)
+                        Picker(selection: $app_state.selected_plist_names.Parts, label: Text(app_state.selected_folder.Parts)
+                                .bold())
                         {
-                            Text($0)
+                            ForEach(app_state.avaliable_plist_names.Parts, id: \.self)
+                            {
+                                Text($0)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: app_state.selected_plist_names.Parts)
+                        { _ in
+                            app_state.update_additive_data(type: .part)
+                            app_state.save_selected_plist_names(type: .part)
                         }
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .onChange(of: app_state.selected_plist_names.Parts)
-                    { _ in
-                        app_state.update_additive_data(type: .part)
-                        app_state.save_selected_plist_names(type: .part)
-                    }
+                    
                     Spacer()
                     
                     Button(action: { show_load_panel(type: .part) })
