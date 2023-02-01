@@ -50,7 +50,7 @@ struct ContentView: View
             .environmentObject(base_workspace)
             .onAppear
             {
-                set_internal_scenes_adress()
+                set_internal_scenes_address()
                 set_selection_functions()
                 get_file_data()
                 update_preferences()
@@ -60,7 +60,7 @@ struct ContentView: View
             .environmentObject(base_workspace)
             .onAppear
             {
-                set_internal_scenes_adress()
+                set_internal_scenes_address()
                 set_selection_functions()
                 get_file_data()
                 update_preferences()
@@ -68,7 +68,7 @@ struct ContentView: View
         #endif
     }
     
-    private func set_internal_scenes_adress()
+    private func set_internal_scenes_address()
     {
         Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
         
