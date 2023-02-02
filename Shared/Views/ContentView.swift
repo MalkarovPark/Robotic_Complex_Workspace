@@ -72,9 +72,9 @@ struct ContentView: View
     {
         Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
         
-        Robot.scene_folder = "Components.scnassets/Robots/Default"
-        Tool.scene_folder = "Components.scnassets/Tool"
-        Part.scene_folder = "Components.scnassets/Part"
+        Robot.scene_folder = "Components.scnassets/Robots"
+        Tool.scene_folder = "Components.scnassets/Tools"
+        Part.scene_folder = "Components.scnassets/Parts"
     }
     
     private func set_selection_functions()

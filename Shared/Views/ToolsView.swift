@@ -361,6 +361,7 @@ struct ToolView: View
                     .keyboardShortcut(.cancelAction)
                     .padding()
                 }
+                .disabled(base_workspace.selected_tool.codes_count == 0)
             }
             .sheet(isPresented: $connector_view_presented)
             {

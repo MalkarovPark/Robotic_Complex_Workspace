@@ -495,7 +495,7 @@ class AppState : ObservableObject
         //Get tool model by selected item for preview
         if tools_empty ?? true
         {
-            previewed_object = Tool(name: "None")
+            previewed_object = Tool(name: "None", dictionary: tool_dictionary)
         }
         else
         {
@@ -527,7 +527,7 @@ class AppState : ObservableObject
         //Get part model by selected item for preview
         if parts_empty ?? true
         {
-            previewed_object = Part(name: "None")
+            previewed_object = Part(name: "None", dictionary: part_dictionary)
         }
         else
         {

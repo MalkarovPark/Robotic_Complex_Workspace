@@ -16,13 +16,6 @@
 		<key>Scene</key>
 		<string>gripper.scn</string>
 	</dict>
-	<key>Spatula</key>
-	<dict>
-		<key>Module</key>
-		<string></string>
-		<key>Scene</key>
-		<string>spatula.scn</string>
-	</dict>
 	<key>Drill</key>
 	<dict>
 		<key>Module</key>
