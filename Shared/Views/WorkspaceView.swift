@@ -1254,10 +1254,18 @@ struct WorkspaceCardsView: View
                     }
                     
                     new_object_select()
+                    object_type_changed = true
                 }
                 .onChange(of: viewed_object_name)
                 { _ in
-                    new_object_select()
+                    if !object_type_changed
+                    {
+                        new_object_select()
+                    }
+                    else
+                    {
+                        object_type_changed = false
+                    }
                 }
             }
         }
@@ -1289,26 +1297,19 @@ struct WorkspaceCardsView: View
     
     private func new_object_select()
     {
-        if !object_type_changed
+        update_toggle.toggle()
+        
+        switch object_selection
         {
-            update_toggle.toggle()
-            
-            switch object_selection
-            {
-            case .robot:
-                base_workspace.deselect_robot()
-                base_workspace.select_robot(name: viewed_object_name)
-            case .tool:
-                base_workspace.deselect_tool()
-                base_workspace.select_tool(name: viewed_object_name)
-            case .part:
-                base_workspace.deselect_part()
-                base_workspace.select_part(name: viewed_object_name)
-            }
-        }
-        else
-        {
-            object_type_changed = false
+        case .robot:
+            base_workspace.deselect_robot()
+            base_workspace.select_robot(name: viewed_object_name)
+        case .tool:
+            base_workspace.deselect_tool()
+            base_workspace.select_tool(name: viewed_object_name)
+        case .part:
+            base_workspace.deselect_part()
+            base_workspace.select_part(name: viewed_object_name)
         }
     }
 }
