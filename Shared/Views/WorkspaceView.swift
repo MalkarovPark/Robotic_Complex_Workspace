@@ -1036,6 +1036,8 @@ struct WorkspaceCardsView: View
     
     @State private var update_toggle = false
     
+    @State private var object_type_changed = false
+    
     #if os(iOS)
     @State private var is_object_appeared = false
     #endif
@@ -1250,23 +1252,12 @@ struct WorkspaceCardsView: View
                         
                         viewed_object_name = base_workspace.placed_parts_names.first ?? ""
                     }
+                    
+                    new_object_select()
                 }
                 .onChange(of: viewed_object_name)
                 { _ in
-                    update_toggle.toggle()
-                    
-                    switch object_selection
-                    {
-                    case .robot:
-                        base_workspace.deselect_robot()
-                        base_workspace.select_robot(name: viewed_object_name)
-                    case .tool:
-                        base_workspace.deselect_tool()
-                        base_workspace.select_tool(name: viewed_object_name)
-                    case .part:
-                        base_workspace.deselect_part()
-                        base_workspace.select_part(name: viewed_object_name)
-                    }
+                    new_object_select()
                 }
             }
         }
@@ -1294,6 +1285,31 @@ struct WorkspaceCardsView: View
         }
         
         return avaliable_for_place
+    }
+    
+    private func new_object_select()
+    {
+        if !object_type_changed
+        {
+            update_toggle.toggle()
+            
+            switch object_selection
+            {
+            case .robot:
+                base_workspace.deselect_robot()
+                base_workspace.select_robot(name: viewed_object_name)
+            case .tool:
+                base_workspace.deselect_tool()
+                base_workspace.select_tool(name: viewed_object_name)
+            case .part:
+                base_workspace.deselect_part()
+                base_workspace.select_part(name: viewed_object_name)
+            }
+        }
+        else
+        {
+            object_type_changed = false
+        }
     }
 }
 
