@@ -1039,6 +1039,7 @@ struct WorkspaceCardsView: View
     @State private var object_type_changed = false
     
     #if os(iOS)
+    @State private var tabview_update_toggle = false
     @State private var is_object_appeared = false
     #endif
     
@@ -1166,6 +1167,7 @@ struct WorkspaceCardsView: View
                         viewed_object_name = base_workspace.placed_parts_names.first ?? ""
                     }
                 }
+                .modifier(DoubleModifier(update_toggle: $tabview_update_toggle))
                 #endif
             }
             else
@@ -1255,6 +1257,10 @@ struct WorkspaceCardsView: View
                     
                     new_object_select()
                     object_type_changed = true
+                    
+                    #if os(iOS)
+                    tabview_update_toggle.toggle()
+                    #endif
                 }
                 .onChange(of: viewed_object_name)
                 { _ in
@@ -1297,7 +1303,7 @@ struct WorkspaceCardsView: View
     
     private func new_object_select()
     {
-        update_toggle.toggle()
+        //update_toggle.toggle()
         
         switch object_selection
         {
@@ -1311,6 +1317,7 @@ struct WorkspaceCardsView: View
             base_workspace.deselect_part()
             base_workspace.select_part(name: viewed_object_name)
         }
+        update_toggle.toggle()
     }
 }
 
@@ -1340,18 +1347,19 @@ struct WorkspaceObjectCard: View
                         Image(nsImage: object.image)
                             .resizable()
                             .scaledToFill()
+                            .shadow(radius: 8.0)
                     }
                     #else
                     Image(uiImage: object.image)
                         .resizable()
                         .scaledToFill()
+                        .shadow(radius: 8.0)
                     #endif
                 }
                 .overlay(alignment: .topLeading)
                 {
                     Text(object.name ?? "None")
                         .fontWeight(.bold)
-                        //.font(.title)
                         .font(.system(.title, design: .rounded))
                         .foregroundColor(.white)
                         .padding()
@@ -1362,14 +1370,18 @@ struct WorkspaceObjectCard: View
                     {
                         Image(systemName: "xmark")
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.borderless)
+                    .imageScale(.large)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
                     .padding()
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .padding()
-                .shadow(radius: 8.0)
+                //.shadow(radius: 8.0)
         }
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .shadow(radius: 8.0)
         .padding()
         #if os(iOS)
         .padding(.bottom, 32)
