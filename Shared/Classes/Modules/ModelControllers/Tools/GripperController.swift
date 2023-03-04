@@ -31,6 +31,40 @@ class GripperController: ToolModelController
     private var closed = false
     private var moved = false
     
+    override func nodes_perform(code: Int)
+    {
+        if nodes.count == 2 //Gripper model has two nodes of jaws
+        {
+            switch code
+            {
+            case 0: //Grip
+                if !closed && !moved
+                {
+                    moved = true
+                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
+                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
+                    {
+                        self.moved = false
+                        self.closed = true
+                    }
+                }
+            case 1: //Release
+                if closed && !moved
+                {
+                    moved = true
+                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
+                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
+                    {
+                        self.moved = false
+                        self.closed = false
+                    }
+                }
+            default:
+                remove_all_model_actions()
+            }
+        }
+    }
+    
     override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
         if nodes.count == 2 //Gripper model has two nodes of jaws
