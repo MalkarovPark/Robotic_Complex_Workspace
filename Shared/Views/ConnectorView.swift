@@ -14,6 +14,8 @@ struct ConnectorView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @Binding var demo: Bool
+    //@Binding var update_model: Bool
+    
     @StateObject var connector: WorkspaceObjectConnector
     
     @EnvironmentObject var base_workspace: Workspace
@@ -147,6 +149,25 @@ struct ConnectorView: View
                 }
                 
                 Spacer()
+                
+                Toggle(isOn: $connector.update_model)
+                {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                }
+                .onChange(of: connector.update_model)
+                { _ in
+                    update_file_data()
+                }
+                .disabled(demo)
+                #if os(macOS)
+                .controlSize(.large)
+                #else
+                .buttonStyle(.bordered)
+                #endif
+                .toggleStyle(.button)
+                .padding(.trailing)
+                
+                //Spacer()
                 
                 Toggle(isOn: $connected)
                 {
