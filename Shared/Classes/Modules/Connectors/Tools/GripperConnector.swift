@@ -63,13 +63,8 @@ class GripperConnector: ToolConnector
     
     //private var perform_task = Task {}
     
-    override func perform(code: Int, completion: @escaping () -> Void)
+    /*override func perform(code: Int, completion: @escaping () -> Void)
     {
-        /*if update_model
-        {
-            model_controller?.nodes_perform(code: code)
-        }*/
-        
         new_line_check()
         
         DispatchQueue.global().async
@@ -77,19 +72,11 @@ class GripperConnector: ToolConnector
             self.performation_task(code: code)
             completion()
         }
-        
-        /*perform_task = Task
-        {
-            await performation_task(code: code)
-            //perform_task.cancel()
-            completion()
-        }*/
-        
-        //completion()
-    }
+    }*/
     
-    private func performation_task(code: Int)// async
+    override func perform(code: Int)
     {
+        new_line_check()
         model_controller?.nodes_perform(code: code)
         
         switch code
@@ -130,5 +117,15 @@ class GripperConnector: ToolConnector
             //remove_all_model_actions()
             output += "???"
         }
+    }
+    
+    //MARK: - State functions
+    override func state() -> [StateItem]?
+    {
+        var state = [StateItem]()
+        state.append(StateItem(name: "Rotation frequency", value: "40 Hz", image: "arrow.triangle.2.circlepath"))
+        state.append(StateItem(name: "Address", value: "Local", image: "mappin"))
+        
+        return state
     }
 }

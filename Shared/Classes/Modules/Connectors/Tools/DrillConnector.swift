@@ -124,4 +124,14 @@ class DrillConnector: ToolConnector
             //remove_all_model_actions()
         }
     }
+    
+    //MARK: - State functions
+    override func state() -> [StateItem]?
+    {
+        var state = [StateItem]()
+        state.append(StateItem(name: "Rotation frequency", value: "40 Hz", image: "arrow.triangle.2.circlepath"))
+        state.append(StateItem(name: "Address", value: "Local", image: "mappin"))
+        
+        return state
+    }
 }
