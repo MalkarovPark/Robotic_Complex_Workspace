@@ -14,7 +14,7 @@ struct ConnectorView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @Binding var demo: Bool
-    //@Binding var update_model: Bool
+    @Binding var update_model: Bool
     
     @StateObject var connector: WorkspaceObjectConnector
     
@@ -150,7 +150,7 @@ struct ConnectorView: View
                 
                 Spacer()
                 
-                Toggle(isOn: $connector.update_model)
+                Toggle(isOn: $update_model)
                 {
                     Image(systemName: "arrow.triangle.2.circlepath")
                 }
@@ -384,7 +384,7 @@ struct ConnectorView_Previews: PreviewProvider
     {
         Group
         {
-            ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), connector: PortalConnector(), update_file_data: {})
+            ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), update_model: .constant(true), connector: PortalConnector(), update_file_data: {})
                 //.environmentObject(Workspace())
             
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")), update_file_data: {})

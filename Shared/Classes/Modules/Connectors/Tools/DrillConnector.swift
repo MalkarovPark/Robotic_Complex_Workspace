@@ -62,10 +62,7 @@ class DrillConnector: ToolConnector
     
     override func perform(code: Int)
     {
-        if update_model
-        {
-            model_controller?.nodes_perform(code: code)
-        }
+        model_controller?.nodes_perform(code: code)
         
         new_line_check()
         switch code
