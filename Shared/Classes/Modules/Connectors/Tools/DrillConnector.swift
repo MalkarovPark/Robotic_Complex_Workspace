@@ -110,7 +110,7 @@ class DrillConnector: ToolConnector
         //output += "Rotated"
     }
     
-    override func pause()
+    override func pause_operations()
     {
         rotated[0] = false
         rotated[1] = false

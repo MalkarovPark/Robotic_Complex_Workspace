@@ -75,13 +75,28 @@ class PortalConnector: RobotConnector
 
         for i in 0...parts_count
         {
+            if canceled
+            {
+                break
+            }
+            
             sum_x = lpart_x * Float(i)
             sum_y = lpart_y * Float(i)
             sum_z = lpart_z * Float(i)
 
             model_controller?.nodes_update(pointer_location: [sum_x, sum_y, sum_z], pointer_roation: [point.r, point.p, point.w], origin_location: origin_location, origin_rotation: origin_rotation)
+            
+            if canceled
+            {
+                break
+            }
 
             usleep(500000) //sleep(1)
+        }
+        
+        if canceled
+        {
+            model_controller?.nodes_update(pointer_location: [0, 0, 0], pointer_roation: [0, 0, 0], origin_location: origin_location, origin_rotation: origin_rotation)
         }
         
         //model_controller?.nodes_update(pointer_location: [point.x, point.y, point.z], pointer_roation: [point.r, point.p, point.w], origin_location: origin_location, origin_rotation: origin_rotation)

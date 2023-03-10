@@ -154,7 +154,7 @@ struct ConnectorView: View
                 {
                     Image(systemName: "arrow.triangle.2.circlepath")
                 }
-                .onChange(of: connector.update_model)
+                .onChange(of: update_model)
                 { _ in
                     update_file_data()
                 }
