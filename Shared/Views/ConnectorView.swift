@@ -145,6 +145,10 @@ struct ConnectorView: View
                 #endif
                 .onChange(of: demo)
                 { _ in
+                    if update_model
+                    {
+                        update_model.toggle()
+                    }
                     update_file_data()
                 }
                 
