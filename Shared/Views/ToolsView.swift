@@ -340,6 +340,7 @@ struct ToolView: View
                     .padding()
                 }
                 .disabled(base_workspace.selected_tool.codes_count == 0)
+                .modifier(MenuHandlingModifier(performed: $base_workspace.selected_tool.performed, toggle_perform: base_workspace.selected_tool.start_pause_performing, stop_perform: base_workspace.selected_tool.reset_performing))
             }
             .overlay(alignment: .bottomTrailing)
             {

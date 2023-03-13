@@ -18,13 +18,12 @@ struct WorkspaceView: View
     #if os(iOS)
     @Binding var file_name: String
     @Binding var file_url: URL
-    
-    @EnvironmentObject var app_state: AppState
     #endif
     
     @State var worked = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
@@ -117,9 +116,9 @@ struct WorkspaceView: View
             #endif
         }
         #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
         #else
-            .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
+        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
         
         //MARK: Toolbar
@@ -161,6 +160,7 @@ struct WorkspaceView: View
                 }
             }
         }
+        .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
         #if os(iOS)
         .navigationTitle($file_name)
         .onChange(of: file_name)

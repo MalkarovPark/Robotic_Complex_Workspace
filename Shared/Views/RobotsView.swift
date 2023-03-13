@@ -477,6 +477,7 @@ struct RobotView: View
                 }
             }
         }
+        .modifier(MenuHandlingModifier(performed: $base_workspace.selected_robot.performed, toggle_perform: base_workspace.selected_robot.start_pause_moving, stop_perform: base_workspace.selected_robot.reset_moving))
     }
     
     func close_robot()

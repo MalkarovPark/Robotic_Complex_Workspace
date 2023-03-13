@@ -171,15 +171,6 @@ struct SidebarContent: View
             }
         }
     }
-    
-    /*#if os(macOS)
-    func toggle_sidebar()
-    {
-        NSApp.keyWindow?.firstResponder?.tryToPerform(
-          #selector(NSSplitViewController.toggleSidebar),
-          with: nil)
-    }
-    #endif*/
 }
 
 //MARK: - Previews
