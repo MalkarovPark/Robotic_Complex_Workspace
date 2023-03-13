@@ -27,9 +27,16 @@ class PortalConnector: RobotConnector
         new_line_check()
         output += "Connecting..."
         
-        sleep(4)
-        
         new_line_check()
+        
+        output += "\n \(parameters.count) parameters used:\n"
+        for parameter in parameters
+        {
+            output += " • \(parameter.value)\n"
+        }
+        output += "\n"
+        
+        sleep(4)
         
         if parameters[3].value as! Bool == true
         {

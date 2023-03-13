@@ -52,7 +52,7 @@ struct Robotic_Complex_WorkspaceApp: App
                 Divider()
             }
             
-            CommandMenu("Product")
+            CommandMenu("Performing")
             {
                 Button("Run")
                 {
@@ -129,6 +129,36 @@ struct Robotic_Complex_WorkspaceApp: App
                     app_state.settings_view_presented = true
                 }
                 .keyboardShortcut(",", modifiers: .command)
+            }
+            
+            CommandMenu("Performing")
+            {
+                Button("Run")
+                {
+                    app_state.run_command.toggle() //Begin run program process
+                    
+                    app_state.run_command_set = true
+                    app_state.pause_command_set = false
+                }
+                .keyboardShortcut("R", modifiers: .command)
+                .disabled(app_state.run_command_set)
+                
+                Button("Stop")
+                {
+                    app_state.stop_command.toggle() //Begin stop program process
+                }
+                .keyboardShortcut(".", modifiers: .command)
+                .disabled(!app_state.runned)
+                
+                Button("Pause")
+                {
+                    app_state.pause_command.toggle() //Begin pause camera process
+                    
+                    app_state.run_command_set = false
+                    app_state.pause_command_set = true
+                }
+                .keyboardShortcut("Y", modifiers: [.control, .command])
+                .disabled(app_state.pause_command_set && !app_state.run_command_set)
             }
         }
         #endif
