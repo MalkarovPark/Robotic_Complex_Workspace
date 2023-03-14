@@ -290,17 +290,22 @@ struct ToolView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    #if os(iOS)
+    //MARK: Horizontal window size handler
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    
+    //Picker data for thin window size
+    @State private var program_view_presented = false
+    #endif
+    
     var body: some View
     {
         HStack(spacing: 0)
         {
+            #if os(macOS)
             HStack(spacing: 0)
             {
-                #if os(macOS)
                 ToolSceneView_macOS()
-                #else
-                ToolSceneView_iOS()
-                #endif
             }
             .overlay(alignment: .topLeading)
             {
@@ -322,6 +327,7 @@ struct ToolView: View
                     })
                     {
                         Image(systemName: "stop")
+                            .frame(height: 16)
                     }
                     .buttonStyle(.bordered)
                     .padding([.vertical, .leading])
@@ -335,6 +341,7 @@ struct ToolView: View
                     })
                     {
                         Image(systemName: "playpause")
+                            .frame(height: 16)
                     }
                     .buttonStyle(.bordered)
                     .padding()
@@ -349,6 +356,7 @@ struct ToolView: View
                     Button(action: { connector_view_presented.toggle() })
                     {
                         Image(systemName: "link")
+                            .frame(height: 16)
                     }
                     .buttonStyle(.bordered)
                     .keyboardShortcut(.cancelAction)
@@ -357,6 +365,7 @@ struct ToolView: View
                     Button(action: { statistics_view_presented.toggle() })
                     {
                         Image(systemName: "chart.bar")
+                            .frame(height: 16)
                     }
                     .buttonStyle(.bordered)
                     .keyboardShortcut(.cancelAction)
@@ -364,235 +373,198 @@ struct ToolView: View
                 }
                 .disabled(base_workspace.selected_tool.codes_count == 0)
             }
-            .sheet(isPresented: $connector_view_presented)
-            {
-                ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: base_workspace.selected_tool.connector as WorkspaceObjectConnector, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
-            }
-            .sheet(isPresented: $statistics_view_presented)
-            {
-                StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $base_workspace.selected_tool.state_data, clear_chart_data: { base_workspace.selected_tool.clear_chart_data() }, clear_state_data: base_workspace.selected_tool.clear_state_data, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
-                    .onDisappear
-                    {
-                        app_state.get_scene_image = true
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-                        {
-                            base_workspace.selected_tool.image = app_state.previewed_object!.image
-                        }
-                        is_document_updated = true
-                    }
-            }
             
             Divider()
             
-            VStack(spacing: 0)
+            ToolInspectorView(document: $document, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+                .frame(width: 256)
+            #else
+            if horizontal_size_class == .compact
             {
-                if base_workspace.selected_tool.codes_count > 0
+                VStack(spacing: 0)
                 {
-                    Text("Operations")
-                        .padding(.vertical)
-                    
-                    ZStack
+                    ToolSceneView_iOS()
+                        .overlay(alignment: .bottom)
                     {
-                        List
+                        HStack
                         {
-                            if base_workspace.selected_tool.programs_count > 0
+                            Button(action: {
+                                base_workspace.selected_tool.reset_performing()
+                                base_workspace.update_view()
+                            })
                             {
-                                if base_workspace.selected_tool.selected_program.codes_count > 0
-                                {
-                                    ForEach(base_workspace.selected_tool.selected_program.codes)
-                                    { code in
-                                        OperationItemListView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code, on_delete: remove_codes)
-                                            .onDrag
-                                        {
-                                            return NSItemProvider()
-                                        }
-                                    }
-                                    .onMove(perform: code_item_move)
-                                    .onChange(of: base_workspace.tools)
-                                    { _ in
-                                        document.preset.tools = base_workspace.file_data().tools
-                                        app_state.get_scene_image = true
-                                    }
-                                }
+                                Image(systemName: "stop")
+                                    .frame(maxWidth: .infinity, maxHeight: 16)
                             }
-                        }
-                        #if os(iOS)
-                        .listStyle(.plain)
-                        #endif
-                        
-                        if base_workspace.selected_tool.programs_count == 0
-                        {
-                            Text("No program selected")
-                                .foregroundColor(.gray)
-                        }
-                        else
-                        {
-                            if base_workspace.selected_tool.selected_program.codes_count == 0
-                            {
-                                Text("Empty Program")
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                    }
-                    .overlay(alignment: .bottomTrailing)
-                    {
-                        ZStack(alignment: .trailing)
-                        {
-                            Button(action: add_operation_to_program) //Add element button
-                            {
-                                HStack
-                                {
-                                    Image(systemName: "plus")
-                                }
-                                .padding()
-                            }
-                            .disabled(base_workspace.selected_tool.programs_count == 0)
-                            #if os(macOS)
-                            .frame(maxWidth: 80.0, alignment: .leading)
-                            #else
-                            .frame(maxWidth: 86.0, alignment: .leading)
-                            #endif
-                            .background(.thinMaterial)
-                            .cornerRadius(32)
-                            .shadow(radius: 4.0)
-                            #if os(macOS)
-                            .buttonStyle(BorderlessButtonStyle())
-                            #endif
-                            .padding()
+                            .buttonStyle(.bordered)
                             
-                            Button(action: { add_operation_view_presented = true }) //Configure new element button
-                            {
-                                Circle()
-                                    .foregroundColor(.accentColor)
-                                    .overlay(
-                                        base_workspace.selected_tool.code_info(new_operation_code).image
-                                            .foregroundColor(.white)
-                                            .animation(.easeInOut(duration: 0.2), value: base_workspace.selected_tool.code_info(new_operation_code).image)
-                                    )
-                                    .frame(width: 32, height: 32)
-                            }
-                            #if os(macOS)
-                            .buttonStyle(BorderlessButtonStyle())
-                            #endif
-                            .popover(isPresented: $add_operation_view_presented)
-                            {
-                                #if os(macOS)
-                                HStack
+                            Button(action: {
+                                base_workspace.selected_tool.start_pause_performing()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                                 {
-                                    Picker("Code", selection: $new_operation_code)
-                                    {
-                                        if base_workspace.selected_tool.codes_count > 0
-                                        {
-                                            ForEach(base_workspace.selected_tool.codes, id:\.self)
-                                            { code in
-                                                Text(base_workspace.selected_tool.code_info(code).label)
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Text("None")
-                                        }
-                                    }
-                                    .padding()
-                                    .disabled(base_workspace.selected_tool.codes_count == 0)
-                                    .frame(maxWidth: .infinity)
-                                    .pickerStyle(.radioGroup)
-                                    .labelsHidden()
+                                    base_workspace.update_view()
                                 }
-                                #else
-                                VStack
-                                {
-                                    Picker("Code", selection: $new_operation_code)
-                                    {
-                                        if base_workspace.selected_tool.codes_count > 0
-                                        {
-                                            ForEach(base_workspace.selected_tool.codes, id:\.self)
-                                            { code in
-                                                Text(base_workspace.selected_tool.code_info(code).label)
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Text("None")
-                                        }
-                                    }
-                                    .disabled(base_workspace.selected_tool.codes_count == 0)
-                                    .pickerStyle(.wheel)
-                                    .frame(maxWidth: 192)
-                                    .buttonStyle(.borderedProminent)
-                                }
-                                #endif
+                            })
+                            {
+                                Image(systemName: "playpause")
+                                    .frame(maxWidth: .infinity, maxHeight: 16)
                             }
-                            .padding(.trailing, 24)
+                            .buttonStyle(.bordered)
                             
+                            Button(action: { connector_view_presented.toggle() })
+                            {
+                                Image(systemName: "link")
+                                    .frame(maxWidth: .infinity, maxHeight: 16)
+                            }
+                            .buttonStyle(.bordered)
+                            .keyboardShortcut(.cancelAction)
+                            
+                            Button(action: { statistics_view_presented.toggle() })
+                            {
+                                Image(systemName: "chart.bar")
+                                    .frame(maxWidth: .infinity, maxHeight: 16)
+                            }
+                            .buttonStyle(.bordered)
+                            .keyboardShortcut(.cancelAction)
                         }
-                        .padding(8)
+                        .padding()
                     }
                     
-                    //Divider()
-                    
-                    HStack(spacing: 0)
+                    HStack
                     {
-                        #if os(iOS)
-                        Text("Program")
-                            .font(.subheadline)
-                        #endif
-                        
-                        Picker("Program", selection: $base_workspace.selected_tool.selected_program_index)
+                        Button(action: { program_view_presented.toggle() })
                         {
-                            if base_workspace.selected_tool.programs_names.count > 0
-                            {
-                                ForEach(0 ..< base_workspace.selected_tool.programs_names.count, id: \.self)
-                                {
-                                    Text(base_workspace.selected_tool.programs_names[$0])
-                                }
-                            }
-                            else
-                            {
-                                Text("None")
-                            }
+                            Text("Inspector")
+                                .frame(maxWidth: .infinity)
                         }
-                        .pickerStyle(.menu)
-                        .disabled(base_workspace.selected_tool.programs_names.count == 0)
-                        .frame(maxWidth: .infinity)
-                        #if os(iOS)
                         .buttonStyle(.borderedProminent)
-                        #endif
-                        
-                        Button("-")
+                        .keyboardShortcut(.defaultAction)
+                        .padding()
+                        .popover(isPresented: $program_view_presented)
                         {
-                            delete_operations_program()
-                        }
-                        .disabled(base_workspace.selected_tool.programs_names.count == 0)
-                        .padding(.horizontal)
-                        
-                        Button("+")
-                        {
-                            add_program_view_presented.toggle()
-                        }
-                        .popover(isPresented: $add_program_view_presented)
-                        {
-                            AddOperationProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_tool.selected_program_index)
-                            #if os(macOS)
-                                .frame(height: 72.0)
-                            #else
-                                .presentationDetents([.height(96.0)])
-                            #endif
-                        }
-                        .onChange(of: base_workspace.selected_tool.programs_count)
-                        { _ in
-                            update_data()
+                            VStack
+                            {
+                                ToolInspectorView(document: $document, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+                                    //.disabled(base_workspace.selected_robot.performed == true)
+                                    .presentationDetents([.medium, .large])
+                            }
+                            .onDisappear()
+                            {
+                                program_view_presented = false
+                            }
                         }
                     }
+                }
+                .overlay(alignment: .topLeading)
+                {
+                    Button(action: close_tool)
+                    {
+                        Image(systemName: "xmark")
+                    }
+                    .buttonStyle(.bordered)
+                    .keyboardShortcut(.cancelAction)
                     .padding()
                 }
-                else
-                {
-                    Text("This tool has no control")
-                }
+                .disabled(base_workspace.selected_tool.codes_count == 0)
+                .modifier(MenuHandlingModifier(performed: $base_workspace.selected_tool.performed, toggle_perform: base_workspace.selected_tool.start_pause_performing, stop_perform: base_workspace.selected_tool.reset_performing))
             }
-            .frame(width: 256)
+            else
+            {
+                HStack(spacing: 0)
+                {
+                    ToolSceneView_iOS()
+                }
+                .overlay(alignment: .topLeading)
+                {
+                    Button(action: close_tool)
+                    {
+                        Image(systemName: "xmark")
+                    }
+                    .buttonStyle(.bordered)
+                    .keyboardShortcut(.cancelAction)
+                    .padding()
+                }
+                .overlay(alignment: .bottomLeading)
+                {
+                    HStack(spacing: 0)
+                    {
+                        Button(action: {
+                            base_workspace.selected_tool.reset_performing()
+                            base_workspace.update_view()
+                        })
+                        {
+                            Image(systemName: "stop")
+                                .frame(height: 16)
+                        }
+                        .buttonStyle(.bordered)
+                        .padding([.vertical, .leading])
+                        
+                        Button(action: {
+                            base_workspace.selected_tool.start_pause_performing()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                base_workspace.update_view()
+                            }
+                        })
+                        {
+                            Image(systemName: "playpause")
+                                .frame(height: 16)
+                        }
+                        .buttonStyle(.bordered)
+                        .padding()
+                    }
+                    .disabled(base_workspace.selected_tool.codes_count == 0)
+                    .modifier(MenuHandlingModifier(performed: $base_workspace.selected_tool.performed, toggle_perform: base_workspace.selected_tool.start_pause_performing, stop_perform: base_workspace.selected_tool.reset_performing))
+                }
+                .overlay(alignment: .bottomTrailing)
+                {
+                    HStack(spacing: 0)
+                    {
+                        Button(action: { connector_view_presented.toggle() })
+                        {
+                            Image(systemName: "link")
+                                .frame(height: 16)
+                        }
+                        .buttonStyle(.bordered)
+                        .keyboardShortcut(.cancelAction)
+                        .padding([.vertical, .leading])
+                        
+                        Button(action: { statistics_view_presented.toggle() })
+                        {
+                            Image(systemName: "chart.bar")
+                                .frame(height: 16)
+                        }
+                        .buttonStyle(.bordered)
+                        .keyboardShortcut(.cancelAction)
+                        .padding()
+                    }
+                    .disabled(base_workspace.selected_tool.codes_count == 0)
+                }
+                
+                Divider()
+                
+                ToolInspectorView(document: $document, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+                    .frame(width: 256)
+            }
+            #endif
+        }
+        .sheet(isPresented: $connector_view_presented)
+        {
+            ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: base_workspace.selected_tool.connector as WorkspaceObjectConnector, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+        }
+        .sheet(isPresented: $statistics_view_presented)
+        {
+            StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $base_workspace.selected_tool.state_data, clear_chart_data: { base_workspace.selected_tool.clear_chart_data() }, clear_state_data: base_workspace.selected_tool.clear_state_data, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+                .onDisappear
+                {
+                    app_state.get_scene_image = true
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+                    {
+                        base_workspace.selected_tool.image = app_state.previewed_object!.image
+                    }
+                    is_document_updated = true
+                }
         }
         .controlSize(.regular)
         #if os(macOS)
@@ -699,6 +671,238 @@ struct ToolView: View
             {
                 app_state.view_update_state.toggle()
                 base_workspace.update_view()
+            }
+        }
+    }
+}
+
+struct ToolInspectorView: View
+{
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @State private var add_program_view_presented = false
+    @State private var add_operation_view_presented = false
+    @State private var new_operation_code = 0
+    
+    @State private var ready_for_save = false
+    @State private var is_document_updated = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    let remove_codes: (IndexSet) -> ()
+    let code_item_move: (IndexSet, Int) -> ()
+    let add_operation_to_program: () -> ()
+    let delete_operations_program: () -> ()
+    let update_data: () -> ()
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            if base_workspace.selected_tool.codes_count > 0
+            {
+                Text("Operations")
+                    .padding(.vertical)
+                
+                ZStack
+                {
+                    List
+                    {
+                        if base_workspace.selected_tool.programs_count > 0
+                        {
+                            if base_workspace.selected_tool.selected_program.codes_count > 0
+                            {
+                                ForEach(base_workspace.selected_tool.selected_program.codes)
+                                { code in
+                                    OperationItemListView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code, on_delete: remove_codes)
+                                        .onDrag
+                                    {
+                                        return NSItemProvider()
+                                    }
+                                }
+                                .onMove(perform: code_item_move)
+                                .onChange(of: base_workspace.tools)
+                                { _ in
+                                    document.preset.tools = base_workspace.file_data().tools
+                                    app_state.get_scene_image = true
+                                }
+                            }
+                        }
+                    }
+                    #if os(iOS)
+                    .listStyle(.plain)
+                    #endif
+                    
+                    if base_workspace.selected_tool.programs_count == 0
+                    {
+                        Text("No program selected")
+                            .foregroundColor(.gray)
+                    }
+                    else
+                    {
+                        if base_workspace.selected_tool.selected_program.codes_count == 0
+                        {
+                            Text("Empty Program")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+                .overlay(alignment: .bottomTrailing)
+                {
+                    ZStack(alignment: .trailing)
+                    {
+                        Button(action: add_operation_to_program) //Add element button
+                        {
+                            HStack
+                            {
+                                Image(systemName: "plus")
+                            }
+                            .padding()
+                        }
+                        .disabled(base_workspace.selected_tool.programs_count == 0)
+                        #if os(macOS)
+                        .frame(maxWidth: 80.0, alignment: .leading)
+                        #else
+                        .frame(maxWidth: 86.0, alignment: .leading)
+                        #endif
+                        .background(.thinMaterial)
+                        .cornerRadius(32)
+                        .shadow(radius: 4.0)
+                        #if os(macOS)
+                        .buttonStyle(BorderlessButtonStyle())
+                        #endif
+                        .padding()
+                        
+                        Button(action: { add_operation_view_presented = true }) //Configure new element button
+                        {
+                            Circle()
+                                .foregroundColor(.accentColor)
+                                .overlay(
+                                    base_workspace.selected_tool.code_info(new_operation_code).image
+                                        .foregroundColor(.white)
+                                        .animation(.easeInOut(duration: 0.2), value: base_workspace.selected_tool.code_info(new_operation_code).image)
+                                )
+                                .frame(width: 32, height: 32)
+                        }
+                        #if os(macOS)
+                        .buttonStyle(BorderlessButtonStyle())
+                        #endif
+                        .popover(isPresented: $add_operation_view_presented)
+                        {
+                            #if os(macOS)
+                            HStack
+                            {
+                                Picker("Code", selection: $new_operation_code)
+                                {
+                                    if base_workspace.selected_tool.codes_count > 0
+                                    {
+                                        ForEach(base_workspace.selected_tool.codes, id:\.self)
+                                        { code in
+                                            Text(base_workspace.selected_tool.code_info(code).label)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .padding()
+                                .disabled(base_workspace.selected_tool.codes_count == 0)
+                                .frame(maxWidth: .infinity)
+                                .pickerStyle(.radioGroup)
+                                .labelsHidden()
+                            }
+                            #else
+                            VStack
+                            {
+                                Picker("Code", selection: $new_operation_code)
+                                {
+                                    if base_workspace.selected_tool.codes_count > 0
+                                    {
+                                        ForEach(base_workspace.selected_tool.codes, id:\.self)
+                                        { code in
+                                            Text(base_workspace.selected_tool.code_info(code).label)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .disabled(base_workspace.selected_tool.codes_count == 0)
+                                .pickerStyle(.wheel)
+                                .frame(maxWidth: 192)
+                                .buttonStyle(.borderedProminent)
+                            }
+                            #endif
+                        }
+                        .padding(.trailing, 24)
+                        
+                    }
+                    .padding(8)
+                }
+                
+                //Divider()
+                
+                HStack(spacing: 0)
+                {
+                    #if os(iOS)
+                    Text("Program")
+                        .font(.subheadline)
+                    #endif
+                    
+                    Picker("Program", selection: $base_workspace.selected_tool.selected_program_index)
+                    {
+                        if base_workspace.selected_tool.programs_names.count > 0
+                        {
+                            ForEach(0 ..< base_workspace.selected_tool.programs_names.count, id: \.self)
+                            {
+                                Text(base_workspace.selected_tool.programs_names[$0])
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .disabled(base_workspace.selected_tool.programs_names.count == 0)
+                    .frame(maxWidth: .infinity)
+                    #if os(iOS)
+                    .buttonStyle(.borderedProminent)
+                    #endif
+                    
+                    Button("-")
+                    {
+                        delete_operations_program()
+                    }
+                    .disabled(base_workspace.selected_tool.programs_names.count == 0)
+                    .padding(.horizontal)
+                    
+                    Button("+")
+                    {
+                        add_program_view_presented.toggle()
+                    }
+                    .popover(isPresented: $add_program_view_presented)
+                    {
+                        AddOperationProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_tool.selected_program_index)
+                        #if os(macOS)
+                            .frame(height: 72.0)
+                        #else
+                            .presentationDetents([.height(96.0)])
+                        #endif
+                    }
+                    .onChange(of: base_workspace.selected_tool.programs_count)
+                    { _ in
+                        update_data()
+                    }
+                }
+                .padding()
+            }
+            else
+            {
+                Text("This tool has no control")
             }
         }
     }
