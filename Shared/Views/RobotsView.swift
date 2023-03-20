@@ -1120,9 +1120,9 @@ struct RobotInspectorView: View
                     .pickerStyle(SegmentedPickerStyle())
                     .labelsHidden()
                     #if os(macOS)
-                    .padding(8.0)
+                    .padding(8)
                     #else
-                    .padding(.bottom, 8.0)
+                    .padding(.bottom, 8)
                     #endif
                     
                     if teach_selection == 0
@@ -1532,7 +1532,7 @@ struct PositionItemListView: View
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
                 PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
-                    .presentationDetents([.height(500)])
+                    .presentationDetents([.height(576)])
                 #endif
             }
             
@@ -1555,6 +1555,10 @@ struct PositionItemView: View
     
     @State var item_view_pos_location = [Float]()
     @State var item_view_pos_rotation = [Float]()
+    @State var item_view_pos_type: MoveType = .fine
+    @State var item_view_pos_speed = Float()
+    
+    @State private var appeared = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -1747,6 +1751,57 @@ struct PositionItemView: View
             }
             #endif
             
+            HStack
+            {
+                Picker("Type", selection: $item_view_pos_type)
+                {
+                    ForEach(MoveType.allCases, id: \.self)
+                    { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.menu)
+                #if os(macOS)
+                .frame(maxWidth: .infinity)
+                #else
+                .frame(width: 96)
+                .buttonStyle(.borderedProminent)
+                #endif
+                
+                Text("Speed")
+                #if os(macOS)
+                    .frame(width: 40.0)
+                #else
+                    .frame(width: 60.0)
+                #endif
+                TextField("0", value: $item_view_pos_speed, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                #if os(macOS)
+                    .frame(width: 40.0)
+                #else
+                    .frame(maxWidth: .infinity)
+                #endif
+                Stepper("Enter", value: $item_view_pos_speed, in: 0...100)
+                    .labelsHidden()
+            }
+            .padding([.horizontal, .top])
+            .onChange(of: item_view_pos_type)
+            { newValue in
+                if appeared
+                {
+                    point_item.move_type = newValue
+                    update_workspace_data()
+                }
+            }
+            .onChange(of: item_view_pos_speed)
+            { newValue in
+                if appeared
+                {
+                    point_item.move_speed = item_view_pos_speed
+                    update_workspace_data()
+                }
+            }
+            
             Button(action: delete_point_from_program)
             {
                 Text("Delete")
@@ -1761,6 +1816,13 @@ struct PositionItemView: View
         .onAppear()
         {
             base_workspace.selected_robot.selected_program.selected_point_index = base_workspace.selected_robot.selected_program.points.firstIndex(of: point_item) ?? -1
+            
+            item_view_pos_type = point_item.move_type
+            item_view_pos_speed = point_item.move_speed
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+            {
+                appeared = true
+            }
         }
         .onDisappear()
         {
@@ -1842,6 +1904,10 @@ struct RobotsView_Previews: PreviewProvider
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0), limit_min: .constant(0), limit_max: .constant(200))
             PositionItemListView(points: .constant([PositionPoint()]), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: PositionPoint()) { IndexSet in }
                 .environmentObject(Workspace())
+            
+            PositionItemView(points: .constant([PositionPoint()]), point_item: .constant(PositionPoint()), position_item_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], on_delete: { _ in })
+                .environmentObject(Workspace())
+                .environmentObject(AppState())
         }
     }
 }
