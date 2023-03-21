@@ -41,8 +41,8 @@ class GripperController: ToolModelController
                 if !closed && !moved
                 {
                     moved = true
-                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
-                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
+                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
+                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
                     {
                         self.moved = false
                         self.closed = true
@@ -52,8 +52,8 @@ class GripperController: ToolModelController
                 if closed && !moved
                 {
                     moved = true
-                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
-                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
+                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
+                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
                     {
                         self.moved = false
                         self.closed = false
@@ -75,8 +75,8 @@ class GripperController: ToolModelController
                 if !closed && !moved
                 {
                     moved = true
-                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
-                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
+                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
+                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
                     {
                         self.moved = false
                         self.closed = true
@@ -92,8 +92,8 @@ class GripperController: ToolModelController
                 if closed && !moved
                 {
                     moved = true
-                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 18), duration: 1))
-                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -18), duration: 1))
+                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
+                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
                     {
                         self.moved = false
                         self.closed = false
