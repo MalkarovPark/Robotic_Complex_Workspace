@@ -376,7 +376,7 @@ struct ToolView: View
             
             Divider()
             
-            ToolInspectorView(document: $document, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+            ToolInspectorView(document: $document, new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
                 .frame(width: 256)
             #else
             if horizontal_size_class == .compact
@@ -444,7 +444,7 @@ struct ToolView: View
                         {
                             VStack
                             {
-                                ToolInspectorView(document: $document, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+                                ToolInspectorView(document: $document, new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
                                     //.disabled(base_workspace.selected_robot.performed == true)
                                     .presentationDetents([.medium, .large])
                             }
@@ -543,7 +543,7 @@ struct ToolView: View
                 
                 Divider()
                 
-                ToolInspectorView(document: $document, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+                ToolInspectorView(document: $document, new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
                     .frame(width: 256)
             }
             #endif
@@ -679,10 +679,10 @@ struct ToolView: View
 struct ToolInspectorView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var new_operation_code: Int
     
     @State private var add_program_view_presented = false
     @State private var add_operation_view_presented = false
-    @State private var new_operation_code = 0
     
     @State private var ready_for_save = false
     @State private var is_document_updated = false
