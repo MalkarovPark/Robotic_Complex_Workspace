@@ -27,12 +27,5 @@ struct DynamicStack<Content: View>: View
         {
             HStack(alignment: vertical_alignment, spacing: spacing, content: content)
         }
-        
-        /*ViewThatFits
-        {
-            HStack(alignment: vertical_alignment, spacing: spacing, content: content)
-
-            VStack(alignment: horizontal_alignment, spacing: spacing, content: content)
-        }*/
     }
 }
