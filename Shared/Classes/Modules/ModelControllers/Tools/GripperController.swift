@@ -127,4 +127,61 @@ class GripperController: ToolModelController
             nodes[1].position.z = -46
         }
     }
+    
+    //MARK: - Statistics
+    private var charts = [WorkspaceObjectChart]()
+    private var domain_index: Float = 0
+    
+    override func charts_data() -> [WorkspaceObjectChart]?
+    {
+        if charts.count == 0
+        {
+            charts.append(WorkspaceObjectChart(name: "Jaws Positions", style: .line))
+        }
+        
+        charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(nodes[0].position.z)))
+        charts[0].data.append(ChartDataItem(name: "Right (mm)", domain: ["": domain_index], codomain: Float(nodes[1].position.z)))
+        
+        usleep(100000)
+        
+        domain_index += 1
+        
+        return charts
+    }
+    
+    override func clear_charts_data()
+    {
+        domain_index = 0
+        charts = [WorkspaceObjectChart]()
+    }
+    
+    override func state() -> [StateItem]?
+    {
+        var state = [StateItem]()
+        
+        if !moved
+        {
+            if closed
+            {
+                state.append(StateItem(name: "Closed", value: "", image: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left"))
+            }
+            else
+            {
+                state.append(StateItem(name: "Opened", value: "", image: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right"))
+            }
+        }
+        else
+        {
+            if closed
+            {
+                state.append(StateItem(name: "Opening", value: "", image: "arrow.left.and.line.vertical.and.arrow.right"))
+            }
+            else
+            {
+                state.append(StateItem(name: "Closing", value: "", image: "arrow.right.and.line.vertical.and.arrow.left"))
+            }
+        }
+        
+        return state
+    }
 }
