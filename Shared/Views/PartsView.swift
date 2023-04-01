@@ -291,7 +291,6 @@ struct PartView: View
     
     //@State private var new_part_name = ""
     @State var new_physics: PhysicsType = .ph_none
-    @State var new_gripable = false
     @State var new_color: Color = .accentColor
     
     @State private var ready_for_save = false
@@ -343,34 +342,6 @@ struct PartView: View
                 #if os(iOS)
                     .frame(width: 112)
                 #endif
-                
-                #if os(macOS)
-                Toggle("Gripable", isOn: $new_gripable)
-                    .toggleStyle(.switch)
-                    .padding(.trailing)
-                    .onChange(of: new_gripable)
-                    { _ in
-                        update_data()
-                    }
-                #else
-                HStack(spacing: 0)
-                {
-                    Text("Gripable")
-                        .padding(.trailing)
-                    Toggle(isOn: $new_gripable)
-                    {
-                        Text("Gripable")
-                    }
-                    .toggleStyle(.switch)
-                    .tint(.accentColor)
-                    .labelsHidden()
-                }
-                .padding(.trailing)
-                .onChange(of: new_gripable)
-                { _ in
-                    update_data()
-                }
-                #endif
             }
             .padding(.vertical)
         }
@@ -400,7 +371,6 @@ struct PartView: View
             previewed_part?.enable_physics = false
             
             new_physics = part_item.physics_type
-            new_gripable = part_item.gripable ?? false
             new_color = part_item.color
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
@@ -423,7 +393,6 @@ struct PartView: View
         {
             app_state.get_scene_image = true
             part_item.physics_type = new_physics
-            part_item.gripable = new_gripable
             part_item.color = new_color
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)

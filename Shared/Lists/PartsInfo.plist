@@ -20,8 +20,6 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Cylinder</key>
 	<dict>
@@ -42,8 +40,6 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Plane</key>
 	<dict>
@@ -64,8 +60,6 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Capsule</key>
 	<dict>
@@ -86,8 +80,6 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Torus</key>
 	<dict>
@@ -108,8 +100,6 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Cone</key>
 	<dict>
@@ -131,8 +121,6 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Tube</key>
 	<dict>
@@ -154,8 +142,6 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Pyramid</key>
 	<dict>
@@ -177,8 +163,6 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Box</key>
 	<dict>
@@ -201,15 +185,11 @@
 		</array>
 		<key>Physics</key>
 		<string>dynamic</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 	<key>Scene Part</key>
 	<dict>
 		<key>Scene</key>
 		<string>TestPart.scn</string>
-		<key>Gripable</key>
-		<false/>
 	</dict>
 </dict>
 </plist>
