@@ -63,7 +63,7 @@ struct StatisticsView: View
             #if os(macOS)
             Toggle(isOn: $get_statistics)
             {
-                Text("Enable collection")
+                Text("Enable Collection")
             }
             .toggleStyle(.switch)
             .padding(.horizontal)
@@ -74,11 +74,11 @@ struct StatisticsView: View
             #else
             HStack(spacing: 0)
             {
-                Text("Enable collection")
+                Text("Enable Collection")
                     .padding(.trailing)
                 Toggle(isOn: $get_statistics)
                 {
-                    Text("Enable collection")
+                    Text("Enable Collection")
                 }
                 .toggleStyle(.switch)
                 .tint(.accentColor)
