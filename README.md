@@ -2,7 +2,7 @@
 
 # Robotic Complex Workspace
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Swift](https://img.shields.io/badge/swift-5.7-brightgreen.svg) ![Xcode 14.1+](https://img.shields.io/badge/Xcode-14.1%2B-blue.svg) ![macOS 13.0+](https://img.shields.io/badge/macOS-13.0%2B-blue.svg) ![iOS 16.1+](https://img.shields.io/badge/iOS-16.1%2B-blue.svg)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Swift](https://img.shields.io/badge/swift-5.8-brightgreen.svg) ![Xcode 14.1+](https://img.shields.io/badge/Xcode-14.1%2B-blue.svg) ![macOS 13.0+](https://img.shields.io/badge/macOS-13.0%2B-blue.svg) ![iOS 16.1+](https://img.shields.io/badge/iOS-16.1%2B-blue.svg)
 <a href="https://github.com/MalkarovPark/IndustrialKit">
 <img src="https://img.shields.io/badge/-IndustrialKit-05A89D"></a>
 
@@ -65,13 +65,25 @@ Objects are created in the relevant items available through the sidebar. All cre
 
 When creating a robot, in addition to the *name*, the *manufacturer*, *series* and *model* are specified. The *model* parameter determines how the visual model is controlled and direct connector.
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/230922584-08fa7938-82f9-49c0-85b2-e8ef8403d5ff.png" height="448px" />
+</p>
+
 ### Tools <a name="tools">
 
 When creating, the *name* of the tool and its *model* are specified. Likewise robot, the *model* defines a model controller and direct connector.
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/230924002-158efa13-34b6-4b48-85d6-11d418d96346.png" height="384px" />
+</p>
+
 ### Parts <a name="parts">
 
 When creating a part, its *name* and *model* are specified.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/230924184-07ae403b-72cc-4fcc-bf46-ac6597ed70e6.png" height="320px" />
+</p>
 
 # Visual Modeling & Physical Simulation<a name="visual-modeling">
 
