@@ -72,17 +72,35 @@ When creating, the *name* of the tool and its *model* are specified. Likewise ro
 
 When creating a part, its *name* and *model* are specified.
 
-# Visual Modeling <a name="visual-modeling">
+# Visual Modeling & Physical Simulation<a name="visual-modeling">
 
-Text...
+Provided through the SceneKit framework.
+
+The functionality of building visual models is available for production equipment – robots and tools, both individually and as part of a complex.
+
+Physical simulation allows you to evaluate the performance of technological operations by equipment on parts.
+
+Can be endabled/disabled in settings if needed.
 
 # Connecting Objects <a name="connecting-objects">
 
-Text...
+Connection to real equipment through connectors. For each device, the connector setting is available by pressing the ![link@8x](https://user-images.githubusercontent.com/62340924/230892411-66714a6a-f2e3-4415-a5f1-2d1e22d255ed.png) button.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/230892569-2527b874-9e7a-48fd-9862-351da3f69abd.png" />
+</p>
+
+The connected device can control its visual model, allowing it to be tracked in real time. The user can combine real and virtual devices in one document.
 
 # Handling Statistics <a name="handling-statistics">
 
-Text...
+The application is available to receive statistical data from selected devices and save them in a document.
+The statistics data are available in the form of various types of charts and disclosure groups of parameters.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/230785411-60b2646d-efcf-4cd0-a980-bf8d75693af7.png" height="448px" />
+  <img src="https://user-images.githubusercontent.com/62340924/230785427-0cf6c573-b34f-46ff-856a-9c7a2e3c2416.png" height="448px" />
+</p>
 
 # Getting Help <a name="getting-help"></a>
 GitHub is our primary forum for RCWorkspace. Feel free to open up issues about questions, problems, or ideas.
