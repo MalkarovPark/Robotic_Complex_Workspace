@@ -20,6 +20,7 @@ Robotic Complex Workspace is an open source application for designing and contro
 * [Visual Modeling](#visual-modeling)
 * [Connecting Objects](#connecting-objects)
 * [Handling Statistics](#handling-statistics)
+* [Extensibility](#extensibility)
 * [Getting Help](#getting-help)
 * [License](#license)
 
@@ -100,6 +101,20 @@ The statistics data are available in the form of various types of charts and dis
 <p align="center">
   <img src="https://user-images.githubusercontent.com/62340924/230785411-60b2646d-efcf-4cd0-a980-bf8d75693af7.png" height="448px" />
   <img src="https://user-images.githubusercontent.com/62340924/230785427-0cf6c573-b34f-46ff-856a-9c7a2e3c2416.png" height="448px" />
+</p>
+
+To open the statistics view, press the ![chart bar@8x](https://user-images.githubusercontent.com/62340924/230895161-665df98e-6fc5-426e-9a86-60b51d25b84e.png) button next to the object of interest.
+
+# Extensibility <a name="extensibility">
+
+You can add support for new models of industrial equipment or parts.
+
+Create your controllers and connectors, new visual models. If you create your own fork – don't forget to add the models to the appropriate property list files – RobotsInfo, ToolsInfo, PartsInfo. To select the appropriate controller and connector classes, you need to update the passed *select_robot_modules* and *select_tool_modules functions* in the ContentView.
+
+External model files and parametric files describing them (similar in structure to internal ones) can be connected in the application settings.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/230897776-e1fe2990-e8c6-4883-a8da-a5c0136c5ed7.png" height="400px" />
 </p>
 
 # Getting Help <a name="getting-help"></a>
