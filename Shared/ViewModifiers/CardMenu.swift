@@ -21,32 +21,17 @@ struct CardMenu: ViewModifier
         content
             .contextMenu
             {
-                Button(action: {
-                    duplicate_object()
-                    update_file()
-                })
-                {
-                    Label("Duplicate", systemImage: "plus.square.on.square")
-                    #if os(macOS)
-                    Image(systemName: "plus.square.on.square")
-                    #endif
-                }
-                
                 Toggle(isOn: $object.is_placed)
                 {
                     Label("Placed", systemImage: "target")
-                    #if os(macOS)
+                    /*#if os(macOS)
                     Image(systemName: "target")
-                    #endif
+                    #endif*/
                 }
                 .onChange(of: object.is_placed)
                 { _ in
                     update_file()
                 }
-                
-                #if os(macOS)
-                Divider()
-                #endif
                 
                 Button(action: {
                     clear_preview()
@@ -54,9 +39,26 @@ struct CardMenu: ViewModifier
                 })
                 {
                     Label("Clear Preview", systemImage: "rectangle.slash")
-                    #if os(macOS)
-                    Image(systemName: "rectangle.slash")
-                    #endif
+                }
+                
+                #if os(macOS)
+                Divider()
+                #endif
+                
+                Button(action: {
+                    duplicate_object()
+                    update_file()
+                })
+                {
+                    Label("Duplicate", systemImage: "plus.square.on.square")
+                }
+                
+                Button(action: {
+                    //duplicate_object()
+                    //update_file()
+                })
+                {
+                    Label("Rename", systemImage: "pencil.line")
                 }
             }
     }

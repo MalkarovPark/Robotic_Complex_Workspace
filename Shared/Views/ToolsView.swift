@@ -104,6 +104,9 @@ struct ToolCardView: View
     {
         LargeCardView(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
             .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: tool_item, objects: base_workspace.tools, on_delete: remove_tools, object_type_name: "tool"))
+            .modifier(CardMenu(object: tool_item, clear_preview: tool_item.clear_preview, duplicate_object: {
+                base_workspace.duplicate_tool(name: tool_item.name!)
+            }, update_file: update_file))
             .onTapGesture
             {
                 base_workspace.select_tool(name: tool_item.name!)
@@ -122,6 +125,11 @@ struct ToolCardView: View
             base_workspace.tools.remove(atOffsets: offsets)
             document.preset.tools = base_workspace.file_data().tools
         }
+    }
+    
+    private func update_file()
+    {
+        document.preset.tools = base_workspace.file_data().tools
     }
 }
 

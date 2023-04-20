@@ -113,6 +113,9 @@ struct PartCardView: View
     {
         SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
             .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: part_item, objects: base_workspace.parts, on_delete: remove_parts, object_type_name: "part"))
+            .modifier(CardMenu(object: part_item, clear_preview: part_item.clear_preview, duplicate_object: {
+                base_workspace.duplicate_part(name: part_item.name!)
+            }, update_file: update_file))
             .onTapGesture
             {
                 part_view_presented = true
@@ -134,6 +137,11 @@ struct PartCardView: View
             base_workspace.parts.remove(atOffsets: offsets)
             document.preset.parts = base_workspace.file_data().parts
         }
+    }
+    
+    private func update_file()
+    {
+        document.preset.parts = base_workspace.file_data().parts
     }
 }
 
