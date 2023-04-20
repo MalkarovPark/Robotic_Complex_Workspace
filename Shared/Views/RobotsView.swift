@@ -70,6 +70,9 @@ struct RobotsTableView: View
                         { robot_item in
                             LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
                                 .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
+                                .modifier(CardMenu(object: robot_item, clear_preview: robot_item.clear_preview, duplicate_object: {
+                                    base_workspace.duplicate_robot(name: robot_item.name!)
+                                }, update_file: update_file))
                             .onTapGesture
                             {
                                 view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
@@ -124,19 +127,24 @@ struct RobotsTableView: View
     }
     
     //MARK: Robots manage functions
-    func view_robot(robot_index: Int)
+    private func view_robot(robot_index: Int)
     {
         base_workspace.select_robot(index: robot_index)
         self.robot_view_presented = true
     }
     
-    func delete_robots(at offsets: IndexSet)
+    private func delete_robots(at offsets: IndexSet)
     {
         withAnimation
         {
             base_workspace.robots.remove(atOffsets: offsets)
             document.preset.robots = base_workspace.file_data().robots
         }
+    }
+    
+    private func update_file()
+    {
+        document.preset.robots = base_workspace.file_data().robots
     }
 }
 
