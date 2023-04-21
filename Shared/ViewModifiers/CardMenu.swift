@@ -124,6 +124,7 @@ public struct LargeCardBack: View
     {
         self.color = color
         self.image = image
+        self.title = title
         self.subtitle = subtitle
         
         self.object = object
