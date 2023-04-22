@@ -181,6 +181,23 @@ public struct LargeCardBack: View
                     {
                         HStack
                         {
+                            #if os(macOS)
+                            TextField("Name", text: $title)
+                                .textFieldStyle(.roundedBorder)
+                                .focused($is_focused)
+                                .labelsHidden()
+                                .padding()
+                                .onSubmit
+                                {
+                                    object.name = title
+                                    update_file()
+                                    is_renamed = false
+                                }
+                                .onExitCommand
+                                {
+                                    is_renamed = false
+                                }
+                            #else
                             TextField("Name", text: $title, onCommit: {
                                 object.name = title
                                 update_file()
@@ -190,6 +207,7 @@ public struct LargeCardBack: View
                                 .focused($is_focused)
                                 .labelsHidden()
                                 .padding()
+                            #endif
                         }
                     }
                     .onAppear
@@ -256,6 +274,23 @@ public struct SmallCardBack: View
                 {
                     HStack(spacing: 0)
                     {
+                        #if os(macOS)
+                        TextField("Name", text: $title)
+                            .focused($is_focused)
+                            .labelsHidden()
+                            .font(.headline)
+                            .padding()
+                            .onSubmit
+                            {
+                                object.name = title
+                                update_file()
+                                is_renamed = false
+                            }
+                            .onExitCommand
+                            {
+                                is_renamed = false
+                            }
+                        #else
                         TextField("Name", text: $title, onCommit: {
                             object.name = title
                             update_file()
@@ -265,6 +300,7 @@ public struct SmallCardBack: View
                             .labelsHidden()
                             .font(.headline)
                             .padding()
+                        #endif
                         
                         Spacer()
                         
