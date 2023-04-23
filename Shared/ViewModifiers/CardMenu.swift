@@ -10,6 +10,8 @@ import IndustrialKit
 
 struct CardMenu: ViewModifier
 {
+    @EnvironmentObject var base_workspace: Workspace
+    
     @ObservedObject var object: WorkspaceObject //StateObject ???
     
     @State var front_degree = 0.0
@@ -35,10 +37,6 @@ struct CardMenu: ViewModifier
                         Toggle(isOn: $object.is_placed)
                         {
                             Label("Placed", systemImage: "target")
-                        }
-                        .onChange(of: object.is_placed)
-                        { _ in
-                            update_file()
                         }
                         
                         Button(action: {
@@ -69,6 +67,10 @@ struct CardMenu: ViewModifier
                                 is_flipped.toggle()
                             }
                         }
+                    }
+                    .onChange(of: object.is_placed)
+                    { _ in
+                        update_file()
                     }
             }
             else
