@@ -501,7 +501,7 @@ struct AddElementView: View
                         Text(type.rawValue).tag(type)
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
@@ -583,7 +583,7 @@ struct ElementView: View
                         Text(type.rawValue).tag(type)
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
                 .labelsHidden()
                 .padding(.bottom, 8.0)
                 
@@ -1014,6 +1014,11 @@ struct ModifierElementView: View
     @EnvironmentObject var base_workspace: Workspace
     
     @State private var viewed_tool: Tool?
+    @State private var changer_type_selection = 0
+    
+    @State var element_num = 0
+    
+    private let changer_type_items: [String] = ["Push", "Pop"]
     
     var body: some View
     {
@@ -1107,7 +1112,34 @@ struct ModifierElementView: View
                 }
             case .changer:
                 //MARK: Changer subview
-                Text("Changer")
+                VStack
+                {
+                    Picker("LR", selection: $changer_type_selection)
+                    {
+                        ForEach(0..<changer_type_items.count, id: \.self)
+                        { index in
+                            switch index
+                            {
+                            case 0:
+                                Image(systemName: "tray.and.arrow.down")
+                            default:
+                                Image(systemName: "tray.and.arrow.up")
+                            }
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .padding(.bottom)
+                    
+                    HStack(spacing: 8)
+                    {
+                        Text("Hold")
+                        TextField("0", value: $element_num, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        Stepper("Enter", value: $element_num, in: 0...255)
+                            .labelsHidden()
+                    }
+                }
             }
         }
     }
@@ -1215,7 +1247,7 @@ struct ControlProgramView_Previews: PreviewProvider
                 .environmentObject(Workspace())
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modifier_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
-            ModifierElementView(modifier_type: .constant(.observer), tool_name: .constant("None"))
+            ModifierElementView(modifier_type: .constant(.changer), tool_name: .constant("None"))
                 .environmentObject(Workspace())
             LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))
         }

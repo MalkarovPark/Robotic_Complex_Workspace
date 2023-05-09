@@ -1125,7 +1125,7 @@ struct RobotInspectorView: View
                             Text(self.teach_items[index]).tag(index)
                         }
                     }
-                    .pickerStyle(SegmentedPickerStyle())
+                    .pickerStyle(.segmented)
                     .labelsHidden()
                     #if os(macOS)
                     .padding(8)

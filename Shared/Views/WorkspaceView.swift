@@ -572,7 +572,7 @@ struct AddInWorkspaceView: View
             { _ in
                 base_workspace.object_pointer_node?.isHidden = true
             }
-            .pickerStyle(SegmentedPickerStyle())
+            .pickerStyle(.segmented)
             .labelsHidden()
             .padding([.horizontal, .top])
             
@@ -1054,7 +1054,7 @@ struct WorkspaceCardsView: View
                 {
                     Text("1").tag(1)
                 }
-                .pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
                 .hidden()
             }
             .padding([.horizontal, .top])
@@ -1230,7 +1230,7 @@ struct WorkspaceCardsView: View
                         Text(type.rawValue + "s").tag(type)
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
                 .labelsHidden()
                 .buttonStyle(.borderless)
                 .padding([.horizontal, .top])
