@@ -652,7 +652,7 @@ struct ElementView: View
                 case .perofrmer:
                     PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
                 case .modifier:
-                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type)
+                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type, tool_name: $new_element_item_data.tool_name)
                 case .logic:
                     LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name)
                 }
@@ -781,12 +781,14 @@ struct PerformerElementView: View
                     }
                     .disabled(viewed_robot?.programs_names.count == 0)
                     #else
-                    VStack
-                    {
-                        GeometryReader
-                        { geometry in
-                            HStack(spacing: 0)
+                    GeometryReader
+                    { geometry in
+                        HStack(spacing: 0)
+                        {
+                            VStack(spacing: 0)
                             {
+                                Text("Name")
+                                
                                 Picker("Name", selection: $robot_name) //Robot picker
                                 {
                                     if base_workspace.placed_robots_names.count > 0
@@ -824,9 +826,14 @@ struct PerformerElementView: View
                                 }
                                 .disabled(base_workspace.placed_robots_names.count == 0)
                                 .pickerStyle(.wheel)
-                                .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                                 .compositingGroup()
                                 .clipped()
+                            }
+                            .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
+                                
+                            VStack(spacing: 0)
+                            {
+                                Text("Program")
                                 
                                 Picker("Program", selection: $program_name) //Robot program picker
                                 {
@@ -844,10 +851,10 @@ struct PerformerElementView: View
                                 }
                                 .disabled(viewed_robot?.programs_names.count == 0)
                                 .pickerStyle(.wheel)
-                                .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                                 .compositingGroup()
                                 .clipped()
                             }
+                            .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                         }
                     }
                     .frame(height: 128)
@@ -910,12 +917,14 @@ struct PerformerElementView: View
                     }
                     .disabled(viewed_tool?.programs_names.count == 0)
                     #else
-                    VStack
-                    {
-                        GeometryReader
-                        { geometry in
-                            HStack(spacing: 0)
+                    GeometryReader
+                    { geometry in
+                        HStack(spacing: 0)
+                        {
+                            VStack(spacing: 0)
                             {
+                                Text("Name")
+                                
                                 Picker("Name", selection: $tool_name) //tool picker
                                 {
                                     if base_workspace.placed_tools_names.count > 0
@@ -953,9 +962,14 @@ struct PerformerElementView: View
                                 }
                                 .disabled(base_workspace.placed_tools_names.count == 0)
                                 .pickerStyle(.wheel)
-                                .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                                 .compositingGroup()
                                 .clipped()
+                            }
+                            .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
+                            
+                            VStack(spacing: 0)
+                            {
+                                Text("Program")
                                 
                                 Picker("Program", selection: $program_name) //tool program picker
                                 {
@@ -973,10 +987,10 @@ struct PerformerElementView: View
                                 }
                                 .disabled(viewed_tool?.programs_names.count == 0)
                                 .pickerStyle(.wheel)
-                                .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                                 .compositingGroup()
                                 .clipped()
                             }
+                            .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                         }
                     }
                     .frame(height: 128)
@@ -995,17 +1009,106 @@ struct PerformerElementView: View
 struct ModifierElementView: View
 {
     @Binding var modifier_type: ModifierType
+    @Binding var tool_name: String
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    @State private var viewed_tool: Tool?
+    
     var body: some View
     {
-        Text("Modifier")
-        switch modifier_type
+        VStack
         {
-        case .observer:
-            //MARK: Observer subview
-            Text("Observer")
-        case .changer:
-            //MARK: Changer subview
-            Text("Changer")
+            switch modifier_type
+            {
+            case .observer:
+                //MARK: Observer subview
+                if base_workspace.placed_tools_names.count > 0
+                {
+                    //MARK: tool subview
+                    #if os(macOS)
+                    Picker("Name", selection: $tool_name) //tool picker
+                    {
+                        ForEach(base_workspace.placed_tools_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    .onChange(of: tool_name)
+                    { _ in
+                        viewed_tool = base_workspace.tool_by_name(tool_name)
+                        /*if viewed_tool?.programs_names.count ?? 0 > 0
+                        {
+                            program_name = viewed_tool?.programs_names.first ?? ""
+                        }*/
+                        base_workspace.update_view()
+                    }
+                    .onAppear
+                    {
+                        if tool_name == ""
+                        {
+                            tool_name = base_workspace.placed_tools_names.first!
+                        }
+                        else
+                        {
+                            viewed_tool = base_workspace.tool_by_name(tool_name)
+                            base_workspace.update_view()
+                        }
+                    }
+                    .disabled(base_workspace.placed_tools_names.count == 0)
+                    .frame(maxWidth: .infinity)
+                    #else
+                    VStack(spacing: 0)
+                    {
+                        Text("Name")
+                            .padding(.bottom)
+                        Picker("Name", selection: $tool_name) //tool picker
+                        {
+                            if base_workspace.placed_tools_names.count > 0
+                            {
+                                ForEach(base_workspace.placed_tools_names, id: \.self)
+                                { name in
+                                    Text(name)
+                                }
+                            }
+                            else
+                            {
+                                Text("None")
+                            }
+                        }
+                        .onChange(of: tool_name)
+                        { _ in
+                            viewed_tool = base_workspace.tool_by_name(tool_name)
+                            base_workspace.update_view()
+                        }
+                        .onAppear
+                        {
+                            if tool_name == ""
+                            {
+                                tool_name = base_workspace.placed_tools_names[0]
+                            }
+                            else
+                            {
+                                viewed_tool = base_workspace.tool_by_name(tool_name)
+                                base_workspace.update_view()
+                            }
+                        }
+                        .disabled(base_workspace.placed_tools_names.count == 0)
+                        .pickerStyle(.wheel)
+                        .compositingGroup()
+                        .clipped()
+                    }
+                    .frame(width: 256, height: 128)
+                    #endif
+                }
+                else
+                {
+                    Text("No tools placed in this workspace")
+                }
+            case .changer:
+                //MARK: Changer subview
+                Text("Changer")
+            }
         }
     }
 }
@@ -1111,6 +1214,8 @@ struct ControlProgramView_Previews: PreviewProvider
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modifier_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
+                .environmentObject(Workspace())
+            ModifierElementView(modifier_type: .constant(.observer), tool_name: .constant("None"))
                 .environmentObject(Workspace())
             LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))
         }
