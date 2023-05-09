@@ -652,7 +652,7 @@ struct ElementView: View
                 case .perofrmer:
                     PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
                 case .modifier:
-                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type, tool_name: $new_element_item_data.tool_name)
+                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type, object_name: $new_element_item_data.tool_name, is_push: $new_element_item_data.is_push, register_index: $new_element_item_data.register_index)
                 case .logic:
                     LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name)
                 }
@@ -1009,16 +1009,13 @@ struct PerformerElementView: View
 struct ModifierElementView: View
 {
     @Binding var modifier_type: ModifierType
-    @Binding var tool_name: String
+    @Binding var object_name: String
+    @Binding var is_push: Bool
+    @Binding var register_index: Int
     
     @EnvironmentObject var base_workspace: Workspace
     
-    @State private var viewed_tool: Tool?
-    @State private var changer_type_selection = 0
-    
-    @State var element_num = 0
-    
-    private let changer_type_items: [String] = ["Push", "Pop"]
+    @State private var viewed_object: Tool?
     
     var body: some View
     {
@@ -1032,31 +1029,27 @@ struct ModifierElementView: View
                 {
                     //MARK: tool subview
                     #if os(macOS)
-                    Picker("Name", selection: $tool_name) //tool picker
+                    Picker("Name", selection: $object_name) //tool picker
                     {
                         ForEach(base_workspace.placed_tools_names, id: \.self)
                         { name in
                             Text(name)
                         }
                     }
-                    .onChange(of: tool_name)
+                    .onChange(of: object_name)
                     { _ in
-                        viewed_tool = base_workspace.tool_by_name(tool_name)
-                        /*if viewed_tool?.programs_names.count ?? 0 > 0
-                        {
-                            program_name = viewed_tool?.programs_names.first ?? ""
-                        }*/
+                        viewed_object = base_workspace.tool_by_name(object_name)
                         base_workspace.update_view()
                     }
                     .onAppear
                     {
-                        if tool_name == ""
+                        if object_name == ""
                         {
-                            tool_name = base_workspace.placed_tools_names.first!
+                            object_name = base_workspace.placed_tools_names.first!
                         }
                         else
                         {
-                            viewed_tool = base_workspace.tool_by_name(tool_name)
+                            viewed_object = base_workspace.tool_by_name(object_name)
                             base_workspace.update_view()
                         }
                     }
@@ -1114,18 +1107,12 @@ struct ModifierElementView: View
                 //MARK: Changer subview
                 VStack
                 {
-                    Picker("LR", selection: $changer_type_selection)
+                    Picker("LR", selection: $is_push)
                     {
-                        ForEach(0..<changer_type_items.count, id: \.self)
-                        { index in
-                            switch index
-                            {
-                            case 0:
-                                Image(systemName: "tray.and.arrow.down")
-                            default:
-                                Image(systemName: "tray.and.arrow.up")
-                            }
-                        }
+                        Image(systemName: "tray.and.arrow.down")
+                            .tag(true)
+                        Image(systemName: "tray.and.arrow.up")
+                            .tag(false)
                     }
                     .pickerStyle(.segmented)
                     .labelsHidden()
@@ -1133,10 +1120,10 @@ struct ModifierElementView: View
                     
                     HStack(spacing: 8)
                     {
-                        Text("Hold")
-                        TextField("0", value: $element_num, format: .number)
+                        Text("Register")
+                        TextField("0", value: $register_index, format: .number)
                             .textFieldStyle(.roundedBorder)
-                        Stepper("Enter", value: $element_num, in: 0...255)
+                        Stepper("Enter", value: $register_index, in: 0...255)
                             .labelsHidden()
                     }
                 }
@@ -1247,7 +1234,7 @@ struct ControlProgramView_Previews: PreviewProvider
                 .environmentObject(Workspace())
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modifier_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
-            ModifierElementView(modifier_type: .constant(.changer), tool_name: .constant("None"))
+            ModifierElementView(modifier_type: .constant(.changer), object_name: .constant("None"), is_push: .constant(true), register_index: .constant(0))
                 .environmentObject(Workspace())
             LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))
         }
