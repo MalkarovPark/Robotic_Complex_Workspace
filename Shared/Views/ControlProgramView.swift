@@ -284,17 +284,27 @@ struct ElementCardView: View
                     .padding(16)
                     .animation(.easeInOut(duration: 0.2), value: badge_color())
                     
-                    VStack(alignment: .leading)
+                    HStack(spacing: 0)
                     {
-                        Text(element_item.subtype)
-                            .font(.title3)
-                            .animation(.easeInOut(duration: 0.2), value: element_item.element_data.element_type.rawValue)
-                        Text(element_item.info)
-                            .foregroundColor(.secondary)
-                            .animation(.easeInOut(duration: 0.2), value: element_item.info)
+                        HStack(spacing: 0)
+                        {
+                            VStack(alignment: .leading)
+                            {
+                                Text(element_item.subtype)
+                                    .font(.title3)
+                                    .animation(.easeInOut(duration: 0.2), value: element_item.element_data.element_type.rawValue)
+                                Text(element_item.info)
+                                    .foregroundColor(.secondary)
+                                    .animation(.easeInOut(duration: 0.2), value: element_item.info)
+                            }
+                            
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .padding([.trailing], 32.0)
+                    .padding(.trailing, 16.0)
                 }
+                .frame(maxWidth: .infinity)
             }
         }
         .frame(height: 80)
@@ -408,15 +418,25 @@ struct ElementCardViewPreview: View
                     .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
                     .padding(16)
                     
-                    VStack(alignment: .leading)
+                    HStack(spacing: 0)
                     {
-                        Text(element_item.subtype)
-                            .font(.title3)
-                        Text(element_item.info)
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 0)
+                        {
+                            VStack(alignment: .leading)
+                            {
+                                Text(element_item.subtype)
+                                    .font(.title3)
+                                Text(element_item.info)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .padding([.trailing], 32.0)
+                    .padding(.trailing, 16.0)
                 }
+                .frame(maxWidth: .infinity)
             }
         }
         .frame(height: 80)
@@ -652,7 +672,7 @@ struct ElementView: View
                 case .perofrmer:
                     PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
                 case .modifier:
-                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type, object_name: $new_element_item_data.tool_name, is_push: $new_element_item_data.is_push, register_index: $new_element_item_data.register_index)
+                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type, object_name: $new_element_item_data.object_name, is_push: $new_element_item_data.is_push, register_index: $new_element_item_data.register_index)
                 case .logic:
                     LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name)
                 }
