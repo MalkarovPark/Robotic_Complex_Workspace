@@ -178,7 +178,7 @@ struct ControlProgramView: View
             case .equal:
                 badge_image = Image(systemName: "equal")
             case .unequal:
-                badge_image = Image(systemName: "lessthan")
+                badge_image = Image(systemName: "exclamationmark")
             }
         }
         
@@ -367,7 +367,7 @@ struct ElementCardView: View
             case .equal:
                 badge_image = Image(systemName: "equal")
             case .unequal:
-                badge_image = Image(systemName: "lessthan")
+                badge_image = Image(systemName: "exclamationmark")
             }
         }
         
@@ -674,7 +674,7 @@ struct ElementView: View
                 case .modifier:
                     ModifierElementView(modifier_type: $new_element_item_data.modifier_type, object_name: $new_element_item_data.object_name, is_push: $new_element_item_data.is_push, register_index: $new_element_item_data.register_index)
                 case .logic:
-                    LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name)
+                    LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name, compared_value: $new_element_item_data.compared_value)
                 }
             }
             .padding()
@@ -1158,6 +1158,7 @@ struct LogicElementView: View
     @Binding var logic_type: LogicType
     @Binding var mark_name: String
     @Binding var target_mark_name: String
+    @Binding var compared_value: Int
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -1232,12 +1233,16 @@ struct LogicElementView: View
                     TextField("None", text: $mark_name) //Mark name field
                         .textFieldStyle(.roundedBorder)
                 }
-            case .equal:
+            default:
                 //MARK: Equal subview
-                Text("Equal")
-            case .unequal:
-                //MARK: Unequal subview
-                Text("Unequal")
+                HStack(spacing: 8)
+                {
+                    Text("Register")
+                    TextField("0", value: $compared_value, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                    Stepper("Enter", value: $compared_value, in: 0...255)
+                        .labelsHidden()
+                }
             }
         }
     }
@@ -1256,7 +1261,7 @@ struct ControlProgramView_Previews: PreviewProvider
                 .environmentObject(Workspace())
             ModifierElementView(modifier_type: .constant(.changer), object_name: .constant("None"), is_push: .constant(true), register_index: .constant(0))
                 .environmentObject(Workspace())
-            LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"))
+            LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"), compared_value: .constant(0))
         }
     }
 }
