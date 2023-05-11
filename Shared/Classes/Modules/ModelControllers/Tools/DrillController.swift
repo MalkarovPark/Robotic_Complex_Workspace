@@ -26,6 +26,8 @@ class DrillController: ToolModelController
     
     override func nodes_perform(code: Int)
     {
+        info_code = 4
+        
         if nodes.count == 1 //Drill has one rotated node
         {
             switch code

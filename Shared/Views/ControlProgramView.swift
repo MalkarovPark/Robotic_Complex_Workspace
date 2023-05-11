@@ -1237,7 +1237,7 @@ struct LogicElementView: View
                 //MARK: Equal subview
                 HStack(spacing: 8)
                 {
-                    Text("Register")
+                    Text("Compare with")
                     TextField("0", value: $compared_value, format: .number)
                         .textFieldStyle(.roundedBorder)
                     Stepper("Enter", value: $compared_value, in: 0...255)
