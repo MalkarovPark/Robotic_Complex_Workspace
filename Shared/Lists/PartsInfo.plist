@@ -186,10 +186,19 @@
 		<key>Physics</key>
 		<string>dynamic</string>
 	</dict>
-	<key>Scene Part</key>
+	<key>Books Row</key>
 	<dict>
 		<key>Scene</key>
-		<string>TestPart.scn</string>
+		<string>books_row.scn</string>
+		<key>Physics</key>
+		<string>dynamic</string>
+	</dict>
+	<key>Cup</key>
+	<dict>
+		<key>Scene</key>
+		<string>cup.scn</string>
+		<key>Physics</key>
+		<string>dynamic</string>
 	</dict>
 </dict>
 </plist>
