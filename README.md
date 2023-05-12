@@ -1,4 +1,4 @@
-![RCWorkspace](https://user-images.githubusercontent.com/62340924/210179279-8fb05e47-9268-457d-902f-4f07f9ae12e9.png)
+![RCWorkspace](https://github.com/MalkarovPark/Robotic-Complex-Workspace/assets/62340924/a5268370-9d99-4a6b-88e3-819ac8e7535b)
 
 # Robotic Complex Workspace
 
