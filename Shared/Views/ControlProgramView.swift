@@ -14,9 +14,9 @@ struct ControlProgramView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
-    @State var dragged_element: WorkspaceProgramElement?
-    @State var add_element_view_presented = false
-    @State var add_new_element_data = WorkspaceProgramElementStruct()
+    @State private var dragged_element: WorkspaceProgramElement?
+    @State private var add_element_view_presented = false
+    @State private var add_new_element_data = WorkspaceProgramElementStruct()
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -60,15 +60,15 @@ struct ControlProgramView: View
                         {
                             HStack
                             {
-                                Text("Add Element")
+                                Image(systemName: "plus")
                                 Spacer()
                             }
                             .padding()
                         }
                         #if os(macOS)
-                        .frame(maxWidth: 144.0, alignment: .leading)
+                        .frame(maxWidth: 80.0, alignment: .leading)
                         #else
-                        .frame(maxWidth: 176.0, alignment: .leading)
+                        .frame(maxWidth: 86.0, alignment: .leading)
                         #endif
                         .background(.thinMaterial)
                         .cornerRadius(32)
@@ -1254,7 +1254,8 @@ struct ControlProgramView_Previews: PreviewProvider
     {
         Group
         {
-            //ControlProgramView()
+            ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(Workspace())
             ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modifier_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
