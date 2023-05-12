@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Shared
+//  Robotic Complex Workspace
 //
 //  Created by Malkarov Park on 15.10.2021.
 //

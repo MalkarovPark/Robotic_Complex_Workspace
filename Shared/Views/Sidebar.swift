@@ -61,7 +61,6 @@ struct Sidebar: View
         #else
         SidebarContent(document: $document, file_url: $file_url, file_name: $file_name).frame(minWidth: 200, idealWidth: 250)
         .navigationBarHidden(true)
-        .modifier(DismissModifier())
         #endif
     }
 }
@@ -122,13 +121,6 @@ struct SidebarContent: View
                         }
                     }
                 }
-                /*if horizontal_size_class != .compact
-                {
-                    ToolbarItem(placement: .cancellationAction)
-                    {
-                        dismiss_document_button()
-                    }
-                }*/
             }
             .sheet(isPresented: $app_state.settings_view_presented)
             {
