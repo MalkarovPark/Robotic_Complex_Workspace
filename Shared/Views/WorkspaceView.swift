@@ -216,14 +216,14 @@ struct ComplexWorkspaceView: View
             if !(horizontal_size_class == .compact)
             {
                 WorkspaceSceneView_iOS()
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
                     .navigationBarTitleDisplayMode(.inline)
             }
             else
             {
                 WorkspaceSceneView_iOS()
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding()
                     .navigationBarTitleDisplayMode(.inline)
             }
@@ -289,8 +289,8 @@ struct ComplexWorkspaceView: View
                         .disabled(base_workspace.add_in_view_disabled)
                     }
                     .background(.thinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    .shadow(radius: 8.0)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .shadow(radius: 8)
                     .fixedSize(horizontal: true, vertical: false)
                     .padding()
                 }
@@ -1194,7 +1194,7 @@ struct WorkspaceCardsView: View
                     .background(.thinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding(.trailing)
-                    .shadow(radius: 8.0)
+                    .shadow(radius: 8)
                 }
                 
                 HStack
@@ -1278,7 +1278,7 @@ struct WorkspaceCardsView: View
         #if os(macOS)
         .frame(minWidth: 500, idealWidth: 800, minHeight: 480, idealHeight: 600)
         #else
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -1347,13 +1347,13 @@ struct WorkspaceObjectCard: View
                         Image(nsImage: object.image)
                             .resizable()
                             .scaledToFill()
-                            .shadow(radius: 8.0)
+                            .shadow(radius: 8)
                     }
                     #else
                     Image(uiImage: object.image)
                         .resizable()
                         .scaledToFill()
-                        .shadow(radius: 8.0)
+                        .shadow(radius: 8)
                     #endif
                 }
                 .overlay(alignment: .topLeading)
@@ -1378,10 +1378,10 @@ struct WorkspaceObjectCard: View
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .padding()
-                //.shadow(radius: 8.0)
+                //.shadow(radius: 8)
         }
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .shadow(radius: 8.0)
+        .shadow(radius: 8)
         .padding()
         #if os(iOS)
         .padding(.bottom, 32)
@@ -1634,8 +1634,8 @@ struct ObjectPlaceButton: View
             }
         }
         .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .shadow(radius: 8.0)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .shadow(radius: 8)
     }
 }
 

@@ -190,9 +190,9 @@ struct AddToolView:View
                 {
                     Text("Add Tool")
                         .font(.title2)
-                        .padding(8.0)
+                        .padding(8)
                         .background(.bar)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding([.top, .leading, .trailing])
                 }
             #else
@@ -201,9 +201,9 @@ struct AddToolView:View
                 {
                     Text("Add Tool")
                         .font(.title2)
-                        .padding(8.0)
+                        .padding(8)
                         .background(.bar)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .padding([.top, .leading, .trailing])
                 }
             #endif
@@ -220,7 +220,7 @@ struct AddToolView:View
                     .textFieldStyle(.roundedBorder)
                 #endif
             }
-            .padding(.top, 8.0)
+            .padding(.top, 8)
             .padding(.horizontal)
             
             HStack(spacing: 0)
@@ -238,7 +238,7 @@ struct AddToolView:View
                 }
                 .textFieldStyle(.roundedBorder)
                 .buttonStyle(.bordered)
-                .padding(.vertical, 8.0)
+                .padding(.vertical, 8)
                 .padding(.leading)
                 
                 Button("Cancel", action: { add_tool_view_presented.toggle() })
@@ -770,13 +770,13 @@ struct ToolInspectorView: View
                         }
                         .disabled(base_workspace.selected_tool.programs_count == 0)
                         #if os(macOS)
-                        .frame(maxWidth: 80.0, alignment: .leading)
+                        .frame(maxWidth: 80, alignment: .leading)
                         #else
-                        .frame(maxWidth: 86.0, alignment: .leading)
+                        .frame(maxWidth: 86, alignment: .leading)
                         #endif
                         .background(.thinMaterial)
                         .cornerRadius(32)
-                        .shadow(radius: 4.0)
+                        .shadow(radius: 4)
                         #if os(macOS)
                         .buttonStyle(BorderlessButtonStyle())
                         #endif
@@ -896,9 +896,9 @@ struct ToolInspectorView: View
                     {
                         AddOperationProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_tool.selected_program_index)
                         #if os(macOS)
-                            .frame(height: 72.0)
+                            .frame(height: 72)
                         #else
-                            .presentationDetents([.height(96.0)])
+                            .presentationDetents([.height(96)])
                         #endif
                     }
                     .onChange(of: base_workspace.selected_tool.programs_count)
@@ -974,24 +974,24 @@ struct OperationParameterView: View
             #if os(macOS)
             .foregroundColor(Color.white)
             #else
-            .padding(.leading, 8.0)
+            .padding(.leading, 8)
             #endif
             
             TextField("0", value: $parameter_value, format: .number)
                 .textFieldStyle(.roundedBorder)
             #if os(macOS)
-                .frame(width: 64.0)
+                .frame(width: 64)
             #else
-                .frame(width: 128.0)
+                .frame(width: 128)
             #endif
             
             Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
                 .labelsHidden()
             #if os(iOS)
-                .padding(.trailing, 8.0)
+                .padding(.trailing, 8)
             #endif
         }
-        .padding(8.0)
+        .padding(8)
     }
 }
 
@@ -1013,18 +1013,18 @@ struct AddOperationProgramView: View
             Text("New operations program")
                 .font(.title3)
             #if os(macOS)
-                .padding(.top, 12.0)
+                .padding(.top, 12)
             #else
                 .padding([.leading, .top, .trailing])
-                .padding(.bottom, 8.0)
+                .padding(.bottom, 8)
             #endif
             
-            HStack(spacing: 12.0)
+            HStack(spacing: 12)
             {
                 TextField("None", text: $new_program_name)
-                    .frame(minWidth: 128.0, maxWidth: 256.0)
+                    .frame(minWidth: 128, maxWidth: 256)
                 #if os(iOS)
-                    .frame(idealWidth: 256.0)
+                    .frame(idealWidth: 256)
                     .textFieldStyle(.roundedBorder)
                 #endif
                 
@@ -1044,7 +1044,7 @@ struct AddOperationProgramView: View
                 .fixedSize()
                 .keyboardShortcut(.defaultAction)
             }
-            .padding([.leading, .bottom, .trailing], 12.0)
+            .padding([.leading, .bottom, .trailing], 12)
         }
     }
 }

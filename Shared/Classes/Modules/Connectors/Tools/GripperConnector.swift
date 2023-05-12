@@ -16,7 +16,7 @@ class GripperConnector: ToolConnector
         parameters = [
             ConnectionParameter(name: "String", value: "Text"),
             ConnectionParameter(name: "Int", value: 8),
-            ConnectionParameter(name: "Float", value: Float(6.0)),
+            ConnectionParameter(name: "Float", value: Float(6)),
             ConnectionParameter(name: "Bool", value: true)
         ]
     }

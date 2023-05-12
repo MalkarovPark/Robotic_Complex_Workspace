@@ -202,9 +202,9 @@ struct AddPartView: View
                 {
                     Text("Add Part")
                         .font(.title2)
-                        .padding(8.0)
+                        .padding(8)
                         .background(.bar)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .padding([.top, .leading, .trailing])
                 }
             #else
@@ -213,9 +213,9 @@ struct AddPartView: View
                 {
                     Text("Add Part")
                         .font(.title2)
-                        .padding(8.0)
+                        .padding(8)
                         .background(.bar)
-                        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .padding([.top, .leading, .trailing])
                 }
             #endif
@@ -232,7 +232,7 @@ struct AddPartView: View
                     .textFieldStyle(.roundedBorder)
                 #endif
             }
-            .padding(.top, 8.0)
+            .padding(.top, 8)
             .padding(.horizontal)
             
             HStack(spacing: 0)
@@ -250,7 +250,7 @@ struct AddPartView: View
                 }
                 .textFieldStyle(.roundedBorder)
                 .buttonStyle(.bordered)
-                .padding(.vertical, 8.0)
+                .padding(.vertical, 8)
                 .padding(.leading)
                 
                 Button("Cancel", action: { add_part_view_presented.toggle() })

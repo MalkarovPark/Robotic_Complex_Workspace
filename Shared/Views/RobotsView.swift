@@ -233,7 +233,7 @@ struct AddRobotView: View
                     }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.top, 4.0)
+                .padding(.top, 4)
                 
                 Picker(selection: $app_state.model_name, label: Text("Model")
                         .bold())
@@ -244,9 +244,9 @@ struct AddRobotView: View
                     }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.top, 4.0)
+                .padding(.top, 4)
             }
-            .padding(.vertical, 8.0)
+            .padding(.vertical, 8)
             .padding(.horizontal)
             
             Spacer()
@@ -522,14 +522,14 @@ struct RobotSceneView: View
             if !(horizontal_size_class == .compact)
             {
                 CellSceneView_iOS()
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
                     .navigationBarTitleDisplayMode(.inline)
             }
             else
             {
                 CellSceneView_iOS()
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding()
                     .navigationBarTitleDisplayMode(.inline)
             }
@@ -623,8 +623,8 @@ struct RobotSceneView: View
                         .buttonStyle(.borderless)
                     }
                     .background(.thinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-                    .shadow(radius: 8.0)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .shadow(radius: 8)
                     .fixedSize(horizontal: true, vertical: false)
                     .padding()
                 }
@@ -881,7 +881,7 @@ struct SpaceScaleView: View
             HStack(spacing: 8)
             {
                 Text("X:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $space_scale[0], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $space_scale[0], in: 2...1000)
@@ -891,7 +891,7 @@ struct SpaceScaleView: View
             HStack(spacing: 8)
             {
                 Text("Y:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $space_scale[1], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $space_scale[1], in: 2...1000)
@@ -901,7 +901,7 @@ struct SpaceScaleView: View
             HStack(spacing: 8)
             {
                 Text("Z:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $space_scale[2], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $space_scale[2], in: 2...1000)
@@ -934,7 +934,7 @@ struct OriginMoveView: View
             HStack(spacing: 8)
             {
                 Text("X:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $origin_view_pos_location[0], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $origin_view_pos_location[0], in: -50...50)
@@ -944,7 +944,7 @@ struct OriginMoveView: View
             HStack(spacing: 8)
             {
                 Text("Y:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $origin_view_pos_location[1], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $origin_view_pos_location[1], in: -50...50)
@@ -954,7 +954,7 @@ struct OriginMoveView: View
             HStack(spacing: 8)
             {
                 Text("Z:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $origin_view_pos_location[2], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $origin_view_pos_location[2], in: -50...50)
@@ -987,7 +987,7 @@ struct OriginRotateView: View
             HStack(spacing: 8)
             {
                 Text("R:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $origin_view_pos_rotation[0], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $origin_view_pos_rotation[0], in: -180...180)
@@ -997,7 +997,7 @@ struct OriginRotateView: View
             HStack(spacing: 8)
             {
                 Text("P:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $origin_view_pos_rotation[1], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $origin_view_pos_rotation[1], in: -180...180)
@@ -1007,7 +1007,7 @@ struct OriginRotateView: View
             HStack(spacing: 8)
             {
                 Text("W:")
-                    .frame(width: 20.0)
+                    .frame(width: 20)
                 TextField("0", value: $origin_view_pos_rotation[2], format: .number)
                     .textFieldStyle(.roundedBorder)
                 Stepper("Enter", value: $origin_view_pos_rotation[2], in: -180...180)
@@ -1072,7 +1072,7 @@ struct RobotInspectorView: View
                         }
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 6.0, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                 .padding()
                 
                 if base_workspace.selected_robot.programs_count == 0
@@ -1097,18 +1097,18 @@ struct RobotInspectorView: View
                     Button(action: add_point_to_program)
                     {
                         Image(systemName: "plus")
-                            .padding(8.0)
+                            .padding(8)
                     }
                     .disabled(base_workspace.selected_robot.programs_count == 0)
                     .foregroundColor(.white)
                     .background(Color.accentColor)
                     .clipShape(Circle())
-                    .frame(width: 24.0, height: 24.0)
-                    .shadow(radius: 4.0)
+                    .frame(width: 24, height: 24)
+                    .shadow(radius: 4)
                     #if os(macOS)
                     .buttonStyle(BorderlessButtonStyle())
                     #endif
-                    .padding(32.0)
+                    .padding(32)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
             }
@@ -1144,7 +1144,7 @@ struct RobotInspectorView: View
                                     .foregroundColor(Color.accentColor)
                             }
                             .buttonStyle(.borderless)
-                            .frame(width: 64.0)
+                            .frame(width: 64)
                             .popover(isPresented: $ppv_presented_location[0])
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_value: $base_workspace.selected_robot.pointer_location[0], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[0])
@@ -1162,7 +1162,7 @@ struct RobotInspectorView: View
                                     .foregroundColor(Color.accentColor)
                             }
                             .buttonStyle(.borderless)
-                            .frame(width: 64.0)
+                            .frame(width: 64)
                             .popover(isPresented: $ppv_presented_location[1])
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_value: $base_workspace.selected_robot.pointer_location[1], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[1])
@@ -1180,7 +1180,7 @@ struct RobotInspectorView: View
                                     .foregroundColor(Color.accentColor)
                             }
                             .buttonStyle(.borderless)
-                            .frame(width: 64.0)
+                            .frame(width: 64)
                             .popover(isPresented: $ppv_presented_location[2])
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_value: $base_workspace.selected_robot.pointer_location[2], limit_min: .constant(0), limit_max: $base_workspace.selected_robot.space_scale[2])
@@ -1189,9 +1189,9 @@ struct RobotInspectorView: View
                                 .padding(.trailing)
                         }
                         #if os(macOS)
-                        .padding(.bottom, 8.0)
+                        .padding(.bottom, 8)
                         #else
-                        .padding(.bottom, 4.0)
+                        .padding(.bottom, 4)
                         #endif
                     }
                     else
@@ -1205,12 +1205,12 @@ struct RobotInspectorView: View
                                     .foregroundColor(Color.accentColor)
                             }
                             .buttonStyle(.borderless)
-                            .frame(width: 64.0)
+                            .frame(width: 64)
                             .popover(isPresented: $ppv_presented_rotation[0])
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_value: $base_workspace.selected_robot.pointer_rotation[0], limit_min: .constant(-180), limit_max: .constant(180))
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_rotation[0], in: -180.0...180.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_rotation[0], in: -180.0...180)
                                 .padding(.trailing)
                         }
                         
@@ -1223,12 +1223,12 @@ struct RobotInspectorView: View
                                     .foregroundColor(Color.accentColor)
                             }
                             .buttonStyle(.borderless)
-                            .frame(width: 64.0)
+                            .frame(width: 64)
                             .popover(isPresented: $ppv_presented_rotation[1])
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_value: $base_workspace.selected_robot.pointer_rotation[1], limit_min: .constant(-180), limit_max: .constant(180))
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_rotation[1], in: -180.0...180.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_rotation[1], in: -180.0...180)
                                 .padding(.trailing)
                         }
                         
@@ -1241,25 +1241,25 @@ struct RobotInspectorView: View
                                     .foregroundColor(Color.accentColor)
                             }
                             .buttonStyle(.borderless)
-                            .frame(width: 64.0)
+                            .frame(width: 64)
                             .popover(isPresented: $ppv_presented_rotation[2])
                             {
                                 PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_value: $base_workspace.selected_robot.pointer_rotation[2], limit_min: .constant(-180), limit_max: .constant(180))
                             }
-                            Slider(value: $base_workspace.selected_robot.pointer_rotation[2], in: -180.0...180.0)
+                            Slider(value: $base_workspace.selected_robot.pointer_rotation[2], in: -180.0...180)
                                 .padding(.trailing)
                         }
                         #if os(macOS)
-                        .padding(.bottom, 8.0)
+                        .padding(.bottom, 8)
                         #else
-                        .padding(.bottom, 4.0)
+                        .padding(.bottom, 4)
                         #endif
                     }
                 }
             }
             .padding(.horizontal)
             
-            HStack(spacing: 0) //(spacing: 12.0)
+            HStack(spacing: 0) //(spacing: 12)
             {
                 #if os(iOS)
                 Text("Program")
@@ -1302,9 +1302,9 @@ struct RobotInspectorView: View
                 {
                     AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
                     #if os(macOS)
-                        .frame(height: 72.0)
+                        .frame(height: 72)
                     #else
-                        .presentationDetents([.height(96.0)])
+                        .presentationDetents([.height(96)])
                     #endif
                 }
             }
@@ -1421,24 +1421,24 @@ struct PositionParameterView: View
             #if os(macOS)
             .foregroundColor(Color.white)
             #else
-            .padding(.leading, 8.0)
+            .padding(.leading, 8)
             #endif
             
             TextField("0", value: $parameter_value, format: .number)
                 .textFieldStyle(.roundedBorder)
             #if os(macOS)
-                .frame(width: 64.0)
+                .frame(width: 64)
             #else
-                .frame(width: 128.0)
+                .frame(width: 128)
             #endif
             
             Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
                 .labelsHidden()
             #if os(iOS)
-                .padding(.trailing, 8.0)
+                .padding(.trailing, 8)
             #endif
         }
-        .padding(8.0)
+        .padding(8)
     }
 }
 
@@ -1461,18 +1461,18 @@ struct AddProgramView: View
             Text("New position program")
                 .font(.title3)
             #if os(macOS)
-                .padding(.top, 12.0)
+                .padding(.top, 12)
             #else
                 .padding([.leading, .top, .trailing])
-                .padding(.bottom, 8.0)
+                .padding(.bottom, 8)
             #endif
             
-            HStack(spacing: 12.0)
+            HStack(spacing: 12)
             {
                 TextField("None", text: $new_program_name)
-                    .frame(minWidth: 128.0, maxWidth: 256.0)
+                    .frame(minWidth: 128, maxWidth: 256)
                 #if os(iOS)
-                    .frame(idealWidth: 256.0)
+                    .frame(idealWidth: 256)
                     .textFieldStyle(.roundedBorder)
                 #endif
                 
@@ -1493,7 +1493,7 @@ struct AddProgramView: View
                 .fixedSize()
                 .keyboardShortcut(.defaultAction)
             }
-            .padding([.leading, .bottom, .trailing], 12.0)
+            .padding([.leading, .bottom, .trailing], 12)
         }
     }
 }
@@ -1600,7 +1600,7 @@ struct PositionItemView: View
                                     HStack(spacing: 8)
                                     {
                                         Text(location_component.info.text)
-                                            .frame(width: 20.0)
+                                            .frame(width: 20)
                                         TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
                                             .textFieldStyle(.roundedBorder)
                                             #if os(iOS)
@@ -1620,7 +1620,7 @@ struct PositionItemView: View
                                     HStack(spacing: 8)
                                     {
                                         Text(rotation_component.info.text)
-                                            .frame(width: 20.0)
+                                            .frame(width: 20)
                                         TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
                                             .textFieldStyle(.roundedBorder)
                                             #if os(iOS)
@@ -1661,7 +1661,7 @@ struct PositionItemView: View
                                         HStack(spacing: 8)
                                         {
                                             Text(location_component.info.text)
-                                                .frame(width: 20.0)
+                                                .frame(width: 20)
                                             TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
                                                 .textFieldStyle(.roundedBorder)
                                                 .keyboardType(.decimalPad)
@@ -1679,7 +1679,7 @@ struct PositionItemView: View
                                         HStack(spacing: 8)
                                         {
                                             Text(rotation_component.info.text)
-                                                .frame(width: 20.0)
+                                                .frame(width: 20)
                                             TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
                                                 .textFieldStyle(.roundedBorder)
                                                 .keyboardType(.decimalPad)
@@ -1718,7 +1718,7 @@ struct PositionItemView: View
                                         HStack(spacing: 8)
                                         {
                                             Text(location_component.info.text)
-                                                .frame(width: 20.0)
+                                                .frame(width: 20)
                                             TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
                                                 .textFieldStyle(.roundedBorder)
                                                 .keyboardType(.decimalPad)
@@ -1736,7 +1736,7 @@ struct PositionItemView: View
                                         HStack(spacing: 8)
                                         {
                                             Text(rotation_component.info.text)
-                                                .frame(width: 20.0)
+                                                .frame(width: 20)
                                             TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
                                                 .textFieldStyle(.roundedBorder)
                                                 .keyboardType(.decimalPad)
@@ -1778,14 +1778,14 @@ struct PositionItemView: View
                 
                 Text("Speed")
                 #if os(macOS)
-                    .frame(width: 40.0)
+                    .frame(width: 40)
                 #else
-                    .frame(width: 60.0)
+                    .frame(width: 60)
                 #endif
                 TextField("0", value: $item_view_pos_speed, format: .number)
                     .textFieldStyle(.roundedBorder)
                 #if os(macOS)
-                    .frame(width: 40.0)
+                    .frame(width: 40)
                 #else
                     .frame(maxWidth: .infinity)
                 #endif
@@ -1905,9 +1905,9 @@ struct RobotsView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             
-            OriginRotateView(origin_rotate_view_presented: .constant(true), origin_view_pos_rotation: .constant([0.0, 0.0, 0.0]))
-            OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0.0, 0.0, 0.0]))
-            SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2.0, 2.0, 2.0]))
+            OriginRotateView(origin_rotate_view_presented: .constant(true), origin_view_pos_rotation: .constant([0, 0, 0]))
+            OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0, 0, 0]))
+            SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2, 2, 2]))
             
             PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0), limit_min: .constant(0), limit_max: .constant(200))
             PositionItemListView(points: .constant([PositionPoint()]), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: PositionPoint()) { IndexSet in }

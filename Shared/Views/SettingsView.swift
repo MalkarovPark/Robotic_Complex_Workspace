@@ -614,7 +614,7 @@ struct CellSettingsView: View
                         HStack(spacing: 8)
                         {
                             Text("X:")
-                                .frame(width: 20.0)
+                                .frame(width: 20)
                             TextField("0", value: $location_x, format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .labelsHidden()
@@ -629,7 +629,7 @@ struct CellSettingsView: View
                         HStack(spacing: 8)
                         {
                             Text("Y:")
-                                .frame(width: 20.0)
+                                .frame(width: 20)
                             TextField("0", value: $location_y, format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .labelsHidden()
@@ -644,7 +644,7 @@ struct CellSettingsView: View
                         HStack(spacing: 8)
                         {
                             Text("Z:")
-                                .frame(width: 20.0)
+                                .frame(width: 20)
                             TextField("0", value: $location_z, format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .labelsHidden()
@@ -666,7 +666,7 @@ struct CellSettingsView: View
                         HStack(spacing: 8)
                         {
                             Text("X:")
-                                .frame(width: 20.0)
+                                .frame(width: 20)
                             TextField("0", value: $scale_x, format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .labelsHidden()
@@ -681,7 +681,7 @@ struct CellSettingsView: View
                         HStack(spacing: 8)
                         {
                             Text("Y:")
-                                .frame(width: 20.0)
+                                .frame(width: 20)
                             TextField("0", value: $scale_y, format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .labelsHidden()
@@ -696,7 +696,7 @@ struct CellSettingsView: View
                         HStack(spacing: 8)
                         {
                             Text("Z:")
-                                .frame(width: 20.0)
+                                .frame(width: 20)
                             TextField("0", value: $scale_z, format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .labelsHidden()
@@ -717,7 +717,7 @@ struct CellSettingsView: View
                     HStack(spacing: 8)
                     {
                         Text("X:")
-                            .frame(width: 20.0)
+                            .frame(width: 20)
                         TextField("0", value: $location_x, format: .number)
                             .labelsHidden()
                         Stepper("Enter", value: $location_x, in: -50...50)
@@ -731,7 +731,7 @@ struct CellSettingsView: View
                     HStack(spacing: 8)
                     {
                         Text("Y:")
-                            .frame(width: 20.0)
+                            .frame(width: 20)
                         TextField("0", value: $location_y, format: .number)
                             .labelsHidden()
                         Stepper("Enter", value: $location_y, in: -50...50)
@@ -745,7 +745,7 @@ struct CellSettingsView: View
                     HStack(spacing: 8)
                     {
                         Text("Z:")
-                            .frame(width: 20.0)
+                            .frame(width: 20)
                         TextField("0", value: $location_z, format: .number)
                             .labelsHidden()
                         Stepper("Enter", value: $location_z, in: -50...50)
@@ -762,7 +762,7 @@ struct CellSettingsView: View
                     HStack(spacing: 8)
                     {
                         Text("X:")
-                            .frame(width: 20.0)
+                            .frame(width: 20)
                         TextField("0", value: $scale_x, format: .number)
                             .labelsHidden()
                         Stepper("Enter", value: $scale_x, in: 0...400)
@@ -776,7 +776,7 @@ struct CellSettingsView: View
                     HStack(spacing: 8)
                     {
                         Text("Y:")
-                            .frame(width: 20.0)
+                            .frame(width: 20)
                         TextField("0", value: $scale_y, format: .number)
                             .labelsHidden()
                         Stepper("Enter", value: $scale_y, in: 0...400)
@@ -790,7 +790,7 @@ struct CellSettingsView: View
                     HStack(spacing: 8)
                     {
                         Text("Z:")
-                            .frame(width: 20.0)
+                            .frame(width: 20)
                         TextField("0", value: $scale_z, format: .number)
                             .labelsHidden()
                         Stepper("Enter", value: $scale_z, in: 0...400)

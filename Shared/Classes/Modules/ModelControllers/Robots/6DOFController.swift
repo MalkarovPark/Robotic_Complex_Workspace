@@ -46,7 +46,7 @@ class _6DOFController: RobotModelController
     {
         var angles = [Float]()
         var C3 = Float()
-        var theta = [Float](repeating: 0.0, count: 6)
+        var theta = [Float](repeating: 0, count: 6)
         
         do
         {

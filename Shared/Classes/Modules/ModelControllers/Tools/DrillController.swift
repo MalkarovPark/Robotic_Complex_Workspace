@@ -131,7 +131,7 @@ class DrillController: ToolModelController
     {
         var acceleration_values: [Float] = []
         var velocity_values: [Float] = []
-        var velocity: Float = 0.0
+        var velocity: Float = 0
         
         for i in 0..<10
         {

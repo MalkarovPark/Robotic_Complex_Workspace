@@ -66,13 +66,13 @@ struct ControlProgramView: View
                             .padding()
                         }
                         #if os(macOS)
-                        .frame(maxWidth: 80.0, alignment: .leading)
+                        .frame(maxWidth: 80, alignment: .leading)
                         #else
-                        .frame(maxWidth: 86.0, alignment: .leading)
+                        .frame(maxWidth: 86, alignment: .leading)
                         #endif
                         .background(.thinMaterial)
                         .cornerRadius(32)
-                        .shadow(radius: 4.0)
+                        .shadow(radius: 4)
                         #if os(macOS)
                         .buttonStyle(BorderlessButtonStyle())
                         #endif
@@ -94,7 +94,7 @@ struct ControlProgramView: View
                         {
                             AddElementView(add_element_view_presented: $add_element_view_presented, add_new_element_data: $add_new_element_data)
                             #if os(iOS)
-                                .presentationDetents([.height(128.0)])
+                                .presentationDetents([.height(128)])
                             #endif
                         }
                         #if os(macOS)
@@ -280,7 +280,7 @@ struct ElementCardView: View
                     }
                     .frame(width: 48, height: 48)
                     .background(badge_color())
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding(16)
                     .animation(.easeInOut(duration: 0.2), value: badge_color())
                     
@@ -302,15 +302,15 @@ struct ElementCardView: View
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .padding(.trailing, 16.0)
+                    .padding(.trailing, 16)
                 }
                 .frame(maxWidth: .infinity)
             }
         }
         .frame(height: 80)
         .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .shadow(radius: 8.0)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .shadow(radius: 8)
         .onTapGesture
         {
             element_view_presented.toggle()
@@ -328,7 +328,7 @@ struct ElementCardView: View
                     .foregroundColor(Color.yellow)
                     .frame(width: 16, height: 16)
                     .padding()
-                    .shadow(radius: 8.0)
+                    .shadow(radius: 8)
                     .transition(AnyTransition.scale)
             }
         }
@@ -415,7 +415,7 @@ struct ElementCardViewPreview: View
                     }
                     .frame(width: 48, height: 48)
                     .background(badge_color())
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding(16)
                     
                     HStack(spacing: 0)
@@ -434,14 +434,14 @@ struct ElementCardViewPreview: View
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .padding(.trailing, 16.0)
+                    .padding(.trailing, 16)
                 }
                 .frame(maxWidth: .infinity)
             }
         }
         .frame(height: 80)
         .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
     
     func badge_image() -> Image
@@ -523,7 +523,7 @@ struct AddElementView: View
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .padding(.bottom, 8.0)
+                .padding(.bottom, 8)
                 
                 //MARK: Subtype pickers cases
                 HStack(spacing: 16)
@@ -605,7 +605,7 @@ struct ElementView: View
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .padding(.bottom, 8.0)
+                .padding(.bottom, 8)
                 
                 //MARK: Subtype pickers cases
                 HStack(spacing: 16)
@@ -1080,7 +1080,7 @@ struct ModifierElementView: View
                     {
                         Text("Name")
                             .padding(.bottom)
-                        Picker("Name", selection: $tool_name) //tool picker
+                        Picker("Name", selection: $object_name) //tool picker
                         {
                             if base_workspace.placed_tools_names.count > 0
                             {
@@ -1094,20 +1094,20 @@ struct ModifierElementView: View
                                 Text("None")
                             }
                         }
-                        .onChange(of: tool_name)
+                        .onChange(of: object_name)
                         { _ in
-                            viewed_tool = base_workspace.tool_by_name(tool_name)
+                            viewed_object = base_workspace.tool_by_name(object_name)
                             base_workspace.update_view()
                         }
                         .onAppear
                         {
-                            if tool_name == ""
+                            if object_name == ""
                             {
-                                tool_name = base_workspace.placed_tools_names[0]
+                                object_name = base_workspace.placed_tools_names[0]
                             }
                             else
                             {
-                                viewed_tool = base_workspace.tool_by_name(tool_name)
+                                viewed_object = base_workspace.tool_by_name(object_name)
                                 base_workspace.update_view()
                             }
                         }

@@ -393,7 +393,7 @@ struct ConnectorView_Previews: PreviewProvider
             
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")), update_file_data: {})
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Int", value: 8)), update_file_data: {})
-            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Float", value: Float(6.0))), update_file_data: {})
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Float", value: Float(6))), update_file_data: {})
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Bool", value: true)), update_file_data: {})
         }
     }

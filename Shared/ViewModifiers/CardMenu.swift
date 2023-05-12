@@ -14,8 +14,8 @@ struct CardMenu: ViewModifier
     
     @ObservedObject var object: WorkspaceObject //StateObject ???
     
-    @State var front_degree = 0.0
-    @State var back_degree = 90.0
+    @State var front_degree = 0
+    @State var back_degree = 90
     @State var is_flipped = false
     
     let clear_preview: () -> ()
@@ -219,9 +219,9 @@ public struct LargeCardBack: View
                 }
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .frame(height: 192)
-        .shadow(radius: 8.0)
+        .shadow(radius: 8)
     }
 }
 
@@ -335,7 +335,7 @@ public struct SmallCardBack: View
             }
             .background(.thinMaterial)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .shadow(radius: 8.0)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .shadow(radius: 8)
     }
 }
