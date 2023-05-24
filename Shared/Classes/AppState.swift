@@ -34,11 +34,6 @@ class AppState : ObservableObject
     
     @Published var run_command = false
     @Published var stop_command = false
-    @Published var pause_command = false
-    
-    @Published var run_command_set = false
-    @Published var pause_command_set = true
-    @Published var runned = false
     
     #if os(iOS)
     @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
@@ -706,31 +701,14 @@ struct MenuHandlingModifier: ViewModifier
         content
             .onChange(of: app_state.run_command)
             { _ in
-                print("Run")
                 toggle_perform()
             }
             .onChange(of: app_state.stop_command)
             { _ in
-                print("Stop")
                 stop_perform()
-            }
-            .onChange(of: app_state.pause_command)
-            { _ in
-                print("Pause")
-                toggle_perform()
-            }
-            .onChange(of: performed)
-            { newValue in
-                app_state.runned = newValue
-                if !newValue
-                {
-                    app_state.run_command_set = false
-                    app_state.pause_command_set = true
-                }
             }
             .onAppear
             {
-                app_state.run_command_set = false
                 app_state.reset_view = false
                 app_state.reset_view_enabled = true
             }

@@ -598,7 +598,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Robotic Complex Workspace (iOS).entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "";
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6T64H9365J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -617,7 +617,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
 				PRODUCT_NAME = "Robotic Complex Workspace";
 				SDKROOT = iphoneos;
@@ -635,7 +635,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Robotic Complex Workspace (iOS).entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "";
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6T64H9365J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -654,7 +654,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
 				PRODUCT_NAME = "Robotic Complex Workspace";
 				SDKROOT = iphoneos;
@@ -687,7 +687,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
 				PRODUCT_NAME = RCWorkspace;
 				SDKROOT = macosx;
@@ -717,7 +717,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
 				PRODUCT_NAME = RCWorkspace;
 				SDKROOT = macosx;
