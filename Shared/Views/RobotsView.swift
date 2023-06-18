@@ -493,6 +493,7 @@ struct RobotView: View
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         robot_view_presented = false
+        base_workspace.deselect_robot()
     }
 }
 
