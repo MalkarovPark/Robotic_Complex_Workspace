@@ -641,6 +641,8 @@ struct RobotSceneView: View
 #if os(macOS)
 struct CellSceneView_macOS: NSViewRepresentable
 {
+    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
+    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
@@ -685,7 +687,7 @@ struct CellSceneView_macOS: NSViewRepresentable
         
         app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
-        if app_state.get_scene_image == true
+        if app_state.get_scene_image && workspace_images_store
         {
             app_state.get_scene_image = false
             base_workspace.selected_robot.image = ui_view.snapshot()
@@ -754,6 +756,8 @@ struct CellSceneView_macOS: NSViewRepresentable
 #else
 struct CellSceneView_iOS: UIViewRepresentable
 {
+    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
+    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
@@ -797,7 +801,7 @@ struct CellSceneView_iOS: UIViewRepresentable
         
         app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
-        if app_state.get_scene_image == true
+        if app_state.get_scene_image && workspace_images_store
         {
             app_state.get_scene_image = false
             base_workspace.selected_robot.image = ui_view.snapshot()

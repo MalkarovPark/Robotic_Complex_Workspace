@@ -417,6 +417,8 @@ struct PartView: View
 #if os(macOS)
 struct PartSceneView_macOS: NSViewRepresentable
 {
+    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
+    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
@@ -455,7 +457,7 @@ struct PartSceneView_macOS: NSViewRepresentable
         //Update commands
         app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
-        if app_state.get_scene_image == true
+        if app_state.get_scene_image && workspace_images_store
         {
             app_state.get_scene_image = false
             app_state.previewed_object?.image = ui_view.snapshot()
@@ -517,6 +519,8 @@ struct PartSceneView_macOS: NSViewRepresentable
 #else
 struct PartSceneView_iOS: UIViewRepresentable
 {
+    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
+    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
@@ -553,7 +557,7 @@ struct PartSceneView_iOS: UIViewRepresentable
         //Update commands
         app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
         
-        if app_state.get_scene_image == true
+        if app_state.get_scene_image && workspace_images_store
         {
             app_state.get_scene_image = false
             app_state.previewed_object?.image = ui_view.snapshot()

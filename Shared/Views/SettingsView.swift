@@ -87,6 +87,8 @@ struct GeneralSettingsView: View
 {
     @AppStorage("WorkspaceVisualModeling") private var workspace_visual_modeling: Bool = true
     
+    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
+    
     var body: some View
     {
         Form
@@ -111,13 +113,37 @@ struct GeneralSettingsView: View
                         .padding(4)
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
+                    
+                    Divider()
+                    
+                    VStack(spacing: 4)
+                    {
+                        HStack
+                        {
+                            Text("Store objects previews")
+                            
+                            Spacer()
+                            
+                            Toggle("Visual", isOn: $workspace_images_store)
+                                .toggleStyle(.switch)
+                                .labelsHidden()
+                        }
+                        .padding(4)
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
                 }
-                //.padding(.bottom)
             }
             #else
             Section
             {
                 Toggle("Use visual modeling for workspace", isOn: $workspace_visual_modeling)
+                    .toggleStyle(.switch)
+                    .tint(.accentColor)
+            }
+            
+            Section
+            {
+                Toggle("Store objects previews", isOn: $workspace_images_store)
                     .toggleStyle(.switch)
                     .tint(.accentColor)
             }
