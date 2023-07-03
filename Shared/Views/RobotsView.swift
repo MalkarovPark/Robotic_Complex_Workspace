@@ -524,7 +524,6 @@ struct RobotSceneView: View
             {
                 CellSceneView_iOS()
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
                     .navigationBarTitleDisplayMode(.inline)
             }
             else
@@ -629,12 +628,16 @@ struct RobotSceneView: View
                     .fixedSize(horizontal: true, vertical: false)
                     .padding()
                 }
+                #if os(iOS)
+                .modifier(MountedPadding(is_padding: horizontal_size_class == .compact))
+                #endif
+                
                 Spacer()
             }
-            #if os(iOS)
-            .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
-            #endif
         }
+        #if os(iOS)
+        .modifier(MountedPadding(is_padding: !(horizontal_size_class == .compact)))
+        #endif
     }
 }
 

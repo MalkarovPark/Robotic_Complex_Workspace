@@ -29,3 +29,23 @@ struct DynamicStack<Content: View>: View
         }
     }
 }
+
+#if os(iOS)
+struct MountedPadding: ViewModifier
+{
+    @State var is_padding: Bool
+    
+    func body(content: Content) -> some View
+    {
+        if is_padding
+        {
+            content
+                .padding([.bottom, .leading])
+        }
+        else
+        {
+            content
+        }
+    }
+}
+#endif
