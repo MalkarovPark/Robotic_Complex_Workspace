@@ -64,15 +64,37 @@ struct SettingsView: View
 #if os(iOS)
 struct CaptionModifier: ViewModifier
 {
+    @EnvironmentObject var app_state: AppState
+    
     var label: String
     
     func body(content: Content) -> some View
     {
         VStack(spacing: 0)
         {
-            Text(label)
-                .font(.title2)
+            HStack(spacing: 0)
+            {
+                Text(label)
+                    .font(.title2)
+                    .padding()
+            }
+            .frame(maxWidth: .infinity)
+            .overlay(alignment: .trailing)
+            {
+                ZStack
+                {
+                    Image(systemName: "xmark")
+                        .padding(4.0)
+                }
+                .frame(width: 30, height: 30)
+                .background(.thinMaterial)
+                .clipShape(Circle())
+                .onTapGesture
+                {
+                    app_state.settings_view_presented = false
+                }
                 .padding()
+            }
 
             Divider()
             
