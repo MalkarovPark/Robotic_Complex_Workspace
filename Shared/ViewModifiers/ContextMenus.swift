@@ -1,5 +1,5 @@
 //
-//  CardMenu.swift
+//  ContextMenus.swift
 //  Robotic Complex Workspace
 //
 //  Created by Malkarov Park on 20.04.2023.
@@ -337,5 +337,44 @@ public struct SmallCardBack: View
         }
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .shadow(radius: 8)
+    }
+}
+
+struct WorkspaceMenu: ViewModifier
+{
+    @EnvironmentObject var base_workspace: Workspace
+    
+    @State private var flip = false
+    
+    public func body(content: Content) -> some View
+    {
+        ZStack
+        {
+            if flip
+            {
+                content
+            }
+            else
+            {
+                content
+            }
+        }
+        .contextMenu
+        {
+            Button(action: flip_scene)
+            {
+                Label("Reset Scene", systemImage: "arrow.counterclockwise")
+            }
+        }
+    }
+    
+    private func flip_scene()
+    {
+        if base_workspace.performed
+        {
+            base_workspace.reset_performing()
+            //base_workspace.update_view()
+        }
+        flip.toggle()
     }
 }

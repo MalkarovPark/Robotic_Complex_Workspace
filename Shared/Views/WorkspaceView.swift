@@ -212,12 +212,14 @@ struct ComplexWorkspaceView: View
         {
             #if os(macOS)
             WorkspaceSceneView_macOS()
+                .modifier(WorkspaceMenu())
             #else
             if !(horizontal_size_class == .compact)
             {
                 WorkspaceSceneView_iOS()
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .navigationBarTitleDisplayMode(.inline)
+                    .modifier(WorkspaceMenu())
             }
             else
             {
@@ -225,6 +227,7 @@ struct ComplexWorkspaceView: View
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding()
                     .navigationBarTitleDisplayMode(.inline)
+                    .modifier(WorkspaceMenu())
             }
             #endif
             
