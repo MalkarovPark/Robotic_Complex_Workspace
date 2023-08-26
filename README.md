@@ -30,7 +30,7 @@ The application codebase supports macOS, iOS/iPadOS and requires Xcode 14.1 or n
 
 # Getting Started <a name="getting-started"></a>
 
-* [Website](https://malkarovpark.github.io/Celadon/)
+* [Website](https://celadon-production-systems.carrd.co/)
 * [Documentation](https://celadon-industrial.github.io/IndustrialKit/documentation/rcworkspace/)
 
 ### Application Installation <a name="application-installation"></a>
