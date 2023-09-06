@@ -134,6 +134,11 @@ class GripperController: ToolModelController
     
     override func charts_data() -> [WorkspaceObjectChart]?
     {
+        guard nodes.count == 2 else
+        {
+            return nil
+        }
+        
         if charts.count == 0
         {
             charts.append(WorkspaceObjectChart(name: "Jaws Positions", style: .line))

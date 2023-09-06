@@ -1190,7 +1190,7 @@ struct WorkspaceCardsView: View
             //MARK: Object edit card
             HStack(spacing: 0)
             {
-                if viewed_object_name != "" && avaliable_for_place && base_workspace.selected_object != nil
+                if viewed_object_name != "" && avaliable_for_place
                 {
                     HStack
                     {
@@ -1201,6 +1201,7 @@ struct WorkspaceCardsView: View
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding(.trailing)
                     .shadow(radius: 8)
+                    .disabled(base_workspace.selected_object == nil)
                 }
                 
                 HStack
@@ -1569,8 +1570,8 @@ struct CardInfoView: View
         }
         .onAppear
         {
-            location = object!.location
-            rotation = object!.rotation
+            location = object?.location ?? [0, 0, 0]
+            rotation = object?.rotation ?? [0, 0, 0]
             
             if object is Tool
             {

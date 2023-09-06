@@ -78,6 +78,11 @@ class DrillController: ToolModelController
     
     override func charts_data() -> [WorkspaceObjectChart]?
     {
+        guard nodes.count == 1 else
+        {
+            return nil
+        }
+        
         var acceleration = [Float]()
         var velocity = [Float]()
         
