@@ -403,7 +403,8 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
     {
         if base_workspace.is_selected && base_workspace.performed
         {
-            base_workspace.selected_robot.update_robot()
+            //base_workspace.selected_robot.update_robot()
+            base_workspace.selected_robot.current_pointer_position_select()
             
             if base_workspace.selected_robot.moving_completed
             {

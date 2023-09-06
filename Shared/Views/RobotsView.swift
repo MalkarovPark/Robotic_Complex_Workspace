@@ -738,7 +738,6 @@ struct CellSceneView_macOS: NSViewRepresentable
     
     func scene_check() //Render functions
     {
-        base_workspace.selected_robot.update_robot()
         if base_workspace.selected_robot.moving_completed == true
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
@@ -747,8 +746,11 @@ struct CellSceneView_macOS: NSViewRepresentable
                 base_workspace.update_view()
             }
         }
+        
         if base_workspace.selected_robot.performed == true
         {
+            base_workspace.selected_robot.current_pointer_position_select()
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
                 base_workspace.update_view()
