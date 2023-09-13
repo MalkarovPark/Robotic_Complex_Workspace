@@ -749,7 +749,7 @@ struct CellSceneView_macOS: NSViewRepresentable
         
         if base_workspace.selected_robot.performed == true
         {
-            base_workspace.selected_robot.current_pointer_position_select()
+            base_workspace.selected_robot.update_model()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
@@ -865,7 +865,7 @@ struct CellSceneView_iOS: UIViewRepresentable
         
         if base_workspace.selected_robot.performed == true
         {
-            base_workspace.selected_robot.current_pointer_position_select()
+            base_workspace.selected_robot.update_model()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
