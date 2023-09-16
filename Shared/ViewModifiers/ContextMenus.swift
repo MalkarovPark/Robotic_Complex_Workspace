@@ -15,9 +15,9 @@ struct CardMenu: ViewModifier
     
     @ObservedObject var object: WorkspaceObject //StateObject ???
     
-    @State var front_degree = 0
-    @State var back_degree = 90
     @State var is_flipped = false
+    @State var is_selected = false
+    @State var name = String()
     
     let clear_preview: () -> ()
     let duplicate_object: () -> ()
@@ -102,16 +102,21 @@ struct CardMenu: ViewModifier
                         {
                             ZStack
                             {
-                                Image(systemName: "checkmark")
+                                Image(systemName: app_state.robot_from.name != name ? "checkmark" : "nosign")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 16, height: 16)
-                                    .foregroundStyle(false ? .primary : .tertiary)
+                                    .foregroundStyle(is_selected ? .primary : .tertiary)
                             }
                             .frame(width: 64, height: 64)
                             .background(.regularMaterial)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .transition(AnyTransition.opacity.animation(.spring))
+                            .onTapGesture(perform: update_selection)
+                            .onDisappear
+                            {
+                                is_selected = false
+                            }
                         }
                     }
             }
@@ -127,6 +132,22 @@ struct CardMenu: ViewModifier
                     SmallCardBack(color: object.card_info.color, image: object.card_info.image, title: object.card_info.title, object: object, is_renamed: $is_flipped, update_file: update_file)
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
+            }
+        }
+    }
+    
+    private func update_selection()
+    {
+        if app_state.robot_from.name != name
+        {
+            is_selected.toggle()
+            if is_selected
+            {
+                app_state.robots_to_names.append(name)
+            }
+            else
+            {
+                app_state.robots_to_names.remove(at: app_state.robots_to_names.firstIndex(of: name) ?? 0)
             }
         }
     }

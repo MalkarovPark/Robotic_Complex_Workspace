@@ -93,6 +93,10 @@ struct RobotsTableView: View
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
             }
         }
+        .onDisappear
+        {
+            app_state.clear_pass()
+        }
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -126,7 +130,7 @@ struct RobotsTableView: View
                     Spacer()
                     HStack(spacing: 0)
                     {
-                        Button(action: cancel_pass)
+                        Button(action: dismiss_pass)
                         {
                             Text("Cancel")
                         }
@@ -134,7 +138,7 @@ struct RobotsTableView: View
                         .keyboardShortcut(.cancelAction)
                         .padding(.trailing)
                         
-                        Button(action: { })
+                        Button(action: perform_pass)
                         {
                             Text("Pass")
                         }
@@ -149,8 +153,10 @@ struct RobotsTableView: View
         }
     }
     
-    private func cancel_pass()
+    private func dismiss_pass()
     {
+        app_state.clear_pass()
+        
         if app_state.preferences_pass_mode
         {
             app_state.preferences_pass_mode = false
@@ -159,6 +165,12 @@ struct RobotsTableView: View
         {
             app_state.programs_pass_mode = false
         }
+    }
+    
+    private func perform_pass()
+    {
+        print("📦 \(app_state.robots_to_names)")
+        dismiss_pass()
     }
 }
 
@@ -173,16 +185,19 @@ struct RobotCardView: View
     @State private var pass_programs_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
         LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
             .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
-            .modifier(CardMenu(object: robot_item, clear_preview: robot_item.clear_preview, duplicate_object: {
+            .modifier(CardMenu(object: robot_item, name: robot_item.name ?? "", clear_preview: robot_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_robot(name: robot_item.name!)
             }, update_file: update_file, pass_preferences: {
+                app_state.robot_from = robot_item
                 pass_preferences_presented = true
             }, pass_programs: {
+                app_state.robot_from = robot_item
                 pass_programs_presented = true
             }))
         .onTapGesture

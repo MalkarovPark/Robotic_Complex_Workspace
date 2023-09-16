@@ -45,7 +45,7 @@ class AppState : ObservableObject
     @Published var programs_pass_mode = false
     
     public var robot_from = Robot()
-    public var robot_to = Robot()
+    public var robots_to_names = [String]()
     
     public var origin_location_flag = false
     public var origin_rotation_flag = false
@@ -55,14 +55,17 @@ class AppState : ObservableObject
     
     public func clear_pass()
     {
-        robot_from = Robot()
-        robot_to = Robot()
-        
-        origin_location_flag = false
-        origin_rotation_flag = false
-        space_scale_flag = false
-        
-        passed_programs_names_list = [String]()
+        if preferences_pass_mode || programs_pass_mode
+        {
+            robot_from = Robot()
+            robots_to_names.removeAll()
+            
+            origin_location_flag = false
+            origin_rotation_flag = false
+            space_scale_flag = false
+            
+            passed_programs_names_list = [String]()
+        }
     }
     
     //Other
