@@ -68,23 +68,15 @@ struct RobotsTableView: View
                     {
                         ForEach(base_workspace.robots)
                         { robot_item in
-                            LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
-                                .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
-                                .modifier(CardMenu(object: robot_item, clear_preview: robot_item.clear_preview, duplicate_object: {
-                                    base_workspace.duplicate_robot(name: robot_item.name!)
-                                }, update_file: update_file))
-                            .onTapGesture
-                            {
-                                view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
-                            }
-                            .onDrag({
-                                self.dragged_robot = robot_item
-                                return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
-                            }, preview: {
-                                LargeCardViewPreview(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
-                            })
-                            .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, document: $document, workspace_robots: base_workspace.file_data().robots, robot: robot_item))
-                            .transition(AnyTransition.scale)
+                            RobotCardView(document: $document, robot_view_presented: $robot_view_presented, add_robot_view_presented: $add_robot_view_presented, robot_item: robot_item)
+                                .onDrag({
+                                    self.dragged_robot = robot_item
+                                    return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
+                                }, preview: {
+                                    LargeCardViewPreview(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
+                                })
+                                .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, document: $document, workspace_robots: base_workspace.file_data().robots, robot: robot_item))
+                                .transition(AnyTransition.scale)
                         }
                     }
                     .padding(20)
@@ -123,6 +115,49 @@ struct RobotsTableView: View
                     }
                 }
             }
+        }
+    }
+    
+    
+}
+
+struct RobotCardView: View
+{
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var robot_view_presented: Bool
+    @Binding var add_robot_view_presented: Bool
+    
+    @State var robot_item: Robot
+    @State private var pass_preferences_presented = false
+    @State private var pass_programs_presented = false
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var body: some View
+    {
+        LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
+            .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
+            .modifier(CardMenu(object: robot_item, clear_preview: robot_item.clear_preview, duplicate_object: {
+                base_workspace.duplicate_robot(name: robot_item.name!)
+            }, update_file: update_file, pass_preferences: {
+                pass_preferences_presented = true
+            }, pass_programs: {
+                pass_programs_presented = true
+            }))
+        .onTapGesture
+        {
+            view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
+        }
+        .popover(isPresented: $pass_preferences_presented, arrowEdge: .bottom)
+        {
+            PassPreferencesView(is_presented: $pass_preferences_presented)
+            #if os(iOS)
+                .presentationDetents([.height(256)])
+            #endif
+        }
+        .sheet(isPresented: $pass_programs_presented)
+        {
+            PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
         }
     }
     
@@ -494,6 +529,150 @@ struct RobotView: View
         app_state.get_scene_image = true
         robot_view_presented = false
         base_workspace.deselect_robot()
+    }
+}
+
+//MARK: Pass preferences view
+struct PassPreferencesView: View
+{
+    @Binding var is_presented: Bool
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            Text("Pass Preferences")
+                .font(.title2)
+                .padding(.bottom)
+            
+            VStack(spacing: 0)
+            {
+                Toggle(isOn: $is_presented)
+                {
+                    Text("Location")
+                        .frame(maxWidth: .infinity)
+                }
+                .padding(.bottom)
+                
+                Toggle(isOn: $is_presented)
+                {
+                    Text("Rotation")
+                        .frame(maxWidth: .infinity)
+                }
+                .padding(.bottom)
+                
+                Toggle(isOn: $is_presented)
+                {
+                    Text("Scale")
+                        .frame(maxWidth: .infinity)
+                }
+                .padding(.bottom)
+            }
+            #if os(macOS)
+            .frame(width: 96)
+            #else
+            .frame(maxWidth: .infinity)
+            #endif
+            
+            #if os(iOS)
+            Spacer()
+            #endif
+            
+            HStack(spacing: 0)
+            {
+                Button(action: { is_presented.toggle() })
+                {
+                    Text("Dismiss")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .keyboardShortcut(.cancelAction)
+                .padding(.trailing)
+                
+                Button(action: { is_presented.toggle() })
+                {
+                    Text("Next")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding()
+        #if os(macOS)
+        .frame(width: 192)
+        #else
+        .frame(minWidth: 256)
+        #endif
+    }
+}
+
+//MARK: Pass programs view
+struct PassProgramsView: View
+{
+    @Binding var is_presented: Bool
+    
+    @State private var selected_programs = Set<String>()
+    @State var items: [String]
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            Text("Pass Programs")
+                .font(.title2)
+                .padding(.bottom)
+            
+            List(items, id: \.self)
+            { item in
+                Toggle(isOn: Binding(get: {
+                    self.selected_programs.contains(item)
+                }, set: { newValue in
+                    if newValue
+                    {
+                        self.selected_programs.insert(item)
+                    }
+                    else
+                    {
+                        self.selected_programs.remove(item)
+                    }
+                }))
+                {
+                    Text(item)
+                }
+            }
+            #if os(iOS)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            #endif
+            .padding(.bottom)
+            
+            HStack(spacing: 0)
+            {
+                Button(action: { is_presented.toggle() })
+                {
+                    Text("Dismiss")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .keyboardShortcut(.cancelAction)
+                .padding(.trailing)
+                
+                Button(action: {
+                    is_presented.toggle()
+                    print(selected_programs)
+                })
+                {
+                    Text("Next")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding()
+        #if os(macOS)
+        .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
+        #endif
     }
 }
 

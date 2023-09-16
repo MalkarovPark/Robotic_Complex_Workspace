@@ -22,6 +22,9 @@ struct CardMenu: ViewModifier
     let duplicate_object: () -> ()
     let update_file: () -> ()
     
+    let pass_preferences: () -> ()
+    let pass_programs: () -> ()
+    
     private let duration_and_delay: CGFloat = 0.3
     
     public func body(content: Content) -> some View
@@ -65,6 +68,26 @@ struct CardMenu: ViewModifier
                             withAnimation
                             {
                                 is_flipped.toggle()
+                            }
+                        }
+                        
+                        if object is Robot
+                        {
+                            #if os(macOS)
+                            Divider()
+                            #endif
+                            
+                            Menu("Pass")
+                            {
+                                Button(action: pass_preferences)
+                                {
+                                    Label("Origin Parameters", systemImage: "move.3d")
+                                }
+                                
+                                Button(action: pass_programs)
+                                {
+                                    Label("Positions Program", systemImage: "scroll")
+                                }
                             }
                         }
                     }

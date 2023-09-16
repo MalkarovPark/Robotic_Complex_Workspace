@@ -115,7 +115,11 @@ struct PartCardView: View
             .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: part_item, objects: base_workspace.parts, on_delete: remove_parts, object_type_name: "part"))
             .modifier(CardMenu(object: part_item, clear_preview: part_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name!)
-            }, update_file: update_file))
+            }, update_file: update_file, pass_preferences: {
+                
+            }, pass_programs: {
+                
+            }))
             .onTapGesture
             {
                 part_view_presented = true
