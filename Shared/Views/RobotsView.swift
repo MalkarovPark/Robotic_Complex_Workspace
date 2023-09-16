@@ -52,6 +52,7 @@ struct RobotsTableView: View
     @State private var dragged_robot: Robot?
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
     
@@ -116,9 +117,49 @@ struct RobotsTableView: View
                 }
             }
         }
+        .overlay(alignment: .bottom)
+        {
+            if app_state.preferences_pass_mode || app_state.programs_pass_mode
+            {
+                HStack(spacing: 0)
+                {
+                    Spacer()
+                    HStack(spacing: 0)
+                    {
+                        Button(action: cancel_pass)
+                        {
+                            Text("Cancel")
+                        }
+                        .buttonStyle(.bordered)
+                        .keyboardShortcut(.cancelAction)
+                        .padding(.trailing)
+                        
+                        Button(action: { })
+                        {
+                            Text("Pass")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .keyboardShortcut(.defaultAction)
+                    }
+                    .padding()
+                }
+                .background(.thinMaterial)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.1)))
+            }
+        }
     }
     
-    
+    private func cancel_pass()
+    {
+        if app_state.preferences_pass_mode
+        {
+            app_state.preferences_pass_mode = false
+        }
+        else
+        {
+            app_state.programs_pass_mode = false
+        }
+    }
 }
 
 struct RobotCardView: View
@@ -537,6 +578,12 @@ struct PassPreferencesView: View
 {
     @Binding var is_presented: Bool
     
+    @State private var origin_location = false
+    @State private var origin_rotation = false
+    @State private var space_scale = false
+    
+    @EnvironmentObject var app_state: AppState
+    
     var body: some View
     {
         VStack(spacing: 0)
@@ -547,21 +594,21 @@ struct PassPreferencesView: View
             
             VStack(spacing: 0)
             {
-                Toggle(isOn: $is_presented)
+                Toggle(isOn: $origin_location)
                 {
                     Text("Location")
                         .frame(maxWidth: .infinity)
                 }
                 .padding(.bottom)
                 
-                Toggle(isOn: $is_presented)
+                Toggle(isOn: $origin_rotation)
                 {
                     Text("Rotation")
                         .frame(maxWidth: .infinity)
                 }
                 .padding(.bottom)
                 
-                Toggle(isOn: $is_presented)
+                Toggle(isOn: $space_scale)
                 {
                     Text("Scale")
                         .frame(maxWidth: .infinity)
@@ -589,13 +636,17 @@ struct PassPreferencesView: View
                 .keyboardShortcut(.cancelAction)
                 .padding(.trailing)
                 
-                Button(action: { is_presented.toggle() })
+                Button(action: {
+                    pass_perform()
+                    is_presented.toggle()
+                })
                 {
                     Text("Next")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
+                .disabled(!origin_location && !origin_rotation && !space_scale)
             }
         }
         .padding()
@@ -604,6 +655,15 @@ struct PassPreferencesView: View
         #else
         .frame(minWidth: 256)
         #endif
+    }
+    
+    private func pass_perform()
+    {
+        app_state.preferences_pass_mode = true
+        
+        app_state.origin_location_flag = origin_location
+        app_state.origin_rotation_flag = origin_rotation
+        app_state.space_scale_flag = space_scale
     }
 }
 
@@ -614,6 +674,8 @@ struct PassProgramsView: View
     
     @State private var selected_programs = Set<String>()
     @State var items: [String]
+    
+    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
@@ -658,8 +720,8 @@ struct PassProgramsView: View
                 .padding(.trailing)
                 
                 Button(action: {
+                    pass_perform()
                     is_presented.toggle()
-                    print(selected_programs)
                 })
                 {
                     Text("Next")
@@ -667,12 +729,19 @@ struct PassProgramsView: View
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
+                .disabled(selected_programs.count == 0)
             }
         }
         .padding()
         #if os(macOS)
         .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
         #endif
+    }
+    
+    private func pass_perform()
+    {
+        app_state.programs_pass_mode = true
+        app_state.passed_programs_names_list = Array(selected_programs).sorted()
     }
 }
 

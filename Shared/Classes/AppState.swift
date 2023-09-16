@@ -39,6 +39,32 @@ class AppState : ObservableObject
     @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
     #endif
     
+    //Pass data
+    //@Published var robots_selection_mode = false //Flag for multiply selection mode of the RobotsView.
+    @Published var preferences_pass_mode = false
+    @Published var programs_pass_mode = false
+    
+    public var robot_from = Robot()
+    public var robot_to = Robot()
+    
+    public var origin_location_flag = false
+    public var origin_rotation_flag = false
+    public var space_scale_flag = false
+    
+    public var passed_programs_names_list = [String]()
+    
+    public func clear_pass()
+    {
+        robot_from = Robot()
+        robot_to = Robot()
+        
+        origin_location_flag = false
+        origin_rotation_flag = false
+        space_scale_flag = false
+        
+        passed_programs_names_list = [String]()
+    }
+    
     //Other
     @Published var get_scene_image = false //Flag for getting a snapshot of the scene view
     

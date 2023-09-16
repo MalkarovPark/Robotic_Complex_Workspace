@@ -11,6 +11,7 @@ import IndustrialKit
 struct CardMenu: ViewModifier
 {
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     @ObservedObject var object: WorkspaceObject //StateObject ???
     
@@ -81,7 +82,7 @@ struct CardMenu: ViewModifier
                             {
                                 Button(action: pass_preferences)
                                 {
-                                    Label("Origin Parameters", systemImage: "move.3d")
+                                    Label("Origin Preferences", systemImage: "move.3d")
                                 }
                                 
                                 Button(action: pass_programs)
@@ -94,6 +95,24 @@ struct CardMenu: ViewModifier
                     .onChange(of: object.is_placed)
                     { _ in
                         update_file()
+                    }
+                    .overlay
+                    {
+                        if app_state.preferences_pass_mode || app_state.programs_pass_mode
+                        {
+                            ZStack
+                            {
+                                Image(systemName: "checkmark")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 16, height: 16)
+                                    .foregroundStyle(false ? .primary : .tertiary)
+                            }
+                            .frame(width: 64, height: 64)
+                            .background(.regularMaterial)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .transition(AnyTransition.opacity.animation(.spring))
+                        }
                     }
             }
             else
