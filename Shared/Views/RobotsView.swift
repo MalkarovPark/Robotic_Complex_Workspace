@@ -169,7 +169,24 @@ struct RobotsTableView: View
     
     private func perform_pass()
     {
-        print("📦 \(app_state.robots_to_names)")
+        if app_state.preferences_pass_mode
+        {
+            for robot_to_name in app_state.robots_to_names
+            {
+                pass_robot_preferences(app_state.origin_location_flag, app_state.origin_rotation_flag, app_state.space_scale_flag, from: app_state.robot_from, to: base_workspace.robot_by_name(robot_to_name))
+            }
+        }
+        
+        if app_state.programs_pass_mode
+        {
+            for robot_to_name in app_state.robots_to_names
+            {
+                pass_positions_programs(names: app_state.passed_programs_names_list, from: app_state.robot_from, to: base_workspace.robot_by_name(robot_to_name))
+            }
+        }
+        
+        document.preset.robots = base_workspace.file_data().robots
+        
         dismiss_pass()
     }
 }
