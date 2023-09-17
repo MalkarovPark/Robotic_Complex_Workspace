@@ -1238,6 +1238,9 @@ struct LogicElementView: View
                 HStack(spacing: 8)
                 {
                     Text("Compare with")
+                    #if os(iOS)
+                        .frame(minWidth: 120)
+                    #endif
                     TextField("0", value: $compared_value, format: .number)
                         .textFieldStyle(.roundedBorder)
                     Stepper("Enter", value: $compared_value, in: 0...255)

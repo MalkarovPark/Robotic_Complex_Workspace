@@ -128,9 +128,9 @@ struct PartCardView: View
             {
                 PartView(part_view_presented: $part_view_presented, document: $document, part_item: $part_item)
                     .onDisappear()
-                {
-                    part_view_presented = false
-                }
+                    {
+                        part_view_presented = false
+                    }
             }
     }
     

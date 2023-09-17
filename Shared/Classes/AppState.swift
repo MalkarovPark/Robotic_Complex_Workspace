@@ -40,7 +40,6 @@ class AppState : ObservableObject
     #endif
     
     //Pass data
-    //@Published var robots_selection_mode = false //Flag for multiply selection mode of the RobotsView.
     @Published var preferences_pass_mode = false
     @Published var programs_pass_mode = false
     
@@ -224,6 +223,8 @@ class AppState : ObservableObject
             parts = Array(parts_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of parts
             part_name = parts.first ?? "None" //Set first array element as selected part name
         }
+        
+        register_colors = colors_by_seed(seed: 5433) //Generate colors for registers data view
     }
     
     //MARK: - Get additive workspace objects data from external property list
@@ -713,6 +714,9 @@ class AppState : ObservableObject
         previewed_object?.node?.position = SCNVector3(x: 0, y: 0, z: 0)
         previewed_object?.node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
     }
+    
+    //MARK: - Register colors
+    public var register_colors = Array(repeating: Color.clear, count: 256)
 }
 
 //MARK - Control modifier
@@ -742,4 +746,25 @@ struct MenuHandlingModifier: ViewModifier
                 app_state.reset_view_enabled = true
             }
     }
+}
+
+func colors_by_seed(seed: Int) -> [Color]
+{
+    var colors = [Color]()
+
+    srand48(seed)
+    
+    for _ in 0..<256
+    {
+        var color = [Double]()
+        for _ in 0..<3
+        {
+            let random_number = Double(drand48() * Double(128) + 64)
+            
+            color.append(random_number)
+        }
+        colors.append(Color(red: color[0] / 255, green: color[1] / 255, blue: color[2] / 255))
+    }
+
+    return colors
 }

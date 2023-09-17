@@ -21,6 +21,7 @@ struct WorkspaceView: View
     #endif
     
     @State var worked = false
+    @State var registers_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -120,6 +121,14 @@ struct WorkspaceView: View
         #else
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
+        .sheet(isPresented: $registers_view_presented)
+        {
+            RegistersDataView(is_presented: $registers_view_presented)
+                .onDisappear()
+                {
+                    registers_view_presented = false
+                }
+        }
         
         //MARK: Toolbar
         .toolbar
@@ -133,6 +142,13 @@ struct WorkspaceView: View
                 }
             }
             #endif*/
+            ToolbarItem(placement: placement_trailing)
+            {
+                Button(action: { registers_view_presented = true })
+                {
+                    Label("Registers", systemImage: "number")
+                }
+            }
             ToolbarItem(placement: placement_trailing)
             {
                 //MARK: Workspace performing elements
@@ -190,6 +206,93 @@ struct WorkspaceView: View
         base_workspace.cycled.toggle()
     }
 }
+
+struct RegistersDataView: View
+{
+    @Binding var is_presented: Bool
+    
+    @EnvironmentObject var app_state: AppState
+    
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 88, maximum: 88), spacing: 0)]
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            ScrollView
+            {
+                LazyVGrid(columns: columns, spacing: 8)
+                {
+                    ForEach(0..<256)
+                    { index in
+                        RegisterCardView(value: index, color: app_state.register_colors[index])
+                    }
+                }
+                .padding()
+            }
+        }
+        .overlay(alignment: .topLeading)
+        {
+            Button(action: { is_presented.toggle() })
+            {
+                Label("Close", systemImage: "xmark")
+                    .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.bordered)
+            .keyboardShortcut(.cancelAction)
+            .padding()
+        }
+        .controlSize(.regular)
+        #if os(macOS)
+        .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
+        #endif
+    }
+}
+
+struct RegisterCardView: View
+{
+    var value: Int
+    var color: Color
+    
+    @State var num = 0
+    
+    var body: some View
+    {
+        ZStack
+        {
+            VStack
+            {
+                VStack(spacing: 0)
+                {
+                    ZStack
+                    {
+                        TextField("Num", value: $num, format: .number)
+                            .font(.system(size: 20))
+                            .multilineTextAlignment(.center)
+                            .textFieldStyle(.plain)
+                            //.frame(width: 32)
+                    }
+                    .frame(height: 48)
+                    .background(Color.clear)
+                    
+                    Rectangle()
+                        .foregroundColor(color)
+                        .frame(height: 32)
+                        .overlay(alignment: .leading)
+                        {
+                            Text("\(value)")
+                                .foregroundColor(.white)
+                                .padding()
+                        }
+                }
+            }
+            .background(.thinMaterial)
+        }
+        .frame(width: 80, height: 80)
+        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+    }
+}
+
 
 //MARK: - Workspace scene views
 struct ComplexWorkspaceView: View
@@ -1728,6 +1831,7 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             #endif
+            RegistersDataView(is_presented: .constant(true))
             WorkspaceCardsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())

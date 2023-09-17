@@ -837,7 +837,7 @@ struct RobotSceneView: View
                             OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
                                 .onChange(of: base_workspace.selected_robot.origin_rotation)
                             { _ in
-                                base_workspace.selected_robot.robot_location_place()
+                                //base_workspace.selected_robot.robot_location_place()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
                                 app_state.get_scene_image = true
@@ -864,7 +864,7 @@ struct RobotSceneView: View
                             OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
                                 .onChange(of: base_workspace.selected_robot.origin_location)
                             { _ in
-                                base_workspace.selected_robot.robot_location_place()
+                                //base_workspace.selected_robot.robot_location_place()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
                                 app_state.get_scene_image = true
