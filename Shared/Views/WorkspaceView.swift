@@ -211,9 +211,12 @@ struct RegistersDataView: View
 {
     @Binding var is_presented: Bool
     
+    @State private var toggle = false
+    
+    @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    let numbers = (0...255).map { $0 }
+    private let numbers = (0...255).map { $0 }
     
     #if os(macOS)
     private let columns: [GridItem] = [.init(.adaptive(minimum: 88, maximum: 88), spacing: 0)]
@@ -231,22 +234,27 @@ struct RegistersDataView: View
                 {
                     ForEach(numbers, id: \.self)
                     { number in
-                        RegisterCardView(value: number, color: app_state.register_colors[number])
+                        RegisterCardView(number: number, color: app_state.register_colors[number])
                             .id(number)
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
-                    /*ForEach(0..<256)
-                    { index in
-                        RegisterCardView(value: index, color: app_state.register_colors[index])
-                    }*/
                 }
                 .padding()
+                .modifier(DoubleModifier(update_toggle: $toggle))
             }
             
             Divider()
             
-            HStack
+            HStack(spacing: 0)
             {
+                Button(action: clear_registers)
+                {
+                    Text("Clear All")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .padding(.trailing)
+                
                 Button(action: { is_presented = false })
                 {
                     Text("Dismiss")
@@ -254,22 +262,31 @@ struct RegistersDataView: View
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
-                .padding()
             }
+            .padding()
         }
-        .controlSize(.regular)
+        .controlSize(.large)
         #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
         #endif
+    }
+    
+    private func clear_registers()
+    {
+        base_workspace.clear_registers()
+        toggle.toggle()
     }
 }
 
 struct RegisterCardView: View
 {
-    var value: Int
-    var color: Color
+    @State var value = 0
+    @State private var appeared = false
     
-    @State var num = 0
+    @EnvironmentObject var base_workspace: Workspace
+    
+    var number: Int
+    var color: Color
     
     var body: some View
     {
@@ -281,11 +298,22 @@ struct RegisterCardView: View
                 {
                     ZStack
                     {
-                        TextField("Num", value: $num, format: .number)
+                        TextField("Num", value: $value, format: .number)
                             .font(.system(size: 20))
                             .multilineTextAlignment(.center)
                             .textFieldStyle(.plain)
-                            //.frame(width: 32)
+                            .onAppear
+                            {
+                                value = base_workspace.data_registers[number]
+                                appeared = true
+                            }
+                            .onChange(of: value)
+                            { newValue in
+                                if appeared
+                                {
+                                    base_workspace.update_register(number, new_value: value)
+                                }
+                            }
                     }
                     #if os(macOS)
                     .frame(height: 48)
@@ -303,9 +331,9 @@ struct RegisterCardView: View
                     #endif
                         .overlay(alignment: .leading)
                         {
-                            Text("\(value)")
+                            Text("\(number)")
                                 .foregroundColor(.white)
-                                .padding()
+                                .padding(.leading, 8)
                         }
                 }
             }
