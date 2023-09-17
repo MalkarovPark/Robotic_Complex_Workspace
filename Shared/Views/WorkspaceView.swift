@@ -144,16 +144,16 @@ struct WorkspaceView: View
             #endif*/
             ToolbarItem(placement: placement_trailing)
             {
-                Button(action: { registers_view_presented = true })
-                {
-                    Label("Registers", systemImage: "number")
-                }
-            }
-            ToolbarItem(placement: placement_trailing)
-            {
                 //MARK: Workspace performing elements
                 HStack(alignment: .center)
                 {
+                    Button(action: { registers_view_presented = true })
+                    {
+                        Label("Registers", systemImage: "number")
+                    }
+                    
+                    Divider()
+                    
                     Button(action: change_cycle)
                     {
                         if base_workspace.cycled
@@ -213,7 +213,13 @@ struct RegistersDataView: View
     
     @EnvironmentObject var app_state: AppState
     
+    let numbers = (0...255).map { $0 }
+    
+    #if os(macOS)
     private let columns: [GridItem] = [.init(.adaptive(minimum: 88, maximum: 88), spacing: 0)]
+    #else
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 132, maximum: 132), spacing: 0)]
+    #endif
     
     var body: some View
     {
@@ -223,24 +229,33 @@ struct RegistersDataView: View
             {
                 LazyVGrid(columns: columns, spacing: 8)
                 {
-                    ForEach(0..<256)
+                    ForEach(numbers, id: \.self)
+                    { number in
+                        RegisterCardView(value: number, color: app_state.register_colors[number])
+                            .id(number)
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    }
+                    /*ForEach(0..<256)
                     { index in
                         RegisterCardView(value: index, color: app_state.register_colors[index])
-                    }
+                    }*/
                 }
                 .padding()
             }
-        }
-        .overlay(alignment: .topLeading)
-        {
-            Button(action: { is_presented.toggle() })
+            
+            Divider()
+            
+            HStack
             {
-                Label("Close", systemImage: "xmark")
-                    .labelStyle(.iconOnly)
+                Button(action: { is_presented = false })
+                {
+                    Text("Dismiss")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .padding()
             }
-            .buttonStyle(.bordered)
-            .keyboardShortcut(.cancelAction)
-            .padding()
         }
         .controlSize(.regular)
         #if os(macOS)
@@ -272,12 +287,20 @@ struct RegisterCardView: View
                             .textFieldStyle(.plain)
                             //.frame(width: 32)
                     }
+                    #if os(macOS)
                     .frame(height: 48)
+                    #else
+                    .frame(height: 72)
+                    #endif
                     .background(Color.clear)
                     
                     Rectangle()
                         .foregroundColor(color)
+                    #if os(macOS)
                         .frame(height: 32)
+                    #else
+                        .frame(height: 48)
+                    #endif
                         .overlay(alignment: .leading)
                         {
                             Text("\(value)")
@@ -288,7 +311,11 @@ struct RegisterCardView: View
             }
             .background(.thinMaterial)
         }
+        #if os(macOS)
         .frame(width: 80, height: 80)
+        #else
+        .frame(width: 120, height: 120)
+        #endif
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
     }
 }
