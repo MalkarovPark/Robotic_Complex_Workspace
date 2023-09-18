@@ -204,7 +204,7 @@ class _6DOFController: RobotModelController
     
     //MARK: - Statistics
     private var charts = [WorkspaceObjectChart]()
-    private var chart_ik_values = [Float]()
+    private var chart_ik_values = [Float](repeating: 0, count: 6)
     private var domain_index: Float = 0
     
     override func charts_data() -> [WorkspaceObjectChart]?
@@ -248,6 +248,7 @@ class _6DOFController: RobotModelController
     override func clear_charts_data()
     {
         domain_index = 0
+        chart_ik_values = [Float](repeating: 0, count: 6)
         charts = [WorkspaceObjectChart]()
     }
     
