@@ -111,7 +111,7 @@ struct CardMenu: ViewModifier
                             .frame(width: 64, height: 64)
                             .background(.regularMaterial)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                            .transition(AnyTransition.opacity.animation(.spring))
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2))) //.transition(AnyTransition.opacity.animation(.spring))
                             .onTapGesture(perform: update_selection)
                             .onDisappear
                             {
