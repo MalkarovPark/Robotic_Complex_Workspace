@@ -133,15 +133,7 @@ struct WorkspaceView: View
         //MARK: Toolbar
         .toolbar
         {
-            /*#if os(iOS)
-            if horizontal_size_class == .compact
-            {
-                ToolbarItem(placement: .cancellationAction)
-                {
-                    dismiss_document_button()
-                }
-            }
-            #endif*/
+            #if os(macOS)
             ToolbarItem(placement: placement_trailing)
             {
                 //MARK: Workspace performing elements
@@ -175,6 +167,41 @@ struct WorkspaceView: View
                     }
                 }
             }
+            #else
+            ToolbarItem(placement: horizontal_size_class == .compact ? .bottomBar : placement_trailing)
+            {
+                //MARK: Workspace performing elements
+                HStack(alignment: .center)
+                {
+                    Button(action: { registers_view_presented = true })
+                    {
+                        Label("Registers", systemImage: "number")
+                    }
+                    
+                    Divider()
+                    
+                    Button(action: change_cycle)
+                    {
+                        if base_workspace.cycled
+                        {
+                            Label("Repeat", systemImage: "repeat")
+                        }
+                        else
+                        {
+                            Label("One", systemImage: "repeat.1")
+                        }
+                    }
+                    Button(action: stop_perform)
+                    {
+                        Label("Reset", systemImage: "stop")
+                    }
+                    Button(action: toggle_perform)
+                    {
+                        Label("PlayPause", systemImage: "playpause")
+                    }
+                }
+            }
+            #endif
         }
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
         #if os(iOS)
@@ -247,7 +274,7 @@ struct RegistersDataView: View
             
             HStack(spacing: 0)
             {
-                Button(action: clear_registers)
+                Button(role: .destructive, action: clear_registers)
                 {
                     Text("Clear All")
                         .frame(maxWidth: .infinity)
@@ -1126,11 +1153,10 @@ struct InfoView: View
             
             HStack
             {
-                Button(action: remove_object)
+                Button(role: .destructive, action: remove_object)
                 {
                     Text("Remove from workspace")
                         .frame(maxWidth: .infinity)
-                        .foregroundColor(Color.red)
                 }
                 .buttonStyle(.bordered)
                 .padding()

@@ -2102,11 +2102,10 @@ struct PositionItemView: View
                 }
             }
             
-            Button(action: delete_point_from_program)
+            Button(role: .destructive, action: delete_point_from_program)
             {
                 Text("Delete")
                     .frame(maxWidth: .infinity)
-                    .foregroundColor(Color.red)
             }
             .padding()
             #if os(iOS)

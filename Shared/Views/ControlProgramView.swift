@@ -685,8 +685,11 @@ struct ElementView: View
             Divider()
             HStack
             {
-                Button("Delete", action: delete_program_element)
-                    .padding()
+                Button(role: .destructive, action: delete_program_element)
+                {
+                    Text("Delete")
+                }
+                .padding()
                 
                 Spacer()
                 
