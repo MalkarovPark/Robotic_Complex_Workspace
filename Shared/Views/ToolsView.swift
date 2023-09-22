@@ -870,7 +870,10 @@ struct ToolInspectorView: View
                         {
                             ForEach(0 ..< base_workspace.selected_tool.programs_names.count, id: \.self)
                             {
-                                Text(base_workspace.selected_tool.programs_names[$0])
+                                if base_workspace.selected_tool.programs_names.count > 0
+                                {
+                                    Text(base_workspace.selected_tool.programs_names[$0])
+                                }
                             }
                         }
                         else
