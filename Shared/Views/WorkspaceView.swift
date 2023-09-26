@@ -934,8 +934,10 @@ struct AddInWorkspaceView: View
         {
         case .robot:
             document.preset.robots = base_workspace.file_data().robots
+            base_workspace.elements_check()
         case .tool:
             document.preset.tools = base_workspace.file_data().tools
+            base_workspace.elements_check()
         case .part:
             document.preset.parts = base_workspace.file_data().parts
         default:
@@ -1882,9 +1884,11 @@ struct AddObjectView: View
         case .robot:
             base_workspace.robot_by_name(selected_object_name).is_placed = true
             document.preset.robots = base_workspace.file_data().robots
+            base_workspace.elements_check()
         case .tool:
             base_workspace.tool_by_name(selected_object_name).is_placed = true
             document.preset.tools = base_workspace.file_data().tools
+            base_workspace.elements_check()
         case .part:
             base_workspace.part_by_name(selected_object_name).is_placed = true
             document.preset.parts = base_workspace.file_data().parts

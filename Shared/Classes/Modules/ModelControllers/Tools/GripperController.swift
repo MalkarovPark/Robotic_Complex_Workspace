@@ -31,7 +31,7 @@ class GripperController: ToolModelController
     private var closed = false
     private var moved = false
     
-    override func nodes_perform(code: Int)
+    /*override func nodes_perform(code: Int)
     {
         if nodes.count == 2 //Gripper model has two nodes of jaws
         {
@@ -63,7 +63,7 @@ class GripperController: ToolModelController
                 remove_all_model_actions()
             }
         }
-    }
+    }*/
     
     override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
@@ -81,6 +81,8 @@ class GripperController: ToolModelController
                         self.moved = false
                         self.closed = true
                         
+                        self.info_code = 5
+                        
                         completion()
                     }
                 }
@@ -97,6 +99,8 @@ class GripperController: ToolModelController
                     {
                         self.moved = false
                         self.closed = false
+                        
+                        self.info_code = 10
                         
                         completion()
                     }
