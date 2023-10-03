@@ -165,6 +165,8 @@ struct ControlProgramView: View
             {
             case .observer:
                 badge_image = Image(systemName: "loupe")
+            case .mover:
+                badge_image = Image(systemName: "sparkles.square.filled.on.square")
             case .changer:
                 badge_image = Image(systemName: "wand.and.rays")
             }
@@ -354,6 +356,8 @@ struct ElementCardView: View
             {
             case .observer:
                 badge_image = Image(systemName: "loupe")
+            case .mover:
+                badge_image = Image(systemName: "sparkles.square.filled.on.square")
             case .changer:
                 badge_image = Image(systemName: "wand.and.rays")
             }
@@ -463,6 +467,8 @@ struct ElementCardViewPreview: View
             {
             case .observer:
                 badge_image = Image(systemName: "loupe")
+            case .mover:
+                badge_image = Image(systemName: "sparkles.square.filled.on.square")
             case .changer:
                 badge_image = Image(systemName: "wand.and.rays")
             }
@@ -1126,7 +1132,7 @@ struct ModifierElementView: View
                 {
                     Text("No tools placed in this workspace")
                 }
-            case .changer:
+            case .mover:
                 //MARK: Changer subview
                 VStack
                 {
@@ -1149,6 +1155,11 @@ struct ModifierElementView: View
                         Stepper("Enter", value: $register_index, in: 0...255)
                             .labelsHidden()
                     }
+                }
+            case .changer:
+                VStack
+                {
+                    Text("Changer")
                 }
             }
         }
