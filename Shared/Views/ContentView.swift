@@ -79,38 +79,11 @@ struct ContentView: View
     
     private func set_selection_functions()
     {
+        Workspace.change_by = change_by(name: registers:)
+        Workspace.changer_modules = ["Module", "Module 2"]
+        
         Robot.select_modules = select_robot_modules(name:model_controller:connector:)
         Tool.select_modules = select_tool_modules(name:model_controller:connector:)
-    }
-    
-    private func select_robot_modules(name: String, model_controller: inout RobotModelController, connector: inout RobotConnector)
-    {
-        switch name
-        {
-        case "Portal":
-            model_controller = PortalController()
-            connector = PortalConnector()
-        case "6DOF":
-            model_controller = _6DOFController()
-            connector = _6DOFConnector()
-        default:
-            break
-        }
-    }
-    
-    private func select_tool_modules(name: String, model_controller: inout ToolModelController, connector: inout ToolConnector)
-    {
-        switch name
-        {
-        case "gripper":
-            model_controller = GripperController()
-            connector = GripperConnector()
-        case "drill":
-            model_controller = DrillController()
-            connector = DrillConnector()
-        default:
-            break
-        }
     }
     
     private func get_file_data() //Store preset file data into workspace

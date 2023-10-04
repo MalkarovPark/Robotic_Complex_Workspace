@@ -678,7 +678,7 @@ struct ElementView: View
                 case .perofrmer:
                     PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
                 case .modifier:
-                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type, object_name: $new_element_item_data.object_name, is_push: $new_element_item_data.is_push, register_index: $new_element_item_data.register_index)
+                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type, object_name: $new_element_item_data.object_name, is_push: $new_element_item_data.is_push, register_index: $new_element_item_data.register_index, module_name: $new_element_item_data.module_name)
                 case .logic:
                     LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name, compared_value: $new_element_item_data.compared_value)
                 }
@@ -1041,6 +1041,7 @@ struct ModifierElementView: View
     @Binding var object_name: String
     @Binding var is_push: Bool
     @Binding var register_index: Int
+    @Binding var module_name: String
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -1133,7 +1134,7 @@ struct ModifierElementView: View
                     Text("No tools placed in this workspace")
                 }
             case .mover:
-                //MARK: Changer subview
+                //MARK: Move subview
                 VStack
                 {
                     Picker("LR", selection: $is_push)
@@ -1157,10 +1158,62 @@ struct ModifierElementView: View
                     }
                 }
             case .changer:
+                //MARK: Changer subview
+                #if os(macOS)
+                HStack
+                {
+                    Picker("Module:", selection: $module_name) //Changer module picker
+                    {
+                        if Workspace.changer_modules.count > 0
+                        {
+                            ForEach(Workspace.changer_modules, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .onAppear
+                    {
+                        if Workspace.changer_modules.count > 0 && module_name == ""
+                        {
+                            module_name = Workspace.changer_modules[0]
+                        }
+                    }
+                    .disabled(Workspace.changer_modules.count == 0)
+                }
+                #else
                 VStack
                 {
-                    Text("Changer")
+                    if base_workspace.marks_names.count > 0
+                    {
+                        Text("Module:")
+                        Picker("Module:", selection: $module_name) //Target mark picker
+                        {
+                            ForEach(Workspace.changer_modules, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        .onAppear
+                        {
+                            if Workspace.changer_modules.count > 0 && module_name == ""
+                            {
+                                module_name = Workspace.changer_modules[0]
+                            }
+                        }
+                        .disabled(Workspace.changer_modules.count == 0)
+                        .pickerStyle(.wheel)
+                    }
+                    else
+                    {
+                        Text("No modules")
+                    }
                 }
+                #endif
             }
         }
     }
@@ -1277,7 +1330,7 @@ struct ControlProgramView_Previews: PreviewProvider
                 .environmentObject(Workspace())
             ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modifier_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
                 .environmentObject(Workspace())
-            ModifierElementView(modifier_type: .constant(.changer), object_name: .constant("None"), is_push: .constant(true), register_index: .constant(0))
+            ModifierElementView(modifier_type: .constant(.changer), object_name: .constant("None"), is_push: .constant(true), register_index: .constant(0), module_name: .constant("None"))
                 .environmentObject(Workspace())
             LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"), compared_value: .constant(0))
         }
