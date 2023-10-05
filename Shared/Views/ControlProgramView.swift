@@ -1188,7 +1188,7 @@ struct ModifierElementView: View
                 #else
                 VStack
                 {
-                    if base_workspace.marks_names.count > 0
+                    if Workspace.changer_modules.count > 0
                     {
                         Text("Module:")
                         Picker("Module:", selection: $module_name) //Target mark picker

@@ -45,9 +45,11 @@ func change_by(name: String, registers: inout [Int])
     switch name
     {
     case "Module":
-        break
+        registers[4] = 55
+        registers[8] = 56
     case "Module 2":
-        break
+        registers[12] = 60
+        registers[13] = 77
     default:
         break
     }
