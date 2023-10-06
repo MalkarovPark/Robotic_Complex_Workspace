@@ -232,7 +232,7 @@ struct AddPartView: View
                 Text("Name")
                     .bold()
                 TextField("None", text: $new_part_name)
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                     .textFieldStyle(.roundedBorder)
                 #endif
             }
@@ -241,7 +241,7 @@ struct AddPartView: View
             
             HStack(spacing: 0)
             {
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 Spacer()
                 #endif
                 Picker(selection: $app_state.part_name, label: Text("Model")
@@ -335,7 +335,7 @@ struct PartView: View
                     }
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 .buttonStyle(.bordered)
                 .frame(maxWidth: .infinity)
                 #endif
@@ -351,7 +351,7 @@ struct PartView: View
                     { _ in
                         update_data()
                     }
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                     .frame(width: 112)
                 #endif
             }

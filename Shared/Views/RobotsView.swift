@@ -97,7 +97,7 @@ struct RobotsTableView: View
         {
             app_state.clear_pass()
         }
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .toolbar
@@ -114,7 +114,7 @@ struct RobotsTableView: View
                     .sheet(isPresented: $add_robot_view_presented)
                     {
                         AddRobotView(add_robot_view_presented: $add_robot_view_presented, document: $document)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                             .presentationDetents([.height(512), .large])
                         #endif
                     }
@@ -224,7 +224,7 @@ struct RobotCardView: View
         .popover(isPresented: $pass_preferences_presented, arrowEdge: .bottom)
         {
             PassPreferencesView(is_presented: $pass_preferences_presented)
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .presentationDetents([.height(256)])
             #endif
         }
@@ -473,7 +473,7 @@ struct RobotView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     //MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     
@@ -653,7 +653,7 @@ struct PassPreferencesView: View
             .frame(maxWidth: .infinity)
             #endif
             
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             Spacer()
             #endif
             
@@ -735,7 +735,7 @@ struct PassProgramsView: View
                     Text(item)
                 }
             }
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             #endif
             .padding(.bottom)
@@ -789,7 +789,7 @@ struct RobotSceneView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     
@@ -829,7 +829,7 @@ struct RobotSceneView: View
                                 .padding()
                         }
                         .buttonStyle(.borderless)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $origin_rotate_view_presented)
@@ -856,7 +856,7 @@ struct RobotSceneView: View
                                 .padding()
                         }
                         .buttonStyle(.borderless)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $origin_move_view_presented)
@@ -882,7 +882,7 @@ struct RobotSceneView: View
                                 .imageScale(.large)
                                 .padding()
                         }
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $space_scale_view_presented)
@@ -908,14 +908,14 @@ struct RobotSceneView: View
                     .fixedSize(horizontal: true, vertical: false)
                     .padding()
                 }
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 .modifier(MountedPadding(is_padding: horizontal_size_class == .compact))
                 #endif
                 
                 Spacer()
             }
         }
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         .modifier(MountedPadding(is_padding: !(horizontal_size_class == .compact)))
         #endif
     }
@@ -1553,7 +1553,7 @@ struct RobotInspectorView: View
             
             HStack(spacing: 0) //(spacing: 12)
             {
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 Text("Program")
                     .font(.subheadline)
                 #endif
@@ -1575,7 +1575,7 @@ struct RobotInspectorView: View
                 .pickerStyle(.menu)
                 .disabled(base_workspace.selected_robot.programs_names.count == 0)
                 .frame(maxWidth: .infinity)
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 .buttonStyle(.borderedProminent)
                 #endif
                 
@@ -1726,7 +1726,7 @@ struct PositionParameterView: View
             
             Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
                 .labelsHidden()
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .padding(.trailing, 8)
             #endif
         }
@@ -1763,7 +1763,7 @@ struct AddProgramView: View
             {
                 TextField("None", text: $new_program_name)
                     .frame(minWidth: 128, maxWidth: 256)
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                     .frame(idealWidth: 256)
                     .textFieldStyle(.roundedBorder)
                 #endif
@@ -1801,7 +1801,7 @@ struct PositionItemListView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     
@@ -1863,7 +1863,7 @@ struct PositionItemView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @State var is_compact = false
     #endif
     
@@ -1895,7 +1895,7 @@ struct PositionItemView: View
                                             .frame(width: 20)
                                         TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
                                             .textFieldStyle(.roundedBorder)
-                                            #if os(iOS)
+                                            #if os(iOS) || os(visionOS)
                                             .keyboardType(.decimalPad)
                                             #endif
                                         Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
@@ -1915,7 +1915,7 @@ struct PositionItemView: View
                                             .frame(width: 20)
                                         TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
                                             .textFieldStyle(.roundedBorder)
-                                            #if os(iOS)
+                                            #if os(iOS) || os(visionOS)
                                             .keyboardType(.decimalPad)
                                             #endif
                                         Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
@@ -2108,7 +2108,7 @@ struct PositionItemView: View
                     .frame(maxWidth: .infinity)
             }
             .padding()
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             .buttonStyle(.bordered)
             #endif
         }

@@ -35,7 +35,7 @@ class AppState : ObservableObject
     @Published var run_command = false
     @Published var stop_command = false
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
     #endif
     

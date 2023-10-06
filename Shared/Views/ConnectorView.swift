@@ -99,7 +99,7 @@ struct ConnectorView: View
                             Image(systemName: "scroll")
                         }
                         .frame(maxHeight: .infinity)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .buttonStyle(.bordered)
                         #endif
                         .toggleStyle(.button)
@@ -129,7 +129,7 @@ struct ConnectorView: View
             
             HStack(spacing: 0)
             {
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 Text("Demo")
                     .padding(.trailing)
                 #endif
@@ -139,7 +139,7 @@ struct ConnectorView: View
                     Text("Demo")
                 }
                 .toggleStyle(.switch)
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 .tint(.accentColor)
                 .labelsHidden()
                 #endif
@@ -353,7 +353,7 @@ struct ConnectionParameterView: View
                 {
                     Text("Bool")
                 }
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 .tint(.accentColor)
                 #endif
                 .labelsHidden()

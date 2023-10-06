@@ -93,7 +93,7 @@ struct ControlProgramView: View
                         .popover(isPresented: $add_element_view_presented)
                         {
                             AddElementView(add_element_view_presented: $add_element_view_presented, add_new_element_data: $add_new_element_data)
-                            #if os(iOS)
+                            #if os(iOS) || os(visionOS)
                                 .presentationDetents([.height(128)])
                             #endif
                         }
@@ -534,7 +534,7 @@ struct AddElementView: View
                 //MARK: Subtype pickers cases
                 HStack(spacing: 16)
                 {
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     Text("Type")
                         .font(.subheadline)
                     #endif
@@ -616,7 +616,7 @@ struct ElementView: View
                 //MARK: Subtype pickers cases
                 HStack(spacing: 16)
                 {
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     Text("Type")
                         .font(.subheadline)
                     #endif
@@ -633,7 +633,7 @@ struct ElementView: View
                         }
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .buttonStyle(.bordered)
                         #endif
                     case .modifier:
@@ -646,7 +646,7 @@ struct ElementView: View
                         }
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .buttonStyle(.bordered)
                         #endif
                     case .logic:
@@ -659,7 +659,7 @@ struct ElementView: View
                         }
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .buttonStyle(.bordered)
                         #endif
                     }
@@ -1305,7 +1305,7 @@ struct LogicElementView: View
                 HStack(spacing: 8)
                 {
                     Text("Compare with")
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                         .frame(minWidth: 120)
                     #endif
                     TextField("0", value: $compared_value, format: .number)

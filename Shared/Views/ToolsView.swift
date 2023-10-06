@@ -220,7 +220,7 @@ struct AddToolView:View
                 Text("Name")
                     .bold()
                 TextField("None", text: $new_tool_name)
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                     .textFieldStyle(.roundedBorder)
                 #endif
             }
@@ -229,7 +229,7 @@ struct AddToolView:View
             
             HStack(spacing: 0)
             {
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 Spacer()
                 #endif
                 Picker(selection: $app_state.tool_name, label: Text("Model")
@@ -302,7 +302,7 @@ struct ToolView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     //MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     
@@ -742,7 +742,7 @@ struct ToolInspectorView: View
                             }
                         }
                     }
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     .listStyle(.plain)
                     #endif
                     
@@ -859,7 +859,7 @@ struct ToolInspectorView: View
                 
                 HStack(spacing: 0)
                 {
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     Text("Program")
                         .font(.subheadline)
                     #endif
@@ -884,7 +884,7 @@ struct ToolInspectorView: View
                     .pickerStyle(.menu)
                     .disabled(base_workspace.selected_tool.programs_names.count == 0)
                     .frame(maxWidth: .infinity)
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     .buttonStyle(.borderedProminent)
                     #endif
                     
@@ -994,7 +994,7 @@ struct OperationParameterView: View
             
             Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
                 .labelsHidden()
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .padding(.trailing, 8)
             #endif
         }
@@ -1030,7 +1030,7 @@ struct AddOperationProgramView: View
             {
                 TextField("None", text: $new_program_name)
                     .frame(minWidth: 128, maxWidth: 256)
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                     .frame(idealWidth: 256)
                     .textFieldStyle(.roundedBorder)
                 #endif
@@ -1068,7 +1068,7 @@ struct OperationItemListView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     

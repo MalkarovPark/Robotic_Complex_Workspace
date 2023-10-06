@@ -48,7 +48,7 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 struct Sidebar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument //Current openet document
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     //Document file info for iOS/iPadOS
     @Binding var file_url: URL
     @Binding var file_name: String
@@ -60,7 +60,7 @@ struct Sidebar: View
         SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250)
         #else
         SidebarContent(document: $document, file_url: $file_url, file_name: $file_name).frame(minWidth: 200, idealWidth: 250)
-        .navigationBarHidden(true)
+            .navigationBarHidden(true)
         #endif
     }
 }
@@ -68,7 +68,7 @@ struct Sidebar: View
 struct SidebarContent: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @EnvironmentObject var app_state: AppState
     
     @Binding var file_url: URL
@@ -107,7 +107,7 @@ struct SidebarContent: View
                 }
             }
             .navigationTitle("View")
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             .toolbar
             {
                 //Settings button for iOS/iPadOS sidebar toolbar

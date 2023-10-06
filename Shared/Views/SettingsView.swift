@@ -6,14 +6,14 @@
 //
 
 import SwiftUI
-#if os(iOS)
+#if os(iOS) || os(visionOS)
 import UniformTypeIdentifiers
 #endif
 import IndustrialKit
 
 struct SettingsView: View
 {
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Binding var setting_view_presented: Bool
     #endif
     
@@ -27,7 +27,7 @@ struct SettingsView: View
         TabView
         {
             GeneralSettingsView()
-            #if os(iOS)
+            #if os(iOS) || os(visionOS) || os(visionOS)
                 .modifier(CaptionModifier(label: "General"))
             #endif
                 .tabItem
@@ -37,7 +37,7 @@ struct SettingsView: View
             .tag(Tabs.general)
             
             PropertiesSettingsView()
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .modifier(CaptionModifier(label: "Properties"))
             #endif
                 .tabItem
@@ -46,7 +46,7 @@ struct SettingsView: View
             }
             
             CellSettingsView()
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .modifier(CaptionModifier(label: "Cell"))
             #endif
                 .tabItem
@@ -61,7 +61,7 @@ struct SettingsView: View
     }
 }
 
-#if os(iOS)
+#if os(iOS) || os(visionOS)
 struct CaptionModifier: ViewModifier
 {
     @EnvironmentObject var app_state: AppState
@@ -192,7 +192,7 @@ struct PropertiesSettingsView: View
     
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @State private var clear_message_presented = false
     #endif
     @State private var load_panel_presented = false

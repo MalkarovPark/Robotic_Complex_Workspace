@@ -30,7 +30,7 @@ struct ContentView: View
     
     @Binding var document: Robotic_Complex_WorkspaceDocument //Opened document
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @State var file_name = "" //Visible file name
     @State var file_url: URL //Visible file URL
     #endif
@@ -38,7 +38,7 @@ struct ContentView: View
     
     @StateObject private var base_workspace = Workspace() //Workspace object for opened file
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     

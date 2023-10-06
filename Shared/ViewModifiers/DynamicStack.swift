@@ -30,7 +30,7 @@ struct DynamicStack<Content: View>: View
     }
 }
 
-#if os(iOS)
+#if os(iOS) || os(visionOS)
 struct MountedPadding: ViewModifier
 {
     @State var is_padding: Bool

@@ -15,7 +15,7 @@ struct WorkspaceView: View
     @AppStorage("WorkspaceVisualModeling") private var workspace_visual_modeling: Bool = true
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Binding var file_name: String
     @Binding var file_url: URL
     #endif
@@ -26,7 +26,7 @@ struct WorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     
     @State private var program_view_presented = false //Picker data for thin window size
@@ -116,7 +116,7 @@ struct WorkspaceView: View
             }
             #endif
         }
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         .navigationBarTitleDisplayMode(.inline)
         #else
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
@@ -204,7 +204,7 @@ struct WorkspaceView: View
             #endif
         }
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         .navigationTitle($file_name)
         .onChange(of: file_name)
         { _ in
@@ -387,7 +387,7 @@ struct ComplexWorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     
@@ -428,12 +428,12 @@ struct ComplexWorkspaceView: View
                             Image(systemName: "plus")
                                 .imageScale(.large)
                                 .padding()
-                            #if os(iOS)
+                            #if os(iOS) || os(visionOS)
                                 .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $add_in_view_presented)
@@ -455,12 +455,12 @@ struct ComplexWorkspaceView: View
                             Image(systemName: "pencil")
                                 .imageScale(.large)
                                 .padding()
-                            #if os(iOS)
+                            #if os(iOS) || os(visionOS)
                                 .foregroundColor(base_workspace.add_in_view_disabled ? Color.secondary : Color.black)
                             #endif
                         }
                         .buttonStyle(.borderless)
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $info_view_presented)
@@ -481,14 +481,14 @@ struct ComplexWorkspaceView: View
                     .fixedSize(horizontal: true, vertical: false)
                     .padding()
                 }
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 .modifier(MountedPadding(is_padding: horizontal_size_class == .compact))
                 #endif
                 
                 Spacer()
             }
         }
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         .modifier(MountedPadding(is_padding: !(horizontal_size_class == .compact)))
         #endif
     }
@@ -850,7 +850,7 @@ struct AddInWorkspaceView: View
                             .pickerStyle(.menu)
                             .frame(maxWidth: .infinity)
                             .padding([.horizontal, .top])
-                            #if os(iOS)
+                            #if os(iOS) || os(visionOS)
                             .buttonStyle(.bordered)
                             #endif
                         }
@@ -876,7 +876,7 @@ struct AddInWorkspaceView: View
                 Text("None")
             }
             
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             if is_compact
             {
                 Spacer()
@@ -960,7 +960,7 @@ struct ObjectPickerView: View
     {
         if avaliable_objects_names.count > 0
         {
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             Text("Name")
                 .font(.subheadline)
             #endif
@@ -984,7 +984,7 @@ struct ObjectPickerView: View
             }
             .pickerStyle(.menu)
             .frame(maxWidth: .infinity)
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             .buttonStyle(.bordered)
             #endif
         }
@@ -1098,7 +1098,7 @@ struct InfoView: View
                                 .pickerStyle(.menu)
                                 .frame(maxWidth: .infinity)
                                 .padding([.horizontal, .top])
-                                #if os(iOS)
+                                #if os(iOS) || os(visionOS)
                                 .buttonStyle(.bordered)
                                 #endif
                             }
@@ -1146,7 +1146,7 @@ struct InfoView: View
             }, is_compact: $is_compact, spacing: 12)
             .padding([.horizontal, .top])
             
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             if is_compact
             {
                 Spacer()
@@ -1230,7 +1230,7 @@ struct WorkspaceCardsView: View
     
     @State private var object_type_changed = false
     
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     @State private var tabview_update_toggle = false
     @State private var is_object_appeared = false
     #endif
@@ -1451,7 +1451,7 @@ struct WorkspaceCardsView: View
                     new_object_select()
                     object_type_changed = true
                     
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     tabview_update_toggle.toggle()
                     #endif
                 }
@@ -1576,7 +1576,7 @@ struct WorkspaceObjectCard: View
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .shadow(radius: 8)
         .padding()
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         .padding(.bottom, 32)
         #endif
     }
@@ -1689,7 +1689,7 @@ struct CardInfoView: View
                                 .pickerStyle(.menu)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical)
-                                #if os(iOS)
+                                #if os(iOS) || os(visionOS)
                                 .buttonStyle(.bordered)
                                 #endif
                             }
@@ -1805,12 +1805,12 @@ struct ObjectPlaceButton: View
                 Image(systemName: "plus")
                     .imageScale(.large)
                     .padding()
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                     .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
                 #endif
             }
             .buttonStyle(.borderless)
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             .foregroundColor(.black)
             #endif
             .popover(isPresented: $add_in_view_presented)
@@ -1927,7 +1927,7 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
         }
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         .previewDevice("iPad mini (6th generation)")
         .previewInterfaceOrientation(.landscapeLeft)
         #endif
