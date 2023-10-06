@@ -624,7 +624,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
+				PRODUCT_BUNDLE_IDENTIFIER = celadon.RoboticComplexWorkspace;
 				PRODUCT_NAME = "Robotic Complex Workspace";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
@@ -661,7 +661,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
+				PRODUCT_BUNDLE_IDENTIFIER = celadon.RoboticComplexWorkspace;
 				PRODUCT_NAME = "Robotic Complex Workspace";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
@@ -695,7 +695,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
+				PRODUCT_BUNDLE_IDENTIFIER = celadon.RoboticComplexWorkspace;
 				PRODUCT_NAME = RCWorkspace;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -726,7 +726,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "mw-park.Robotic-Complex-Workspace";
+				PRODUCT_BUNDLE_IDENTIFIER = celadon.RoboticComplexWorkspace;
 				PRODUCT_NAME = RCWorkspace;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
