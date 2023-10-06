@@ -128,6 +128,9 @@ struct WorkspaceView: View
                 {
                     registers_view_presented = false
                 }
+            #if os(visionOS)
+                .frame(width: 600, height: 600)
+            #endif
         }
         
         //MARK: Toolbar
@@ -1367,7 +1370,9 @@ struct WorkspaceCardsView: View
                 Text("No objects placed")
                     .fontWeight(.bold)
                     .font(.system(.title, design: .rounded))
+                #if os(macOS) || os(iOS)
                     .foregroundColor(.white)
+                #endif
                     .shadow(radius: 8)
                     .padding()
                     .frame(maxHeight: .infinity)

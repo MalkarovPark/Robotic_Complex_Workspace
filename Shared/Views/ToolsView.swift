@@ -63,7 +63,9 @@ struct ToolsView: View
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
         }
+        #if os(macOS) || os(iOS)
         .background(Color.white)
+        #endif
         #if os(macOS)
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #else
@@ -83,6 +85,9 @@ struct ToolsView: View
                     .sheet(isPresented: $add_tool_view_presented)
                     {
                         AddToolView(add_tool_view_presented: $add_tool_view_presented, document: $document)
+                        #if os(visionOS)
+                            .frame(width: 512, height: 512)
+                        #endif
                     }
                 }
             }
@@ -119,6 +124,9 @@ struct ToolCardView: View
             .sheet(isPresented: $tool_view_presented)
             {
                 ToolView(tool_view_presented: $tool_view_presented, document: $document)
+                #if os(visionOS)
+                    .frame(width: 512, height: 512)
+                #endif
             }
     }
     
@@ -563,6 +571,9 @@ struct ToolView: View
         .sheet(isPresented: $connector_view_presented)
         {
             ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: base_workspace.selected_tool.connector as WorkspaceObjectConnector, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+            #if os(visionOS)
+                .frame(width: 512, height: 512)
+            #endif
         }
         .sheet(isPresented: $statistics_view_presented)
         {
@@ -577,6 +588,9 @@ struct ToolView: View
                     }
                     is_document_updated = true
                 }
+            #if os(visionOS)
+                .frame(width: 512, height: 512)
+            #endif
         }
         .controlSize(.regular)
         #if os(macOS)

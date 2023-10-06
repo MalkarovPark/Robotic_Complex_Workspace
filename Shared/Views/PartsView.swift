@@ -62,7 +62,9 @@ struct PartsView: View
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
         }
+        #if os(macOS) || os(iOS)
         .background(Color.white)
+        #endif
         #if os(macOS)
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #else
@@ -82,6 +84,9 @@ struct PartsView: View
                     .sheet(isPresented: $add_part_view_presented)
                     {
                         AddPartView(add_part_view_presented: $add_part_view_presented, document: $document)
+                        #if os(visionOS)
+                            .frame(width: 512, height: 512)
+                        #endif
                     }
                 }
             }
@@ -131,6 +136,9 @@ struct PartCardView: View
                     {
                         part_view_presented = false
                     }
+                #if os(visionOS)
+                    .frame(width: 512, height: 512)
+                #endif
             }
     }
     

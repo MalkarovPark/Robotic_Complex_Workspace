@@ -27,7 +27,9 @@ struct RobotsView: View
                 RobotsTableView(robot_view_presented: $robot_view_presented, document: $document)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                #if os(macOS) || os(iOS)
                     .background(Color.white)
+                #endif
             }
             else
             {
@@ -117,7 +119,13 @@ struct RobotsTableView: View
                         #if os(iOS) || os(visionOS)
                             .presentationDetents([.height(512), .large])
                         #endif
+                        #if os(visionOS)
+                            .frame(width: 512, height: 512)
+                        #endif
                     }
+                    #if os(visionOS)
+                    .frame(width: 512, height: 512)
+                    #endif
                 }
             }
         }
@@ -231,6 +239,9 @@ struct RobotCardView: View
         .sheet(isPresented: $pass_programs_presented)
         {
             PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
+            #if os(visionOS)
+                .frame(width: 512, height: 512)
+            #endif
         }
     }
     
@@ -574,10 +585,16 @@ struct RobotView: View
                     .sheet(isPresented: $connector_view_presented)
                     {
                         ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                        #if os(visionOS)
+                            .frame(width: 512, height: 512)
+                        #endif
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
                         StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                        #if os(visionOS)
+                            .frame(width: 512, height: 512)
+                        #endif
                     }
                     
                     Button(action: { base_workspace.selected_robot.reset_moving()
@@ -1392,7 +1409,9 @@ struct RobotInspectorView: View
                             .padding(8)
                     }
                     .disabled(base_workspace.selected_robot.programs_count == 0)
+                    #if os(macOS) || os(iOS)
                     .foregroundColor(.white)
+                    #endif
                     .background(Color.accentColor)
                     .clipShape(Circle())
                     .frame(width: 24, height: 24)

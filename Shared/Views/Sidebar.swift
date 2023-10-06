@@ -131,6 +131,9 @@ struct SidebarContent: View
                 {
                     app_state.settings_view_presented = false
                 }
+                #if os(visionOS)
+                .frame(width: 512, height: 512)
+                #endif
             }
             #endif
         } detail: {
