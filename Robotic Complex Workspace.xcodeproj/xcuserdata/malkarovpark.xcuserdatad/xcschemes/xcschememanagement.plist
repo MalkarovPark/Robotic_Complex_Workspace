@@ -4,20 +4,20 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Robotic Complex Workspace (iOS).xcscheme_^#shared#^_</key>
+		<key>Robotic Complex Workspace.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
-		</dict>
-		<key>Robotic Complex Workspace (macOS).xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>1</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>62E0D3572719C700009D58D2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>62E0D35F2719C700009D58D2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
