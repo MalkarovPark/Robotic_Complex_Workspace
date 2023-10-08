@@ -1932,7 +1932,7 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
         }
-        #if os(iOS) || os(visionOS)
+        #if os(iOS)
         .previewDevice("iPad mini (6th generation)")
         .previewInterfaceOrientation(.landscapeLeft)
         #endif

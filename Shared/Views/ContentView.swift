@@ -109,18 +109,15 @@ struct ContentView: View
 }
 
 //MARK: - Previews
-struct ContentView_Previews: PreviewProvider
+#Preview
 {
-    static var previews: some View
-    {
-        #if os(macOS)
-        ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
-            .environmentObject(AppState())
-            .frame(width: 800, height: 600)
-        #else
-        ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()), file_url: URL(fileURLWithPath: ""))
-            .environmentObject(AppState())
-            .frame(width: 800, height: 600)
-        #endif
-    }
+    #if os(macOS)
+    ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+        .environmentObject(AppState())
+        .frame(width: 800, height: 600)
+    #else
+    ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()), file_url: URL(fileURLWithPath: ""))
+        .environmentObject(AppState())
+        .frame(width: 800, height: 600)
+    #endif
 }

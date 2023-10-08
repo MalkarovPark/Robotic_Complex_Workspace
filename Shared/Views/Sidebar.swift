@@ -169,16 +169,13 @@ struct SidebarContent: View
 }
 
 //MARK: - Previews
-struct Sidebar_Previews: PreviewProvider
+#Preview
 {
-    static var previews: some View
-    {
-        #if os(macOS)
-        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()))
-            .environmentObject(Workspace())
-            .environmentObject(AppState())
-        #else
-        Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
-        #endif
-    }
+    #if os(macOS)
+    Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()))
+        .environmentObject(Workspace())
+        .environmentObject(AppState())
+    #else
+    Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
+    #endif
 }
