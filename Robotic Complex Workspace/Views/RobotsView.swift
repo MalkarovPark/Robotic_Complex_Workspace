@@ -1856,10 +1856,31 @@ struct PositionItemListView: View
             }
             
             Spacer()
+            
+            Button(action: delete_point_from_program)
+            {
+                Image(systemName: "xmark")
+            }
+            .buttonStyle(.borderless)
         }
         .onTapGesture
         {
             position_item_view_presented.toggle()
+        }
+    }
+    
+    func delete_point_from_program()
+    {
+        delete_point()
+        base_workspace.update_view()
+        base_workspace.selected_robot.selected_program.selected_point_index = -1
+    }
+    
+    func delete_point()
+    {
+        if let index = base_workspace.selected_robot.selected_program.points.firstIndex(of: point_item)
+        {
+            self.on_delete(IndexSet(integer: index))
         }
     }
 }
@@ -2103,7 +2124,7 @@ struct PositionItemView: View
                 Stepper("Enter", value: $item_view_pos_speed, in: 0...100)
                     .labelsHidden()
             }
-            .padding([.horizontal, .top])
+            .padding()
             .onChange(of: item_view_pos_type)
             { newValue in
                 if appeared
@@ -2120,16 +2141,6 @@ struct PositionItemView: View
                     update_workspace_data()
                 }
             }
-            
-            Button(role: .destructive, action: delete_point_from_program)
-            {
-                Text("Delete")
-                    .frame(maxWidth: .infinity)
-            }
-            .padding()
-            #if os(iOS) || os(visionOS)
-            .buttonStyle(.bordered)
-            #endif
         }
         .onAppear()
         {
@@ -2173,28 +2184,6 @@ struct PositionItemView: View
         base_workspace.selected_robot.selected_program.visual_build()
         document.preset.robots = base_workspace.file_data().robots
         app_state.get_scene_image = true
-    }
-    
-    func delete_point_from_program()
-    {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
-        {
-            delete_point()
-        }
-        //delete_point()
-        
-        base_workspace.update_view()
-        position_item_view_presented.toggle()
-        
-        base_workspace.selected_robot.selected_program.selected_point_index = -1
-    }
-    
-    func delete_point()
-    {
-        if let index = base_workspace.selected_robot.selected_program.points.firstIndex(of: point_item)
-        {
-            self.on_delete(IndexSet(integer: index))
-        }
     }
 }
 
