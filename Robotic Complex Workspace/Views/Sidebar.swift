@@ -117,7 +117,7 @@ struct SidebarContent: View
                     {
                         Button (action: { app_state.settings_view_presented = true })
                         {
-                            Label("Settings", systemImage: "slider.horizontal.2.square.on.square")
+                            Label("Settings", systemImage: "gear")
                         }
                     }
                 }

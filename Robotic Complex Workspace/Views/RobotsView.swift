@@ -846,7 +846,7 @@ struct RobotSceneView: View
                                 .padding()
                         }
                         .buttonStyle(.borderless)
-                        #if os(iOS) || os(visionOS)
+                        #if os(iOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $origin_rotate_view_presented)
@@ -873,7 +873,7 @@ struct RobotSceneView: View
                                 .padding()
                         }
                         .buttonStyle(.borderless)
-                        #if os(iOS) || os(visionOS)
+                        #if os(iOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $origin_move_view_presented)
@@ -899,7 +899,7 @@ struct RobotSceneView: View
                                 .imageScale(.large)
                                 .padding()
                         }
-                        #if os(iOS) || os(visionOS)
+                        #if os(iOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $space_scale_view_presented)

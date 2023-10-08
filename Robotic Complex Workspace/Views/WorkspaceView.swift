@@ -431,12 +431,14 @@ struct ComplexWorkspaceView: View
                             Image(systemName: "plus")
                                 .imageScale(.large)
                                 .padding()
-                            #if os(iOS) || os(visionOS)
+                            #if os(iOS)
                                 .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
+                            #elseif os(visionOS)
+                                .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
                             #endif
                         }
                         .buttonStyle(.borderless)
-                        #if os(iOS) || os(visionOS)
+                        #if os(iOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $add_in_view_presented)
@@ -446,7 +448,7 @@ struct ComplexWorkspaceView: View
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                             #else
                             AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
-                                .frame(maxWidth: 512)
+                                .frame(maxWidth: 1024)
                             #endif
                         }
                         .disabled(!base_workspace.add_in_view_disabled || base_workspace.performed)
@@ -458,12 +460,14 @@ struct ComplexWorkspaceView: View
                             Image(systemName: "pencil")
                                 .imageScale(.large)
                                 .padding()
-                            #if os(iOS) || os(visionOS)
+                            #if os(iOS)
                                 .foregroundColor(base_workspace.add_in_view_disabled ? Color.secondary : Color.black)
+                            #elseif os(visionOS)
+                                .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
                             #endif
                         }
                         .buttonStyle(.borderless)
-                        #if os(iOS) || os(visionOS)
+                        #if os(iOS)
                         .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $info_view_presented)
@@ -473,7 +477,7 @@ struct ComplexWorkspaceView: View
                                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                             #else
                             InfoView(info_view_presented: $info_view_presented, document: $document, is_compact: horizontal_size_class == .compact)
-                                .frame(maxWidth: 512)
+                                .frame(maxWidth: 1024)
                             #endif
                         }
                         .disabled(base_workspace.add_in_view_disabled)
@@ -1810,12 +1814,14 @@ struct ObjectPlaceButton: View
                 Image(systemName: "plus")
                     .imageScale(.large)
                     .padding()
-                #if os(iOS) || os(visionOS)
+                #if os(iOS)
                     .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
+                #elseif os(visionOS)
+                    .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
                 #endif
             }
             .buttonStyle(.borderless)
-            #if os(iOS) || os(visionOS)
+            #if os(iOS)
             .foregroundColor(.black)
             #endif
             .popover(isPresented: $add_in_view_presented)
