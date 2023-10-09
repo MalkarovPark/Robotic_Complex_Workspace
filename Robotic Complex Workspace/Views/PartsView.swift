@@ -349,14 +349,14 @@ struct PartView: View
                 #endif
                 .padding(.horizontal)
                 .onChange(of: new_physics)
-                { _ in
+                { _, _ in
                     update_data()
                 }
                 
                 ColorPicker("Color", selection: $new_color)
                     .padding(.trailing)
                     .onChange(of: new_color)
-                    { _ in
+                    { _, _ in
                         update_data()
                     }
                 #if os(iOS) || os(visionOS)

@@ -749,7 +749,7 @@ struct ToolInspectorView: View
                                 }
                                 .onMove(perform: code_item_move)
                                 .onChange(of: base_workspace.tools)
-                                { _ in
+                                { _, _ in
                                     document.preset.tools = base_workspace.file_data().tools
                                     app_state.get_scene_image = true
                                 }
@@ -923,7 +923,7 @@ struct ToolInspectorView: View
                         #endif
                     }
                     .onChange(of: base_workspace.selected_tool.programs_count)
-                    { _ in
+                    { _, _ in
                         update_data()
                     }
                 }
@@ -1117,7 +1117,7 @@ struct OperationItemListView: View
             .pickerStyle(.menu)
             .labelsHidden()
             .onChange(of: new_code_value)
-            { newValue in
+            { _, new_value in
                 if update_data == true
                 {
                     code_item.value = new_code_value

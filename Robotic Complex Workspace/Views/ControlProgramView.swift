@@ -166,7 +166,7 @@ struct ControlProgramView: View
             case .observer:
                 badge_image = Image(systemName: "loupe")
             case .mover:
-                badge_image = Image(systemName: "sparkles.square.filled.on.square")
+                badge_image = Image(systemName: "arrow.up.arrow.down")
             case .changer:
                 badge_image = Image(systemName: "wand.and.rays")
             }
@@ -357,7 +357,7 @@ struct ElementCardView: View
             case .observer:
                 badge_image = Image(systemName: "loupe")
             case .mover:
-                badge_image = Image(systemName: "sparkles.square.filled.on.square")
+                badge_image = Image(systemName: "arrow.up.arrow.down")
             case .changer:
                 badge_image = Image(systemName: "wand.and.rays")
             }
@@ -468,7 +468,7 @@ struct ElementCardViewPreview: View
             case .observer:
                 badge_image = Image(systemName: "loupe")
             case .mover:
-                badge_image = Image(systemName: "sparkles.square.filled.on.square")
+                badge_image = Image(systemName: "arrow.up.arrow.down")
             case .changer:
                 badge_image = Image(systemName: "wand.and.rays")
             }
@@ -771,8 +771,8 @@ struct PerformerElementView: View
                         }
                     }
                     .onChange(of: robot_name)
-                    { _ in
-                        viewed_robot = base_workspace.robot_by_name(robot_name)
+                    { _, new_value in
+                        viewed_robot = base_workspace.robot_by_name(new_value)
                         if viewed_robot?.programs_names.count ?? 0 > 0
                         {
                             program_name = viewed_robot?.programs_names.first ?? ""
@@ -833,8 +833,8 @@ struct PerformerElementView: View
                                     }
                                 }
                                 .onChange(of: robot_name)
-                                { _ in
-                                    viewed_robot = base_workspace.robot_by_name(robot_name)
+                                { _, new_value in
+                                    viewed_robot = base_workspace.robot_by_name(new_value)
                                     if viewed_robot?.programs_names.count ?? 0 > 0
                                     {
                                         program_name = viewed_robot?.programs_names.first ?? ""
@@ -907,8 +907,8 @@ struct PerformerElementView: View
                         }
                     }
                     .onChange(of: tool_name)
-                    { _ in
-                        viewed_tool = base_workspace.tool_by_name(tool_name)
+                    { _, new_value in
+                        viewed_tool = base_workspace.tool_by_name(new_value)
                         if viewed_tool?.programs_names.count ?? 0 > 0
                         {
                             program_name = viewed_tool?.programs_names.first ?? ""
@@ -969,8 +969,8 @@ struct PerformerElementView: View
                                     }
                                 }
                                 .onChange(of: tool_name)
-                                { _ in
-                                    viewed_tool = base_workspace.tool_by_name(tool_name)
+                                { _, new_value in
+                                    viewed_tool = base_workspace.tool_by_name(new_value)
                                     if viewed_tool?.programs_names.count ?? 0 > 0
                                     {
                                         program_name = viewed_tool?.programs_names.first ?? ""
@@ -1067,8 +1067,8 @@ struct ModifierElementView: View
                         }
                     }
                     .onChange(of: object_name)
-                    { _ in
-                        viewed_object = base_workspace.tool_by_name(object_name)
+                    { _, new_value in
+                        viewed_object = base_workspace.tool_by_name(new_value)
                         base_workspace.update_view()
                     }
                     .onAppear
@@ -1105,8 +1105,8 @@ struct ModifierElementView: View
                             }
                         }
                         .onChange(of: object_name)
-                        { _ in
-                            viewed_object = base_workspace.tool_by_name(object_name)
+                        { _, new_value in
+                            viewed_object = base_workspace.tool_by_name(new_value)
                             base_workspace.update_view()
                         }
                         .onAppear

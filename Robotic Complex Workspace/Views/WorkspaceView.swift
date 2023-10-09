@@ -210,10 +210,10 @@ struct WorkspaceView: View
         #if os(iOS) || os(visionOS)
         .navigationTitle($file_name)
         .onChange(of: file_name)
-        { _ in
+        { _, new_value in
             print(file_name)
         }
-        .navigationDocument(file_url)
+        .navigationDocument(new_value)
         #endif
     }
     
@@ -338,10 +338,10 @@ struct RegisterCardView: View
                                 appeared = true
                             }
                             .onChange(of: value)
-                            { newValue in
+                            { new_value in
                                 if appeared
                                 {
-                                    base_workspace.update_register(number, new_value: value)
+                                    base_workspace.update_register(number, new_value: new_value)
                                 }
                             }
                     }
@@ -767,7 +767,7 @@ struct AddInWorkspaceView: View
                 }
             }
             .onChange(of: app_state.add_selection)
-            { _ in
+            { _, _ in
                 base_workspace.object_pointer_node?.isHidden = true
             }
             .pickerStyle(.segmented)
@@ -811,7 +811,7 @@ struct AddInWorkspaceView: View
                 }, is_compact: $is_compact, spacing: 16)
                 .padding([.horizontal, .top])
                 .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
-                { _ in
+                { _, _ in
                     base_workspace.update_object_position()
                 }
                 .disabled(base_workspace.avaliable_robots_names.count == 0)
@@ -825,7 +825,7 @@ struct AddInWorkspaceView: View
                         }, is_compact: $is_compact, spacing: 16)
                         .padding([.horizontal, .top])
                         .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
-                        { _ in
+                        { _, _ in
                             base_workspace.update_object_position()
                         }
                     }
@@ -851,7 +851,7 @@ struct AddInWorkspaceView: View
                                 tool_attached = false
                             }
                             .onChange(of: attach_robot_name)
-                            { _ in
+                            { _, _ in
                                 base_workspace.attach_tool_to(robot_name: attach_robot_name)
                             }
                             .pickerStyle(.menu)
@@ -875,7 +875,7 @@ struct AddInWorkspaceView: View
                 }, is_compact: $is_compact, spacing: 16)
                 .padding([.horizontal, .top])
                 .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
-                { _ in
+                { _, _ in
                     base_workspace.update_object_position()
                 }
                 .disabled(base_workspace.avaliable_parts_names.count == 0)
@@ -986,7 +986,7 @@ struct ObjectPickerView: View
                 selected_object_name = avaliable_objects_names.first ?? "None"
             }
             .onChange(of: selected_object_name)
-            { _ in
+            { _, _ in
                 base_workspace.view_object_node(type: workspace_object_type, name: selected_object_name)
             }
             .pickerStyle(.menu)
@@ -1048,7 +1048,7 @@ struct InfoView: View
                     .toggleStyle(.button)
                     .padding()
                     .onChange(of: base_workspace.selected_tool.is_attached)
-                    { new_value in
+                    { _, new_value in
                         if !new_value
                         {
                             base_workspace.remove_attachment()
@@ -1071,7 +1071,7 @@ struct InfoView: View
                 case .robot:
                     PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
                         .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
-                        { _ in
+                        { _, _ in
                             base_workspace.update_object_position()
                             document.preset.robots = base_workspace.file_data().robots
                         }
@@ -1080,7 +1080,7 @@ struct InfoView: View
                     {
                         PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
                             .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
-                            { _ in
+                            { _, _ in
                                 base_workspace.update_object_position()
                                 document.preset.tools = base_workspace.file_data().tools
                             }
@@ -1099,7 +1099,7 @@ struct InfoView: View
                                     }
                                 }
                                 .onChange(of: attach_robot_name)
-                                { new_value in
+                                { _, new_value in
                                     base_workspace.attach_tool_to(robot_name: new_value)
                                 }
                                 .pickerStyle(.menu)
@@ -1143,7 +1143,7 @@ struct InfoView: View
                 case .part:
                     PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
                         .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
-                        { _ in
+                        { _, _ in
                             base_workspace.update_object_position()
                             document.preset.parts = base_workspace.file_data().parts
                         }
@@ -1437,8 +1437,8 @@ struct WorkspaceCardsView: View
                 .buttonStyle(.borderless)
                 .padding([.horizontal, .top])
                 .onChange(of: object_selection)
-                { _ in
-                    switch object_selection
+                { _, new_value in
+                    switch new_value
                     {
                     case .robot:
                         base_workspace.deselect_tool()
@@ -1465,7 +1465,7 @@ struct WorkspaceCardsView: View
                     #endif
                 }
                 .onChange(of: viewed_object_name)
-                { _ in
+                { _, _ in
                     if !object_type_changed
                     {
                         new_object_select()
@@ -1647,7 +1647,7 @@ struct CardInfoView: View
                 case is Robot:
                     PositionView(location: $location, rotation: $rotation)
                         .onChange(of: [location, rotation])
-                        { values in
+                        { _, values in
                             if appeared
                             {
                                 object?.location = values[0]
@@ -1661,7 +1661,7 @@ struct CardInfoView: View
                     {
                         PositionView(location: $location, rotation: $rotation)
                             .onChange(of: [location, rotation])
-                            { values in
+                            { _, values in
                                 if appeared
                                 {
                                     object?.location = values[0]
@@ -1685,7 +1685,7 @@ struct CardInfoView: View
                                     }
                                 }
                                 .onChange(of: attach_robot_name)
-                                { new_value in
+                                { _, new_value in
                                     if appeared
                                     {
                                         (object as! Tool).attached_to = new_value
@@ -1712,7 +1712,7 @@ struct CardInfoView: View
                 case is Part:
                     PositionView(location: $location, rotation: $rotation)
                         .onChange(of: [location, rotation])
-                        { values in
+                        { _, values in
                             if appeared
                             {
                                 object?.location = values[0]
@@ -1734,7 +1734,7 @@ struct CardInfoView: View
                     }
                     .toggleStyle(.button)
                     .onChange(of: is_attached)
-                    { new_value in
+                    { _, new_value in
                         if new_value
                         {
                             if avaliable_attachments.count > 0

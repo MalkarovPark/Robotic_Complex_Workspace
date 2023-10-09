@@ -738,8 +738,8 @@ struct PassProgramsView: View
             { item in
                 Toggle(isOn: Binding(get: {
                     self.selected_programs.contains(item)
-                }, set: { newValue in
-                    if newValue
+                }, set: { new_value in
+                    if new_value
                     {
                         self.selected_programs.insert(item)
                     }
@@ -853,7 +853,7 @@ struct RobotSceneView: View
                         {
                             OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
                                 .onChange(of: base_workspace.selected_robot.origin_rotation)
-                            { _ in
+                            { _, _ in
                                 //base_workspace.selected_robot.robot_location_place()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
@@ -880,7 +880,7 @@ struct RobotSceneView: View
                         {
                             OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
                                 .onChange(of: base_workspace.selected_robot.origin_location)
-                            { _ in
+                            { _, _ in
                                 //base_workspace.selected_robot.robot_location_place()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
@@ -906,7 +906,7 @@ struct RobotSceneView: View
                         {
                             SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
                                 .onChange(of: base_workspace.selected_robot.space_scale)
-                            { _ in
+                            { _, _ in
                                 base_workspace.selected_robot.update_space_scale()
                                 base_workspace.update_view()
                                 document.preset.robots = base_workspace.file_data().robots
@@ -1374,7 +1374,7 @@ struct RobotInspectorView: View
                             }
                             .onMove(perform: point_item_move)
                             .onChange(of: base_workspace.robots)
-                            { _ in
+                            { _, _ in
                                 document.preset.robots = base_workspace.file_data().robots
                                 app_state.get_scene_image = true
                             }
@@ -1943,7 +1943,7 @@ struct PositionItemView: View
                                     }
                                 }
                                 .onChange(of: item_view_pos_location)
-                                { _ in
+                                { _, _ in
                                     update_point_location()
                                 }
                             case .rotation:
@@ -1962,7 +1962,7 @@ struct PositionItemView: View
                                             .labelsHidden()
                                     }
                                     .onChange(of: item_view_pos_rotation)
-                                    { _ in
+                                    { _, _ in
                                         update_point_rotation()
                                     }
                                 }
@@ -2002,7 +2002,7 @@ struct PositionItemView: View
                                         }
                                     }
                                     .onChange(of: item_view_pos_location)
-                                    { _ in
+                                    { _, _ in
                                         update_point_location()
                                     }
                                 case .rotation:
@@ -2019,7 +2019,7 @@ struct PositionItemView: View
                                                 .labelsHidden()
                                         }
                                         .onChange(of: item_view_pos_rotation)
-                                        { _ in
+                                        { _, _ in
                                             update_point_rotation()
                                         }
                                     }
@@ -2059,7 +2059,7 @@ struct PositionItemView: View
                                         }
                                     }
                                     .onChange(of: item_view_pos_location)
-                                    { _ in
+                                    { _, _ in
                                         update_point_location()
                                     }
                                 case .rotation:
@@ -2076,7 +2076,7 @@ struct PositionItemView: View
                                                 .labelsHidden()
                                         }
                                         .onChange(of: item_view_pos_rotation)
-                                        { _ in
+                                        { _, _ in
                                             update_point_rotation()
                                         }
                                     }
@@ -2126,18 +2126,18 @@ struct PositionItemView: View
             }
             .padding()
             .onChange(of: item_view_pos_type)
-            { newValue in
+            { _, new_value in
                 if appeared
                 {
-                    point_item.move_type = newValue
+                    point_item.move_type = new_value
                     update_workspace_data()
                 }
             }
             .onChange(of: item_view_pos_speed)
-            { newValue in
+            { _, new_value in
                 if appeared
                 {
-                    point_item.move_speed = item_view_pos_speed
+                    point_item.move_speed = new_value
                     update_workspace_data()
                 }
             }

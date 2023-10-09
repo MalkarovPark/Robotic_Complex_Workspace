@@ -93,7 +93,7 @@ struct CardMenu: ViewModifier
                         }
                     }
                     .onChange(of: object.is_placed)
-                    { _ in
+                    { _, _ in
                         update_file()
                     }
                     .overlay

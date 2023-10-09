@@ -733,11 +733,11 @@ struct MenuHandlingModifier: ViewModifier
     {
         content
             .onChange(of: app_state.run_command)
-            { _ in
+            { _, _ in
                 toggle_perform()
             }
             .onChange(of: app_state.stop_command)
-            { _ in
+            { _, _ in
                 stop_perform()
             }
             .onAppear

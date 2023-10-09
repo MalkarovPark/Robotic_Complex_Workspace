@@ -144,7 +144,7 @@ struct ConnectorView: View
                 .labelsHidden()
                 #endif
                 .onChange(of: demo)
-                { _ in
+                { _, _ in
                     if update_model
                     {
                         update_model.toggle()
@@ -159,7 +159,7 @@ struct ConnectorView: View
                     Image(systemName: "arrow.triangle.2.circlepath")
                 }
                 .onChange(of: update_model)
-                { _ in
+                { _, _ in
                     update_file_data()
                 }
                 .disabled(demo)
@@ -190,10 +190,10 @@ struct ConnectorView: View
                 .buttonStyle(.bordered)
                 #endif
                 .onChange(of: connected)
-                { newValue in
+                { _, new_value in
                     if !toggle_enabled
                     {
-                        if newValue
+                        if new_value
                         {
                             connector.connect()
                         }
@@ -204,8 +204,8 @@ struct ConnectorView: View
                     }
                 }
                 .onChange(of: connector.connection_failure)
-                { newValue in
-                    if newValue
+                { _, new_value in
+                    if new_value
                     {
                         toggle_enabled = true
                         connected = false
@@ -282,8 +282,8 @@ struct ConnectionParameterView: View
                     }
                 }
                 .onChange(of: new_string_value)
-                { newValue in
-                    parameter.value = newValue
+                { _, new_value in
+                    parameter.value = new_value
                     
                     if appeared
                     {
@@ -311,8 +311,8 @@ struct ConnectionParameterView: View
                     }
                 }
                 .onChange(of: new_int_value)
-                { newValue in
-                    parameter.value = newValue
+                { _, new_value in
+                    parameter.value = new_value
                     
                     if appeared
                     {
@@ -340,8 +340,8 @@ struct ConnectionParameterView: View
                     }
                 }
                 .onChange(of: new_float_value)
-                { newValue in
-                    parameter.value = newValue
+                { _, new_value in
+                    parameter.value = new_value
                     
                     if appeared
                     {
@@ -367,8 +367,8 @@ struct ConnectionParameterView: View
                     }
                 }
                 .onChange(of: new_bool_value)
-                { newValue in
-                    parameter.value = newValue
+                { _, new_value in
+                    parameter.value = new_value
                     
                     if appeared
                     {

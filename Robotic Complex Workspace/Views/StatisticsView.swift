@@ -68,7 +68,7 @@ struct StatisticsView: View
             .toggleStyle(.switch)
             .padding(.horizontal)
             .onChange(of: get_statistics)
-            { _ in
+            { _, _ in
                 update_file_data()
             }
             #else
@@ -86,7 +86,7 @@ struct StatisticsView: View
             }
             .padding(.horizontal)
             .onChange(of: get_statistics)
-            { _ in
+            { _, _ in
                 update_file_data()
             }
             #endif

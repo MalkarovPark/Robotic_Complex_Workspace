@@ -255,7 +255,7 @@ struct PropertiesSettingsView: View
                                 }
                             }
                             .onChange(of: app_state.selected_plist_names.Robots)
-                            { _ in
+                            { _, _ in
                                 app_state.update_additive_data(type: .robot)
                                 app_state.save_selected_plist_names(type: .robot)
                             }
@@ -315,7 +315,7 @@ struct PropertiesSettingsView: View
                                 }
                             }
                             .onChange(of: app_state.selected_plist_names.Tools)
-                            { _ in
+                            { _, _ in
                                 app_state.update_additive_data(type: .tool)
                                 app_state.save_selected_plist_names(type: .tool)
                             }
@@ -376,7 +376,7 @@ struct PropertiesSettingsView: View
                                 }
                             }
                             .onChange(of: app_state.selected_plist_names.Parts)
-                            { _ in
+                            { _, _ in
                                 app_state.update_additive_data(type: .part)
                                 app_state.save_selected_plist_names(type: .part)
                             }
@@ -451,7 +451,7 @@ struct PropertiesSettingsView: View
                         }
                         .pickerStyle(.menu)
                         .onChange(of: app_state.selected_plist_names.Robots)
-                        { _ in
+                        { _, _ in
                             app_state.update_additive_data(type: .robot)
                             app_state.save_selected_plist_names(type: .robot)
                         }
@@ -498,7 +498,7 @@ struct PropertiesSettingsView: View
                         }
                         .pickerStyle(.menu)
                         .onChange(of: app_state.selected_plist_names.Tools)
-                        { _ in
+                        { _, _ in
                             app_state.update_additive_data(type: .tool)
                             app_state.save_selected_plist_names(type: .tool)
                         }
@@ -545,7 +545,7 @@ struct PropertiesSettingsView: View
                         }
                         .pickerStyle(.menu)
                         .onChange(of: app_state.selected_plist_names.Parts)
-                        { _ in
+                        { _, _ in
                             app_state.update_additive_data(type: .part)
                             app_state.save_selected_plist_names(type: .part)
                         }
@@ -670,8 +670,8 @@ struct CellSettingsView: View
                                 .labelsHidden()
                         }
                         .onChange(of: location_x)
-                        { _ in
-                            Robot.default_origin_location[0] = Float(location_x)
+                        { _, new_value in
+                            Robot.default_origin_location[0] = Float(new_value)
                         }
                         
                         HStack(spacing: 8)
@@ -685,8 +685,8 @@ struct CellSettingsView: View
                                 .labelsHidden()
                         }
                         .onChange(of: location_y)
-                        { _ in
-                            Robot.default_origin_location[1] = Float(location_y)
+                        { _, new_value in
+                            Robot.default_origin_location[1] = Float(new_value)
                         }
                         
                         HStack(spacing: 8)
@@ -700,8 +700,8 @@ struct CellSettingsView: View
                                 .labelsHidden()
                         }
                         .onChange(of: location_z)
-                        { _ in
-                            Robot.default_origin_location[2] = Float(location_z)
+                        { _, new_value in
+                            Robot.default_origin_location[2] = Float(new_value)
                         }
                     }
                     .padding(8)
@@ -722,8 +722,8 @@ struct CellSettingsView: View
                                 .labelsHidden()
                         }
                         .onChange(of: scale_x)
-                        { _ in
-                            Robot.default_space_scale[0] = Float(scale_x)
+                        { _, new_value in
+                            Robot.default_space_scale[0] = Float(new_value)
                         }
                         
                         HStack(spacing: 8)
@@ -737,8 +737,8 @@ struct CellSettingsView: View
                                 .labelsHidden()
                         }
                         .onChange(of: scale_y)
-                        { _ in
-                            Robot.default_space_scale[1] = Float(scale_y)
+                        { _, new_value in
+                            Robot.default_space_scale[1] = Float(new_value)
                         }
                         
                         HStack(spacing: 8)
@@ -752,8 +752,8 @@ struct CellSettingsView: View
                                 .labelsHidden()
                         }
                         .onChange(of: scale_z)
-                        { _ in
-                            Robot.default_space_scale[2] = Float(scale_z)
+                        { _, new_value in
+                            Robot.default_space_scale[2] = Float(new_value)
                         }
                     }
                     .padding(8)
@@ -772,8 +772,8 @@ struct CellSettingsView: View
                             .labelsHidden()
                     }
                     .onChange(of: location_x)
-                    { _ in
-                        Robot.default_origin_location[0] = Float(location_x)
+                    { _, new_value in
+                        Robot.default_origin_location[0] = Float(new_value)
                     }
                     
                     HStack(spacing: 8)
@@ -786,8 +786,8 @@ struct CellSettingsView: View
                             .labelsHidden()
                     }
                     .onChange(of: location_y)
-                    { _ in
-                        Robot.default_origin_location[1] = Float(location_y)
+                    { _, new_value in
+                        Robot.default_origin_location[1] = Float(new_value)
                     }
                     
                     HStack(spacing: 8)
@@ -800,8 +800,8 @@ struct CellSettingsView: View
                             .labelsHidden()
                     }
                     .onChange(of: location_z)
-                    { _ in
-                        Robot.default_origin_location[2] = Float(location_z)
+                    { _, new_value in
+                        Robot.default_origin_location[2] = Float(new_value)
                     }
                 }
                 
@@ -817,8 +817,8 @@ struct CellSettingsView: View
                             .labelsHidden()
                     }
                     .onChange(of: scale_x)
-                    { _ in
-                        Robot.default_space_scale[0] = Float(scale_x)
+                    { _, new_value in
+                        Robot.default_space_scale[0] = Float(new_value)
                     }
                     
                     HStack(spacing: 8)
@@ -831,8 +831,8 @@ struct CellSettingsView: View
                             .labelsHidden()
                     }
                     .onChange(of: scale_y)
-                    { _ in
-                        Robot.default_space_scale[1] = Float(scale_y)
+                    { _, new_value in
+                        Robot.default_space_scale[1] = Float(new_value)
                     }
                     
                     HStack(spacing: 8)
@@ -845,8 +845,8 @@ struct CellSettingsView: View
                             .labelsHidden()
                     }
                     .onChange(of: scale_z)
-                    { _ in
-                        Robot.default_space_scale[2] = Float(scale_z)
+                    { _, new_value in
+                        Robot.default_space_scale[2] = Float(new_value)
                     }
                 }
                 #endif
