@@ -210,10 +210,10 @@ struct WorkspaceView: View
         #if os(iOS) || os(visionOS)
         .navigationTitle($file_name)
         .onChange(of: file_name)
-        { _, new_value in
+        { _, _ in
             print(file_name)
         }
-        .navigationDocument(new_value)
+        .navigationDocument(file_url)
         #endif
     }
     
@@ -399,19 +399,19 @@ struct ComplexWorkspaceView: View
         ZStack
         {
             #if os(macOS)
-            WorkspaceSceneView_macOS()
+            WorkspaceSceneView()
                 .modifier(WorkspaceMenu())
             #else
             if !(horizontal_size_class == .compact)
             {
-                WorkspaceSceneView_iOS()
+                WorkspaceSceneView()
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .navigationBarTitleDisplayMode(.inline)
                     .modifier(WorkspaceMenu())
             }
             else
             {
-                WorkspaceSceneView_iOS()
+                WorkspaceSceneView()
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding()
                     .navigationBarTitleDisplayMode(.inline)
@@ -501,8 +501,7 @@ struct ComplexWorkspaceView: View
     }
 }
 
-#if os(macOS)
-struct WorkspaceSceneView_macOS: NSViewRepresentable
+struct WorkspaceSceneView: UIViewRepresentable
 {
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -519,6 +518,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         return scene_view
     }
     
+    #if os(macOS)
     func makeNSView(context: Context) -> SCNView
     {
         //Connect scene to class and add placed robots and parts in workspace
@@ -528,7 +528,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         }
         
         //Add gesture recognizer
-        let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
+        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         base_workspace.scene = viewed_scene
@@ -539,102 +539,7 @@ struct WorkspaceSceneView_macOS: NSViewRepresentable
         
         return scn_scene(context: context)
     }
-
-    func updateNSView(_ ui_view: SCNView, context: Context)
-    {
-        //Update commands
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
-    }
-    
-    func makeCoordinator() -> Coordinator
-    {
-        Coordinator(self, scene_view, workspace: base_workspace)
-    }
-    
-    final class Coordinator: NSObject, SCNSceneRendererDelegate, ObservableObject
-    {
-        var control: WorkspaceSceneView_macOS
-        var workspace: Workspace
-        
-        init(_ control: WorkspaceSceneView_macOS, _ scn_view: SCNView, workspace: Workspace)
-        {
-            self.control = control
-            
-            self.scn_view = scn_view
-            self.workspace = workspace
-            super.init()
-        }
-        
-        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
-        {
-            control.scene_check()
-        }
-        
-        private let scn_view: SCNView
-        @objc func handle_tap(sender: NSClickGestureRecognizer)
-        {
-            if !workspace.is_editing && !workspace.performed
-            {
-                let tap_location = sender.location(in: scn_view)
-                let hit_results = scn_view.hitTest(tap_location, options: [:])
-                var result = SCNHitTestResult()
-                
-                if hit_results.count > 0
-                {
-                    workspace.select_object_in_scene(result: hit_results.first!)
-                }
-                else
-                {
-                    workspace.deselect_object_for_edit()
-                }
-            }
-        }
-    }
-    
-    func scene_check() //Render functions
-    {
-        if base_workspace.is_selected && base_workspace.performed
-        {
-            base_workspace.selected_robot.update_model()
-            
-            if base_workspace.selected_robot.moving_completed
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-                {
-                    base_workspace.selected_robot.moving_completed = false
-                    base_workspace.update_view()
-                }
-            }
-        }
-        
-        if base_workspace.element_changed
-        {
-            DispatchQueue.main.asyncAfter(deadline: .now())
-            {
-                base_workspace.update_view()
-                base_workspace.element_changed = false
-            }
-        }
-    }
-}
-#else
-struct WorkspaceSceneView_iOS: UIViewRepresentable
-{
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
-    
-    let scene_view = SCNView(frame: .zero)
-    let viewed_scene = SCNScene(named: "Components.scnassets/Workspace.scn")!
-    
-    func scn_scene(context: Context) -> SCNView
-    {
-        app_state.reset_view = false
-        app_state.reset_view_enabled = true
-        scene_view.scene = viewed_scene
-        scene_view.delegate = context.coordinator
-        return scene_view
-    }
-    
+    #else
     func makeUIView(context: Context) -> SCNView
     {
         //Connect scene to class and add placed robots and parts in workspace
@@ -655,12 +560,21 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         
         return scn_scene(context: context)
     }
-
+    #endif
+    
+    #if os(macOS)
+    func updateNSView(_ ui_view: SCNView, context: Context)
+    {
+        //Update commands
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+    }
+    #else
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
         app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
     }
+    #endif
     
     func makeCoordinator() -> Coordinator
     {
@@ -669,10 +583,10 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate, ObservableObject
     {
-        var control: WorkspaceSceneView_iOS
+        var control: WorkspaceSceneView
         var workspace: Workspace
         
-        init(_ control: WorkspaceSceneView_iOS, _ scn_view: SCNView, workspace: Workspace)
+        init(_ control: WorkspaceSceneView, _ scn_view: SCNView, workspace: Workspace)
         {
             self.control = control
             
@@ -733,7 +647,6 @@ struct WorkspaceSceneView_iOS: UIViewRepresentable
         }
     }
 }
-#endif
 
 struct AddInWorkspaceView: View
 {

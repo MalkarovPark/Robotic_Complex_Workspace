@@ -196,8 +196,7 @@ struct AddToolView:View
     {
         VStack(spacing: 0)
         {
-            #if os(macOS)
-            ToolSceneView_macOS()
+            ToolSceneView()
                 .overlay(alignment: .top)
                 {
                     Text("Add Tool")
@@ -207,18 +206,6 @@ struct AddToolView:View
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding([.top, .leading, .trailing])
                 }
-            #else
-            ToolSceneView_iOS()
-                .overlay(alignment: .top)
-                {
-                    Text("Add Tool")
-                        .font(.title2)
-                        .padding(8)
-                        .background(.bar)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                        .padding([.top, .leading, .trailing])
-                }
-            #endif
             
             Divider()
             Spacer()
@@ -325,7 +312,7 @@ struct ToolView: View
             #if os(macOS)
             HStack(spacing: 0)
             {
-                ToolSceneView_macOS()
+                ToolSceneView()
             }
             .overlay(alignment: .topLeading)
             {
@@ -403,7 +390,7 @@ struct ToolView: View
             {
                 VStack(spacing: 0)
                 {
-                    ToolSceneView_iOS()
+                    ToolSceneView()
                         .overlay(alignment: .bottom)
                     {
                         HStack
@@ -492,7 +479,7 @@ struct ToolView: View
             {
                 HStack(spacing: 0)
                 {
-                    ToolSceneView_iOS()
+                    ToolSceneView()
                 }
                 .overlay(alignment: .topLeading)
                 {
@@ -1155,8 +1142,7 @@ struct OperationItemListView: View
 }
 
 //MARK: - Scene views
-#if os(macOS)
-struct ToolSceneView_macOS: NSViewRepresentable
+struct ToolSceneView: UIViewRepresentable
 {
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
     
@@ -1172,27 +1158,47 @@ struct ToolSceneView_macOS: NSViewRepresentable
         app_state.reset_view_enabled = true
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
-        scene_view.scene?.background.contents = NSColor.clear
+        scene_view.scene?.background.contents = UIColor.clear
         return scene_view
     }
     
+    #if os(macOS)
     func makeNSView(context: Context) -> SCNView
     {
         base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
         
         //Add gesture recognizer
-        let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         scene_view.allowsCameraControl = true
         scene_view.rendersContinuously = true
         scene_view.autoenablesDefaultLighting = true
         
-        scene_view.backgroundColor = NSColor.clear
+        scene_view.backgroundColor = UIColor.clear
         
         return scn_scene(context: context)
     }
-
+    #else
+    func makeUIView(context: Context) -> SCNView
+    {
+        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
+        
+        //Add gesture recognizer
+        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        scene_view.allowsCameraControl = true
+        scene_view.rendersContinuously = true
+        scene_view.autoenablesDefaultLighting = true
+        
+        scene_view.backgroundColor = UIColor.clear
+        
+        return scn_scene(context: context)
+    }
+    #endif
+    
+    #if os(macOS)
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
@@ -1203,6 +1209,18 @@ struct ToolSceneView_macOS: NSViewRepresentable
             app_state.previewed_object?.image = ui_view.snapshot()
         }
     }
+    #else
+    func updateUIView(_ ui_view: SCNView, context: Context)
+    {
+        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        
+        if app_state.get_scene_image && workspace_images_store
+        {
+            app_state.get_scene_image = false
+            app_state.previewed_object?.image = ui_view.snapshot()
+        }
+    }
+    #endif
     
     func makeCoordinator() -> Coordinator
     {
@@ -1211,9 +1229,9 @@ struct ToolSceneView_macOS: NSViewRepresentable
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate
     {
-        var control: ToolSceneView_macOS
+        var control: ToolSceneView
         
-        init(_ control: ToolSceneView_macOS, _ scn_view: SCNView)
+        init(_ control: ToolSceneView, _ scn_view: SCNView)
         {
             self.control = control
             
@@ -1227,7 +1245,7 @@ struct ToolSceneView_macOS: NSViewRepresentable
         }
         
         private let scn_view: SCNView
-        @objc func handle_tap(_ gesture_recognize: NSGestureRecognizer)
+        @objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
             let tap_location = gesture_recognize.location(in: scn_view)
             let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -1284,136 +1302,6 @@ struct ToolSceneView_macOS: NSViewRepresentable
         }
     }
 }
-#else
-struct ToolSceneView_iOS: UIViewRepresentable
-{
-    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
-    
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
-    
-    let scene_view = SCNView(frame: .zero)
-    let viewed_scene = SCNScene(named: "Components.scnassets/View.scn")!
-    
-    func scn_scene(context: Context) -> SCNView
-    {
-        app_state.reset_view = false
-        app_state.reset_view_enabled = true
-        scene_view.scene = viewed_scene
-        scene_view.delegate = context.coordinator
-        scene_view.scene?.background.contents = UIColor.clear
-        return scene_view
-    }
-    
-    func makeUIView(context: Context) -> SCNView
-    {
-        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
-        
-        //Add gesture recognizer
-        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
-        scene_view.addGestureRecognizer(tap_gesture_recognizer)
-        
-        scene_view.allowsCameraControl = true
-        scene_view.rendersContinuously = true
-        scene_view.autoenablesDefaultLighting = true
-        
-        scene_view.backgroundColor = UIColor.clear
-        
-        return scn_scene(context: context)
-    }
-
-    func updateUIView(_ ui_view: SCNView, context: Context)
-    {
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
-        
-        if app_state.get_scene_image && workspace_images_store
-        {
-            app_state.get_scene_image = false
-            app_state.previewed_object?.image = ui_view.snapshot()
-        }
-    }
-    
-    func makeCoordinator() -> Coordinator
-    {
-        Coordinator(self, scene_view)
-    }
-    
-    final class Coordinator: NSObject, SCNSceneRendererDelegate
-    {
-        var control: ToolSceneView_iOS
-        
-        init(_ control: ToolSceneView_iOS, _ scn_view: SCNView)
-        {
-            self.control = control
-            
-            self.scn_view = scn_view
-            super.init()
-        }
-
-        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
-        {
-            control.scene_check()
-        }
-        
-        private let scn_view: SCNView
-        @objc func handle_tap(_ gesture_recognize: UIGestureRecognizer)
-        {
-            let tap_location = gesture_recognize.location(in: scn_view)
-            let hit_results = scn_view.hitTest(tap_location, options: [:])
-            var result = SCNHitTestResult()
-            
-            if hit_results.count > 0
-            {
-                result = hit_results[0]
-                
-                print(result.localCoordinates)
-                print("🍮 tapped – \(result.node.name!)")
-            }
-        }
-    }
-    
-    func scene_check()
-    {
-        if app_state.preview_update_scene
-        {
-            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Tool", recursively: true)
-            remove_node?.removeFromParentNode()
-            
-            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
-            app_state.previewed_object?.node?.name = "Tool"
-            apply_bit_mask(node: app_state.previewed_object!.node ?? SCNNode(), Workspace.tool_bit_mask)
-            app_state.preview_update_scene = false
-        }
-        
-        if app_state.object_view_was_open //Provide scene connection to model controller if tool was opened
-        {
-            base_workspace.selected_tool.workcell_connect(scene: scene_view.scene!, name: "Tool")
-            app_state.object_view_was_open = false
-        }
-        
-        if base_workspace.selected_object_type == .tool
-        {
-            if base_workspace.selected_tool.performing_completed == true
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                {
-                    base_workspace.selected_tool.performing_completed = false
-                    base_workspace.update_view()
-                }
-            }
-            
-            if base_workspace.selected_tool.code_changed
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now())
-                {
-                    base_workspace.update_view()
-                    base_workspace.selected_tool.code_changed = false
-                }
-            }
-        }
-    }
-}
-#endif
 
 //MARK: - Previews
 struct ToolsView_Previews: PreviewProvider

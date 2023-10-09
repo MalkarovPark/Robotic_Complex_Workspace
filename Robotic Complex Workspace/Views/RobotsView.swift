@@ -814,22 +814,10 @@ struct RobotSceneView: View
     {
         ZStack
         {
-            #if os(macOS)
-            CellSceneView_macOS()
-            #else
-            if !(horizontal_size_class == .compact)
-            {
-                CellSceneView_iOS()
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .navigationBarTitleDisplayMode(.inline)
-            }
-            else
-            {
-                CellSceneView_iOS()
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .padding()
-                    .navigationBarTitleDisplayMode(.inline)
-            }
+            CellSceneView()
+            #if os(iOS) || os(visionOS)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .navigationBarTitleDisplayMode(.inline)
             #endif
             
             HStack
@@ -938,8 +926,7 @@ struct RobotSceneView: View
     }
 }
 
-#if os(macOS)
-struct CellSceneView_macOS: NSViewRepresentable
+struct CellSceneView: UIViewRepresentable
 {
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
     
@@ -958,13 +945,14 @@ struct CellSceneView_macOS: NSViewRepresentable
         return scene_view
     }
     
+    #if os(macOS)
     func makeNSView(context: Context) -> SCNView
     {
         //Connect workcell box and pointer
         base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
         
         //Add gesture recognizer
-        let tap_gesture_recognizer = NSClickGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         scene_view.allowsCameraControl = true
@@ -973,7 +961,25 @@ struct CellSceneView_macOS: NSViewRepresentable
         
         return scn_scene(context: context)
     }
-
+    #else
+    func makeUIView(context: Context) -> SCNView
+    {
+        //Connect workcell box and pointer
+        base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
+        
+        //Add gesture recognizer
+        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        scene_view.allowsCameraControl = true
+        scene_view.rendersContinuously = true
+        scene_view.autoenablesDefaultLighting = true
+        
+        return scn_scene(context: context)
+    }
+    #endif
+    
+    #if os(macOS)
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
@@ -993,103 +999,7 @@ struct CellSceneView_macOS: NSViewRepresentable
             base_workspace.selected_robot.image = ui_view.snapshot()
         }
     }
-    
-    func makeCoordinator() -> Coordinator
-    {
-        Coordinator(self, scene_view)
-    }
-    
-    final class Coordinator: NSObject, SCNSceneRendererDelegate
-    {
-        var control: CellSceneView_macOS
-        
-        init(_ control: CellSceneView_macOS, _ scn_view: SCNView)
-        {
-            self.control = control
-            
-            self.scn_view = scn_view
-            super.init()
-        }
-        
-        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
-        {
-            control.scene_check()
-        }
-        
-        private let scn_view: SCNView
-        @objc func handle_tap(_ gesture_recognize: NSGestureRecognizer)
-        {
-            let tap_location = gesture_recognize.location(in: scn_view)
-            let hit_results = scn_view.hitTest(tap_location, options: [:])
-            var result = SCNHitTestResult()
-            
-            if hit_results.count > 0
-            {
-                result = hit_results[0]
-                
-                print(result.localCoordinates)
-                print("🍮 tapped – \(result.node.name!)")
-            }
-        }
-    }
-    
-    func scene_check() //Render functions
-    {
-        if base_workspace.selected_robot.moving_completed == true
-        {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                base_workspace.selected_robot.moving_completed = false
-                base_workspace.update_view()
-            }
-        }
-        
-        if base_workspace.selected_robot.performed == true
-        {
-            base_workspace.selected_robot.update_model()
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                base_workspace.update_view()
-            }
-        }
-    }
-}
-#else
-struct CellSceneView_iOS: UIViewRepresentable
-{
-    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
-    
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
-    
-    let scene_view = SCNView(frame: .zero)
-    let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
-    
-    func scn_scene(context: Context) -> SCNView
-    {
-        app_state.reset_view = false
-        scene_view.scene = viewed_scene
-        scene_view.delegate = context.coordinator
-        return scene_view
-    }
-    
-    func makeUIView(context: Context) -> SCNView
-    {
-        //Connect workcell box and pointer
-        base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
-        
-        //Add gesture recognizer
-        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
-        scene_view.addGestureRecognizer(tap_gesture_recognizer)
-        
-        scene_view.allowsCameraControl = true
-        scene_view.rendersContinuously = true
-        scene_view.autoenablesDefaultLighting = true
-        
-        return scn_scene(context: context)
-    }
-
+    #else
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
@@ -1109,6 +1019,7 @@ struct CellSceneView_iOS: UIViewRepresentable
             base_workspace.selected_robot.image = ui_view.snapshot()
         }
     }
+    #endif
     
     func makeCoordinator() -> Coordinator
     {
@@ -1117,23 +1028,23 @@ struct CellSceneView_iOS: UIViewRepresentable
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate
     {
-        var control: CellSceneView_iOS
+        var control: CellSceneView
         
-        init(_ control: CellSceneView_iOS, _ scn_view: SCNView)
+        init(_ control: CellSceneView, _ scn_view: SCNView)
         {
             self.control = control
             
             self.scn_view = scn_view
             super.init()
         }
-
+        
         func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
         {
             control.scene_check()
         }
         
         private let scn_view: SCNView
-        @objc func handle_tap(_ gesture_recognize: UIGestureRecognizer)
+        @objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
             let tap_location = gesture_recognize.location(in: scn_view)
             let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -1171,7 +1082,6 @@ struct CellSceneView_iOS: UIViewRepresentable
         }
     }
 }
-#endif
 
 //MARK: Scale elements
 struct SpaceScaleView: View
