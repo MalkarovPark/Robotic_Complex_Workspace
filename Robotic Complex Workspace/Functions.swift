@@ -54,3 +54,5 @@ func change_by(name: String, registers: inout [Int])
         break
     }
 }
+
+let changer_modules_names = ["Module", "Module 2"]
