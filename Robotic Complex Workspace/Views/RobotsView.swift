@@ -511,6 +511,7 @@ struct RobotView: View
                 VStack(spacing: 0)
                 {
                     RobotSceneView(document: $document)
+                        .padding()
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     
                     HStack
@@ -1522,9 +1523,7 @@ struct RobotInspectorView: View
                 .popover(isPresented: $add_program_view_presented)
                 {
                     AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
-                    #if os(macOS)
-                        .frame(height: 72)
-                    #else
+                    #if os(iOS)
                         .presentationDetents([.height(96)])
                     #endif
                 }
@@ -1678,18 +1677,9 @@ struct AddProgramView: View
     {
         VStack
         {
-            Text("New position program")
-                .font(.title3)
-            #if os(macOS)
-                .padding(.top, 12)
-            #else
-                .padding([.leading, .top, .trailing])
-                .padding(.bottom, 8)
-            #endif
-            
             HStack(spacing: 12)
             {
-                TextField("None", text: $new_program_name)
+                TextField("Name", text: $new_program_name)
                     .frame(minWidth: 128, maxWidth: 256)
                 #if os(iOS) || os(visionOS)
                     .frame(idealWidth: 256)
@@ -1713,7 +1703,7 @@ struct AddProgramView: View
                 .fixedSize()
                 .keyboardShortcut(.defaultAction)
             }
-            .padding([.leading, .bottom, .trailing], 12)
+            .padding(12)
         }
     }
 }

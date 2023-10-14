@@ -217,16 +217,7 @@ struct ConnectorView: View
         }
         #if os(macOS)
         .frame(minWidth: 320, idealWidth: 400, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
-        .overlay(alignment: .topLeading)
-        {
-            Button(action: close_connector)
-            {
-                Image(systemName: "xmark")
-            }
-            .buttonStyle(.bordered)
-            .keyboardShortcut(.cancelAction)
-            .padding()
-        }
+        .modifier(ViewCloseButton(is_presented: $is_presented))
         .controlSize(.regular)
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -238,10 +229,10 @@ struct ConnectorView: View
         }
     }
     
-    private func close_connector()
+    /*private func close_connector()
     {
         is_presented = false
-    }
+    }*/
 }
 
 struct ConnectionParameterView: View

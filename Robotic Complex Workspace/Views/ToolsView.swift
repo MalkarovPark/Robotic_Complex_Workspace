@@ -314,16 +314,7 @@ struct ToolView: View
             {
                 ToolSceneView()
             }
-            .overlay(alignment: .topLeading)
-            {
-                Button(action: close_tool)
-                {
-                    Image(systemName: "xmark")
-                }
-                .buttonStyle(.bordered)
-                .keyboardShortcut(.cancelAction)
-                .padding()
-            }
+            .modifier(ViewCloseFuncButton(close_action: close_tool))
             .overlay(alignment: .bottomLeading)
             {
                 HStack(spacing: 0)
@@ -462,16 +453,7 @@ struct ToolView: View
                         }
                     }
                 }
-                .overlay(alignment: .topLeading)
-                {
-                    Button(action: close_tool)
-                    {
-                        Image(systemName: "xmark")
-                    }
-                    .buttonStyle(.bordered)
-                    .keyboardShortcut(.cancelAction)
-                    .padding()
-                }
+                .modifier(ViewCloseFuncButton(close_action: close_tool))
                 .disabled(base_workspace.selected_tool.codes_count == 0)
                 .modifier(MenuHandlingModifier(performed: $base_workspace.selected_tool.performed, toggle_perform: base_workspace.selected_tool.start_pause_performing, stop_perform: base_workspace.selected_tool.reset_performing))
             }
@@ -481,16 +463,7 @@ struct ToolView: View
                 {
                     ToolSceneView()
                 }
-                .overlay(alignment: .topLeading)
-                {
-                    Button(action: close_tool)
-                    {
-                        Image(systemName: "xmark")
-                    }
-                    .buttonStyle(.bordered)
-                    .keyboardShortcut(.cancelAction)
-                    .padding()
-                }
+                .modifier(ViewCloseFuncButton(close_action: close_tool))
                 .overlay(alignment: .bottomLeading)
                 {
                     HStack(spacing: 0)
@@ -903,9 +876,7 @@ struct ToolInspectorView: View
                     .popover(isPresented: $add_program_view_presented)
                     {
                         AddOperationProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_tool.selected_program_index)
-                        #if os(macOS)
-                            .frame(height: 72)
-                        #else
+                        #if os(iOS)
                             .presentationDetents([.height(96)])
                         #endif
                     }
@@ -1018,18 +989,9 @@ struct AddOperationProgramView: View
     {
         VStack
         {
-            Text("New operations program")
-                .font(.title3)
-            #if os(macOS)
-                .padding(.top, 12)
-            #else
-                .padding([.leading, .top, .trailing])
-                .padding(.bottom, 8)
-            #endif
-            
             HStack(spacing: 12)
             {
-                TextField("None", text: $new_program_name)
+                TextField("Name", text: $new_program_name)
                     .frame(minWidth: 128, maxWidth: 256)
                 #if os(iOS) || os(visionOS)
                     .frame(idealWidth: 256)
@@ -1052,7 +1014,7 @@ struct AddOperationProgramView: View
                 .fixedSize()
                 .keyboardShortcut(.defaultAction)
             }
-            .padding([.leading, .bottom, .trailing], 12)
+            .padding(12)
         }
     }
 }

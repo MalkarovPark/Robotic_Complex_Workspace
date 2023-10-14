@@ -79,22 +79,7 @@ struct CaptionModifier: ViewModifier
                     .padding()
             }
             .frame(maxWidth: .infinity)
-            .overlay(alignment: .trailing)
-            {
-                ZStack
-                {
-                    Image(systemName: "xmark")
-                        .padding(4.0)
-                }
-                .frame(width: 30, height: 30)
-                .background(.thinMaterial)
-                .clipShape(Circle())
-                .onTapGesture
-                {
-                    app_state.settings_view_presented = false
-                }
-                .padding()
-            }
+            .modifier(ViewCloseButton(is_presented: $app_state.settings_view_presented))
 
             Divider()
             

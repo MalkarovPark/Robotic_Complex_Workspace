@@ -347,16 +347,7 @@ struct PartView: View
             }
             .padding(.vertical)
         }
-        .overlay(alignment: .topLeading)
-        {
-            Button(action: { part_view_presented.toggle() })
-            {
-                Image(systemName: "xmark")
-            }
-            .buttonStyle(.bordered)
-            .keyboardShortcut(.cancelAction)
-            .padding()
-        }
+        .modifier(ViewCloseButton(is_presented: $part_view_presented))
         .controlSize(.regular)
         #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
