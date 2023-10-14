@@ -56,7 +56,7 @@ struct RobotsTableView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
     
     var body: some View
     {
@@ -1635,8 +1635,7 @@ struct PositionParameterView: View
                 position_parameter_view_presented.toggle()
             })
             {
-                Label("Reset", systemImage: "arrow.counterclockwise")
-                    .labelStyle(.iconOnly)
+                Image(systemName: "arrow.counterclockwise")
             }
             .buttonStyle(.borderedProminent)
             #if os(macOS)

@@ -1270,7 +1270,7 @@ struct ToolSceneView: UIViewRepresentable
             
             scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
             app_state.previewed_object?.node?.name = "Tool"
-            apply_bit_mask(node: app_state.previewed_object!.node ?? SCNNode(), Workspace.tool_bit_mask)
+            apply_bit_mask(node: app_state.previewed_object?.node ?? SCNNode(), Workspace.tool_bit_mask)
             app_state.preview_update_scene = false
         }
         

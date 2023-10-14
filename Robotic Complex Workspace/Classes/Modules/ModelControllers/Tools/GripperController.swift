@@ -164,7 +164,7 @@ class GripperController: ToolModelController
         charts = [WorkspaceObjectChart]()
     }
     
-    override func state() -> [StateItem]?
+    override func state_data() -> [StateItem]?
     {
         var state = [StateItem]()
         

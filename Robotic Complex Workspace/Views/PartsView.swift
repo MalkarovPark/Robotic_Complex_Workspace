@@ -351,8 +351,7 @@ struct PartView: View
         {
             Button(action: { part_view_presented.toggle() })
             {
-                Label("Close", systemImage: "xmark")
-                    .labelStyle(.iconOnly)
+                Image(systemName: "xmark")
             }
             .buttonStyle(.bordered)
             .keyboardShortcut(.cancelAction)

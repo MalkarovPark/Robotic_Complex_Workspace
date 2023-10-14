@@ -267,13 +267,11 @@ struct PropertiesSettingsView: View
                                 app_state.clear_additive_data(type: .robot)
                             })
                             {
-                                Label("Clear", systemImage: "arrow.counterclockwise")
-                                    .labelStyle(.iconOnly)
+                                Image(systemName: "arrow.counterclockwise")
                             }
                             Button(action: { show_load_panel(type: .robot) })
                             {
-                                Label("Folder", systemImage: "folder")
-                                    .labelStyle(.iconOnly)
+                                Image(systemName: "folder")
                             }
                         }
                         .padding(4)
@@ -328,13 +326,11 @@ struct PropertiesSettingsView: View
                                 )
                             })
                             {
-                                Label("Clear", systemImage: "arrow.counterclockwise")
-                                    .labelStyle(.iconOnly)
+                                Image(systemName: "arrow.counterclockwise")
                             }
                             Button(action: { show_load_panel(type: .tool) })
                             {
-                                Label("Folder", systemImage: "folder")
-                                    .labelStyle(.iconOnly)
+                                Image(systemName: "folder")
                             }
                         }
                         .padding(4)
@@ -388,13 +384,11 @@ struct PropertiesSettingsView: View
                                 app_state.clear_additive_data(type: .part)
                             })
                             {
-                                Label("Clear", systemImage: "arrow.counterclockwise")
-                                    .labelStyle(.iconOnly)
+                                Image(systemName: "arrow.counterclockwise")
                             }
                             Button(action: { show_load_panel(type: .part) })
                             {
-                                Label("Folder", systemImage: "folder")
-                                    .labelStyle(.iconOnly)
+                                Image(systemName: "folder")
                             }
                         }
                         .padding(4)
@@ -461,8 +455,7 @@ struct PropertiesSettingsView: View
                     
                     Button(action: { show_load_panel(type: .robot) })
                     {
-                        Label("Folder", systemImage: "folder")
-                            .labelStyle(.iconOnly)
+                        Image(systemName: "folder")
                     }
                 }
             }
@@ -508,8 +501,7 @@ struct PropertiesSettingsView: View
                     
                     Button(action: { show_load_panel(type: .tool) })
                     {
-                        Label("Folder", systemImage: "folder")
-                            .labelStyle(.iconOnly)
+                        Image(systemName: "folder")
                     }
                 }
             }
@@ -555,8 +547,7 @@ struct PropertiesSettingsView: View
                     
                     Button(action: { show_load_panel(type: .part) })
                     {
-                        Label("Folder", systemImage: "folder")
-                            .labelStyle(.iconOnly)
+                        Image(systemName: "folder")
                     }
                 }
             }

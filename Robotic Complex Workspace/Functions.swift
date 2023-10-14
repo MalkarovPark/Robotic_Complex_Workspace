@@ -40,6 +40,8 @@ func select_tool_modules(name: String, model_controller: inout ToolModelControll
 }
 
 //MARK: - Changer modules
+let changer_modules_names = ["Module", "Module 2"]
+
 func change_by(name: String, registers: inout [Int])
 {
     switch name
@@ -54,5 +56,3 @@ func change_by(name: String, registers: inout [Int])
         break
     }
 }
-
-let changer_modules_names = ["Module", "Module 2"]
