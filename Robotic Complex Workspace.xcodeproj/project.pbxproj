@@ -38,6 +38,7 @@
 		6236F9862AD34763008FA7C4 /* PartsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9832AD34763008FA7C4 /* PartsInfo.plist */; };
 		6236F98A2AD347AA008FA7C4 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9892AD347AA008FA7C4 /* Components.scnassets */; };
 		623D724A2ADB2FF000927DEA /* ViewCloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D72492ADB2FF000927DEA /* ViewCloseButton.swift */; };
+		623D724C2ADC696F00927DEA /* RegistersDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D724B2ADC696F00927DEA /* RegistersDataView.swift */; };
 		626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 626EF85D2AD3493900F2A361 /* IndustrialKit */; };
 		627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627D3E9A2AD34A7600D5988D /* AppState.swift */; };
 /* End PBXBuildFile section */
@@ -77,6 +78,7 @@
 		6236F9832AD34763008FA7C4 /* PartsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PartsInfo.plist; sourceTree = "<group>"; };
 		6236F9892AD347AA008FA7C4 /* Components.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Components.scnassets; sourceTree = "<group>"; };
 		623D72492ADB2FF000927DEA /* ViewCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewCloseButton.swift; sourceTree = "<group>"; };
+		623D724B2ADC696F00927DEA /* RegistersDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistersDataView.swift; sourceTree = "<group>"; };
 		627D3E9A2AD34A7600D5988D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -132,6 +134,7 @@
 				6236F9502AD345C4008FA7C4 /* StatisticsView.swift */,
 				6236F94D2AD345C4008FA7C4 /* ToolsView.swift */,
 				6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */,
+				623D724B2ADC696F00927DEA /* RegistersDataView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -356,6 +359,7 @@
 				6236F9722AD3470C008FA7C4 /* PortalConnector.swift in Sources */,
 				6236F9772AD34714008FA7C4 /* GripperConnector.swift in Sources */,
 				627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */,
+				623D724C2ADC696F00927DEA /* RegistersDataView.swift in Sources */,
 				6236F95D2AD345C4008FA7C4 /* ControlProgramView.swift in Sources */,
 				6236F9582AD345C4008FA7C4 /* PartsView.swift in Sources */,
 				623D724A2ADB2FF000927DEA /* ViewCloseButton.swift in Sources */,
