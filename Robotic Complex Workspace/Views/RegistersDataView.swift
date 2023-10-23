@@ -57,7 +57,7 @@ struct RegistersDataView: View
                 .buttonStyle(.bordered)
                 .padding(.trailing)
                 
-                Button(role: .destructive, action: save_registers)
+                Button(action: save_registers)
                 {
                     Text("Save")
                         .frame(maxWidth: .infinity)

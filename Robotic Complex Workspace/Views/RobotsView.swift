@@ -2016,7 +2016,7 @@ struct PositionItemView: View
                 TextField("0", value: $item_view_pos_speed, format: .number)
                     .textFieldStyle(.roundedBorder)
                 #if os(macOS)
-                    .frame(width: 40)
+                    .frame(width: 48)
                 #else
                     .frame(maxWidth: .infinity)
                 #endif
