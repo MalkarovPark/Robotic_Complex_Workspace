@@ -1293,7 +1293,7 @@ struct RobotInspectorView: View
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                .padding()
+                .padding([.horizontal, .top])
                 
                 if base_workspace.selected_robot.programs_count == 0
                 {
