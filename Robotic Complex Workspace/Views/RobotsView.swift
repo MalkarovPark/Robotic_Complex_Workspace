@@ -1470,54 +1470,6 @@ struct PositionDropDelegate: DropDelegate
     }
 }
 
-//MARK: Position parameter view
-struct PositionParameterView: View
-{
-    @Binding var position_parameter_view_presented: Bool
-    @Binding var parameter_value: Float
-    @Binding var limit_min: Float
-    @Binding var limit_max: Float
-    
-    var body: some View
-    {
-        HStack(spacing: 8)
-        {
-            Button(action: {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                {
-                    parameter_value = 0
-                }
-                //parameter_value = 0
-                position_parameter_view_presented.toggle()
-            })
-            {
-                Image(systemName: "arrow.counterclockwise")
-            }
-            .buttonStyle(.borderedProminent)
-            #if os(macOS)
-            .foregroundColor(Color.white)
-            #else
-            .padding(.leading, 8)
-            #endif
-            
-            TextField("0", value: $parameter_value, format: .number)
-                .textFieldStyle(.roundedBorder)
-            #if os(macOS)
-                .frame(width: 64)
-            #else
-                .frame(width: 128)
-            #endif
-            
-            Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
-                .labelsHidden()
-            #if os(iOS) || os(visionOS)
-                .padding(.trailing, 8)
-            #endif
-        }
-        .padding(8)
-    }
-}
-
 //MARK: Add program view
 struct AddProgramView: View
 {
@@ -1964,7 +1916,6 @@ struct RobotsView_Previews: PreviewProvider
             OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0, 0, 0]))
             SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2, 2, 2]))
             
-            PositionParameterView(position_parameter_view_presented: .constant(true), parameter_value: .constant(0), limit_min: .constant(0), limit_max: .constant(200))
             PositionItemListView(points: .constant([PositionPoint()]), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: PositionPoint()) { IndexSet in }
                 .environmentObject(Workspace())
             
