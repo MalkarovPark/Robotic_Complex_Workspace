@@ -1330,7 +1330,8 @@ struct RobotInspectorView: View
                     #if os(macOS)
                     .buttonStyle(BorderlessButtonStyle())
                     #endif
-                    .padding(32)
+                    .padding(.trailing, 32)
+                    .padding(.bottom, 16)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
             }
