@@ -688,21 +688,17 @@ class AppState : ObservableObject
     }
     
     //MARK: - Visual functions
-    func reset_camera_view_position(workspace: Workspace, view: SCNView)
+    func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
     {
         if reset_view && reset_view_enabled
         {
-            let reset_action = workspace.reset_view_action
+            let reset_action = SCNAction.group([SCNAction.move(to: locataion, duration: 0.5), SCNAction.rotate(toAxisAngle: rotation, duration: 0.5)])
             reset_view = false
             reset_view_enabled = false
             
             view.defaultCameraController.pointOfView?.runAction(
                 reset_action, completionHandler: {
                     self.reset_view_enabled = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                    {
-                        workspace.update_view()
-                    }
                 })
         }
     }

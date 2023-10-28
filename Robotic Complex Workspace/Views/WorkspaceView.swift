@@ -15,10 +15,6 @@ struct WorkspaceView: View
     @AppStorage("WorkspaceVisualModeling") private var workspace_visual_modeling: Bool = true
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    #if os(iOS) || os(visionOS)
-    @Binding var file_name: String
-    @Binding var file_url: URL
-    #endif
     
     @State var worked = false
     @State var registers_view_presented = false
@@ -207,14 +203,6 @@ struct WorkspaceView: View
             #endif
         }
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
-        #if os(iOS) || os(visionOS)
-        .navigationTitle($file_name)
-        .onChange(of: file_name)
-        { _, _ in
-            print(file_name)
-        }
-        .navigationDocument(file_url)
-        #endif
     }
     
     func stop_perform()
@@ -425,13 +413,13 @@ struct WorkspaceSceneView: UIViewRepresentable
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
     }
     #else
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
     }
     #endif
     
@@ -1690,15 +1678,9 @@ struct WorkspaceView_Previews: PreviewProvider
     {
         Group
         {
-            #if os(macOS)
             WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            #else
-            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), file_name: .constant("None"), file_url: .constant(URL(fileURLWithPath: "")))
-                .environmentObject(Workspace())
-                .environmentObject(AppState())
-            #endif
             WorkspaceCardsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())

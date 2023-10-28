@@ -992,7 +992,7 @@ struct CellSceneView: UIViewRepresentable
             }
         }
         
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
         
         if app_state.get_scene_image && workspace_images_store
         {
@@ -1012,7 +1012,7 @@ struct CellSceneView: UIViewRepresentable
             }
         }
         
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
         
         if app_state.get_scene_image && workspace_images_store
         {

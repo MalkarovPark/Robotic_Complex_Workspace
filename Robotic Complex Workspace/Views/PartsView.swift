@@ -458,7 +458,7 @@ struct PartSceneView: UIViewRepresentable
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
         
         if app_state.get_scene_image && workspace_images_store
         {
@@ -470,7 +470,7 @@ struct PartSceneView: UIViewRepresentable
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
         
         if app_state.get_scene_image && workspace_images_store
         {

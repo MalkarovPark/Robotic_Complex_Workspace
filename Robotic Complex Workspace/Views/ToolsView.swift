@@ -701,7 +701,7 @@ struct ToolInspectorView: View
                             {
                                 ForEach(base_workspace.selected_tool.selected_program.codes)
                                 { code in
-                                    OperationItemListView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code, on_delete: remove_codes)
+                                    OperationItemView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code, on_delete: remove_codes)
                                         .onDrag
                                     {
                                         return NSItemProvider()
@@ -1020,7 +1020,7 @@ struct AddOperationProgramView: View
 }
 
 //MARK: - Position item view for list
-struct OperationItemListView: View
+struct OperationItemView: View
 {
     @Binding var codes: [OperationCode]
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -1163,7 +1163,7 @@ struct ToolSceneView: UIViewRepresentable
     #if os(macOS)
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
         
         if app_state.get_scene_image && workspace_images_store
         {
@@ -1174,7 +1174,7 @@ struct ToolSceneView: UIViewRepresentable
     #else
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
-        app_state.reset_camera_view_position(workspace: base_workspace, view: ui_view)
+        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
         
         if app_state.get_scene_image && workspace_images_store
         {
@@ -1281,7 +1281,7 @@ struct ToolsView_Previews: PreviewProvider
             ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            OperationItemListView(codes: .constant([OperationCode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), code_item: OperationCode(1)) { IndexSet in }
+            OperationItemView(codes: .constant([OperationCode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), code_item: OperationCode(1)) { IndexSet in }
             .environmentObject(Workspace())
         }
     }

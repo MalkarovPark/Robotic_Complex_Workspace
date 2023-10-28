@@ -30,10 +30,6 @@ struct ContentView: View
     
     @Binding var document: Robotic_Complex_WorkspaceDocument //Opened document
     
-    #if os(iOS) || os(visionOS)
-    @State var file_name = "" //Visible file name
-    @State var file_url: URL //Visible file URL
-    #endif
     @State var first_loaded = true //Fade in workspace scene property
     
     @StateObject private var base_workspace = Workspace() //Workspace object for opened file
@@ -45,7 +41,6 @@ struct ContentView: View
     //MARK: Main view
     @ViewBuilder var body: some View
     {
-        #if os(macOS)
         Sidebar(document: $document)
             .environmentObject(base_workspace)
             .onAppear
@@ -55,17 +50,6 @@ struct ContentView: View
                 get_file_data()
                 update_preferences()
             }
-        #else
-        Sidebar(document: $document, file_url: $file_url, file_name: $file_name)
-            .environmentObject(base_workspace)
-            .onAppear
-            {
-                set_internal_scenes_address()
-                set_selection_functions()
-                get_file_data()
-                update_preferences()
-            }
-        #endif
     }
     
     private func set_internal_scenes_address()
@@ -111,13 +95,7 @@ struct ContentView: View
 //MARK: - Previews
 #Preview
 {
-    #if os(macOS)
     ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()))
         .environmentObject(AppState())
         .frame(width: 800, height: 600)
-    #else
-    ContentView(document: .constant(Robotic_Complex_WorkspaceDocument()), file_url: URL(fileURLWithPath: ""))
-        .environmentObject(AppState())
-        .frame(width: 800, height: 600)
-    #endif
 }

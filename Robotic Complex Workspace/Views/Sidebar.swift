@@ -48,18 +48,11 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 struct Sidebar: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument //Current openet document
-    #if os(iOS) || os(visionOS)
-    //Document file info for iOS/iPadOS
-    @Binding var file_url: URL
-    @Binding var file_name: String
-    #endif
     
     var body: some View
     {
-        #if os(macOS)
         SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250)
-        #else
-        SidebarContent(document: $document, file_url: $file_url, file_name: $file_name).frame(minWidth: 200, idealWidth: 250)
+        #if os(iOS) || os(visionOS)
             .navigationBarHidden(true)
         #endif
     }
@@ -70,9 +63,6 @@ struct SidebarContent: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     #if os(iOS) || os(visionOS)
     @EnvironmentObject var app_state: AppState
-    
-    @Binding var file_url: URL
-    @Binding var file_name: String
     
     @State var settings_view_presented = false
     
@@ -143,11 +133,7 @@ struct SidebarContent: View
                 switch sidebar_selection
                 {
                 case .WorkspaceView:
-                    #if os(macOS)
                     WorkspaceView(document: $document)
-                    #else
-                    WorkspaceView(document: $document, file_name: $file_name, file_url: $file_url)
-                    #endif
                 case .RobotsView:
                     RobotsView(document: $document)
                 case .ToolsView:
@@ -171,11 +157,7 @@ struct SidebarContent: View
 //MARK: - Previews
 #Preview
 {
-    #if os(macOS)
     Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()))
         .environmentObject(Workspace())
         .environmentObject(AppState())
-    #else
-    Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()), file_url: .constant(URL(fileURLWithPath: "")), file_name: .constant("None"))
-    #endif
 }
