@@ -699,6 +699,10 @@ class AppState : ObservableObject
             view.defaultCameraController.pointOfView?.runAction(
                 reset_action, completionHandler: {
                     self.reset_view_enabled = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                    {
+                        self.objectWillChange.send()
+                    }
                 })
         }
     }

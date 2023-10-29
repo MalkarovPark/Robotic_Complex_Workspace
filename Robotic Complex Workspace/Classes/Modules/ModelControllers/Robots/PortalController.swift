@@ -149,11 +149,11 @@ class PortalController: RobotModelController
         #if os(macOS)
         node.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lengths[1])
         node.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lengths[5])
-        frame_element_length = CGFloat(lengths[5] - lengths[1]) + 160 //Calculate frame X length
+        frame_element_length = CGFloat(lengths[5] + lengths[1]) //Calculate frame X length
         #else
         node.childNode(withName: "limit1_min", recursively: true)!.position.z = lengths[1]
         node.childNode(withName: "limit1_max", recursively: true)!.position.z = lengths[5]
-        frame_element_length = CGFloat(lengths[5] - lengths[1] + 160) //Calculate frame X length
+        frame_element_length = CGFloat(lengths[5] + lengths[1]) //Calculate frame X length
         #endif
         
         modified_node = node.childNode(withName: "part_x", recursively: true)!
@@ -170,11 +170,11 @@ class PortalController: RobotModelController
         #if os(macOS)
         node.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lengths[2]) / 2
         node.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lengths[6])
-        frame_element_length = CGFloat(lengths[6] - lengths[2]) + 160 //Calculate frame Y length
+        frame_element_length = CGFloat(lengths[6] + lengths[2] - 80) //Calculate frame Y length
         #else
         node.childNode(withName: "limit0_min", recursively: true)!.position.x = lengths[2] / 2
         node.childNode(withName: "limit0_max", recursively: true)!.position.x = lengths[6]
-        frame_element_length = CGFloat(lengths[6] - lengths[2] + 160) //Calculate frame Y length
+        frame_element_length = CGFloat(lengths[6] + lengths[2] - 80) //Calculate frame Y length
         #endif
         
         modified_node = node.childNode(withName: "part_y", recursively: true)!
@@ -191,11 +191,11 @@ class PortalController: RobotModelController
         #if os(macOS)
         node.childNode(withName: "limit2_min", recursively: true)!.position.y = CGFloat(-lengths[3])
         node.childNode(withName: "limit2_max", recursively: true)!.position.y = CGFloat(lengths[7])
-        frame_element_length = CGFloat(lengths[7])
+        frame_element_length = CGFloat(lengths[7] + 80)
         #else
         node.childNode(withName: "limit2_min", recursively: true)!.position.y = -lengths[3]
         node.childNode(withName: "limit2_max", recursively: true)!.position.y = lengths[7]
-        frame_element_length = CGFloat(lengths[7])
+        frame_element_length = CGFloat(lengths[7] + 80)
         #endif
         
         modified_node = node.childNode(withName: "part_z", recursively: true)!
