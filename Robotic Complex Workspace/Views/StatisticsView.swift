@@ -11,7 +11,6 @@ import IndustrialKit
 struct StatisticsView: View
 {
     @Binding var is_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @Binding var get_statistics: Bool
     @Binding var charts_data: [WorkspaceObjectChart]?
@@ -171,7 +170,7 @@ struct StatisticsView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        StatisticsView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), get_statistics: .constant(true), charts_data: .constant([WorkspaceObjectChart(name: "Chart 1", style: .line), WorkspaceObjectChart(name: "Chart 2", style: .line)]), state_data: .constant([
+        StatisticsView(is_presented: .constant(true), get_statistics: .constant(true), charts_data: .constant([WorkspaceObjectChart(name: "Chart 1", style: .line), WorkspaceObjectChart(name: "Chart 2", style: .line)]), state_data: .constant([
             StateItem(name: "Temperature", image: "thermometer", children: [StateItem(name: "Base", value: "70º"), StateItem(name: "Electrode", value: "150º")])]), clear_chart_data: {}, clear_state_data: {}, update_file_data: {})
             .environmentObject(Workspace())
     }

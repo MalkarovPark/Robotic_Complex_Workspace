@@ -592,7 +592,7 @@ struct RobotView: View
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
-                        StatisticsView(is_presented: $statistics_view_presented, document: $document, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif
