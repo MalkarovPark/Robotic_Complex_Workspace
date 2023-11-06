@@ -356,12 +356,22 @@ struct WorkspaceSceneView: UIViewRepresentable
     let scene_view = SCNView(frame: .zero)
     let viewed_scene = SCNScene(named: "Components.scnassets/Workspace.scn")!
     
+    #if os(macOS)
+    private let base_camera_position_node = SCNNode()
+    #endif
+    
     func scn_scene(context: Context) -> SCNView
     {
         app_state.reset_view = false
         app_state.reset_view_enabled = true
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
+        
+        #if os(macOS)
+        base_camera_position_node.position = base_workspace.camera_node?.position ?? SCNVector3(0, 0, 2)
+        base_camera_position_node.rotation = base_workspace.camera_node?.rotation ?? SCNVector4Zero
+        #endif
+        
         return scene_view
     }
     
@@ -377,6 +387,11 @@ struct WorkspaceSceneView: UIViewRepresentable
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        //Add reset double tap recognizer for macOS
+        let double_tap_gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_reset_double_tap(_:)))
+        double_tap_gesture.numberOfClicksRequired = 2
+        scene_view.addGestureRecognizer(double_tap_gesture)
         
         base_workspace.scene = viewed_scene
         
@@ -448,6 +463,11 @@ struct WorkspaceSceneView: UIViewRepresentable
         }
         
         private let scn_view: SCNView
+        
+        #if os(macOS)
+        private var on_reset_view = false
+        #endif
+        
         @objc func handle_tap(sender: UITapGestureRecognizer)
         {
             if !workspace.is_editing && !workspace.performed
@@ -466,6 +486,25 @@ struct WorkspaceSceneView: UIViewRepresentable
                 }
             }
         }
+        
+        #if os(macOS)
+        @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
+        {
+            reset_camera_view_position(locataion: SCNVector3(0, 0, 2), rotation: SCNVector4Zero, view: scn_view)
+            
+            func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
+            {
+                if !on_reset_view
+                {
+                    on_reset_view = true
+                    
+                    let reset_action = SCNAction.group([SCNAction.move(to: control.base_camera_position_node.position, duration: 0.5), SCNAction.rotate(toAxisAngle: control.base_camera_position_node.rotation, duration: 0.5)])
+                    scn_view.defaultCameraController.pointOfView?.runAction(
+                        reset_action, completionHandler: { self.on_reset_view = false })
+                }
+            }
+        }
+        #endif
     }
     
     func scene_check() //Render functions
