@@ -29,9 +29,6 @@ class AppState : ObservableObject
     @AppStorage("PartsEmpty") private var parts_empty: Bool?
     
     //Commands
-    @Published var reset_view = false //Flag for return camera position to default in scene views
-    @Published var reset_view_enabled = true //Reset menu item availability flag
-    
     @Published var run_command = false
     @Published var stop_command = false
     
@@ -422,7 +419,7 @@ class AppState : ObservableObject
                     print(error.localizedDescription)
                 }
             }
-            update_tool_info()
+            //update_tool_info()
         case .part:
             //MARK: Parts data
             if !(parts_empty ?? true)
@@ -454,7 +451,7 @@ class AppState : ObservableObject
                     print(error.localizedDescription)
                 }
             }
-            update_part_info()
+            //update_part_info()
         }
         
         did_updated = true
@@ -688,25 +685,6 @@ class AppState : ObservableObject
     }
     
     //MARK: - Visual functions
-    func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
-    {
-        if reset_view && reset_view_enabled
-        {
-            let reset_action = SCNAction.group([SCNAction.move(to: locataion, duration: 0.5), SCNAction.rotate(toAxisAngle: rotation, duration: 0.5)])
-            reset_view = false
-            reset_view_enabled = false
-            
-            view.defaultCameraController.pointOfView?.runAction(
-                reset_action, completionHandler: {
-                    self.reset_view_enabled = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                    {
-                        self.objectWillChange.send()
-                    }
-                })
-        }
-    }
-    
     func reset_previewed_node_position()
     {
         clear_constranints(node: previewed_object?.node ?? SCNNode())
@@ -739,11 +717,6 @@ struct MenuHandlingModifier: ViewModifier
             .onChange(of: app_state.stop_command)
             { _, _ in
                 stop_perform()
-            }
-            .onAppear
-            {
-                app_state.reset_view = false
-                app_state.reset_view_enabled = true
             }
     }
 }

@@ -943,8 +943,6 @@ struct CellSceneView: UIViewRepresentable
     
     func scn_scene(context: Context) -> SCNView
     {
-        app_state.reset_view = false
-        app_state.reset_view_enabled = true
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
         

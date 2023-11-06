@@ -362,8 +362,6 @@ struct WorkspaceSceneView: UIViewRepresentable
     
     func scn_scene(context: Context) -> SCNView
     {
-        app_state.reset_view = false
-        app_state.reset_view_enabled = true
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
         
@@ -428,13 +426,12 @@ struct WorkspaceSceneView: UIViewRepresentable
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
+        
     }
     #else
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
     }
     #endif
     

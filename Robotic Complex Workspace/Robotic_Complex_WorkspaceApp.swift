@@ -39,7 +39,7 @@ struct Robotic_Complex_WorkspaceApp: App
         {
             SidebarCommands() //Sidebar control items for view menu item
             
-            CommandGroup(after: CommandGroupPlacement.sidebar) //View commands for view menu item
+            /*CommandGroup(after: CommandGroupPlacement.sidebar) //View commands for view menu item
             {
                 Divider()
                 Button("Reset Camera")
@@ -47,9 +47,8 @@ struct Robotic_Complex_WorkspaceApp: App
                     app_state.reset_view = true //Begin reset camera process
                 }
                 .keyboardShortcut("0", modifiers: .command)
-                .disabled(!app_state.reset_view_enabled) //Disable reset view item when camera is reseting
                 Divider()
-            }
+            }*/
             
             CommandMenu("Performing")
             {

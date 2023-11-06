@@ -196,7 +196,7 @@ struct AddToolView:View
     {
         VStack(spacing: 0)
         {
-            ToolSceneView()
+            ToolPreviewSceneView()
                 .overlay(alignment: .top)
                 {
                     Text("Add Tool")
@@ -255,7 +255,11 @@ struct AddToolView:View
         #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
         #endif
-        .onAppear()
+        .onChange(of: app_state.tool_name)
+        { _, _ in
+            app_state.update_tool_info()
+        }
+        .onAppear
         {
             app_state.update_tool_info()
         }
@@ -1104,6 +1108,31 @@ struct OperationItemView: View
 }
 
 //MARK: - Scene views
+struct ToolPreviewSceneView: View
+{
+    @EnvironmentObject var app_state: AppState
+    
+    var body: some View
+    {
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, on_render: update_preview_node(scene_view:), on_tap: { _, _ in })
+    }
+    
+    private func update_preview_node(scene_view: SCNView)
+    {
+        if app_state.preview_update_scene
+        {
+            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Node", recursively: true)
+            remove_node?.removeFromParentNode()
+            
+            app_state.update_tool_info()
+            
+            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
+            app_state.previewed_object?.node?.name = "Node"
+            app_state.preview_update_scene = false
+        }
+    }
+}
+
 struct ToolSceneView: UIViewRepresentable
 {
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
@@ -1116,8 +1145,6 @@ struct ToolSceneView: UIViewRepresentable
     
     func scn_scene(context: Context) -> SCNView
     {
-        app_state.reset_view = false
-        app_state.reset_view_enabled = true
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
         scene_view.scene?.background.contents = UIColor.clear
@@ -1163,8 +1190,6 @@ struct ToolSceneView: UIViewRepresentable
     #if os(macOS)
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
-        
         if app_state.get_scene_image && workspace_images_store
         {
             app_state.get_scene_image = false
@@ -1174,8 +1199,6 @@ struct ToolSceneView: UIViewRepresentable
     #else
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
-        app_state.reset_camera_view_position(locataion: base_workspace.camera_node?.position ?? SCNVector3(0, 0, 0), rotation: base_workspace.camera_node?.rotation ?? SCNVector4(0, 0, 0, 0), view: ui_view)
-        
         if app_state.get_scene_image && workspace_images_store
         {
             app_state.get_scene_image = false

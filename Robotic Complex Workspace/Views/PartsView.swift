@@ -208,7 +208,7 @@ struct AddPartView: View
     {
         VStack(spacing: 0)
         {
-            PreviewSceneView()
+            PartPreviewSceneView()
                 .overlay(alignment: .top)
                 {
                     Text("Add Part")
@@ -268,7 +268,11 @@ struct AddPartView: View
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
         #endif
         .onChange(of: app_state.part_name)
-        { oldValue, newValue in
+        { _, _ in
+            app_state.update_part_info()
+        }
+        .onAppear
+        {
             app_state.update_part_info()
         }
     }
@@ -397,7 +401,7 @@ struct PartView: View
 }
 
 //MARK: - Scene views
-struct PreviewSceneView: View
+struct PartPreviewSceneView: View
 {
     @EnvironmentObject var app_state: AppState
     
@@ -410,11 +414,13 @@ struct PreviewSceneView: View
     {
         if app_state.preview_update_scene
         {
-            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Figure", recursively: true)
+            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Node", recursively: true)
             remove_node?.removeFromParentNode()
             
+            app_state.update_part_info()
+            
             scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
-            app_state.previewed_object?.node?.name = "Figure"
+            app_state.previewed_object?.node?.name = "Node"
             app_state.preview_update_scene = false
         }
     }
