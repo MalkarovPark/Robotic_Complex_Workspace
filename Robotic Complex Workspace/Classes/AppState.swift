@@ -87,6 +87,8 @@ class AppState : ObservableObject
         }
     }
     
+    public var hold_card_image = UIImage() //Test hold variable
+    
     @Published var series_name = "None" //Series display string for menu
     {
         didSet

@@ -123,7 +123,7 @@ struct ToolCardView: View
             }
             .sheet(isPresented: $tool_view_presented)
             {
-                ToolView(tool_view_presented: $tool_view_presented, document: $document)
+                ToolView(tool_view_presented: $tool_view_presented, document: $document, tool_item: $tool_item)
                 #if os(visionOS)
                     .frame(width: 512, height: 512)
                 #endif
@@ -272,7 +272,7 @@ struct AddToolView:View
             new_tool_name = "None"
         }
         
-        app_state.get_scene_image = true
+        //app_state.get_scene_image = true
         app_state.previewed_object?.name = new_tool_name
         base_workspace.add_tool(app_state.previewed_object! as! Tool)
         
@@ -287,6 +287,7 @@ struct ToolView: View
 {
     @Binding var tool_view_presented: Bool
     @Binding var document: Robotic_Complex_WorkspaceDocument
+    @Binding var tool_item: Tool
     
     @State private var add_program_view_presented = false
     @State private var add_operation_view_presented = false
@@ -316,7 +317,7 @@ struct ToolView: View
             #if os(macOS)
             HStack(spacing: 0)
             {
-                ToolSceneView()
+                ToolSceneView(tool: $tool_item)
             }
             .modifier(ViewCloseFuncButton(close_action: close_tool))
             .overlay(alignment: .bottomLeading)
@@ -324,7 +325,7 @@ struct ToolView: View
                 HStack(spacing: 0)
                 {
                     Button(action: {
-                        base_workspace.selected_tool.reset_performing()
+                        tool_item.reset_performing()
                         base_workspace.update_view()
                     })
                     {
@@ -335,7 +336,7 @@ struct ToolView: View
                     .padding([.vertical, .leading])
                     
                     Button(action: {
-                        base_workspace.selected_tool.start_pause_performing()
+                        tool_item.start_pause_performing()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                         {
                             base_workspace.update_view()
@@ -348,8 +349,8 @@ struct ToolView: View
                     .buttonStyle(.bordered)
                     .padding()
                 }
-                .disabled(base_workspace.selected_tool.codes_count == 0)
-                .modifier(MenuHandlingModifier(performed: $base_workspace.selected_tool.performed, toggle_perform: base_workspace.selected_tool.start_pause_performing, stop_perform: base_workspace.selected_tool.reset_performing))
+                .disabled(tool_item.codes_count == 0)
+                .modifier(MenuHandlingModifier(performed: $tool_item.performed, toggle_perform: tool_item.start_pause_performing, stop_perform: tool_item.reset_performing))
             }
             .overlay(alignment: .bottomTrailing)
             {
@@ -373,7 +374,7 @@ struct ToolView: View
                     .keyboardShortcut(.cancelAction)
                     .padding()
                 }
-                .disabled(base_workspace.selected_tool.codes_count == 0)
+                .disabled(tool_item.codes_count == 0)
             }
             
             Divider()
@@ -534,24 +535,14 @@ struct ToolView: View
         }
         .sheet(isPresented: $connector_view_presented)
         {
-            ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: base_workspace.selected_tool.connector as WorkspaceObjectConnector, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+            ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: tool_item.connector as WorkspaceObjectConnector, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
             #if os(visionOS)
                 .frame(width: 512, height: 512)
             #endif
         }
         .sheet(isPresented: $statistics_view_presented)
         {
-            StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $base_workspace.selected_tool.state_data, clear_chart_data: { base_workspace.selected_tool.clear_chart_data() }, clear_state_data: base_workspace.selected_tool.clear_state_data, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
-                .onDisappear
-                {
-                    app_state.get_scene_image = true
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-                    {
-                        base_workspace.selected_tool.image = app_state.previewed_object!.image
-                    }
-                    is_document_updated = true
-                }
+            StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $tool_item.state_data, clear_chart_data: { tool_item.clear_chart_data() }, clear_state_data: tool_item.clear_state_data, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
             #if os(visionOS)
                 .frame(width: 512, height: 512)
             #endif
@@ -562,23 +553,24 @@ struct ToolView: View
         #endif
         .onAppear
         {
-            app_state.previewed_object?.node = base_workspace.selected_tool.node
-            
-            app_state.object_view_was_open = true
             app_state.preview_update_scene = true
             
-            app_state.reset_previewed_node_position()
-            
-            app_state.previewed_object?.image = base_workspace.selected_tool.image
-            
-            if base_workspace.selected_tool.codes_count > 0
+            if tool_item.codes_count > 0
             {
-                new_operation_code = base_workspace.selected_tool.codes.first ?? 0
+                new_operation_code = tool_item.codes.first ?? 0
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
             {
                 ready_for_save = true
+            }
+        }
+        .onDisappear
+        {
+            if is_document_updated
+            {
+                tool_item.image = app_state.hold_card_image
+                app_state.view_update_state.toggle()
             }
         }
     }
@@ -588,19 +580,17 @@ struct ToolView: View
         if ready_for_save
         {
             app_state.get_scene_image = true
-            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
-                base_workspace.selected_tool.image = app_state.previewed_object!.image
                 document.preset.tools = base_workspace.file_data().tools
+                is_document_updated = true
             }
-            is_document_updated = true
         }
     }
     
     func code_item_move(from source: IndexSet, to destination: Int)
     {
-        base_workspace.selected_tool.selected_program.codes.move(fromOffsets: source, toOffset: destination)
+        tool_item.selected_program.codes.move(fromOffsets: source, toOffset: destination)
         update_data()
     }
     
@@ -608,7 +598,7 @@ struct ToolView: View
     {
         withAnimation
         {
-            base_workspace.selected_tool.selected_program.codes.remove(atOffsets: offsets)
+            tool_item.selected_program.codes.remove(atOffsets: offsets)
         }
         
         update_data()
@@ -616,17 +606,17 @@ struct ToolView: View
     
     func delete_operations_program()
     {
-        if base_workspace.selected_tool.programs_names.count > 0
+        if tool_item.programs_names.count > 0
         {
-            let current_spi = base_workspace.selected_tool.selected_program_index
-            base_workspace.selected_tool.delete_program(index: current_spi)
-            if base_workspace.selected_tool.programs_names.count > 1 && current_spi > 0
+            let current_spi = tool_item.selected_program_index
+            tool_item.delete_program(index: current_spi)
+            if tool_item.programs_names.count > 1 && current_spi > 0
             {
-                base_workspace.selected_tool.selected_program_index = current_spi - 1
+                tool_item.selected_program_index = current_spi - 1
             }
             else
             {
-                base_workspace.selected_tool.selected_program_index = 0
+                tool_item.selected_program_index = 0
             }
             
             update_data()
@@ -635,34 +625,14 @@ struct ToolView: View
     
     func add_operation_to_program()
     {
+        tool_item.selected_program.add_code(OperationCode(new_operation_code))
         
-        base_workspace.selected_tool.selected_program.add_code(OperationCode(new_operation_code))
-        
-        document.preset.tools = base_workspace.file_data().tools
-        app_state.get_scene_image = true
+        update_data()
     }
     
     func close_tool()
     {
-        base_workspace.selected_tool.reset_performing()
-        base_workspace.selected_tool.workcell_disconnect()
-        
-        base_workspace.deselect_tool()
         tool_view_presented = false
-        
-        app_state.object_view_was_open = false
-        app_state.preview_update_scene = false
-        
-        app_state.previewed_object = Tool()
-        
-        if is_document_updated
-        {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                app_state.view_update_state.toggle()
-                base_workspace.update_view()
-            }
-        }
     }
 }
 
@@ -714,8 +684,7 @@ struct ToolInspectorView: View
                                 .onMove(perform: code_item_move)
                                 .onChange(of: base_workspace.tools)
                                 { _, _ in
-                                    document.preset.tools = base_workspace.file_data().tools
-                                    app_state.get_scene_image = true
+                                    update_data()
                                 }
                             }
                         }
@@ -832,8 +801,6 @@ struct ToolInspectorView: View
                     }
                     .padding(8)
                 }
-                
-                //Divider()
                 
                 HStack(spacing: 0)
                 {
@@ -1012,7 +979,7 @@ struct AddOperationProgramView: View
                     base_workspace.selected_tool.add_program(OperationsProgram(name: new_program_name))
                     selected_program_index = base_workspace.selected_tool.programs_names.count - 1
                     
-                    app_state.get_scene_image = true
+                    //app_state.get_scene_image = true
                     add_program_view_presented.toggle()
                 }
                 .fixedSize()
@@ -1133,157 +1100,62 @@ struct ToolPreviewSceneView: View
     }
 }
 
-struct ToolSceneView: UIViewRepresentable
+struct ToolSceneView: View
 {
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    let scene_view = SCNView(frame: .zero)
-    let viewed_scene = SCNScene(named: "Components.scnassets/View.scn")!
+    @Binding var tool: Tool
     
-    func scn_scene(context: Context) -> SCNView
+    var body: some View
     {
-        scene_view.scene = viewed_scene
-        scene_view.delegate = context.coordinator
-        scene_view.scene?.background.contents = UIColor.clear
-        return scene_view
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, node: tool.node ?? SCNNode(), on_render: update_view_node(scene_view:), on_tap: { _, _ in })
     }
     
-    #if os(macOS)
-    func makeNSView(context: Context) -> SCNView
-    {
-        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
-        
-        //Add gesture recognizer
-        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
-        scene_view.addGestureRecognizer(tap_gesture_recognizer)
-        
-        scene_view.allowsCameraControl = true
-        scene_view.rendersContinuously = true
-        scene_view.autoenablesDefaultLighting = true
-        
-        scene_view.backgroundColor = UIColor.clear
-        
-        return scn_scene(context: context)
-    }
-    #else
-    func makeUIView(context: Context) -> SCNView
-    {
-        base_workspace.camera_node = viewed_scene.rootNode.childNode(withName: "camera", recursively: true)
-        
-        //Add gesture recognizer
-        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
-        scene_view.addGestureRecognizer(tap_gesture_recognizer)
-        
-        scene_view.allowsCameraControl = true
-        scene_view.rendersContinuously = true
-        scene_view.autoenablesDefaultLighting = true
-        
-        scene_view.backgroundColor = UIColor.clear
-        
-        return scn_scene(context: context)
-    }
-    #endif
-    
-    #if os(macOS)
-    func updateNSView(_ ui_view: SCNView, context: Context)
-    {
-        if app_state.get_scene_image && workspace_images_store
-        {
-            app_state.get_scene_image = false
-            app_state.previewed_object?.image = ui_view.snapshot()
-        }
-    }
-    #else
-    func updateUIView(_ ui_view: SCNView, context: Context)
-    {
-        if app_state.get_scene_image && workspace_images_store
-        {
-            app_state.get_scene_image = false
-            app_state.previewed_object?.image = ui_view.snapshot()
-        }
-    }
-    #endif
-    
-    func makeCoordinator() -> Coordinator
-    {
-        Coordinator(self, scene_view)
-    }
-    
-    final class Coordinator: NSObject, SCNSceneRendererDelegate
-    {
-        var control: ToolSceneView
-        
-        init(_ control: ToolSceneView, _ scn_view: SCNView)
-        {
-            self.control = control
-            
-            self.scn_view = scn_view
-            super.init()
-        }
-        
-        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
-        {
-            control.scene_check()
-        }
-        
-        private let scn_view: SCNView
-        @objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
-        {
-            let tap_location = gesture_recognize.location(in: scn_view)
-            let hit_results = scn_view.hitTest(tap_location, options: [:])
-            var result = SCNHitTestResult()
-            
-            if hit_results.count > 0
-            {
-                result = hit_results[0]
-                
-                print(result.localCoordinates)
-                print("🍮 tapped – \(result.node.name!)")
-            }
-        }
-    }
-    
-    func scene_check() //Render functions
+    private func update_view_node(scene_view: SCNView)
     {
         if app_state.preview_update_scene
         {
-            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Tool", recursively: true)
-            remove_node?.removeFromParentNode()
+            let viewed_node = scene_view.scene?.rootNode.childNode(withName: "Node", recursively: true)
             
-            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
-            app_state.previewed_object?.node?.name = "Tool"
-            apply_bit_mask(node: app_state.previewed_object?.node ?? SCNNode(), Workspace.tool_bit_mask)
+            apply_bit_mask(node: viewed_node ?? SCNNode(), Workspace.tool_bit_mask)
+            
+            clear_constranints(node: viewed_node ?? SCNNode())
+            viewed_node?.position = SCNVector3(x: 0, y: 0, z: 0)
+            viewed_node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
+            
+            tool.workcell_connect(scene: scene_view.scene!, name: "Node")
+            
             app_state.preview_update_scene = false
-        }
-        
-        if app_state.object_view_was_open //Provide scene connection to model controller if tool was opened
-        {
-            base_workspace.selected_tool.workcell_connect(scene: scene_view.scene!, name: "Tool")
-            app_state.object_view_was_open = false
         }
         
         if base_workspace.selected_object_type == .tool
         {
-            if base_workspace.selected_tool.performing_completed == true
+            if tool.performing_completed == true
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                 {
-                    base_workspace.selected_tool.performing_completed = false
+                    tool.performing_completed = false
                     base_workspace.update_view()
                 }
             }
             
-            if base_workspace.selected_tool.code_changed
+            if tool.code_changed
             {
                 DispatchQueue.main.asyncAfter(deadline: .now())
                 {
                     base_workspace.update_view()
-                    base_workspace.selected_tool.code_changed = false
+                    tool.code_changed = false
                 }
             }
+        }
+        
+        if app_state.get_scene_image && workspace_images_store
+        {
+            app_state.get_scene_image = false
+            app_state.previewed_object?.image = scene_view.snapshot()
         }
     }
 }
@@ -1301,7 +1173,7 @@ struct ToolsView_Previews: PreviewProvider
             AddToolView(add_tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
-            ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), tool_item: .constant(Tool()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             OperationItemView(codes: .constant([OperationCode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), code_item: OperationCode(1)) { IndexSet in }
