@@ -208,15 +208,16 @@ struct RobotCardView: View
     @State var robot_item: Robot
     @State private var pass_preferences_presented = false
     @State private var pass_programs_presented = false
+    @State private var to_rename = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
-        LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
+        LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
             .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
-            .modifier(CardMenu(object: robot_item, name: robot_item.name ?? "", clear_preview: robot_item.clear_preview, duplicate_object: {
+            .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name ?? "", clear_preview: robot_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_robot(name: robot_item.name!)
             }, update_file: update_file, pass_preferences: {
                 app_state.robot_from = robot_item

@@ -111,14 +111,15 @@ struct PartCardView: View
     
     @State var part_item: Part
     @State private var part_view_presented = false
+    @State private var to_rename = false
     
     @EnvironmentObject var base_workspace: Workspace
     
     var body: some View
     {
-        SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
+        SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
             .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: part_item, objects: base_workspace.parts, on_delete: remove_parts, object_type_name: "part"))
-            .modifier(CardMenu(object: part_item, clear_preview: part_item.clear_preview, duplicate_object: {
+            .modifier(CardMenu(object: part_item, to_rename: $to_rename, clear_preview: part_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name!)
             }, update_file: update_file, pass_preferences: {
                 
