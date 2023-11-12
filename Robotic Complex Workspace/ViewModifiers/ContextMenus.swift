@@ -37,12 +37,15 @@ struct CardMenu: ViewModifier
                     Label("Placed", systemImage: "target")
                 }
                 
-                Button(action: {
-                    clear_preview()
-                    update_file()
-                })
+                if object is Robot
                 {
-                    Label("Clear Preview", systemImage: "rectangle.slash")
+                    Button(action: {
+                        clear_preview()
+                        update_file()
+                    })
+                    {
+                        Label("Clear Preview", systemImage: "rectangle.slash")
+                    }
                 }
                 
                 #if os(macOS)

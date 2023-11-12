@@ -117,7 +117,7 @@ struct PartCardView: View
     
     var body: some View
     {
-        SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
+        SmallCardView(color: part_item.card_info.color, node: part_item.node!, title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
             .shadow(radius: 8)
             .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: part_item, objects: base_workspace.parts, on_delete: remove_parts, object_type_name: "part"))
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, clear_preview: part_item.clear_preview, duplicate_object: {
@@ -286,7 +286,6 @@ struct AddPartView: View
             new_part_name = "None"
         }
         
-        app_state.get_scene_image = true
         app_state.previewed_object?.name = new_part_name
         base_workspace.add_part(app_state.previewed_object! as! Part)
         document.preset.parts = base_workspace.file_data().parts
