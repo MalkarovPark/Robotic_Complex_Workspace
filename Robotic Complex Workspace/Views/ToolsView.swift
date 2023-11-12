@@ -41,7 +41,7 @@ struct ToolsView: View
                                 self.dragged_tool = tool_item
                                 return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
                             }, preview: {
-                                LargeCardViewPreview(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
+                                LargeCardView(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
                             })
                             .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, document: $document, workspace_tools: base_workspace.file_data().tools, tool: tool_item))
                             .transition(AnyTransition.scale)
@@ -109,6 +109,7 @@ struct ToolCardView: View
     var body: some View
     {
         LargeCardView(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+            .shadow(radius: 8)
             .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: tool_item, objects: base_workspace.tools, on_delete: remove_tools, object_type_name: "tool"))
             .modifier(CardMenu(object: tool_item, to_rename: $to_rename, clear_preview: tool_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_tool(name: tool_item.name!)

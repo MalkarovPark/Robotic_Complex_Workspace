@@ -41,7 +41,7 @@ struct PartsView: View
                                 self.dragged_part = part_item
                                 return NSItemProvider(object: part_item.id.uuidString as NSItemProviderWriting)
                             }, preview: {
-                                SmallCardViewPreview(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
+                                SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
                             })
                             .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, document: $document, workspace_parts: base_workspace.file_data().parts, part: part_item))
                             .transition(AnyTransition.scale)
@@ -118,6 +118,7 @@ struct PartCardView: View
     var body: some View
     {
         SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
+            .shadow(radius: 8)
             .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: part_item, objects: base_workspace.parts, on_delete: remove_parts, object_type_name: "part"))
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, clear_preview: part_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name!)

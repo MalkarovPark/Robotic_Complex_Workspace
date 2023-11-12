@@ -26,8 +26,6 @@ struct CardMenu: ViewModifier
     let pass_preferences: () -> ()
     let pass_programs: () -> ()
     
-    private let duration_and_delay: CGFloat = 0.3
-    
     public func body(content: Content) -> some View
     {
         content

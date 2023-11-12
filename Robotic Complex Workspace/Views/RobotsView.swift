@@ -76,7 +76,7 @@ struct RobotsTableView: View
                                     self.dragged_robot = robot_item
                                     return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    LargeCardViewPreview(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
+                                    LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
                                 })
                                 .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, document: $document, workspace_robots: base_workspace.file_data().robots, robot: robot_item))
                                 .transition(AnyTransition.scale)
@@ -216,6 +216,7 @@ struct RobotCardView: View
     var body: some View
     {
         LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+            .shadow(radius: 8)
             .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
             .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name ?? "", clear_preview: robot_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_robot(name: robot_item.name!)
