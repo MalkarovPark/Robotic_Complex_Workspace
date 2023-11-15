@@ -104,6 +104,8 @@ struct ToolCardView: View
     @State private var tool_view_presented = false
     @State private var to_rename = false
     
+    @State private var update_toggle = false
+    
     @EnvironmentObject var base_workspace: Workspace
     
     var body: some View
@@ -118,6 +120,7 @@ struct ToolCardView: View
             }, pass_programs: {
                 
             }))
+            .modifier(DoubleModifier(update_toggle: $update_toggle))
             .onTapGesture
             {
                 base_workspace.select_tool(name: tool_item.name!)
@@ -130,9 +133,22 @@ struct ToolCardView: View
                     .frame(width: 512, height: 512)
                 #endif
             }
+            .onAppear(perform: remove_tool_constraints)
     }
     
-    func remove_tools(at offsets: IndexSet)
+    private func remove_tool_constraints()
+    {
+        if tool_item.node?.constraints?.count ?? 0 > 0 //tool_item.is_attached
+        {
+            clear_constraints(node: tool_item.node ?? SCNNode())
+            tool_item.node?.position = SCNVector3Zero
+            tool_item.node?.rotation = SCNVector4Zero
+            
+            update_toggle.toggle()
+        }
+    }
+    
+    private func remove_tools(at offsets: IndexSet)
     {
         withAnimation
         {
@@ -1124,7 +1140,7 @@ struct ToolSceneView: View
             
             apply_bit_mask(node: viewed_node ?? SCNNode(), Workspace.tool_bit_mask)
             
-            clear_constranints(node: viewed_node ?? SCNNode())
+            clear_constraints(node: viewed_node ?? SCNNode())
             viewed_node?.position = SCNVector3(x: 0, y: 0, z: 0)
             viewed_node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
             

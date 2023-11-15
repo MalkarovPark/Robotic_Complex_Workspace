@@ -1397,7 +1397,7 @@ struct WorkspaceObjectCard: View
         case is Tool:
             if (object as! Tool).is_attached
             {
-                clear_constranints(node: object.node ?? SCNNode())
+                clear_constraints(node: object.node ?? SCNNode())
                 (object as! Tool).attached_to = nil
                 
                 //base_workspace.remove_attachment()
@@ -1487,7 +1487,7 @@ struct CardInfoView: View
                                         (object as! Tool).attached_to = new_value
                                         document.preset.tools = base_workspace.file_data().tools
                                         
-                                        clear_constranints(node: object?.node ?? SCNNode())
+                                        clear_constraints(node: object?.node ?? SCNNode())
                                         object?.node?.constraints?.append(SCNReplicatorConstraint(target: base_workspace.robot_by_name(new_value).tool_node))
                                     }
                                 }
@@ -1546,7 +1546,7 @@ struct CardInfoView: View
                         else
                         {
                             (object as! Tool).attached_to = nil
-                            clear_constranints(node: object?.node ?? SCNNode())
+                            clear_constraints(node: object?.node ?? SCNNode())
                         }
                         
                         if appeared

@@ -689,10 +689,10 @@ class AppState : ObservableObject
     //MARK: - Visual functions
     func reset_previewed_node_position()
     {
-        clear_constranints(node: previewed_object?.node ?? SCNNode())
+        clear_constraints(node: previewed_object?.node ?? SCNNode())
         
-        previewed_object?.node?.position = SCNVector3(x: 0, y: 0, z: 0)
-        previewed_object?.node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
+        previewed_object?.node?.position = SCNVector3Zero
+        previewed_object?.node?.rotation = SCNVector4Zero
     }
     
     //MARK: - Register colors
