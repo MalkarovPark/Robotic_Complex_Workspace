@@ -824,13 +824,13 @@ struct InfoView: View
             switch base_workspace.selected_object_type
             {
             case .robot:
-                Text("\(base_workspace.selected_robot.name ?? "None")")
+                Text("\(base_workspace.selected_robot.name)")
                     .font(.title3)
                     .padding([.horizontal, .top])
             case .tool:
                 HStack(spacing: 0)
                 {
-                    Text("\(base_workspace.selected_tool.name ?? "None")")
+                    Text(base_workspace.selected_tool.name)
                         .font(.title3)
                         .padding([.horizontal, .top])
                 }
@@ -853,7 +853,7 @@ struct InfoView: View
                     }
                 }
             case .part:
-                Text("\(base_workspace.selected_part.name ?? "None")")
+                Text(base_workspace.selected_part.name)
                     .font(.title3)
                     .padding([.horizontal, .top])
             default:
@@ -1356,7 +1356,7 @@ struct WorkspaceObjectCard: View
                 }
                 .overlay(alignment: .topLeading)
                 {
-                    Text(object.name ?? "None")
+                    Text(object.name)
                         .fontWeight(.bold)
                         .font(.system(.title, design: .rounded))
                         .foregroundColor(.white)

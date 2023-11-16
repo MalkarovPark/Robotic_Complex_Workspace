@@ -41,6 +41,8 @@ struct ControlProgramView: View
                         .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, document: $document, workspace_elements: base_workspace.file_data().elements, element: element))
                     }
                     .padding(4)
+                    
+                    Spacer(minLength: 64)
                 }
                 .padding()
                 .disabled(base_workspace.performed)

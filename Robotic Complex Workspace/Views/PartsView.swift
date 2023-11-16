@@ -121,7 +121,7 @@ struct PartCardView: View
             .shadow(radius: 8)
             .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: part_item, objects: base_workspace.parts, on_delete: remove_parts, object_type_name: "part"))
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, clear_preview: part_item.clear_preview, duplicate_object: {
-                base_workspace.duplicate_part(name: part_item.name!)
+                base_workspace.duplicate_part(name: part_item.name)
             }, update_file: update_file, pass_preferences: {
                 
             }, pass_programs: {

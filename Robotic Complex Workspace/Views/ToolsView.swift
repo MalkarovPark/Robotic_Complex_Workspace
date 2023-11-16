@@ -114,7 +114,7 @@ struct ToolCardView: View
             .shadow(radius: 8)
             .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: tool_item, objects: base_workspace.tools, on_delete: remove_tools, object_type_name: "tool"))
             .modifier(CardMenu(object: tool_item, to_rename: $to_rename, clear_preview: tool_item.clear_preview, duplicate_object: {
-                base_workspace.duplicate_tool(name: tool_item.name!)
+                base_workspace.duplicate_tool(name: tool_item.name)
             }, update_file: update_file, pass_preferences: {
                 
             }, pass_programs: {
@@ -123,7 +123,7 @@ struct ToolCardView: View
             .modifier(DoubleModifier(update_toggle: $update_toggle))
             .onTapGesture
             {
-                base_workspace.select_tool(name: tool_item.name!)
+                base_workspace.select_tool(name: tool_item.name)
                 tool_view_presented = true
             }
             .sheet(isPresented: $tool_view_presented)

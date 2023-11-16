@@ -218,8 +218,8 @@ struct RobotCardView: View
         LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
             .shadow(radius: 8)
             .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
-            .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name ?? "", clear_preview: robot_item.clear_preview, duplicate_object: {
-                base_workspace.duplicate_robot(name: robot_item.name!)
+            .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
+                base_workspace.duplicate_robot(name: robot_item.name)
             }, update_file: update_file, pass_preferences: {
                 app_state.robot_from = robot_item
                 pass_preferences_presented = true
@@ -1083,6 +1083,8 @@ struct CellSceneView: UIViewRepresentable
     
     func scene_check() //Render functions
     {
+        //base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
+        
         if base_workspace.selected_robot.moving_completed == true
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)

@@ -123,7 +123,7 @@ struct RegisterCardView: View
                                 appeared = true
                             }
                             .onChange(of: value)
-                            { new_value in
+                            { _, new_value in
                                 if appeared
                                 {
                                     base_workspace.update_register(number, new_value: new_value)
