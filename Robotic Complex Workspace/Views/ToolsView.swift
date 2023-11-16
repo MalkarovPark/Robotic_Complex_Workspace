@@ -140,7 +140,7 @@ struct ToolCardView: View
     {
         if tool_item.node?.constraints?.count ?? 0 > 0 //tool_item.is_attached
         {
-            clear_constraints(node: tool_item.node ?? SCNNode())
+            tool_item.node?.remove_all_constraints()
             tool_item.node?.position = SCNVector3Zero
             tool_item.node?.rotation = SCNVector4Zero
             
@@ -1140,7 +1140,7 @@ struct ToolSceneView: View
             
             apply_bit_mask(node: viewed_node ?? SCNNode(), Workspace.tool_bit_mask)
             
-            clear_constraints(node: viewed_node ?? SCNNode())
+            viewed_node?.remove_all_constraints()
             viewed_node?.position = SCNVector3(x: 0, y: 0, z: 0)
             viewed_node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
             

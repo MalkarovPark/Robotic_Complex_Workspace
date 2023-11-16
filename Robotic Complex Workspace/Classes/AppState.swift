@@ -689,7 +689,7 @@ class AppState : ObservableObject
     //MARK: - Visual functions
     func reset_previewed_node_position()
     {
-        clear_constraints(node: previewed_object?.node ?? SCNNode())
+        previewed_object?.node?.remove_all_constraints()
         
         previewed_object?.node?.position = SCNVector3Zero
         previewed_object?.node?.rotation = SCNVector4Zero
