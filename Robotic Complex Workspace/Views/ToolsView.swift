@@ -404,7 +404,7 @@ struct ToolView: View
             {
                 VStack(spacing: 0)
                 {
-                    ToolSceneView()
+                    ToolSceneView(tool: $tool_item)
                         .overlay(alignment: .bottom)
                     {
                         HStack
@@ -484,7 +484,7 @@ struct ToolView: View
             {
                 HStack(spacing: 0)
                 {
-                    ToolSceneView()
+                    ToolSceneView(tool: $tool_item)
                 }
                 .modifier(ViewCloseFuncButton(close_action: close_tool))
                 .overlay(alignment: .bottomLeading)
