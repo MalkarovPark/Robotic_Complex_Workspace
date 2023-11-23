@@ -25,17 +25,11 @@ struct WorkspaceView: View
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     
-    @State private var program_view_presented = false //Picker data for thin window size
+    @State private var program_view_presented = false
     #endif
     
     var body: some View
     {
-        #if os(macOS)
-        let placement_trailing: ToolbarItemPlacement = .automatic
-        #else
-        let placement_trailing: ToolbarItemPlacement = .navigationBarTrailing
-        #endif
-        
         HStack(spacing: 0)
         {
             #if os(macOS)
@@ -132,8 +126,7 @@ struct WorkspaceView: View
         //MARK: Toolbar
         .toolbar
         {
-            #if os(macOS)
-            ToolbarItem(placement: placement_trailing)
+            ToolbarItem(placement: compact_placement())
             {
                 //MARK: Workspace performing elements
                 HStack(alignment: .center)
@@ -166,46 +159,11 @@ struct WorkspaceView: View
                     }
                 }
             }
-            #else
-            ToolbarItem(placement: horizontal_size_class == .compact ? .bottomBar : placement_trailing)
-            {
-                //MARK: Workspace performing elements
-                HStack(alignment: .center)
-                {
-                    Button(action: { registers_view_presented = true })
-                    {
-                        Label("Registers", systemImage: "number")
-                    }
-                    
-                    Divider()
-                    
-                    Button(action: change_cycle)
-                    {
-                        if base_workspace.cycled
-                        {
-                            Label("Repeat", systemImage: "repeat")
-                        }
-                        else
-                        {
-                            Label("One", systemImage: "repeat.1")
-                        }
-                    }
-                    Button(action: stop_perform)
-                    {
-                        Label("Reset", systemImage: "stop")
-                    }
-                    Button(action: toggle_perform)
-                    {
-                        Label("PlayPause", systemImage: "playpause")
-                    }
-                }
-            }
-            #endif
         }
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
     }
     
-    func stop_perform()
+    private func stop_perform()
     {
         if base_workspace.performed
         {
@@ -214,17 +172,32 @@ struct WorkspaceView: View
         }
     }
     
-    func toggle_perform()
+    private func toggle_perform()
     {
         base_workspace.start_pause_performing()
     }
     
-    func change_cycle()
+    private func change_cycle()
     {
         base_workspace.cycled.toggle()
     }
+    
+    private func compact_placement() -> ToolbarItemPlacement
+    {
+        #if os(iOS) || os(visionOS)
+        if horizontal_size_class == .compact
+        {
+            return .bottomBar
+        }
+        else
+        {
+            return toolbar_item_placement_trailing
+        }
+        #else
+        return toolbar_item_placement_trailing
+        #endif
+    }
 }
-
 
 //MARK: - Workspace scene views
 struct ComplexWorkspaceView: View

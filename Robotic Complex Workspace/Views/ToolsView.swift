@@ -74,7 +74,7 @@ struct ToolsView: View
         .toolbar
         {
             //MARK: Toolbar
-            ToolbarItem(placement: placement_trailing)
+            ToolbarItem(placement: toolbar_item_placement_trailing)
             {
                 HStack(alignment: .center)
                 {

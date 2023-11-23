@@ -105,7 +105,7 @@ struct RobotsTableView: View
         .toolbar
         {
             //MARK: Toolbar
-            ToolbarItem(placement: placement_trailing)
+            ToolbarItem(placement: toolbar_item_placement_trailing)
             {
                 HStack(alignment: .center)
                 {
@@ -565,15 +565,22 @@ struct RobotView: View
         .toolbar
         {
             //MARK: Toolbar items
-            ToolbarItem(placement: placement_trailing)
+            ToolbarItem(placement: toolbar_item_placement_leading)
+            {
+                Button(action: close_robot)
+                {
+                    #if os(macOS)
+                    Image(systemName: "chevron.left")
+                    #else
+                    Image(systemName: "xmark")
+                    #endif
+                }
+            }
+            
+            ToolbarItem(placement: compact_placement())
             {
                 HStack(alignment: .center)
                 {
-                    Button(action: close_robot)
-                    {
-                        Image(systemName: "rectangle.grid.2x2")
-                    }
-                    Divider()
                     
                     Button(action: { connector_view_presented.toggle() })
                     {
@@ -616,12 +623,28 @@ struct RobotView: View
         .modifier(MenuHandlingModifier(performed: $base_workspace.selected_robot.performed, toggle_perform: base_workspace.selected_robot.start_pause_moving, stop_perform: base_workspace.selected_robot.reset_moving))
     }
     
-    func close_robot()
+    private func close_robot()
     {
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         robot_view_presented = false
         base_workspace.deselect_robot()
+    }
+    
+    private func compact_placement() -> ToolbarItemPlacement
+    {
+        #if os(iOS) || os(visionOS)
+        if horizontal_size_class == .compact
+        {
+            return .bottomBar
+        }
+        else
+        {
+            return toolbar_item_placement_trailing
+        }
+        #else
+        return toolbar_item_placement_trailing
+        #endif
     }
 }
 

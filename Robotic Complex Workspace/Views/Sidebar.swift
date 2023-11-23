@@ -101,7 +101,7 @@ struct SidebarContent: View
             .toolbar
             {
                 //Settings button for iOS/iPadOS sidebar toolbar
-                ToolbarItem(placement: placement_trailing)
+                ToolbarItem(placement: toolbar_item_placement_trailing)
                 {
                     HStack(alignment: .center)
                     {
