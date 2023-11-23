@@ -95,7 +95,7 @@ struct RegistersDataView: View
 
 struct RegisterCardView: View
 {
-    @State var value = 0
+    @State var value: Float = 0
     @State private var appeared = false
     
     @EnvironmentObject var base_workspace: Workspace

@@ -1149,6 +1149,9 @@ struct SpaceScaleView: View
                     .frame(width: 20)
                 TextField("0", value: $space_scale[0], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $space_scale[0], in: 2...1000)
                     .labelsHidden()
             }
@@ -1159,6 +1162,9 @@ struct SpaceScaleView: View
                     .frame(width: 20)
                 TextField("0", value: $space_scale[1], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $space_scale[1], in: 2...1000)
                     .labelsHidden()
             }
@@ -1169,6 +1175,9 @@ struct SpaceScaleView: View
                     .frame(width: 20)
                 TextField("0", value: $space_scale[2], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $space_scale[2], in: 2...1000)
                     .labelsHidden()
             }
@@ -1202,6 +1211,9 @@ struct OriginMoveView: View
                     .frame(width: 20)
                 TextField("0", value: $origin_view_pos_location[0], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $origin_view_pos_location[0], in: -20000...20000)
                     .labelsHidden()
             }
@@ -1212,6 +1224,9 @@ struct OriginMoveView: View
                     .frame(width: 20)
                 TextField("0", value: $origin_view_pos_location[1], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $origin_view_pos_location[1], in: -20000...20000)
                     .labelsHidden()
             }
@@ -1222,6 +1237,9 @@ struct OriginMoveView: View
                     .frame(width: 20)
                 TextField("0", value: $origin_view_pos_location[2], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $origin_view_pos_location[2], in: -20000...20000)
                     .labelsHidden()
             }
@@ -1255,6 +1273,9 @@ struct OriginRotateView: View
                     .frame(width: 20)
                 TextField("0", value: $origin_view_pos_rotation[0], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $origin_view_pos_rotation[0], in: -180...180)
                     .labelsHidden()
             }
@@ -1265,6 +1286,9 @@ struct OriginRotateView: View
                     .frame(width: 20)
                 TextField("0", value: $origin_view_pos_rotation[1], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $origin_view_pos_rotation[1], in: -180...180)
                     .labelsHidden()
             }
@@ -1275,6 +1299,9 @@ struct OriginRotateView: View
                     .frame(width: 20)
                 TextField("0", value: $origin_view_pos_rotation[2], format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $origin_view_pos_rotation[2], in: -180...180)
                     .labelsHidden()
             }
@@ -1874,6 +1901,7 @@ struct PositionItemView: View
                     .frame(width: 48)
                 #else
                     .frame(maxWidth: .infinity)
+                    .keyboardType(.decimalPad)
                 #endif
                 Stepper("Enter", value: $item_view_pos_speed, in: 0...100)
                     .labelsHidden()

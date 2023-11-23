@@ -444,7 +444,7 @@ struct WorkspaceSceneView: UIViewRepresentable
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
-                var result = SCNHitTestResult()
+                //var result = SCNHitTestResult()
                 
                 if hit_results.count > 0
                 {

@@ -1227,7 +1227,7 @@ struct LogicElementView: View
     @Binding var logic_type: LogicType
     @Binding var mark_name: String
     @Binding var target_mark_name: String
-    @Binding var compared_value: Int
+    @Binding var compared_value: Float
     
     @EnvironmentObject var base_workspace: Workspace
     
