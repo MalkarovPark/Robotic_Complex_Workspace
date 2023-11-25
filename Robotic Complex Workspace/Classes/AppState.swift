@@ -686,6 +686,10 @@ class AppState : ObservableObject
         return folder_names
     }
     
+    //MARK: - Program elements functions
+    @Published var edited_element = WorkspaceProgramElement()
+    @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
+    
     //MARK: - Visual functions
     func reset_previewed_node_position()
     {

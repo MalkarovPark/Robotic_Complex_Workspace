@@ -16,7 +16,9 @@ struct ControlProgramView: View
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
     @State private var dragged_element: WorkspaceProgramElement?
     @State private var add_element_view_presented = false
-    @State private var add_new_element_data = WorkspaceProgramElementStruct()
+    
+    @EnvironmentObject var app_state: AppState
+    //@State private var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -31,12 +33,12 @@ struct ControlProgramView: View
                 {
                     ForEach(base_workspace.elements)
                     { element in
-                        ElementCardView(elements: $base_workspace.elements, document: $document, element_item: element, on_delete: remove_elements)
+                        ProgramElementItemView(elements: $base_workspace.elements, document: $document, element: element, on_delete: remove_elements)
                         .onDrag({
                             self.dragged_element = element
                             return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
                         }, preview: {
-                            ElementCardViewPreview(element_item: element)
+                            ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color)
                         })
                         .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, document: $document, workspace_elements: base_workspace.file_data().elements, element: element))
                     }
@@ -83,18 +85,18 @@ struct ControlProgramView: View
                         Button(action: { add_element_view_presented.toggle() }) //Configure new element button
                         {
                             Circle()
-                                .foregroundColor(add_button_color())
+                                .foregroundStyle(app_state.new_program_element.color)
                                 .overlay(
-                                    add_button_image()
+                                    app_state.new_program_element.image
                                         .foregroundColor(.white)
-                                        .animation(.easeInOut(duration: 0.2), value: add_button_image())
+                                        .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
                                 )
                                 .frame(width: 32, height: 32)
-                                .animation(.easeInOut(duration: 0.2), value: add_button_color())
+                                .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.color)
                         }
                         .popover(isPresented: $add_element_view_presented)
                         {
-                            AddElementView(add_element_view_presented: $add_element_view_presented, add_new_element_data: $add_new_element_data)
+                            AddElementView(add_element_view_presented: $add_element_view_presented, new_program_element: $app_state.new_program_element)
                             #if os(iOS) || os(visionOS)
                                 .presentationDetents([.height(128)])
                             #endif
@@ -112,99 +114,30 @@ struct ControlProgramView: View
     func add_new_program_element()
     {
         base_workspace.update_view()
-        //let new_program_element = WorkspaceProgramElement(element_type: add_new_element_data.element_type, performer_type: add_new_element_data.performer_type, modifier_type: add_new_element_data.modifier_type, logic_type: add_new_element_data.logic_type)
-        let new_program_element = WorkspaceProgramElement(element_struct: add_new_element_data)
+        let new_program_element = app_state.new_program_element
         
         //Checking for existing workspace components for element selection
-        switch new_program_element.element_data.element_type
+        switch new_program_element
         {
-        case .perofrmer:
-            switch new_program_element.element_data.performer_type
+        case let element_item as RobotPerformerElement:
+            if base_workspace.placed_robots_names.count > 0
             {
-            case .robot:
-                if base_workspace.placed_robots_names.count > 0
+                element_item.object_name = base_workspace.placed_robots_names.first!
+                base_workspace.select_robot(name: element_item.object_name)
+                
+                if base_workspace.selected_robot.programs_count > 0
                 {
-                    new_program_element.element_data.robot_name = base_workspace.placed_robots_names.first!
-                    base_workspace.select_robot(name: new_program_element.element_data.robot_name)
-                    
-                    if base_workspace.selected_robot.programs_count > 0
-                    {
-                        new_program_element.element_data.program_name = base_workspace.selected_robot.programs_names.first!
-                    }
-                    base_workspace.deselect_robot()
+                    element_item.object_name = base_workspace.selected_robot.programs_names.first!
                 }
-            case .tool:
-                break
+                base_workspace.deselect_robot()
             }
-        case .modifier:
-            break
-        case .logic:
+        default:
             break
         }
         
         //Add new program element and save to file
         base_workspace.elements.append(new_program_element)
         document.preset.elements = base_workspace.file_data().elements
-    }
-    
-    //MARK: Button image by element subtype
-    func add_button_image() -> Image
-    {
-        var badge_image: Image
-        
-        switch add_new_element_data.element_type
-        {
-        case .perofrmer:
-            switch add_new_element_data.performer_type
-            {
-            case .robot:
-                badge_image = Image(systemName: "r.square")
-            case .tool:
-                badge_image = Image(systemName: "hammer")
-            }
-        case .modifier:
-            switch add_new_element_data.modifier_type
-            {
-            case .observer:
-                badge_image = Image(systemName: "loupe")
-            case .mover:
-                badge_image = Image(systemName: "arrow.up.arrow.down")
-            case .changer:
-                badge_image = Image(systemName: "wand.and.rays")
-            }
-        case .logic:
-            switch add_new_element_data.logic_type
-            {
-            case .jump:
-                badge_image = Image(systemName: "arrowshape.bounce.forward")
-            case .mark:
-                badge_image = Image(systemName: "record.circle")
-            case .equal:
-                badge_image = Image(systemName: "equal")
-            case .unequal:
-                badge_image = Image(systemName: "exclamationmark")
-            }
-        }
-        
-        return badge_image
-    }
-    
-    //MARK: Button color by element type
-    func add_button_color() -> Color
-    {
-        var badge_color: Color
-        
-        switch add_new_element_data.element_type
-        {
-        case .perofrmer:
-            badge_color = .green
-        case .modifier:
-            badge_color = .pink
-        case .logic:
-            badge_color = .gray
-        }
-        
-        return badge_color
     }
     
     func remove_elements(at offsets: IndexSet) //Remove program element function
@@ -225,7 +158,7 @@ struct WorkspaceDropDelegate : DropDelegate
     @Binding var dragged_element : WorkspaceProgramElement?
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var workspace_elements: [WorkspaceProgramElementStruct]
+    @State var workspace_elements: [WorkspaceProgramElement]
     
     let element: WorkspaceProgramElement
     
@@ -255,257 +188,82 @@ struct WorkspaceDropDelegate : DropDelegate
 }
 
 //MARK: - Workspace program element card view
-struct ElementCardView: View
+struct ProgramElementItemView: View
 {
     @Binding var elements: [WorkspaceProgramElement]
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var element_item: WorkspaceProgramElement
+    @State var element: WorkspaceProgramElement
     @State var element_view_presented = false
+    @State private var is_current = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     let on_delete: (IndexSet) -> ()
     
     var body: some View
     {
-        ZStack
-        {
-            VStack
-            {
-                HStack(spacing: 0)
-                {
-                    ZStack
-                    {
-                        badge_image()
-                            .foregroundColor(.white)
-                            .imageScale(.large)
-                            .animation(.easeInOut(duration: 0.2), value: badge_image())
-                    }
-                    .frame(width: 48, height: 48)
-                    .background(badge_color())
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .padding(16)
-                    .animation(.easeInOut(duration: 0.2), value: badge_color())
-                    
-                    HStack(spacing: 0)
-                    {
-                        HStack(spacing: 0)
-                        {
-                            VStack(alignment: .leading)
-                            {
-                                Text(element_item.subtype)
-                                    .font(.title3)
-                                    .animation(.easeInOut(duration: 0.2), value: element_item.element_data.element_type.rawValue)
-                                Text(element_item.info)
-                                    .foregroundColor(.secondary)
-                                    .animation(.easeInOut(duration: 0.2), value: element_item.info)
-                            }
-                            
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .padding(.trailing, 16)
-                }
-                .frame(maxWidth: .infinity)
-            }
-        }
-        .frame(height: 80)
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .shadow(radius: 8)
-        .onTapGesture
+        ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: base_workspace.is_current_element(element: element))
+            .frame(height: 80)
+            .background(.thinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .shadow(radius: 8)
+            .onTapGesture
         {
             element_view_presented.toggle()
         }
         .popover(isPresented: $element_view_presented,
                  arrowEdge: .trailing)
         {
-            ElementView(elements: $elements, element_item: $element_item, element_view_presented: $element_view_presented, document: $document, new_element_item_data: element_item.element_data, on_delete: on_delete)
-        }
-        .overlay(alignment: .topTrailing)
-        {
-            if base_workspace.is_current_element(element: element_item)
+            VStack(spacing: 0)
             {
-                Circle()
-                    .foregroundColor(Color.yellow)
-                    .frame(width: 16, height: 16)
-                    .padding()
-                    .shadow(radius: 8)
-                    .transition(AnyTransition.scale)
-            }
-        }
-    }
-    
-    //MARK: Badge image by element subtype
-    func badge_image() -> Image
-    {
-        var badge_image: Image
-        
-        switch element_item.element_data.element_type
-        {
-        case .perofrmer:
-            switch element_item.element_data.performer_type
-            {
-            case .robot:
-                badge_image = Image(systemName: "r.square")
-            case .tool:
-                badge_image = Image(systemName: "hammer")
-            }
-        case .modifier:
-            switch element_item.element_data.modifier_type
-            {
-            case .observer:
-                badge_image = Image(systemName: "loupe")
-            case .mover:
-                badge_image = Image(systemName: "arrow.up.arrow.down")
-            case .changer:
-                badge_image = Image(systemName: "wand.and.rays")
-            }
-        case .logic:
-            switch element_item.element_data.logic_type
-            {
-            case .jump:
-                badge_image = Image(systemName: "arrowshape.bounce.forward")
-            case .mark:
-                badge_image = Image(systemName: "record.circle")
-            case .equal:
-                badge_image = Image(systemName: "equal")
-            case .unequal:
-                badge_image = Image(systemName: "exclamationmark")
-            }
-        }
-        
-        return badge_image
-    }
-    
-    //MARK: Badge color by element type
-    func badge_color() -> Color
-    {
-        var badge_color: Color
-        
-        switch element_item.element_data.element_type
-        {
-        case .perofrmer:
-            badge_color = .green
-        case .modifier:
-            badge_color = .pink
-        case .logic:
-            badge_color = .gray
-        }
-        
-        return badge_color
-    }
-}
-
-//MARK: - Workspace program element card preview for drag
-struct ElementCardViewPreview: View
-{
-    @State var element_item: WorkspaceProgramElement
-    
-    var body: some View
-    {
-        ZStack
-        {
-            VStack
-            {
-                HStack(spacing: 0)
+                ElementView(element: $element, on_update: update_program_element)
+                
+                Divider()
+                
+                HStack
                 {
-                    ZStack
+                    Button(role: .destructive, action: delete_program_element)
                     {
-                        badge_image()
-                            .foregroundColor(.white)
-                            .imageScale(.large)
-                            .animation(.easeInOut(duration: 0.2), value: badge_image())
+                        Text("Delete")
                     }
-                    .frame(width: 48, height: 48)
-                    .background(badge_color())
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .padding(16)
+                    .padding()
                     
-                    HStack(spacing: 0)
-                    {
-                        HStack(spacing: 0)
-                        {
-                            VStack(alignment: .leading)
-                            {
-                                Text(element_item.subtype)
-                                    .font(.title3)
-                                Text(element_item.info)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .padding(.trailing, 16)
+                    Spacer()
+                    
+                    Button("Update", action: update_program_element)
+                        .keyboardShortcut(.defaultAction)
+                        .padding()
+                    #if os(macOS)
+                        .foregroundColor(Color.white)
+                    #endif
                 }
-                .frame(maxWidth: .infinity)
             }
         }
-        .frame(height: 80)
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
     
-    func badge_image() -> Image
+    //MARK: Program elements manage functions
+    private func update_program_element()
     {
-        var badge_image: Image
+        base_workspace.elements_check()
         
-        switch element_item.element_data.element_type
-        {
-        case .perofrmer:
-            switch element_item.element_data.performer_type
-            {
-            case .robot:
-                badge_image = Image(systemName: "r.square")
-            case .tool:
-                badge_image = Image(systemName: "hammer")
-            }
-        case .modifier:
-            switch element_item.element_data.modifier_type
-            {
-            case .observer:
-                badge_image = Image(systemName: "loupe")
-            case .mover:
-                badge_image = Image(systemName: "arrow.up.arrow.down")
-            case .changer:
-                badge_image = Image(systemName: "wand.and.rays")
-            }
-        case .logic:
-            switch element_item.element_data.logic_type
-            {
-            case .jump:
-                badge_image = Image(systemName: "arrowshape.bounce.forward")
-            case .mark:
-                badge_image = Image(systemName: "record.circle")
-            case .equal:
-                badge_image = Image(systemName: "equal")
-            case .unequal:
-                badge_image = Image(systemName: "lessthan")
-            }
-        }
+        document.preset.elements = base_workspace.file_data().elements
         
-        return badge_image
+        //element_view_presented.toggle()
     }
     
-    func badge_color() -> Color
+    private func delete_program_element()
     {
-        var badge_color: Color
-        
-        switch element_item.element_data.element_type
+        if let index = elements.firstIndex(of: element)
         {
-        case .perofrmer:
-            badge_color = .green
-        case .modifier:
-            badge_color = .pink
-        case .logic:
-            badge_color = .gray
+            self.on_delete(IndexSet(integer: index))
+            base_workspace.elements_check()
         }
         
-        return badge_color
+        base_workspace.update_view()
+        
+        element_view_presented.toggle()
     }
 }
 
@@ -513,7 +271,12 @@ struct ElementCardViewPreview: View
 struct AddElementView: View
 {
     @Binding var add_element_view_presented: Bool
-    @Binding var add_new_element_data: WorkspaceProgramElementStruct
+    @Binding var new_program_element: WorkspaceProgramElement
+    
+    @State private var element_type: ProgramElementType = .perofrmer
+    @State private var performer_type: PerformerType = .robot
+    @State private var modifier_type: ModifierType = .mover
+    @State private var logic_type: LogicType = .comparator
     
     var body: some View
     {
@@ -522,11 +285,15 @@ struct AddElementView: View
             VStack
             {
                 //MARK: Type picker
-                Picker("Type", selection: $add_new_element_data.element_type)
+                Picker("Type", selection: $element_type)
                 {
                     ForEach(ProgramElementType.allCases, id: \.self)
                     { type in
                         Text(type.rawValue).tag(type)
+                    }
+                    .onChange(of: element_type)
+                    { _, _ in
+                        build_element()
                     }
                 }
                 .pickerStyle(.segmented)
@@ -540,11 +307,10 @@ struct AddElementView: View
                     Text("Type")
                         .font(.subheadline)
                     #endif
-                    switch add_new_element_data.element_type
+                    switch element_type
                     {
                     case .perofrmer:
-                        
-                        Picker("Type", selection: $add_new_element_data.performer_type)
+                        Picker("Type", selection: $performer_type)
                         {
                             ForEach(PerformerType.allCases, id: \.self)
                             { type in
@@ -554,8 +320,11 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         .buttonStyle(.bordered)
+                        .onChange(of: performer_type) { _, _ in
+                            build_element()
+                        }
                     case .modifier:
-                        Picker("Type", selection: $add_new_element_data.modifier_type)
+                        Picker("Type", selection: $modifier_type)
                         {
                             ForEach(ModifierType.allCases, id: \.self)
                             { type in
@@ -565,8 +334,11 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         .buttonStyle(.bordered)
+                        .onChange(of: modifier_type) { _, _ in
+                            build_element()
+                        }
                     case .logic:
-                        Picker("Type", selection: $add_new_element_data.logic_type)
+                        Picker("Type", selection: $logic_type)
                         {
                             ForEach(LogicType.allCases, id: \.self)
                             { type in
@@ -576,15 +348,97 @@ struct AddElementView: View
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity)
                         .buttonStyle(.bordered)
+                        .onChange(of: logic_type) { _, _ in
+                            build_element()
+                        }
                     }
                 }
             }
             .padding()
         }
     }
+    
+    private func build_element()
+    {
+        switch element_type
+        {
+        case .perofrmer:
+            switch performer_type
+            {
+            case .robot:
+                new_program_element = RobotPerformerElement()
+            case .tool:
+                new_program_element = ToolPerformerElement()
+            }
+        case .modifier:
+            switch modifier_type
+            {
+            case .mover:
+                new_program_element = MoverModifierElement()
+            case .copy:
+                new_program_element = CopyModifierElement()
+            case .write:
+                new_program_element = WriteModifierElement()
+            case .clear:
+                new_program_element = ClearModifierElement()
+            case .changer:
+                new_program_element = ChangerModifierElement()
+            case .observer:
+                new_program_element = ObserverModifierElement()
+            }
+        case .logic:
+            switch logic_type
+            {
+            case .comparator:
+                new_program_element = ComparatorLogicElement()
+            case .mark:
+                new_program_element = MarkLogicElement()
+            }
+        }
+    }
 }
 
 struct ElementView: View
+{
+    @Binding var element: WorkspaceProgramElement
+    
+    let on_update: () -> ()
+    
+    var body: some View
+    {
+        ZStack
+        {
+            switch element
+            {
+            case is RobotPerformerElement:
+                EmptyView()
+            case is ToolPerformerElement:
+                EmptyView()
+            case is MoverModifierElement:
+                EmptyView()
+            case is CopyModifierElement:
+                EmptyView()
+            case is WriteModifierElement:
+                EmptyView()
+            case is ClearModifierElement:
+                EmptyView()
+            case is ChangerModifierElement:
+                EmptyView()
+            case is ObserverModifierElement:
+                EmptyView()
+            case is ComparatorLogicElement:
+                EmptyView()
+            case is MarkLogicElement:
+                MarkLogicElementView(element: $element, on_update: on_update)
+            default:
+                EmptyView()
+            }
+        }
+        .padding()
+    }
+}
+
+/*struct ElementView: View
 {
     @Binding var elements: [WorkspaceProgramElement]
     @Binding var element_item: WorkspaceProgramElement
@@ -738,588 +592,43 @@ struct ElementView: View
             base_workspace.elements_check()
         }
     }
-}
+}*/
 
-//MARK: - Performer element view
-struct PerformerElementView: View
+//MARK: - Type enums
+///A program element type enum.
+public enum ProgramElementType: String, Codable, Equatable, CaseIterable
 {
-    @Binding var performer_type: PerformerType
-    @Binding var robot_name: String
-    @Binding var program_name: String
-    @Binding var tool_name: String
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    @State private var viewed_robot: Robot?
-    @State private var viewed_tool: Tool?
-    
-    var body: some View
-    {
-        VStack
-        {
-            switch performer_type
-            {
-            case .robot:
-                //MARK: Robot subview
-                if base_workspace.placed_robots_names.count > 0
-                {
-                    //MARK: Robot subview
-                    #if os(macOS)
-                    Picker("Name", selection: $robot_name) //Robot picker
-                    {
-                        ForEach(base_workspace.placed_robots_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    .onChange(of: robot_name)
-                    { _, new_value in
-                        viewed_robot = base_workspace.robot_by_name(new_value)
-                        if viewed_robot?.programs_names.count ?? 0 > 0
-                        {
-                            program_name = viewed_robot?.programs_names.first ?? ""
-                        }
-                        base_workspace.update_view()
-                    }
-                    .onAppear
-                    {
-                        if robot_name == ""
-                        {
-                            robot_name = base_workspace.placed_robots_names.first!
-                        }
-                        else
-                        {
-                            viewed_robot = base_workspace.robot_by_name(robot_name)
-                            base_workspace.update_view()
-                        }
-                    }
-                    .disabled(base_workspace.placed_robots_names.count == 0)
-                    .frame(maxWidth: .infinity)
-                    
-                    Picker("Program", selection: $program_name) //Robot program picker
-                    {
-                        if viewed_robot?.programs_names.count ?? 0 > 0
-                        {
-                            ForEach(viewed_robot!.programs_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        else
-                        {
-                            Text("None")
-                        }
-                    }
-                    .disabled(viewed_robot?.programs_names.count == 0)
-                    #else
-                    GeometryReader
-                    { geometry in
-                        HStack(spacing: 0)
-                        {
-                            VStack(spacing: 0)
-                            {
-                                Text("Name")
-                                
-                                Picker("Name", selection: $robot_name) //Robot picker
-                                {
-                                    if base_workspace.placed_robots_names.count > 0
-                                    {
-                                        ForEach(base_workspace.placed_robots_names, id: \.self)
-                                        { name in
-                                            Text(name)
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Text("None")
-                                    }
-                                }
-                                .onChange(of: robot_name)
-                                { _, new_value in
-                                    viewed_robot = base_workspace.robot_by_name(new_value)
-                                    if viewed_robot?.programs_names.count ?? 0 > 0
-                                    {
-                                        program_name = viewed_robot?.programs_names.first ?? ""
-                                    }
-                                    base_workspace.update_view()
-                                }
-                                .onAppear
-                                {
-                                    if robot_name == ""
-                                    {
-                                        robot_name = base_workspace.placed_robots_names[0]
-                                    }
-                                    else
-                                    {
-                                        viewed_robot = base_workspace.robot_by_name(robot_name)
-                                        base_workspace.update_view()
-                                    }
-                                }
-                                .disabled(base_workspace.placed_robots_names.count == 0)
-                                .pickerStyle(.wheel)
-                                .compositingGroup()
-                                .clipped()
-                            }
-                            .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
-                                
-                            VStack(spacing: 0)
-                            {
-                                Text("Program")
-                                
-                                Picker("Program", selection: $program_name) //Robot program picker
-                                {
-                                    if viewed_robot?.programs_names.count ?? 0 > 0
-                                    {
-                                        ForEach(viewed_robot!.programs_names, id: \.self)
-                                        { name in
-                                            Text(name)
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Text("None")
-                                    }
-                                }
-                                .disabled(viewed_robot?.programs_names.count == 0)
-                                .pickerStyle(.wheel)
-                                .compositingGroup()
-                                .clipped()
-                            }
-                            .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
-                        }
-                    }
-                    .frame(height: 128)
-                    #endif
-                }
-                else
-                {
-                    Text("No robots placed in this workspace")
-                }
-            case .tool:
-                //MARK: Tool subview
-                if base_workspace.placed_tools_names.count > 0
-                {
-                    //MARK: tool subview
-                    #if os(macOS)
-                    Picker("Name", selection: $tool_name) //tool picker
-                    {
-                        ForEach(base_workspace.placed_tools_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    .onChange(of: tool_name)
-                    { _, new_value in
-                        viewed_tool = base_workspace.tool_by_name(new_value)
-                        if viewed_tool?.programs_names.count ?? 0 > 0
-                        {
-                            program_name = viewed_tool?.programs_names.first ?? ""
-                        }
-                        base_workspace.update_view()
-                    }
-                    .onAppear
-                    {
-                        if tool_name == ""
-                        {
-                            tool_name = base_workspace.placed_tools_names.first!
-                        }
-                        else
-                        {
-                            viewed_tool = base_workspace.tool_by_name(tool_name)
-                            base_workspace.update_view()
-                        }
-                    }
-                    .disabled(base_workspace.placed_tools_names.count == 0)
-                    .frame(maxWidth: .infinity)
-                    
-                    Picker("Program", selection: $program_name) //tool program picker
-                    {
-                        if viewed_tool?.programs_names.count ?? 0 > 0
-                        {
-                            ForEach(viewed_tool!.programs_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        else
-                        {
-                            Text("None")
-                        }
-                    }
-                    .disabled(viewed_tool?.programs_names.count == 0)
-                    #else
-                    GeometryReader
-                    { geometry in
-                        HStack(spacing: 0)
-                        {
-                            VStack(spacing: 0)
-                            {
-                                Text("Name")
-                                
-                                Picker("Name", selection: $tool_name) //tool picker
-                                {
-                                    if base_workspace.placed_tools_names.count > 0
-                                    {
-                                        ForEach(base_workspace.placed_tools_names, id: \.self)
-                                        { name in
-                                            Text(name)
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Text("None")
-                                    }
-                                }
-                                .onChange(of: tool_name)
-                                { _, new_value in
-                                    viewed_tool = base_workspace.tool_by_name(new_value)
-                                    if viewed_tool?.programs_names.count ?? 0 > 0
-                                    {
-                                        program_name = viewed_tool?.programs_names.first ?? ""
-                                    }
-                                    base_workspace.update_view()
-                                }
-                                .onAppear
-                                {
-                                    if tool_name == ""
-                                    {
-                                        tool_name = base_workspace.placed_tools_names[0]
-                                    }
-                                    else
-                                    {
-                                        viewed_tool = base_workspace.tool_by_name(tool_name)
-                                        base_workspace.update_view()
-                                    }
-                                }
-                                .disabled(base_workspace.placed_tools_names.count == 0)
-                                .pickerStyle(.wheel)
-                                .compositingGroup()
-                                .clipped()
-                            }
-                            .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
-                            
-                            VStack(spacing: 0)
-                            {
-                                Text("Program")
-                                
-                                Picker("Program", selection: $program_name) //tool program picker
-                                {
-                                    if viewed_tool?.programs_names.count ?? 0 > 0
-                                    {
-                                        ForEach(viewed_tool!.programs_names, id: \.self)
-                                        { name in
-                                            Text(name)
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Text("None")
-                                    }
-                                }
-                                .disabled(viewed_tool?.programs_names.count == 0)
-                                .pickerStyle(.wheel)
-                                .compositingGroup()
-                                .clipped()
-                            }
-                            .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
-                        }
-                    }
-                    .frame(height: 128)
-                    #endif
-                }
-                else
-                {
-                    Text("No tools placed in this workspace")
-                }
-            }
-        }
-    }
+    case perofrmer = "Performer"
+    case modifier = "Modifier"
+    case logic = "Logic"
 }
 
-//MARK: - Modifier element view
-struct ModifierElementView: View
+///A performer program element type enum.
+public enum PerformerType: String, Codable, Equatable, CaseIterable
 {
-    @Binding var modifier_type: ModifierType
-    @Binding var object_name: String
-    @Binding var is_push: Bool
-    @Binding var register_index: Int
-    @Binding var module_name: String
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    @State private var viewed_object: Tool?
-    
-    var body: some View
-    {
-        VStack
-        {
-            switch modifier_type
-            {
-            case .observer:
-                //MARK: Observer subview
-                if base_workspace.placed_tools_names.count > 0
-                {
-                    //MARK: tool subview
-                    #if os(macOS)
-                    Picker("Name", selection: $object_name) //tool picker
-                    {
-                        ForEach(base_workspace.placed_tools_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    .onChange(of: object_name)
-                    { _, new_value in
-                        viewed_object = base_workspace.tool_by_name(new_value)
-                        base_workspace.update_view()
-                    }
-                    .onAppear
-                    {
-                        if object_name == ""
-                        {
-                            object_name = base_workspace.placed_tools_names.first!
-                        }
-                        else
-                        {
-                            viewed_object = base_workspace.tool_by_name(object_name)
-                            base_workspace.update_view()
-                        }
-                    }
-                    .disabled(base_workspace.placed_tools_names.count == 0)
-                    .frame(maxWidth: .infinity)
-                    #else
-                    VStack(spacing: 0)
-                    {
-                        Text("Name")
-                            .padding(.bottom)
-                        Picker("Name", selection: $object_name) //tool picker
-                        {
-                            if base_workspace.placed_tools_names.count > 0
-                            {
-                                ForEach(base_workspace.placed_tools_names, id: \.self)
-                                { name in
-                                    Text(name)
-                                }
-                            }
-                            else
-                            {
-                                Text("None")
-                            }
-                        }
-                        .onChange(of: object_name)
-                        { _, new_value in
-                            viewed_object = base_workspace.tool_by_name(new_value)
-                            base_workspace.update_view()
-                        }
-                        .onAppear
-                        {
-                            if object_name == ""
-                            {
-                                object_name = base_workspace.placed_tools_names[0]
-                            }
-                            else
-                            {
-                                viewed_object = base_workspace.tool_by_name(object_name)
-                                base_workspace.update_view()
-                            }
-                        }
-                        .disabled(base_workspace.placed_tools_names.count == 0)
-                        .pickerStyle(.wheel)
-                        .compositingGroup()
-                        .clipped()
-                    }
-                    .frame(width: 256, height: 128)
-                    #endif
-                }
-                else
-                {
-                    Text("No tools placed in this workspace")
-                }
-            case .mover:
-                //MARK: Move subview
-                VStack
-                {
-                    Picker("LR", selection: $is_push)
-                    {
-                        Image(systemName: "tray.and.arrow.down")
-                            .tag(true)
-                        Image(systemName: "tray.and.arrow.up")
-                            .tag(false)
-                    }
-                    .pickerStyle(.segmented)
-                    .labelsHidden()
-                    .padding(.bottom)
-                    
-                    HStack(spacing: 8)
-                    {
-                        Text("Register")
-                        TextField("0", value: $register_index, format: .number)
-                            .textFieldStyle(.roundedBorder)
-                        Stepper("Enter", value: $register_index, in: 0...255)
-                            .labelsHidden()
-                    }
-                }
-            case .changer:
-                //MARK: Changer subview
-                #if os(macOS)
-                HStack
-                {
-                    Picker("Module:", selection: $module_name) //Changer module picker
-                    {
-                        if Workspace.changer_modules.count > 0
-                        {
-                            ForEach(Workspace.changer_modules, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        else
-                        {
-                            Text("None")
-                        }
-                    }
-                    .onAppear
-                    {
-                        if Workspace.changer_modules.count > 0 && module_name == ""
-                        {
-                            module_name = Workspace.changer_modules[0]
-                        }
-                    }
-                    .disabled(Workspace.changer_modules.count == 0)
-                }
-                #else
-                VStack
-                {
-                    if Workspace.changer_modules.count > 0
-                    {
-                        Text("Module:")
-                        Picker("Module:", selection: $module_name) //Target mark picker
-                        {
-                            ForEach(Workspace.changer_modules, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        .onAppear
-                        {
-                            if Workspace.changer_modules.count > 0 && module_name == ""
-                            {
-                                module_name = Workspace.changer_modules[0]
-                            }
-                        }
-                        .disabled(Workspace.changer_modules.count == 0)
-                        .pickerStyle(.wheel)
-                    }
-                    else
-                    {
-                        Text("No modules")
-                    }
-                }
-                #endif
-            }
-        }
-    }
+    case robot = "Robot"
+    case tool = "Tool"
 }
 
-//MARK: - Logic element view
-struct LogicElementView: View
+///A modifier program element type enum.
+public enum ModifierType: String, Codable, Equatable, CaseIterable
 {
-    @Binding var logic_type: LogicType
-    @Binding var mark_name: String
-    @Binding var target_mark_name: String
-    @Binding var compared_value: Float
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    var body: some View
-    {
-        VStack
-        {
-            switch logic_type
-            {
-            case .jump:
-                //MARK: Jump subview
-                #if os(macOS)
-                HStack
-                {
-                    Picker("To Mark:", selection: $target_mark_name) //Target mark picker
-                    {
-                        if base_workspace.marks_names.count > 0
-                        {
-                            ForEach(base_workspace.marks_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        else
-                        {
-                            Text("None")
-                        }
-                    }
-                    .onAppear
-                    {
-                        if base_workspace.marks_names.count > 0 && target_mark_name == ""
-                        {
-                            target_mark_name = base_workspace.marks_names[0]
-                        }
-                    }
-                    .disabled(base_workspace.marks_names.count == 0)
-                }
-                #else
-                VStack
-                {
-                    if base_workspace.marks_names.count > 0
-                    {
-                        Text("To mark:")
-                        Picker("To Mark:", selection: $target_mark_name) //Target mark picker
-                        {
-                            ForEach(base_workspace.marks_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        .onAppear
-                        {
-                            if base_workspace.marks_names.count > 0 && target_mark_name == ""
-                            {
-                                target_mark_name = base_workspace.marks_names[0]
-                            }
-                        }
-                        .disabled(base_workspace.marks_names.count == 0)
-                        .pickerStyle(.wheel)
-                    }
-                    else
-                    {
-                        Text("No marks")
-                    }
-                }
-                #endif
-            case .mark:
-                //MARK: Mark subview
-                HStack
-                {
-                    Text("Name")
-                    TextField("None", text: $mark_name) //Mark name field
-                        .textFieldStyle(.roundedBorder)
-                }
-            default:
-                //MARK: Equal subview
-                HStack(spacing: 8)
-                {
-                    Text("Compare with")
-                    #if os(iOS) || os(visionOS)
-                        .frame(minWidth: 120)
-                    #endif
-                    TextField("0", value: $compared_value, format: .number)
-                        .textFieldStyle(.roundedBorder)
-                    Stepper("Enter", value: $compared_value, in: 0...255)
-                        .labelsHidden()
-                }
-            }
-        }
-    }
+    case mover = "Move"
+    case copy = "Copy"
+    case write = "Write"
+    case clear = "Clear"
+    case changer = "Changer"
+    case observer = "Observer"
 }
 
+///A logic program element type enum.
+public enum LogicType: String, Codable, Equatable, CaseIterable
+{
+    case comparator = "Comparator"
+    case mark = "Mark"
+}
+
+//MARK: - Previews
 struct ControlProgramView_Previews: PreviewProvider
 {
     static var previews: some View
@@ -1327,14 +636,9 @@ struct ControlProgramView_Previews: PreviewProvider
         Group
         {
             ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(AppState())
                 .environmentObject(Workspace())
-            ElementCardView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), document: .constant(Robotic_Complex_WorkspaceDocument()), element_item: WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot), on_delete: { IndexSet in print("None") })
-                .environmentObject(Workspace())
-            ElementView(elements: .constant([WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)]), element_item: .constant(WorkspaceProgramElement(element_type: .perofrmer, performer_type: .robot)), element_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), new_element_item_data: WorkspaceProgramElementStruct(element_type: .logic, performer_type: .robot, modifier_type: .changer, logic_type: .jump), on_delete: { IndexSet in print("None") })
-                .environmentObject(Workspace())
-            ModifierElementView(modifier_type: .constant(.changer), object_name: .constant("None"), is_push: .constant(true), register_index: .constant(0), module_name: .constant("None"))
-                .environmentObject(Workspace())
-            LogicElementView(logic_type: .constant(.mark), mark_name: .constant("Mark Name"), target_mark_name: .constant("Target Mark Name"), compared_value: .constant(0))
+            ElementView(element: .constant(WorkspaceProgramElement()), on_update: {})
         }
     }
 }

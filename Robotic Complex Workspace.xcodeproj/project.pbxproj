@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		622E73DF2B12AD1D0035FDD5 /* PerformerElementsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 622E73DE2B12AD1D0035FDD5 /* PerformerElementsViews.swift */; };
+		622E73E12B12AD4A0035FDD5 /* ModifierElementsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 622E73E02B12AD4A0035FDD5 /* ModifierElementsViews.swift */; };
+		622E73E32B12AD710035FDD5 /* LogicElementsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 622E73E22B12AD710035FDD5 /* LogicElementsViews.swift */; };
 		6236F9372AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */; };
 		6236F9392AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */; };
 		6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F93C2AD3439C008FA7C4 /* Assets.xcassets */; };
@@ -43,6 +46,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		622E73DE2B12AD1D0035FDD5 /* PerformerElementsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformerElementsViews.swift; sourceTree = "<group>"; };
+		622E73E02B12AD4A0035FDD5 /* ModifierElementsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifierElementsViews.swift; sourceTree = "<group>"; };
+		622E73E22B12AD710035FDD5 /* LogicElementsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogicElementsViews.swift; sourceTree = "<group>"; };
 		6236F9342AD3439B008FA7C4 /* Robotic Complex Workspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Robotic Complex Workspace.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceApp.swift; sourceTree = "<group>"; };
 		6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceDocument.swift; sourceTree = "<group>"; };
@@ -92,6 +98,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		622E73DD2B12ACC60035FDD5 /* ControlProgramViews */ = {
+			isa = PBXGroup;
+			children = (
+				622E73DE2B12AD1D0035FDD5 /* PerformerElementsViews.swift */,
+				622E73E02B12AD4A0035FDD5 /* ModifierElementsViews.swift */,
+				622E73E22B12AD710035FDD5 /* LogicElementsViews.swift */,
+			);
+			path = ControlProgramViews;
+			sourceTree = "<group>";
+		};
 		6236F9352AD3439B008FA7C4 /* Robotic Complex Workspace */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,9 +138,10 @@
 		6236F94A2AD345A0008FA7C4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6236F9532AD345C4008FA7C4 /* ControlProgramView.swift */,
+				622E73DD2B12ACC60035FDD5 /* ControlProgramViews */,
 				6236F94C2AD345C4008FA7C4 /* ConnectorView.swift */,
 				6236F9542AD345C4008FA7C4 /* ContentView.swift */,
-				6236F9532AD345C4008FA7C4 /* ControlProgramView.swift */,
 				6236F94E2AD345C4008FA7C4 /* PartsView.swift */,
 				6236F9522AD345C4008FA7C4 /* RobotsView.swift */,
 				6236F94F2AD345C4008FA7C4 /* SettingsView.swift */,
@@ -335,7 +352,9 @@
 			files = (
 				6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */,
 				6236F9562AD345C4008FA7C4 /* ConnectorView.swift in Sources */,
+				622E73DF2B12AD1D0035FDD5 /* PerformerElementsViews.swift in Sources */,
 				6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */,
+				622E73E12B12AD4A0035FDD5 /* ModifierElementsViews.swift in Sources */,
 				6236F95E2AD345C4008FA7C4 /* ContentView.swift in Sources */,
 				6236F97E2AD34727008FA7C4 /* GripperController.swift in Sources */,
 				6236F95A2AD345C4008FA7C4 /* StatisticsView.swift in Sources */,
@@ -344,6 +363,7 @@
 				6236F9552AD345C4008FA7C4 /* Sidebar.swift in Sources */,
 				6236F9572AD345C4008FA7C4 /* ToolsView.swift in Sources */,
 				6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */,
+				622E73E32B12AD710035FDD5 /* LogicElementsViews.swift in Sources */,
 				6236F9392AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift in Sources */,
 				6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */,
 				6236F9762AD34714008FA7C4 /* DrillConnector.swift in Sources */,
