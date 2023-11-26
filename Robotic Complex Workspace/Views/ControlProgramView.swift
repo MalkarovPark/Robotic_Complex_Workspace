@@ -136,7 +136,7 @@ struct ControlProgramView: View
         }
         
         //Add new program element and save to file
-        base_workspace.elements.append(new_program_element)
+        base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         document.preset.elements = base_workspace.file_data().elements
     }
     
