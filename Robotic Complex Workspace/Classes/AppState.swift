@@ -687,7 +687,6 @@ class AppState : ObservableObject
     }
     
     //MARK: - Program elements functions
-    @Published var edited_element = WorkspaceProgramElement()
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
     //MARK: - Visual functions

@@ -122,11 +122,11 @@ struct MarkLogicElementView: View
             (element as! MarkLogicElement).name = new_value
             on_update()
         }
-        //Make codable structs for program elements
     }
 }
 
 #Preview
 {
-    MarkLogicElementView(element: .constant(WorkspaceProgramElement()), on_update: {})
+    MarkLogicElementView(element: .constant(MarkLogicElement()), on_update: {})
+        .environmentObject(Workspace())
 }

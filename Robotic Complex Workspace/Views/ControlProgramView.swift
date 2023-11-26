@@ -158,7 +158,7 @@ struct WorkspaceDropDelegate : DropDelegate
     @Binding var dragged_element : WorkspaceProgramElement?
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var workspace_elements: [WorkspaceProgramElement]
+    @State var workspace_elements: [WorkspaceProgramElementStruct]
     
     let element: WorkspaceProgramElement
     
@@ -197,6 +197,8 @@ struct ProgramElementItemView: View
     @State var element_view_presented = false
     @State private var is_current = false
     
+    @State private var is_deliting = false
+    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
@@ -204,43 +206,40 @@ struct ProgramElementItemView: View
     
     var body: some View
     {
-        ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: base_workspace.is_current_element(element: element))
-            .frame(height: 80)
-            .background(.thinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .shadow(radius: 8)
-            .onTapGesture
+        ZStack
         {
-            element_view_presented.toggle()
-        }
-        .popover(isPresented: $element_view_presented,
-                 arrowEdge: .trailing)
-        {
-            VStack(spacing: 0)
+            ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: base_workspace.is_current_element(element: element))
+                .frame(height: 80)
+                .background(.thinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .shadow(radius: 8)
+                .onTapGesture
             {
-                ElementView(element: $element, on_update: update_program_element)
-                
-                Divider()
-                
-                HStack
-                {
-                    Button(role: .destructive, action: delete_program_element)
+                element_view_presented = true
+            }
+            
+            if !is_deliting
+            {
+                Rectangle()
+                    .foregroundStyle(.clear)
+                    .popover(isPresented: $element_view_presented,
+                             arrowEdge: .trailing)
                     {
-                        Text("Delete")
+                        ElementView(element: $element, on_update: update_program_element)
                     }
-                    .padding()
-                    
-                    Spacer()
-                    
-                    Button("Update", action: update_program_element)
-                        .keyboardShortcut(.defaultAction)
-                        .padding()
-                    #if os(macOS)
-                        .foregroundColor(Color.white)
-                    #endif
-                }
             }
         }
+        .disabled(is_deliting)
+        .contextMenu
+        {
+            Button(role: .destructive, action: {
+                delete_program_element()
+            })
+            {
+                Label("Delete", systemImage: "xmark")
+            }
+        }
+        
     }
     
     //MARK: Program elements manage functions
@@ -249,12 +248,11 @@ struct ProgramElementItemView: View
         base_workspace.elements_check()
         
         document.preset.elements = base_workspace.file_data().elements
-        
-        //element_view_presented.toggle()
     }
     
     private func delete_program_element()
     {
+        is_deliting = true
         if let index = elements.firstIndex(of: element)
         {
             self.on_delete(IndexSet(integer: index))
@@ -355,6 +353,46 @@ struct AddElementView: View
                 }
             }
             .padding()
+        }
+        .onAppear(perform: get_parameters)
+    }
+    
+    private func get_parameters()
+    {
+        switch new_program_element.file_info.identifier
+        {
+        case .robot_perofrmer:
+            element_type = .perofrmer
+            performer_type = .robot
+        case .tool_performer:
+            element_type = .perofrmer
+            performer_type = .tool
+        case .mover_modifier:
+            element_type = .modifier
+            modifier_type = .mover
+        case .copy_modifier:
+            element_type = .modifier
+            modifier_type = .copy
+        case .write_modifier:
+            element_type = .modifier
+            modifier_type = .write
+        case .clear_modifier:
+            element_type = .modifier
+            modifier_type = .clear
+        case .changer_modifier:
+            element_type = .modifier
+            modifier_type = .changer
+        case .observer_modifier:
+            element_type = .modifier
+            modifier_type = .observer
+        case .comparator_logic:
+            element_type = .logic
+            logic_type = .comparator
+        case .mark_logic:
+            element_type = .logic
+            logic_type = .mark
+        case .none:
+            break
         }
     }
     
