@@ -131,9 +131,38 @@ struct ControlProgramView: View
                 }
                 base_workspace.deselect_robot()
             }
+        case let element_item as ComparatorLogicElement:
+            if base_workspace.marks_names.count > 0
+            {
+                var mark_founded = false
+                
+                for mark_name in base_workspace.marks_names
+                {
+                    if mark_name == element_item.target_mark_name
+                    {
+                        mark_founded = true
+                    }
+                    
+                    if mark_founded == true
+                    {
+                        break
+                    }
+                }
+                
+                if mark_founded == false && element_item.target_mark_name == ""
+                {
+                    element_item.target_mark_name = base_workspace.marks_names[0]
+                }
+            }
+            else
+            {
+                element_item.target_mark_name = ""
+            }
         default:
             break
         }
+        
+        //base_workspace.elements_check()
         
         //Add new program element and save to file
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
@@ -465,7 +494,7 @@ struct ElementView: View
             case is ObserverModifierElement:
                 EmptyView()
             case is ComparatorLogicElement:
-                EmptyView()
+                ComparatorElementView(element: $element, on_update: on_update)
             case is MarkLogicElement:
                 MarkLogicElementView(element: $element, on_update: on_update)
             default:

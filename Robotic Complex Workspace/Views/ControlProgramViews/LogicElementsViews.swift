@@ -10,17 +10,59 @@ import IndustrialKit
 
 struct ComparatorElementView: View
 {
-    @Binding var logic_type: LogicType
-    @Binding var target_mark_name: String
-    @Binding var compared_value: Float
+    @Binding var element: WorkspaceProgramElement
     
     @EnvironmentObject var base_workspace: Workspace
+    @State private var picker_is_presented = false
+    
+    @State var compare_type: CompareType = .equal
+    @State var value_index = 0
+    @State var value2_index = 0
+    @State var target_mark_name = ""
+    
+    let on_update: () -> ()
+    
+    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    {
+        self._element = element
+        
+        _compare_type = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).compare_type)
+        _value_index = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).value_index)
+        _value2_index = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).value2_index)
+        _target_mark_name = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).target_mark_name)
+        
+        self.on_update = on_update
+    }
     
     var body: some View
     {
-        HStack(spacing: 0)
+        VStack(spacing: 0)
         {
-            #if os(macOS)
+            HStack(spacing: 8)
+            {
+                Text("If")
+                
+                TextField("0", value: $value_index, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                Stepper("Enter", value: $value_index, in: 0...255)
+                    .labelsHidden()
+                
+                Button(compare_type.rawValue)
+                {
+                    picker_is_presented = true
+                }
+                .popover(isPresented: $picker_is_presented)
+                {
+                    CompareTypePicker(compare_type: $compare_type)
+                }
+                
+                TextField("0", value: $value_index, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                Stepper("Enter", value: $value_index, in: 0...255)
+                    .labelsHidden()
+            }
+            .padding(.bottom)
+            
             HStack
             {
                 Picker("To Mark:", selection: $target_mark_name) //Target mark picker
@@ -46,48 +88,46 @@ struct ComparatorElementView: View
                 }
                 .disabled(base_workspace.marks_names.count == 0)
             }
-            #else
-            VStack
-            {
-                if base_workspace.marks_names.count > 0
-                {
-                    Text("To mark:")
-                    Picker("To Mark:", selection: $target_mark_name) //Target mark picker
-                    {
-                        ForEach(base_workspace.marks_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    .onAppear
-                    {
-                        if base_workspace.marks_names.count > 0 && target_mark_name == ""
-                        {
-                            target_mark_name = base_workspace.marks_names[0]
-                        }
-                    }
-                    .disabled(base_workspace.marks_names.count == 0)
-                    .pickerStyle(.wheel)
-                }
-                else
-                {
-                    Text("No marks")
-                }
-            }
-            #endif
-            //MARK: Equal subview
-            HStack(spacing: 8)
-            {
-                Text("Compare with")
-                #if os(iOS) || os(visionOS)
-                    .frame(minWidth: 120)
-                #endif
-                TextField("0", value: $compared_value, format: .number)
-                    .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $compared_value, in: 0...255)
-                    .labelsHidden()
+        }
+        .onChange(of: compare_type)
+        { _, new_value in
+            (element as! ComparatorLogicElement).compare_type = new_value
+            on_update()
+        }
+        .onChange(of: value_index)
+        { _, new_value in
+            (element as! ComparatorLogicElement).value_index = new_value
+            on_update()
+        }
+        .onChange(of: value2_index)
+        { _, new_value in
+            (element as! ComparatorLogicElement).value2_index = new_value
+            on_update()
+        }
+        .onChange(of: target_mark_name)
+        { _, new_value in
+            (element as! ComparatorLogicElement).target_mark_name = new_value
+            on_update()
+        }
+    }
+}
+
+struct CompareTypePicker: View
+{
+    @Binding var compare_type: CompareType
+    
+    var body: some View
+    {
+        Picker("Compare", selection: $compare_type)
+        {
+            ForEach(CompareType.allCases, id: \.self)
+            { compare_type in
+                Text(compare_type.rawValue)
             }
         }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .padding()
     }
 }
 
@@ -95,17 +135,14 @@ struct MarkLogicElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
-    @State private var new_element: MarkLogicElement
-    
-    @State private var new_name: String
+    @State private var name: String
     
     let on_update: () -> ()
     
     init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
-        _new_element = State(initialValue: _element.wrappedValue as! MarkLogicElement)
-        _new_name = State(initialValue: (_element.wrappedValue as! MarkLogicElement).name)
+        _name = State(initialValue: (_element.wrappedValue as! MarkLogicElement).name)
         self.on_update = on_update
     }
     
@@ -114,10 +151,10 @@ struct MarkLogicElementView: View
         HStack
         {
             Text("Name")
-            TextField("Mark name", text: $new_name) //Mark name field
+            TextField("Mark name", text: $name) //Mark name field
                 .textFieldStyle(.roundedBorder)
         }
-        .onChange(of: new_name)
+        .onChange(of: name)
         { _, new_value in
             (element as! MarkLogicElement).name = new_value
             on_update()
@@ -127,6 +164,14 @@ struct MarkLogicElementView: View
 
 #Preview
 {
+    ComparatorElementView(element: .constant(ComparatorLogicElement()), on_update: {})
+        .environmentObject(Workspace())
+        .frame(width: 256)
+}
+
+#Preview
+{
     MarkLogicElementView(element: .constant(MarkLogicElement()), on_update: {})
         .environmentObject(Workspace())
+        .frame(width: 256)
 }
