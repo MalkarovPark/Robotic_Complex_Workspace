@@ -12,13 +12,13 @@ struct ComparatorElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
-    @EnvironmentObject var base_workspace: Workspace
-    @State private var picker_is_presented = false
-    
     @State var compare_type: CompareType = .equal
     @State var value_index = 0
     @State var value2_index = 0
     @State var target_mark_name = ""
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @State private var picker_is_presented = false
     
     let on_update: () -> ()
     

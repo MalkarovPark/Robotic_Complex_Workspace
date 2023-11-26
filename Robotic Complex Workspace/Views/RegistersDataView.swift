@@ -20,11 +20,7 @@ struct RegistersDataView: View
     
     private let numbers = (0...255).map { $0 }
     
-    #if os(macOS)
-    private let columns: [GridItem] = [.init(.adaptive(minimum: 88, maximum: 88), spacing: 0)]
-    #else
-    private let columns: [GridItem] = [.init(.adaptive(minimum: 132, maximum: 132), spacing: 0)]
-    #endif
+    private let columns: [GridItem] = [.init(.adaptive(minimum: register_card_maximum, maximum: register_card_maximum), spacing: 0)]
     
     var body: some View
     {
@@ -32,7 +28,7 @@ struct RegistersDataView: View
         {
             ScrollView
             {
-                LazyVGrid(columns: columns, spacing: 8)
+                LazyVGrid(columns: columns, spacing: register_card_spacing)
                 {
                     ForEach(numbers, id: \.self)
                     { number in
@@ -43,6 +39,11 @@ struct RegistersDataView: View
                 }
                 .padding()
                 .modifier(DoubleModifier(update_toggle: $toggle))
+                #if os(macOS)
+                .padding(.vertical, 10)
+                #else
+                .padding(.vertical)
+                #endif
             }
             
             Divider()
@@ -77,7 +78,7 @@ struct RegistersDataView: View
         }
         .controlSize(.large)
         #if os(macOS)
-        .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
+        .frame(minWidth: 420, maxWidth: 512, minHeight: 400, maxHeight: 480)
         #endif
     }
     
@@ -114,7 +115,7 @@ struct RegisterCardView: View
                     ZStack
                     {
                         TextField("0", value: $value, format: .number)
-                            .font(.system(size: 20))
+                            .font(.system(size: register_card_font_size))
                             .multilineTextAlignment(.center)
                             .textFieldStyle(.plain)
                             .onAppear
@@ -149,17 +150,18 @@ struct RegisterCardView: View
                             Text("\(number)")
                                 .foregroundColor(.white)
                                 .padding(.leading, 8)
+                            #if os(iOS) || os(visionOS)
+                                .font(.system(size: 20))
+                            #endif
                         }
+                        .shadow(radius: 2)
                 }
             }
             .background(.thinMaterial)
         }
-        #if os(macOS)
-        .frame(width: 80, height: 80)
-        #else
-        .frame(width: 120, height: 120)
-        #endif
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .frame(width: register_card_scale, height: register_card_scale)
+        .clipShape(RoundedRectangle(cornerRadius: 4.0, style: .continuous))
+        .shadow(radius: 4)
     }
 }
 
@@ -167,4 +169,17 @@ struct RegisterCardView: View
     RegistersDataView(document: .constant(Robotic_Complex_WorkspaceDocument()), is_presented: .constant(true))
         .environmentObject(Workspace())
         .environmentObject(AppState())
+        .frame(width: 400)
 }
+
+#if os(macOS)
+let register_card_scale: CGFloat = 80
+let register_card_spacing: CGFloat = 16
+let register_card_font_size: CGFloat = 20
+#else
+let register_card_scale: CGFloat = 112
+let register_card_spacing: CGFloat = 20
+let register_card_font_size: CGFloat = 32
+#endif
+
+let register_card_maximum = register_card_scale + register_card_spacing

@@ -191,7 +191,7 @@ struct WorkspaceView: View
         }
         else
         {
-            return toolbar_item_placement_trailing
+            return .automatic
         }
         #else
         return toolbar_item_placement_trailing

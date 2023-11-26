@@ -105,7 +105,7 @@ struct RobotsTableView: View
         .toolbar
         {
             //MARK: Toolbar
-            ToolbarItem(placement: toolbar_item_placement_trailing)
+            ToolbarItem(placement: .automatic)
             {
                 HStack(alignment: .center)
                 {

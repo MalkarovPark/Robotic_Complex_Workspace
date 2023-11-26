@@ -478,7 +478,7 @@ struct ElementView: View
             switch element
             {
             case is RobotPerformerElement:
-                EmptyView()
+                RobotPerformerElementView(element: $element, on_update: on_update)
             case is ToolPerformerElement:
                 EmptyView()
             case is MoverModifierElement:
