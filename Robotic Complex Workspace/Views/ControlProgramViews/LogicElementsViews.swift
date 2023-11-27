@@ -13,8 +13,8 @@ struct ComparatorElementView: View
     @Binding var element: WorkspaceProgramElement
     
     @State var compare_type: CompareType = .equal
-    @State var value_index = 0
-    @State var value2_index = 0
+    @State var value_index = [Int]()
+    @State var value2_index = [Int]()
     @State var target_mark_name = ""
     
     @EnvironmentObject var base_workspace: Workspace
@@ -27,8 +27,8 @@ struct ComparatorElementView: View
         self._element = element
         
         _compare_type = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).compare_type)
-        _value_index = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).value_index)
-        _value2_index = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).value2_index)
+        _value_index = State(initialValue: [(_element.wrappedValue as! ComparatorLogicElement).value_index])
+        _value2_index = State(initialValue: [(_element.wrappedValue as! ComparatorLogicElement).value2_index])
         _target_mark_name = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).target_mark_name)
         
         self.on_update = on_update
@@ -40,12 +40,9 @@ struct ComparatorElementView: View
         {
             HStack(spacing: 8)
             {
-                Text("If")
+                Text("If value of")
                 
-                TextField("0", value: $value_index, format: .number)
-                    .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $value_index, in: 0...255)
-                    .labelsHidden()
+                RegisterSelector(text: "\(value_index[0])", indices: $value_index, names: ["Value 1"], cards_colors: register_colors)
                 
                 Button(compare_type.rawValue)
                 {
@@ -56,10 +53,9 @@ struct ComparatorElementView: View
                     CompareTypePicker(compare_type: $compare_type)
                 }
                 
-                TextField("0", value: $value_index, format: .number)
-                    .textFieldStyle(.roundedBorder)
-                Stepper("Enter", value: $value_index, in: 0...255)
-                    .labelsHidden()
+                Text("value of")
+                
+                RegisterSelector(text: "\(value2_index[0])", indices: $value2_index, names: ["Value 2"], cards_colors: register_colors)
             }
             .padding(.bottom)
             
@@ -96,12 +92,12 @@ struct ComparatorElementView: View
         }
         .onChange(of: value_index)
         { _, new_value in
-            (element as! ComparatorLogicElement).value_index = new_value
+            (element as! ComparatorLogicElement).value_index = new_value[0]
             on_update()
         }
         .onChange(of: value2_index)
         { _, new_value in
-            (element as! ComparatorLogicElement).value2_index = new_value
+            (element as! ComparatorLogicElement).value2_index = new_value[0]
             on_update()
         }
         .onChange(of: target_mark_name)

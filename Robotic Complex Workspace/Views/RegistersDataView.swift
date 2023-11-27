@@ -16,7 +16,6 @@ struct RegistersDataView: View
     @State private var toggle = false
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
     
     private let numbers = (0...255).map { $0 }
     
@@ -32,7 +31,7 @@ struct RegistersDataView: View
                 {
                     ForEach(numbers, id: \.self)
                     { number in
-                        RegisterCardView(number: number, color: app_state.register_colors[number])
+                        RegisterCardView(number: number, color: register_colors[number])
                             .id(number)
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
@@ -165,11 +164,170 @@ struct RegisterCardView: View
     }
 }
 
-#Preview {
-    RegistersDataView(document: .constant(Robotic_Complex_WorkspaceDocument()), is_presented: .constant(true))
-        .environmentObject(Workspace())
-        .environmentObject(AppState())
-        .frame(width: 400)
+struct RegisterSelector: View
+{
+    let text: String
+    
+    @Binding var indices: [Int]
+    @State var names: [String]
+    @State var cards_colors: [Color]
+    
+    @State private var is_presented = false
+    
+    var body: some View
+    {
+        Button("\(text)", action: { is_presented = true })
+        .popover(isPresented: $is_presented)
+        {
+            RegistersSelectorView(indices: $indices, names: names, cards_colors: cards_colors)
+        }
+    }
+}
+
+struct RegistersSelectorView: View
+{
+    @Binding var indices: [Int]
+    @State var names: [String]
+    @State var cards_colors: [Color]
+    
+    private let numbers = (0...255).map { $0 }
+    
+    @State private var current_parameter = 0
+    @State private var selections = [Bool](repeating: false, count: 256)
+    @State private var texts = [String](repeating: String(), count: 256)
+    
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 70, maximum: 70), spacing: 0)]
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            if names.count > 1
+            {
+                Picker(selection: .constant(1), label: Text("placeholder")) { }
+                .padding()
+                .hidden()
+            }
+            
+            ScrollView
+            {
+                LazyVGrid(columns: columns, spacing: 6)
+                {
+                    ForEach(numbers, id: \.self)
+                    { number in
+                        RegisterSelectorCardView(is_selected: $selections[number], number: number, color: cards_colors[number], selection_text: texts[number])
+                        .onTapGesture
+                        {
+                            select_index(number)
+                        }
+                    }
+                }
+                .padding()
+                #if os(macOS)
+                .padding(.vertical, 10)
+                #else
+                .padding(.vertical)
+                #endif
+            }
+        }
+        .frame(width: 256, height: 256)
+        .overlay(alignment: .top)
+        {
+            if names.count > 1
+            {
+                Picker("Parameters", selection: $current_parameter)
+                {
+                    ForEach(Array(indices.enumerated()), id: \.offset)
+                    { index, _ in
+                        Text("\(names[index])")
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .padding()
+                .background(.thinMaterial)
+            }
+        }
+        .onAppear
+        {
+            update_selections()
+            update_texts()
+        }
+    }
+    
+    private func update_selections()
+    {
+        selections = [Bool](repeating: false, count: 256)
+        
+        for index in indices
+        {
+            selections[index] = true
+        }
+    }
+    
+    private func update_texts()
+    {
+        texts = [String](repeating: String(), count: 256)
+        
+        for (index, value) in indices.enumerated()
+        {
+            texts[value] += "\(names[index]) "
+        }
+        
+        for index in texts.indices
+        {
+            texts[index] = String(texts[index].dropLast())
+        }
+    }
+    
+    private func select_index(_ number: Int)
+    {
+        indices[current_parameter] = number
+        
+        update_selections()
+        update_texts()
+    }
+}
+
+struct RegisterSelectorCardView: View
+{
+    @Binding var is_selected: Bool
+    
+    let number: Int
+    let color: Color
+    
+    let selection_text: String
+    
+    var body: some View
+    {
+        ZStack
+        {
+            Rectangle()
+                .foregroundStyle(Color(color).opacity(0.75))
+            
+            Text("\(number)")
+                .font(.system(size: 20))
+                .foregroundColor(.white)
+                .padding(8)
+            
+            if is_selected
+            {
+                ZStack
+                {
+                    Text(selection_text)
+                        .foregroundStyle(.primary)
+                        .minimumScaleFactor(0.5)
+                        .padding(8)
+                        //.lineLimit(1)
+                }
+                .frame(width: 64, height: 64)
+                .background(.regularMaterial)
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+        .frame(width: 64, height: 64)
+        .shadow(radius: 2)
+    }
 }
 
 #if os(macOS)
@@ -183,3 +341,17 @@ let register_card_font_size: CGFloat = 32
 #endif
 
 let register_card_maximum = register_card_scale + register_card_spacing
+
+#Preview
+{
+    RegistersDataView(document: .constant(Robotic_Complex_WorkspaceDocument()), is_presented: .constant(true))
+        .environmentObject(Workspace())
+        .environmentObject(AppState())
+        .frame(width: 400)
+}
+
+#Preview
+{
+    RegistersSelectorView(indices: .constant([Int](repeating: 0, count: 6)), names: ["X", "Y", "Z", "R", "P", "W"], cards_colors: register_colors)
+        .environmentObject(Workspace())
+}

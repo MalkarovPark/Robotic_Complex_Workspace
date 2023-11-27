@@ -223,7 +223,7 @@ class AppState : ObservableObject
             part_name = parts.first ?? "None" //Set first array element as selected part name
         }
         
-        register_colors = colors_by_seed(seed: 5433) //Generate colors for registers data view
+        //register_colors = colors_by_seed(seed: 5433) //Generate colors for registers data view
     }
     
     //MARK: - Get additive workspace objects data from external property list
@@ -697,9 +697,6 @@ class AppState : ObservableObject
         previewed_object?.node?.position = SCNVector3Zero
         previewed_object?.node?.rotation = SCNVector4Zero
     }
-    
-    //MARK: - Register colors
-    public var register_colors = Array(repeating: Color.clear, count: 256)
 }
 
 //MARK - Control modifier
@@ -746,3 +743,5 @@ func colors_by_seed(seed: Int) -> [Color]
 
     return colors
 }
+
+let register_colors = colors_by_seed(seed: 5433)
