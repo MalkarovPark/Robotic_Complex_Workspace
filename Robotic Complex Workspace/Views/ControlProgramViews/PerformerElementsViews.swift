@@ -13,9 +13,13 @@ struct RobotPerformerElementView: View
     @Binding var element: WorkspaceProgramElement
     
     @State private var object_name = ""
-    @State private var is_single_perfrom = true
+    @State private var is_single_perfrom = false
+    @State private var is_program_by_index = false
     @State private var program_name = ""
-    @State private var program_index_from = 0
+    @State private var program_index_from = [Int]()
+    
+    @State private var location_indices = [Int]()
+    @State private var rotation_indices = [Int]()
     
     @EnvironmentObject var base_workspace: Workspace
     @State private var picker_is_presented = false
@@ -28,8 +32,12 @@ struct RobotPerformerElementView: View
         
         _object_name = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).object_name)
         _is_single_perfrom = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).is_single_perfrom)
+        _is_program_by_index = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).is_program_by_index)
         _program_name = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).program_name)
-        _program_index_from = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).program_index_from)
+        _program_index_from = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).program_index])
+        
+        _location_indices = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).x_index, (_element.wrappedValue as! RobotPerformerElement).y_index, (_element.wrappedValue as! RobotPerformerElement).z_index])
+        _rotation_indices = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).r_index, (_element.wrappedValue as! RobotPerformerElement).p_index, (_element.wrappedValue as! RobotPerformerElement).w_index])
         
         self.on_update = on_update
     }
@@ -38,109 +46,75 @@ struct RobotPerformerElementView: View
     {
         VStack(spacing: 0)
         {
-            //MARK: Robot subview
             if base_workspace.placed_robots_names.count > 0
             {
-                //MARK: Robot subview
-                #if os(macOS)
-                Picker("Name", selection: $object_name) //Robot picker
+                Picker("", selection: $is_single_perfrom)
                 {
-                    ForEach(base_workspace.placed_robots_names, id: \.self)
-                    { name in
-                        Text(name)
-                    }
+                    Text("Single").tag(true)
+                    Text("Program").tag(false)
                 }
-                .onChange(of: object_name)
-                { _, name in
-                    if base_workspace.robot_by_name(name).programs_names.count > 0
-                    {
-                        program_name = base_workspace.robot_by_name(name).programs_names.first ?? ""
-                    }
-                    base_workspace.update_view()
-                }
-                .onAppear
-                {
-                    if object_name == ""
-                    {
-                        object_name = base_workspace.placed_robots_names.first!
-                    }
-                    else
-                    {
-                        base_workspace.update_view()
-                    }
-                }
-                .disabled(base_workspace.placed_robots_names.count == 0)
-                .frame(maxWidth: .infinity)
-                .padding(.bottom)
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .padding([.horizontal])
                 
-                Picker("Program", selection: $program_name) //Robot program picker
+                if is_single_perfrom
                 {
-                    if base_workspace.robot_by_name(object_name).programs_names.count > 0
-                    {
-                        ForEach(base_workspace.robot_by_name(object_name).programs_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
-                    }
-                    else
-                    {
-                        Text("None")
-                    }
+                    RegistersSelector(text: "Location X: \(location_indices[0]), Y: \(location_indices[1]), Z: \(location_indices[2])", indices: $location_indices, names: ["X", "Y", "Z"], cards_colors: register_colors)
+                        .padding(.top)
+                    
+                    RegistersSelector(text: "Rotation R: \(rotation_indices[0]), P: \(rotation_indices[1]), W: \(rotation_indices[2])", indices: $rotation_indices, names: ["R", "P", "W"], cards_colors: register_colors)
+                        .padding(.top)
                 }
-                .disabled(base_workspace.robot_by_name(object_name).programs_names.count == 0)
-                #else
-                GeometryReader
-                { geometry in
-                    HStack(spacing: 0)
+                else
+                {
+                    VStack(spacing: 0)
                     {
-                        VStack(spacing: 0)
+                        //MARK: Robot subview
+                        Picker("Name", selection: $object_name) //Robot picker
                         {
-                            Text("Name")
-                            
-                            Picker("Name", selection: $object_name) //Robot picker
-                            {
-                                if base_workspace.placed_robots_names.count > 0
-                                {
-                                    ForEach(base_workspace.placed_robots_names, id: \.self)
-                                    { name in
-                                        Text(name)
-                                    }
-                                }
-                                else
-                                {
-                                    Text("None")
-                                }
+                            ForEach(base_workspace.placed_robots_names, id: \.self)
+                            { name in
+                                Text(name)
                             }
-                            .onChange(of: object_name)
-                            { _, name in
-                                if base_workspace.robot_by_name(name).programs_names.count > 0
-                                {
-                                    program_name = base_workspace.robot_by_name(name).programs_names.first ?? ""
-                                }
+                        }
+                        .onChange(of: object_name)
+                        { _, name in
+                            if base_workspace.robot_by_name(name).programs_names.count > 0
+                            {
+                                program_name = base_workspace.robot_by_name(name).programs_names.first ?? ""
+                            }
+                            base_workspace.update_view()
+                        }
+                        .onAppear
+                        {
+                            if object_name == ""
+                            {
+                                object_name = base_workspace.placed_robots_names.first!
+                            }
+                            else
+                            {
                                 base_workspace.update_view()
                             }
-                            .onAppear
-                            {
-                                if object_name == ""
-                                {
-                                    object_name = base_workspace.placed_robots_names[0]
-                                }
-                                else
-                                {
-                                    base_workspace.update_view()
-                                }
-                            }
-                            .disabled(base_workspace.placed_robots_names.count == 0)
-                            .pickerStyle(.wheel)
-                            .compositingGroup()
-                            .clipped()
                         }
-                        .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
-                            
-                        VStack(spacing: 0)
+                        .disabled(base_workspace.placed_robots_names.count == 0)
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom)
+                        
+                        Picker("", selection: $is_program_by_index)
                         {
-                            Text("Program")
-                            
+                            Text("Name").tag(false)
+                            Text("Index").tag(true)
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+                        .padding(.bottom)
+                        
+                        if is_program_by_index
+                        {
+                            RegistersSelector(text: "Select", indices: $program_index_from, names: ["Program"], cards_colors: register_colors)
+                        }
+                        else
+                        {
                             Picker("Program", selection: $program_name) //Robot program picker
                             {
                                 if base_workspace.robot_by_name(object_name).programs_names.count > 0
@@ -156,118 +130,130 @@ struct RobotPerformerElementView: View
                                 }
                             }
                             .disabled(base_workspace.robot_by_name(object_name).programs_names.count == 0)
-                            .pickerStyle(.wheel)
-                            .compositingGroup()
-                            .clipped()
                         }
-                        .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                     }
+                    .padding(.top)
+                    #if os(iOS) || os(visionOS)
+                    .frame(minWidth: 256)
+                    #endif
                 }
-                .frame(height: 128)
-                #endif
             }
             else
             {
                 Text("No robots placed in this workspace")
             }
         }
-        #if os(iOS) || os(visionOS)
-        .frame(minWidth: 256)
-        #endif
+        .onChange(of: object_name)
+        { _, new_value in
+            (element as! RobotPerformerElement).object_name = new_value
+            on_update()
+        }
+        .onChange(of: is_single_perfrom)
+        { _, new_value in
+            (element as! RobotPerformerElement).is_single_perfrom = new_value
+            on_update()
+        }
+        .onChange(of: is_program_by_index)
+        { _, new_value in
+            (element as! RobotPerformerElement).is_program_by_index = new_value
+            on_update()
+        }
+        .onChange(of: program_name)
+        { _, new_value in
+            (element as! RobotPerformerElement).program_name = new_value
+            on_update()
+        }
+        .onChange(of: program_index_from)
+        { _, new_value in
+            (element as! RobotPerformerElement).program_index = new_value[0]
+            on_update()
+        }
+        .onChange(of: location_indices)
+        { _, new_value in
+            (element as! RobotPerformerElement).x_index = new_value[0]
+            (element as! RobotPerformerElement).y_index = new_value[1]
+            (element as! RobotPerformerElement).z_index = new_value[2]
+            on_update()
+        }
+        .onChange(of: rotation_indices)
+        { _, new_value in
+            (element as! RobotPerformerElement).r_index = new_value[0]
+            (element as! RobotPerformerElement).p_index = new_value[1]
+            (element as! RobotPerformerElement).w_index = new_value[2]
+            on_update()
+        }
     }
 }
 
 struct ToolPerformerElementView: View
 {
-    @Binding var object_name: String
-    @Binding var program_name: String
+    @Binding var element: WorkspaceProgramElement
+    
+    @State private var object_name = ""
+    @State private var is_single_perfrom = false
+    @State private var is_program_by_index = false
+    @State private var program_name = ""
+    @State private var program_index_from = [Int]()
+    
+    @State private var opcode_index = [Int]()
     
     @EnvironmentObject var base_workspace: Workspace
+    @State private var picker_is_presented = false
     
-    @State private var viewed_tool: Tool?
+    let on_update: () -> ()
+    
+    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    {
+        self._element = element
+        
+        _object_name = State(initialValue: (_element.wrappedValue as! ToolPerformerElement).object_name)
+        _is_single_perfrom = State(initialValue: (_element.wrappedValue as! ToolPerformerElement).is_single_perfrom)
+        _is_program_by_index = State(initialValue: (_element.wrappedValue as! ToolPerformerElement).is_program_by_index)
+        _program_name = State(initialValue: (_element.wrappedValue as! ToolPerformerElement).program_name)
+        _program_index_from = State(initialValue: [(_element.wrappedValue as! ToolPerformerElement).program_index])
+        
+        _opcode_index = State(initialValue: [(_element.wrappedValue as! ToolPerformerElement).opcode_index])
+        
+        self.on_update = on_update
+    }
     
     var body: some View
     {
-        //MARK: Tool subview
-        if base_workspace.placed_tools_names.count > 0
+        VStack(spacing: 0)
         {
-            //MARK: tool subview
-            #if os(macOS)
-            Picker("Name", selection: $object_name) //tool picker
+            if base_workspace.placed_tools_names.count > 0
             {
-                ForEach(base_workspace.placed_tools_names, id: \.self)
-                { name in
-                    Text(name)
-                }
-            }
-            .onChange(of: object_name)
-            { _, new_value in
-                viewed_tool = base_workspace.tool_by_name(new_value)
-                if viewed_tool?.programs_names.count ?? 0 > 0
+                Picker("", selection: $is_single_perfrom)
                 {
-                    program_name = viewed_tool?.programs_names.first ?? ""
+                    Text("Single").tag(true)
+                    Text("Program").tag(false)
                 }
-                base_workspace.update_view()
-            }
-            .onAppear
-            {
-                if object_name == ""
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .padding([.horizontal])
+                
+                if is_single_perfrom
                 {
-                    object_name = base_workspace.placed_tools_names.first!
+                    RegistersSelector(text: "Opcode from", indices: $opcode_index, names: ["Operation code"], cards_colors: register_colors)
+                        .padding(.top)
                 }
                 else
-                {
-                    viewed_tool = base_workspace.tool_by_name(object_name)
-                    base_workspace.update_view()
-                }
-            }
-            .disabled(base_workspace.placed_tools_names.count == 0)
-            .frame(maxWidth: .infinity)
-            
-            Picker("Program", selection: $program_name) //tool program picker
-            {
-                if viewed_tool?.programs_names.count ?? 0 > 0
-                {
-                    ForEach(viewed_tool!.programs_names, id: \.self)
-                    { name in
-                        Text(name)
-                    }
-                }
-                else
-                {
-                    Text("None")
-                }
-            }
-            .disabled(viewed_tool?.programs_names.count == 0)
-            #else
-            GeometryReader
-            { geometry in
-                HStack(spacing: 0)
                 {
                     VStack(spacing: 0)
                     {
-                        Text("Name")
-                        
-                        Picker("Name", selection: $object_name) //tool picker
+                        //MARK: Robot subview
+                        Picker("Name", selection: $object_name) //Robot picker
                         {
-                            if base_workspace.placed_tools_names.count > 0
-                            {
-                                ForEach(base_workspace.placed_tools_names, id: \.self)
-                                { name in
-                                    Text(name)
-                                }
-                            }
-                            else
-                            {
-                                Text("None")
+                            ForEach(base_workspace.placed_tools_names, id: \.self)
+                            { name in
+                                Text(name)
                             }
                         }
                         .onChange(of: object_name)
-                        { _, new_value in
-                            viewed_tool = base_workspace.tool_by_name(new_value)
-                            if viewed_tool?.programs_names.count ?? 0 > 0
+                        { _, name in
+                            if base_workspace.tool_by_name(name).programs_names.count > 0
                             {
-                                program_name = viewed_tool?.programs_names.first ?? ""
+                                program_name = base_workspace.tool_by_name(name).programs_names.first ?? ""
                             }
                             base_workspace.update_view()
                         }
@@ -275,53 +261,89 @@ struct ToolPerformerElementView: View
                         {
                             if object_name == ""
                             {
-                                object_name = base_workspace.placed_tools_names[0]
+                                object_name = base_workspace.placed_tools_names.first!
                             }
                             else
                             {
-                                viewed_tool = base_workspace.tool_by_name(object_name)
                                 base_workspace.update_view()
                             }
                         }
                         .disabled(base_workspace.placed_tools_names.count == 0)
-                        .pickerStyle(.wheel)
-                        .compositingGroup()
-                        .clipped()
-                    }
-                    .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
-                    
-                    VStack(spacing: 0)
-                    {
-                        Text("Program")
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom)
                         
-                        Picker("Program", selection: $program_name) //tool program picker
+                        Picker("", selection: $is_program_by_index)
                         {
-                            if viewed_tool?.programs_names.count ?? 0 > 0
+                            Text("Name").tag(false)
+                            Text("Index").tag(true)
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+                        .padding(.bottom)
+                        
+                        if is_program_by_index
+                        {
+                            RegistersSelector(text: "Select", indices: $program_index_from, names: ["Program"], cards_colors: register_colors)
+                        }
+                        else
+                        {
+                            Picker("Program", selection: $program_name) //Robot program picker
                             {
-                                ForEach(viewed_tool!.programs_names, id: \.self)
-                                { name in
-                                    Text(name)
+                                if base_workspace.tool_by_name(object_name).programs_names.count > 0
+                                {
+                                    ForEach(base_workspace.tool_by_name(object_name).programs_names, id: \.self)
+                                    { name in
+                                        Text(name)
+                                    }
+                                }
+                                else
+                                {
+                                    Text("None")
                                 }
                             }
-                            else
-                            {
-                                Text("None")
-                            }
+                            .disabled(base_workspace.tool_by_name(object_name).programs_names.count == 0)
                         }
-                        .disabled(viewed_tool?.programs_names.count == 0)
-                        .pickerStyle(.wheel)
-                        .compositingGroup()
-                        .clipped()
                     }
-                    .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
+                    .padding(.top)
+                    #if os(iOS) || os(visionOS)
+                    .frame(minWidth: 256)
+                    #endif
                 }
             }
-            .frame(height: 128)
-            #endif
+            else
+            {
+                Text("No tools placed in this workspace")
+            }
         }
-        else
-        {
-            Text("No tools placed in this workspace")
+        .onChange(of: object_name)
+        { _, new_value in
+            (element as! ToolPerformerElement).object_name = new_value
+            on_update()
+        }
+        .onChange(of: is_single_perfrom)
+        { _, new_value in
+            (element as! ToolPerformerElement).is_single_perfrom = new_value
+            on_update()
+        }
+        .onChange(of: is_program_by_index)
+        { _, new_value in
+            (element as! ToolPerformerElement).is_program_by_index = new_value
+            on_update()
+        }
+        .onChange(of: program_name)
+        { _, new_value in
+            (element as! ToolPerformerElement).program_name = new_value
+            on_update()
+        }
+        .onChange(of: program_index_from)
+        { _, new_value in
+            (element as! ToolPerformerElement).program_index = new_value[0]
+            on_update()
+        }
+        .onChange(of: opcode_index)
+        { _, new_value in
+            (element as! ToolPerformerElement).opcode_index = new_value[0]
+            on_update()
         }
     }
 }

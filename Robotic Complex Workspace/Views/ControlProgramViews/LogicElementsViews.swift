@@ -42,7 +42,7 @@ struct ComparatorElementView: View
             {
                 Text("If value of")
                 
-                RegisterSelector(text: "\(value_index[0])", indices: $value_index, names: ["Value 1"], cards_colors: register_colors)
+                RegistersSelector(text: "\(value_index[0])", indices: $value_index, names: ["Value 1"], cards_colors: register_colors)
                 
                 Button(compare_type.rawValue)
                 {
@@ -55,13 +55,13 @@ struct ComparatorElementView: View
                 
                 Text("value of")
                 
-                RegisterSelector(text: "\(value2_index[0])", indices: $value2_index, names: ["Value 2"], cards_colors: register_colors)
+                RegistersSelector(text: "\(value2_index[0])", indices: $value2_index, names: ["Value 2"], cards_colors: register_colors)
             }
             .padding(.bottom)
             
             HStack
             {
-                Picker("To Mark:", selection: $target_mark_name) //Target mark picker
+                Picker("jump to:", selection: $target_mark_name) //Target mark picker
                 {
                     if base_workspace.marks_names.count > 0
                     {

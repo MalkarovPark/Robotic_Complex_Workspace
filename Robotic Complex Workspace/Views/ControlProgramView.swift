@@ -480,7 +480,7 @@ struct ElementView: View
             case is RobotPerformerElement:
                 RobotPerformerElementView(element: $element, on_update: on_update)
             case is ToolPerformerElement:
-                EmptyView()
+                ToolPerformerElementView(element: $element, on_update: on_update)
             case is MoverModifierElement:
                 EmptyView()
             case is CopyModifierElement:

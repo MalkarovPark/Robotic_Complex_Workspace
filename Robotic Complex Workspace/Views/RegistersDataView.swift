@@ -164,7 +164,7 @@ struct RegisterCardView: View
     }
 }
 
-struct RegisterSelector: View
+struct RegistersSelector: View
 {
     let text: String
     
@@ -215,7 +215,7 @@ struct RegistersSelectorView: View
                 {
                     ForEach(numbers, id: \.self)
                     { number in
-                        RegisterSelectorCardView(is_selected: $selections[number], number: number, color: cards_colors[number], selection_text: texts[number])
+                        RegistersSelectorCardView(is_selected: $selections[number], number: number, color: cards_colors[number], selection_text: texts[number])
                         .onTapGesture
                         {
                             select_index(number)
@@ -289,7 +289,7 @@ struct RegistersSelectorView: View
     }
 }
 
-struct RegisterSelectorCardView: View
+struct RegistersSelectorCardView: View
 {
     @Binding var is_selected: Bool
     
