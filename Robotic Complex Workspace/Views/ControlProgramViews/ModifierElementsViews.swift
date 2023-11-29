@@ -174,8 +174,8 @@ struct WriteElementView: View
         {
             HStack(spacing: 8)
             {
-                Text("Z:")
-                    .frame(width: 20)
+                Text("Write")
+                    .frame(width: 34)
                 TextField("0", value: $value, format: .number)
                     .textFieldStyle(.roundedBorder)
                 #if os(iOS) || os(visionOS)
@@ -186,7 +186,7 @@ struct WriteElementView: View
             }
             .padding(.trailing)
             
-            RegistersSelector(text: "\(to_index[0])", indices: $to_index, names: ["To"], cards_colors: register_colors)
+            RegistersSelector(text: "to: \(to_index[0])", indices: $to_index, names: ["To"], cards_colors: register_colors)
         }
         .onChange(of: value)
         { _, new_value in

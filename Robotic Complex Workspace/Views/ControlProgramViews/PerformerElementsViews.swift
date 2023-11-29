@@ -111,7 +111,7 @@ struct RobotPerformerElementView: View
                         
                         if is_program_by_index
                         {
-                            RegistersSelector(text: "Select", indices: $program_index_from, names: ["Program"], cards_colors: register_colors)
+                            RegistersSelector(text: "From: \(program_index_from[0])", indices: $program_index_from, names: ["Program"], cards_colors: register_colors)
                         }
                         else
                         {
@@ -283,7 +283,7 @@ struct ToolPerformerElementView: View
                         
                         if is_program_by_index
                         {
-                            RegistersSelector(text: "Select", indices: $program_index_from, names: ["Program"], cards_colors: register_colors)
+                            RegistersSelector(text: "From: \(program_index_from[0])", indices: $program_index_from, names: ["Program"], cards_colors: register_colors)
                         }
                         else
                         {

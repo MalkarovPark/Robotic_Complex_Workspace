@@ -1169,12 +1169,6 @@ struct ToolSceneView: View
                 }
             }
         }
-        
-        if app_state.get_scene_image && workspace_images_store
-        {
-            app_state.get_scene_image = false
-            app_state.previewed_object?.image = scene_view.snapshot()
-        }
     }
 }
 
