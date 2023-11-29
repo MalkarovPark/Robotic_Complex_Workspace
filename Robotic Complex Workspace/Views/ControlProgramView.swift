@@ -162,10 +162,10 @@ struct ControlProgramView: View
             break
         }
         
-        //base_workspace.elements_check()
-        
         //Add new program element and save to file
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
+        base_workspace.elements_check()
+        
         document.preset.elements = base_workspace.file_data().elements
     }
     
