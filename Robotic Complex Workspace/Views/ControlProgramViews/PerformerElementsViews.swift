@@ -353,3 +353,9 @@ struct ToolPerformerElementView: View
     RobotPerformerElementView(element: .constant(RobotPerformerElement()), on_update: {})
         .environmentObject(Workspace())
 }
+
+#Preview
+{
+    ToolPerformerElementView(element: .constant(ToolPerformerElement()), on_update: {})
+        .environmentObject(Workspace())
+}

@@ -247,7 +247,7 @@ struct ProgramElementItemView: View
                 element_view_presented = true
             }
             
-            if !is_deliting
+            if !is_deliting && !(element is ClearModifierElement)
             {
                 Rectangle()
                     .foregroundStyle(.clear)
@@ -399,9 +399,6 @@ struct AddElementView: View
         case .mover_modifier:
             element_type = .modifier
             modifier_type = .mover
-        case .copy_modifier:
-            element_type = .modifier
-            modifier_type = .copy
         case .write_modifier:
             element_type = .modifier
             modifier_type = .write
@@ -442,8 +439,6 @@ struct AddElementView: View
             {
             case .mover:
                 new_program_element = MoverModifierElement()
-            case .copy:
-                new_program_element = CopyModifierElement()
             case .write:
                 new_program_element = WriteModifierElement()
             case .clear:
@@ -482,15 +477,13 @@ struct ElementView: View
             case is ToolPerformerElement:
                 ToolPerformerElementView(element: $element, on_update: on_update)
             case is MoverModifierElement:
-                EmptyView()
-            case is CopyModifierElement:
-                EmptyView()
+                MoverElementView(element: $element, on_update: on_update)
             case is WriteModifierElement:
-                EmptyView()
+                WriteElementView(element: $element, on_update: on_update)
             case is ClearModifierElement:
                 EmptyView()
             case is ChangerModifierElement:
-                EmptyView()
+                ChangerElementView(element: $element, on_update: on_update)
             case is ObserverModifierElement:
                 EmptyView()
             case is ComparatorLogicElement:
@@ -504,162 +497,6 @@ struct ElementView: View
         .padding()
     }
 }
-
-/*struct ElementView: View
-{
-    @Binding var elements: [WorkspaceProgramElement]
-    @Binding var element_item: WorkspaceProgramElement
-    @Binding var element_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
-    @State var new_element_item_data: WorkspaceProgramElementStruct
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    let on_delete: (IndexSet) -> ()
-    
-    var body: some View
-    {
-        VStack(spacing: 0)
-        {
-            VStack
-            {
-                //MARK: Type picker
-                Picker("Type", selection: $new_element_item_data.element_type)
-                {
-                    ForEach(ProgramElementType.allCases, id: \.self)
-                    { type in
-                        Text(type.rawValue).tag(type)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .padding(.bottom, 8)
-                
-                //MARK: Subtype pickers cases
-                HStack(spacing: 16)
-                {
-                    #if os(iOS) || os(visionOS)
-                    Text("Type")
-                        .font(.subheadline)
-                    #endif
-                    switch new_element_item_data.element_type
-                    {
-                    case .perofrmer:
-                        
-                        Picker("Type", selection: $new_element_item_data.performer_type)
-                        {
-                            ForEach(PerformerType.allCases, id: \.self)
-                            { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity)
-                        #if os(iOS) || os(visionOS)
-                        .buttonStyle(.bordered)
-                        #endif
-                    case .modifier:
-                        Picker("Type", selection: $new_element_item_data.modifier_type)
-                        {
-                            ForEach(ModifierType.allCases, id: \.self)
-                            { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity)
-                        #if os(iOS) || os(visionOS)
-                        .buttonStyle(.bordered)
-                        #endif
-                    case .logic:
-                        Picker("Type", selection: $new_element_item_data.logic_type)
-                        {
-                            ForEach(LogicType.allCases, id: \.self)
-                            { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity)
-                        #if os(iOS) || os(visionOS)
-                        .buttonStyle(.bordered)
-                        #endif
-                    }
-                }
-            }
-            .padding()
-            Divider()
-            
-            Spacer()
-            
-            //MARK: Type views cases
-            VStack
-            {
-                switch new_element_item_data.element_type
-                {
-                case .perofrmer:
-                    PerformerElementView(performer_type: $new_element_item_data.performer_type, robot_name: $new_element_item_data.robot_name, program_name: $new_element_item_data.program_name, tool_name: $new_element_item_data.tool_name)
-                case .modifier:
-                    ModifierElementView(modifier_type: $new_element_item_data.modifier_type, object_name: $new_element_item_data.object_name, is_push: $new_element_item_data.is_push, register_index: $new_element_item_data.register_index, module_name: $new_element_item_data.module_name)
-                case .logic:
-                    LogicElementView(logic_type: $new_element_item_data.logic_type, mark_name: $new_element_item_data.mark_name, target_mark_name: $new_element_item_data.target_mark_name, compared_value: $new_element_item_data.compared_value)
-                }
-            }
-            .padding()
-            
-            Spacer()
-            
-            //MARK: Delete and save buttons
-            Divider()
-            HStack
-            {
-                Button(role: .destructive, action: delete_program_element)
-                {
-                    Text("Delete")
-                }
-                .padding()
-                
-                Spacer()
-                
-                Button("Update", action: update_program_element)
-                    .keyboardShortcut(.defaultAction)
-                    .padding()
-                #if os(macOS)
-                    .foregroundColor(Color.white)
-                #endif
-            }
-        }
-    }
-    
-    //MARK: Program elements manage functions
-    func update_program_element()
-    {
-        element_item.element_data = new_element_item_data
-        base_workspace.elements_check()
-        
-        document.preset.elements = base_workspace.file_data().elements
-        
-        element_view_presented.toggle()
-    }
-    
-    func delete_program_element()
-    {
-        delete_element()
-        base_workspace.update_view()
-        
-        element_view_presented.toggle()
-    }
-    
-    func delete_element()
-    {
-        if let index = elements.firstIndex(of: element_item)
-        {
-            self.on_delete(IndexSet(integer: index))
-            base_workspace.elements_check()
-        }
-    }
-}*/
 
 //MARK: - Type enums
 ///A program element type enum.
@@ -681,7 +518,6 @@ public enum PerformerType: String, Codable, Equatable, CaseIterable
 public enum ModifierType: String, Codable, Equatable, CaseIterable
 {
     case mover = "Move"
-    case copy = "Copy"
     case write = "Write"
     case clear = "Clear"
     case changer = "Changer"
