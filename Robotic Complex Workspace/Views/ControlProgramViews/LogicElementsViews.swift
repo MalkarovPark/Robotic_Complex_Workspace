@@ -51,6 +51,9 @@ struct ComparatorElementView: View
                 .popover(isPresented: $picker_is_presented)
                 {
                     CompareTypePicker(compare_type: $compare_type)
+                    #if os(iOS) || os(visionOS)
+                        .presentationDetents([.height(96)])
+                    #endif
                 }
                 
                 Text("value of")
@@ -82,6 +85,7 @@ struct ComparatorElementView: View
                         target_mark_name = base_workspace.marks_names[0]
                     }
                 }
+                .buttonStyle(.bordered)
                 .disabled(base_workspace.marks_names.count == 0)
             }
         }

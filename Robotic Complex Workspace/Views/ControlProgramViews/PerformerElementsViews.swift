@@ -96,6 +96,7 @@ struct RobotPerformerElementView: View
                                 base_workspace.update_view()
                             }
                         }
+                        .buttonStyle(.bordered)
                         .disabled(base_workspace.placed_robots_names.count == 0)
                         .frame(maxWidth: .infinity)
                         .padding(.bottom)
@@ -129,6 +130,7 @@ struct RobotPerformerElementView: View
                                     Text("None")
                                 }
                             }
+                            .buttonStyle(.bordered)
                             .disabled(base_workspace.robot_by_name(object_name).programs_names.count == 0)
                         }
                     }
@@ -268,6 +270,7 @@ struct ToolPerformerElementView: View
                                 base_workspace.update_view()
                             }
                         }
+                        .buttonStyle(.bordered)
                         .disabled(base_workspace.placed_tools_names.count == 0)
                         .frame(maxWidth: .infinity)
                         .padding(.bottom)
@@ -301,6 +304,7 @@ struct ToolPerformerElementView: View
                                     Text("None")
                                 }
                             }
+                            .buttonStyle(.bordered)
                             .disabled(base_workspace.tool_by_name(object_name).programs_names.count == 0)
                         }
                     }

@@ -481,75 +481,31 @@ struct RobotView: View
     @State private var connector_view_presented = false
     @State private var statistics_view_presented = false
     
+    @State private var inspector_presented = false
+    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS) || os(visionOS)
     //MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
-    
-    //Picker data for thin window size
-    @State private var program_view_presented = false
     #endif
     
     var body: some View
     {
         HStack(spacing: 0)
         {
-            #if os(macOS)
             RobotSceneView(document: $document)
                 .onDisappear(perform: close_robot)
-            
-            Divider()
-            
+            #if os(iOS) || os(visionOS)
+                .navigationBarTitleDisplayMode(.inline)
+                .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
+            #endif
+        }
+        .inspector(isPresented: $inspector_presented)
+        {
             RobotInspectorView(document: $document)
                 .disabled(base_workspace.selected_robot.performed == true)
-                .frame(width: 256)
-            #else
-            if horizontal_size_class == .compact
-            {
-                VStack(spacing: 0)
-                {
-                    RobotSceneView(document: $document)
-                        .padding()
-                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                    
-                    HStack
-                    {
-                        Button(action: { program_view_presented.toggle() })
-                        {
-                            Text("Inspector")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .keyboardShortcut(.defaultAction)
-                        .padding()
-                        .popover(isPresented: $program_view_presented)
-                        {
-                            VStack
-                            {
-                                RobotInspectorView(document: $document)
-                                    .disabled(base_workspace.selected_robot.performed == true)
-                                    .presentationDetents([.medium, .large])
-                            }
-                            .onDisappear()
-                            {
-                                program_view_presented = false
-                            }
-                        }
-                    }
-                }
-                .onDisappear(perform: close_robot)
-            }
-            else
-            {
-                RobotSceneView(document: $document)
-                    .onDisappear(perform: close_robot)
-                RobotInspectorView(document: $document)
-                    .disabled(base_workspace.selected_robot.performed == true)
-                    .frame(width: 288)
-            }
-            #endif
         }
         .onAppear()
         {
@@ -559,7 +515,6 @@ struct RobotView: View
                 base_workspace.selected_robot.select_program(index: 0)
             }
         }
-        
         .toolbar
         {
             //MARK: Toolbar items
@@ -615,6 +570,22 @@ struct RobotView: View
                     {
                         Image(systemName: "playpause")
                     }
+                    
+                    Button(action: { inspector_presented.toggle() })
+                    {
+                        #if os(macOS)
+                        Image(systemName: "sidebar.right")
+                        #else
+                        if !(horizontal_size_class == .compact)
+                        {
+                            Image(systemName: "sidebar.right")
+                        }
+                        else
+                        {
+                            Image(systemName: "rectangle.portrait.bottomthird.inset.filled")
+                        }
+                        #endif
+                    }
                 }
             }
         }
@@ -638,10 +609,10 @@ struct RobotView: View
         }
         else
         {
-            return toolbar_item_placement_trailing
+            return .automatic
         }
         #else
-        return toolbar_item_placement_trailing
+        return .automatic
         #endif
     }
 }
@@ -839,10 +810,6 @@ struct RobotSceneView: View
         ZStack
         {
             CellSceneView()
-            #if os(iOS) || os(visionOS)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .navigationBarTitleDisplayMode(.inline)
-            #endif
             
             HStack
             {
@@ -937,16 +904,10 @@ struct RobotSceneView: View
                     .fixedSize(horizontal: true, vertical: false)
                     .padding()
                 }
-                #if os(iOS) || os(visionOS)
-                .modifier(MountedPadding(is_padding: horizontal_size_class == .compact))
-                #endif
                 
                 Spacer()
             }
         }
-        #if os(iOS) || os(visionOS)
-        .modifier(MountedPadding(is_padding: !(horizontal_size_class == .compact)))
-        #endif
     }
 }
 

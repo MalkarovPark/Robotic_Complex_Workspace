@@ -12,11 +12,7 @@ import IndustrialKit
 //MARK: - Extension info
 extension UTType
 {
-    #if os(iOS)
-    static let workspace_preset_document = UTType(exportedAs: "mv-park.RoboticComplexWorkspace.preset")
-    #else
     static let workspace_preset_document = UTType(exportedAs: "celadon.RoboticComplexWorkspace.preset")
-    #endif
 }
 
 //MARK: - Preset file document structure

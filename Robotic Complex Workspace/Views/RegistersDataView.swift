@@ -177,10 +177,10 @@ struct RegistersSelector: View
     var body: some View
     {
         Button("\(text)", action: { is_presented = true })
-        .popover(isPresented: $is_presented)
-        {
-            RegistersSelectorView(indices: $indices, names: names, cards_colors: cards_colors)
-        }
+            .popover(isPresented: $is_presented)
+            {
+                RegistersSelectorView(indices: $indices, names: names, cards_colors: cards_colors)
+            }
     }
 }
 

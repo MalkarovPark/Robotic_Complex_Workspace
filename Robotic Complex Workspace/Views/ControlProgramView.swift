@@ -255,6 +255,9 @@ struct ProgramElementItemView: View
                              arrowEdge: .trailing)
                     {
                         ElementView(element: $element, on_update: update_program_element)
+                        #if os(iOS) || os(visionOS)
+                            .presentationDetents([.height(240)])
+                        #endif
                     }
             }
         }

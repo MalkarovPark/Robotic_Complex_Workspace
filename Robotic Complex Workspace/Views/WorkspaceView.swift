@@ -16,23 +16,21 @@ struct WorkspaceView: View
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @State var worked = false
-    @State var registers_view_presented = false
+    @State private var worked = false
+    @State private var registers_view_presented = false
+    @State private var inspector_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
-    
-    @State private var program_view_presented = false
     #endif
     
     var body: some View
     {
         HStack(spacing: 0)
         {
-            #if os(macOS)
             if workspace_visual_modeling
             {
                 ComplexWorkspaceView(document: $document)
@@ -42,72 +40,15 @@ struct WorkspaceView: View
             {
                 WorkspaceCardsView(document: $document)
             }
-            
-            Divider()
-            
+        }
+        .inspector(isPresented: $inspector_presented)
+        {
             ControlProgramView(document: $document)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                .frame(width: 256)
-            #else
-            if horizontal_size_class == .compact
-            {
-                VStack(spacing: 0)
-                {
-                    if workspace_visual_modeling
-                    {
-                        ComplexWorkspaceView(document: $document)
-                            .onDisappear(perform: stop_perform)
-                    }
-                    else
-                    {
-                        WorkspaceCardsView(document: $document)
-                    }
-                    
-                    HStack
-                    {
-                        Button(action: { program_view_presented.toggle() })
-                        {
-                            Text("Inspector")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .keyboardShortcut(.defaultAction)
-                        .padding()
-                        .popover(isPresented: $program_view_presented)
-                        {
-                            VStack
-                            {
-                                ControlProgramView(document: $document)
-                                    .presentationDetents([.medium, .large])
-                            }
-                            .onDisappear()
-                            {
-                                program_view_presented = false
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if workspace_visual_modeling
-                {
-                    ComplexWorkspaceView(document: $document)
-                        .onDisappear(perform: stop_perform)
-                }
-                else
-                {
-                    WorkspaceCardsView(document: $document)
-                }
-                
-                ControlProgramView(document: $document)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                    .frame(width: 288)
-            }
-            #endif
         }
         #if os(iOS) || os(visionOS)
         .navigationBarTitleDisplayMode(.inline)
+        .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
         #else
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
@@ -122,8 +63,6 @@ struct WorkspaceView: View
                 .frame(width: 600, height: 600)
             #endif
         }
-        
-        //MARK: Toolbar
         .toolbar
         {
             ToolbarItem(placement: compact_placement())
@@ -156,6 +95,22 @@ struct WorkspaceView: View
                     Button(action: toggle_perform)
                     {
                         Label("PlayPause", systemImage: "playpause")
+                    }
+                    
+                    Button(action: { inspector_presented.toggle() })
+                    {
+                        #if os(macOS)
+                        Image(systemName: "sidebar.right")
+                        #else
+                        if !(horizontal_size_class == .compact)
+                        {
+                            Image(systemName: "sidebar.right")
+                        }
+                        else
+                        {
+                            Image(systemName: "rectangle.portrait.bottomthird.inset.filled")
+                        }
+                        #endif
                     }
                 }
             }
@@ -218,25 +173,10 @@ struct ComplexWorkspaceView: View
     {
         ZStack
         {
-            #if os(macOS)
             WorkspaceSceneView()
                 .modifier(WorkspaceMenu())
-            #else
-            if !(horizontal_size_class == .compact)
-            {
-                WorkspaceSceneView()
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .navigationBarTitleDisplayMode(.inline)
-                    .modifier(WorkspaceMenu())
-            }
-            else
-            {
-                WorkspaceSceneView()
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .padding()
-                    .navigationBarTitleDisplayMode(.inline)
-                    .modifier(WorkspaceMenu())
-            }
+            #if os(iOS) || os(visionOS)
+                .navigationBarTitleDisplayMode(.inline)
             #endif
             
             HStack
@@ -308,16 +248,10 @@ struct ComplexWorkspaceView: View
                     .fixedSize(horizontal: true, vertical: false)
                     .padding()
                 }
-                #if os(iOS) || os(visionOS)
-                .modifier(MountedPadding(is_padding: horizontal_size_class == .compact))
-                #endif
                 
                 Spacer()
             }
         }
-        #if os(iOS) || os(visionOS)
-        .modifier(MountedPadding(is_padding: !(horizontal_size_class == .compact)))
-        #endif
     }
 }
 
