@@ -19,9 +19,9 @@ struct RobotsView: View
     
     var body: some View
     {
-        HStack
+        ZStack
         {
-            if robot_view_presented == false
+            if !robot_view_presented
             {
                 //Display robots table view
                 RobotsTableView(robot_view_presented: $robot_view_presented, document: $document)
@@ -215,18 +215,21 @@ struct RobotCardView: View
     
     var body: some View
     {
-        LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
-            .shadow(radius: 8)
-            .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
-            .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
-                base_workspace.duplicate_robot(name: robot_item.name)
-            }, update_file: update_file, pass_preferences: {
-                app_state.robot_from = robot_item
-                pass_preferences_presented = true
-            }, pass_programs: {
-                app_state.robot_from = robot_item
-                pass_programs_presented = true
-            }))
+        ZStack
+        {
+            LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+                .shadow(radius: 8)
+                .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
+                .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
+                    base_workspace.duplicate_robot(name: robot_item.name)
+                }, update_file: update_file, pass_preferences: {
+                    app_state.robot_from = robot_item
+                    pass_preferences_presented = true
+                }, pass_programs: {
+                    app_state.robot_from = robot_item
+                    pass_programs_presented = true
+                }))
+        }
         .onTapGesture
         {
             view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
@@ -234,13 +237,19 @@ struct RobotCardView: View
         .popover(isPresented: $pass_preferences_presented, arrowEdge: .bottom)
         {
             PassPreferencesView(is_presented: $pass_preferences_presented)
-            #if os(iOS) || os(visionOS)
-                .presentationDetents([.height(256)])
-            #endif
+                #if os(macOS)
+                .frame(width: 192, height: 196)
+                #else
+                .frame(minWidth: 288, minHeight: 320)
+                .presentationDetents([.medium])
+                #endif
         }
         .sheet(isPresented: $pass_programs_presented)
         {
             PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
+            #if os(macOS)
+                .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
+            #endif
             #if os(visionOS)
                 .frame(width: 512, height: 512)
             #endif
@@ -251,7 +260,7 @@ struct RobotCardView: View
     private func view_robot(robot_index: Int)
     {
         base_workspace.select_robot(index: robot_index)
-        self.robot_view_presented = true
+        robot_view_presented = true
     }
     
     private func delete_robots(at offsets: IndexSet)
@@ -571,6 +580,8 @@ struct RobotView: View
                         Image(systemName: "playpause")
                     }
                     
+                    Divider()
+                    
                     Button(action: { inspector_presented.toggle() })
                     {
                         #if os(macOS)
@@ -636,44 +647,31 @@ struct PassPreferencesView: View
                 .font(.title2)
                 .padding(.bottom)
             
-            VStack(spacing: 0)
+            List
             {
                 Toggle(isOn: $origin_location)
                 {
                     Text("Location")
-                        .frame(maxWidth: .infinity)
                 }
-                .padding(.bottom)
                 
                 Toggle(isOn: $origin_rotation)
                 {
                     Text("Rotation")
-                        .frame(maxWidth: .infinity)
                 }
-                .padding(.bottom)
                 
                 Toggle(isOn: $space_scale)
                 {
                     Text("Scale")
-                        .frame(maxWidth: .infinity)
                 }
-                .padding(.bottom)
             }
-            #if os(macOS)
-            .frame(width: 96)
-            #else
-            .frame(maxWidth: .infinity)
-            #endif
-            
-            #if os(iOS) || os(visionOS)
-            Spacer()
-            #endif
+            .modifier(ListBorderer())
+            .padding(.bottom)
             
             HStack(spacing: 0)
             {
                 Button(action: { is_presented.toggle() })
                 {
-                    Text("Dismiss")
+                    Text("Cancel")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -694,11 +692,6 @@ struct PassPreferencesView: View
             }
         }
         .padding()
-        #if os(macOS)
-        .frame(width: 192)
-        #else
-        .frame(minWidth: 256)
-        #endif
     }
     
     private func pass_perform()
@@ -747,16 +740,14 @@ struct PassProgramsView: View
                     Text(item)
                 }
             }
-            #if os(iOS) || os(visionOS)
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-            #endif
+            .modifier(ListBorderer())
             .padding(.bottom)
             
             HStack(spacing: 0)
             {
                 Button(action: { is_presented.toggle() })
                 {
-                    Text("Dismiss")
+                    Text("Cancel")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -777,9 +768,6 @@ struct PassProgramsView: View
             }
         }
         .padding()
-        #if os(macOS)
-        .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
-        #endif
     }
     
     private func pass_perform()

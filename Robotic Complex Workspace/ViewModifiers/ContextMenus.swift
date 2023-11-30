@@ -84,9 +84,10 @@ struct CardMenu: ViewModifier
                         
                         Button(action: pass_programs)
                         {
-                            Label("Positions Program", systemImage: "scroll")
+                            Label("Positions Programs", systemImage: "scroll")
                         }
                     }
+                    .disabled(base_workspace.robots.count < 2)
                 }
             }
             .onChange(of: object.is_placed)
@@ -171,5 +172,19 @@ struct WorkspaceMenu: ViewModifier
             //base_workspace.update_view()
         }
         flip.toggle()
+    }
+}
+
+struct ListBorderer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        content
+        #if os(macOS)
+            .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+            .shadow(radius: 1)
+        #else
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        #endif
     }
 }

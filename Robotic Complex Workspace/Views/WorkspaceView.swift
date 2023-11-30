@@ -97,6 +97,8 @@ struct WorkspaceView: View
                         Label("PlayPause", systemImage: "playpause")
                     }
                     
+                    Divider()
+                    
                     Button(action: { inspector_presented.toggle() })
                     {
                         #if os(macOS)
@@ -807,7 +809,7 @@ struct InfoView: View
                                 }
                                 .pickerStyle(.menu)
                                 .frame(maxWidth: .infinity)
-                                .padding([.horizontal, .top])
+                                .padding(.horizontal)
                                 #if os(iOS) || os(visionOS)
                                 .buttonStyle(.bordered)
                                 #endif
