@@ -48,7 +48,7 @@ struct WorkspaceView: View
         }
         #if os(iOS) || os(visionOS)
         .navigationBarTitleDisplayMode(.inline)
-        .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
+        .modifier(SafeAreaToggler(enabled: (horizontal_size_class == .compact) || !workspace_visual_modeling))
         #else
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
@@ -1058,7 +1058,7 @@ struct WorkspaceCardsView: View
                     }
                 }
                 .tabViewStyle(.page)
-                .indexViewStyle(.page(backgroundDisplayMode: .automatic))
+                .indexViewStyle(.page(backgroundDisplayMode: .always))
                 .onAppear
                 {
                     switch object_selection
@@ -1080,7 +1080,7 @@ struct WorkspaceCardsView: View
                     .fontWeight(.bold)
                     .font(.system(.title, design: .rounded))
                 #if os(macOS) || os(iOS)
-                    .foregroundColor(.white)
+                    .foregroundColor(quaternary_label_color)
                 #endif
                     .shadow(radius: 8)
                     .padding()
@@ -1125,7 +1125,6 @@ struct WorkspaceCardsView: View
             }
             .padding([.horizontal, .bottom])
         }
-        .background(.gray)
         .overlay(alignment: .top)
         {
             HStack
@@ -1185,8 +1184,6 @@ struct WorkspaceCardsView: View
         #if os(macOS)
         .frame(minWidth: 500, idealWidth: 800, minHeight: 480, idealHeight: 600)
         #else
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .padding(.init(top: 8, leading: 20, bottom: 8, trailing: 8))
         .navigationBarTitleDisplayMode(.inline)
         #endif
     }
@@ -1284,7 +1281,6 @@ struct WorkspaceObjectCard: View
                     .padding()
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .padding()
                 //.shadow(radius: 8)
         }
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -1635,6 +1631,8 @@ struct WorkspaceView_Previews: PreviewProvider
             InfoView(info_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
+            WorkspaceObjectCard(document: .constant(Robotic_Complex_WorkspaceDocument()), object: WorkspaceObject(), remove_completion: {})
+                .environmentObject(Workspace())
         }
         #if os(iOS)
         .previewDevice("iPad mini (6th generation)")

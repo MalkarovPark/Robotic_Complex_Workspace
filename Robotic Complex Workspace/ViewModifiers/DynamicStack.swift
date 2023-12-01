@@ -29,3 +29,22 @@ struct DynamicStack<Content: View>: View
         }
     }
 }
+
+#if os(iOS) || os(visionOS)
+struct SafeAreaToggler: ViewModifier
+{
+    var enabled: Bool
+    public func body(content: Content) -> some View
+    {
+        if enabled
+        {
+            content
+        }
+        else
+        {
+            content
+                .ignoresSafeArea(.container, edges: .bottom)
+        }
+    }
+}
+#endif

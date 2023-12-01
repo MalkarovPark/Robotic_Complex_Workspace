@@ -54,12 +54,12 @@ struct ToolsView: View
             }
             else
             {
-                Text("Press «+» to add new tool")
+                Text("Press to add new tool ↑")
                     .font(.largeTitle)
                     .foregroundColor(quaternary_label_color)
                     .padding(16)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
         }

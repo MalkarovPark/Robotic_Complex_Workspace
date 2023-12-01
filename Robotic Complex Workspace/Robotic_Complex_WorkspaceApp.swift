@@ -39,16 +39,16 @@ struct Robotic_Complex_WorkspaceApp: App
         {
             SidebarCommands() //Sidebar control items for view menu item
             
-            /*CommandGroup(after: CommandGroupPlacement.sidebar) //View commands for view menu item
+            #if os(iOS) || os(visionOS)
+            CommandGroup(after: CommandGroupPlacement.appSettings) //Application settings commands
             {
-                Divider()
-                Button("Reset Camera")
+                Button("Settings...")
                 {
-                    app_state.reset_view = true //Begin reset camera process
+                    app_state.settings_view_presented = true
                 }
-                .keyboardShortcut("0", modifiers: .command)
-                Divider()
-            }*/
+                .keyboardShortcut(",", modifiers: .command)
+            }
+            #endif
             
             CommandMenu("Performing")
             {

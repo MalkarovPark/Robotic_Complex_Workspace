@@ -41,7 +41,7 @@ struct StatisticsView: View
                     Text("Statistics")
                         .font(.title2)
                         .padding([.top, .horizontal])
-                    EmptyView()
+                    EmptyStatisticsView()
                 }
             }
             else
@@ -55,7 +55,7 @@ struct StatisticsView: View
                     Text("Statistics")
                         .font(.title2)
                         .padding([.top, .horizontal])
-                    EmptyView()
+                    EmptyStatisticsView()
                 }
             }
             
@@ -151,7 +151,7 @@ struct StatisticsView: View
     }
 }
 
-struct EmptyView: View
+struct EmptyStatisticsView: View
 {
     var body: some View
     {

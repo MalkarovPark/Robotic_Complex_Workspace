@@ -88,11 +88,13 @@ struct RobotsTableView: View
             }
             else
             {
-                Text("Press «+» to add new robot")
+                Text("Press to add new robot ↑")
                     .font(.largeTitle)
                     .foregroundColor(quaternary_label_color)
                     .padding(16)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
         }
         .onDisappear
