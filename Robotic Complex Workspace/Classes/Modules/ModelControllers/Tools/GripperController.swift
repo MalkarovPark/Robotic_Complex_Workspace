@@ -81,7 +81,7 @@ class GripperController: ToolModelController
                         self.moved = false
                         self.closed = true
                         
-                        self.info_code = 5
+                        self.info_output = [16, 64]
                         
                         completion()
                     }
@@ -100,7 +100,7 @@ class GripperController: ToolModelController
                         self.moved = false
                         self.closed = false
                         
-                        self.info_code = 10
+                        self.info_output = [64, 16]
                         
                         completion()
                     }

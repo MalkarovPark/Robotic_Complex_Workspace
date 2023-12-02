@@ -206,8 +206,8 @@ struct ObserverElementView: View
     @Binding var element: WorkspaceProgramElement
     
     @State private var object_name = ""
-    @State private var from_indices = [Int](repeating: 0, count: 4) //4 info elements to output
-    @State private var to_indices = [Int](repeating: 0, count: 4) //4 registers indices to input
+    @State private var from_indices = [Int]()
+    @State private var to_indices = [Int]()
     
     let on_update: () -> ()
     
@@ -270,25 +270,41 @@ struct ObserverElementView: View
                     }
                 }
                 .disabled(base_workspace.placed_tools_names.count == 0)
-                #if os(iOS) || os(visionOS)
+                /*#if os(iOS) || os(visionOS)
                 .pickerStyle(.wheel)
                 #endif
-                //.compositingGroup()
-                //.clipped()
+                .compositingGroup()
+                .clipped()*/
                 .padding(.bottom)
                 
-                List
+                if from_indices.count > 0
                 {
-                    ForEach(from_indices.indices, id: \.self)
-                    { index in
-                        OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                    List
+                    {
+                        ForEach(from_indices.indices, id: \.self)
+                        { index in
+                            OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                        }
+                        .onDelete(perform: delete_item)
                     }
+                    .frame(width: 256, height: 256)
+                    .modifier(ListBorderer())
+                    .padding(.bottom)
                 }
-                .frame(width: 256, height: 256)
-                .modifier(ListBorderer())
-                .padding(.bottom)
+                else
+                {
+                    ZStack
+                    {
+                        Rectangle()
+                            .foregroundStyle(.white)
+                        Text("No Items")
+                    }
+                    .frame(width: 256, height: 64)
+                    .modifier(ListBorderer())
+                    .padding(.bottom)
+                }
                 
-                Button(action: { })
+                Button(action: add_item)
                 {
                     Text("Add")
                         .frame(maxWidth: .infinity)
@@ -317,6 +333,18 @@ struct ObserverElementView: View
             print(to_indices)
             on_update()
         }
+    }
+    
+    func add_item()
+    {
+        from_indices.append(0)
+        to_indices.append(0)
+    }
+    
+    func delete_item(at offsets: IndexSet)
+    {
+        from_indices.remove(atOffsets: offsets)
+        to_indices.remove(atOffsets: offsets)
     }
 }
 
