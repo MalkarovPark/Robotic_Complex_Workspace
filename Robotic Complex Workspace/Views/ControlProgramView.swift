@@ -247,7 +247,7 @@ struct ProgramElementItemView: View
                 element_view_presented = true
             }
             
-            if !is_deliting && !(element is ClearModifierElement)
+            if !is_deliting && !(element is CleanerModifierElement)
             {
                 Rectangle()
                     .foregroundStyle(.clear)
@@ -402,10 +402,10 @@ struct AddElementView: View
         case .mover_modifier:
             element_type = .modifier
             modifier_type = .mover
-        case .write_modifier:
+        case .writer_modifier:
             element_type = .modifier
             modifier_type = .write
-        case .clear_modifier:
+        case .cleaner_modifier:
             element_type = .modifier
             modifier_type = .clear
         case .changer_modifier:
@@ -443,9 +443,9 @@ struct AddElementView: View
             case .mover:
                 new_program_element = MoverModifierElement()
             case .write:
-                new_program_element = WriteModifierElement()
+                new_program_element = WriterModifierElement()
             case .clear:
-                new_program_element = ClearModifierElement()
+                new_program_element = CleanerModifierElement()
             case .changer:
                 new_program_element = ChangerModifierElement()
             case .observer:
@@ -481,14 +481,14 @@ struct ElementView: View
                 ToolPerformerElementView(element: $element, on_update: on_update)
             case is MoverModifierElement:
                 MoverElementView(element: $element, on_update: on_update)
-            case is WriteModifierElement:
-                WriteElementView(element: $element, on_update: on_update)
-            case is ClearModifierElement:
+            case is WriterModifierElement:
+                WriterElementView(element: $element, on_update: on_update)
+            case is CleanerModifierElement:
                 EmptyView()
             case is ChangerModifierElement:
                 ChangerElementView(element: $element, on_update: on_update)
             case is ObserverModifierElement:
-                EmptyView()
+                ObserverElementView(element: $element, on_update: on_update)
             case is ComparatorLogicElement:
                 ComparatorElementView(element: $element, on_update: on_update)
             case is MarkLogicElement:
@@ -523,8 +523,8 @@ public enum ModifierType: String, Codable, Equatable, CaseIterable
     case mover = "Move"
     case write = "Write"
     case clear = "Clear"
-    case changer = "Changer"
-    case observer = "Observer"
+    case changer = "Change"
+    case observer = "Observe"
 }
 
 ///A logic program element type enum.

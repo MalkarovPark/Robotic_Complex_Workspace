@@ -31,7 +31,7 @@ struct RegistersDataView: View
                 {
                     ForEach(numbers, id: \.self)
                     { number in
-                        RegisterCardView(number: number, color: register_colors[number])
+                        RegisterCardView(number: number, color: registers_colors[number])
                             .id(number)
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
@@ -352,6 +352,6 @@ let register_card_maximum = register_card_scale + register_card_spacing
 
 #Preview
 {
-    RegistersSelectorView(indices: .constant([Int](repeating: 0, count: 6)), names: ["X", "Y", "Z", "R", "P", "W"], cards_colors: register_colors)
+    RegistersSelectorView(indices: .constant([Int](repeating: 0, count: 6)), names: ["X", "Y", "Z", "R", "P", "W"], cards_colors: registers_colors)
         .environmentObject(Workspace())
 }

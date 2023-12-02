@@ -744,4 +744,4 @@ func colors_by_seed(seed: Int) -> [Color]
     return colors
 }
 
-let register_colors = colors_by_seed(seed: 5433)
+let registers_colors = colors_by_seed(seed: 5433)

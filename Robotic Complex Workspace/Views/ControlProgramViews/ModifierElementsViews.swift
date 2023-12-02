@@ -43,7 +43,7 @@ struct MoverElementView: View
             .buttonStyle(.bordered)
             .padding(.trailing)
             
-            RegistersSelector(text: "From \(indices[0]) to \(indices[1])", indices: $indices, names: ["From", "To"], cards_colors: register_colors)
+            RegistersSelector(text: "From \(indices[0]) to \(indices[1])", indices: $indices, names: ["From", "To"], cards_colors: registers_colors)
         }
         .onChange(of: move_type)
         { _, new_value in
@@ -149,7 +149,7 @@ struct ChangerElementView: View
     }
 }
 
-struct WriteElementView: View
+struct WriterElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -162,8 +162,8 @@ struct WriteElementView: View
     {
         self._element = element
         
-        _value = State(initialValue: (_element.wrappedValue as! WriteModifierElement).value)
-        _to_index = State(initialValue: [(_element.wrappedValue as! WriteModifierElement).to_index])
+        _value = State(initialValue: (_element.wrappedValue as! WriterModifierElement).value)
+        _to_index = State(initialValue: [(_element.wrappedValue as! WriterModifierElement).to_index])
         
         self.on_update = on_update
     }
@@ -186,16 +186,16 @@ struct WriteElementView: View
             }
             .padding(.trailing)
             
-            RegistersSelector(text: "to: \(to_index[0])", indices: $to_index, names: ["To"], cards_colors: register_colors)
+            RegistersSelector(text: "to: \(to_index[0])", indices: $to_index, names: ["To"], cards_colors: registers_colors)
         }
         .onChange(of: value)
         { _, new_value in
-            (element as! WriteModifierElement).value = new_value
+            (element as! WriterModifierElement).value = new_value
             on_update()
         }
         .onChange(of: to_index)
         { _, new_value in
-            (element as! WriteModifierElement).to_index = new_value[0]
+            (element as! WriterModifierElement).to_index = new_value[0]
             on_update()
         }
     }
@@ -203,8 +203,24 @@ struct WriteElementView: View
 
 struct ObserverElementView: View
 {
-    @Binding var object_name: String
-    @Binding var register_index: Int
+    @Binding var element: WorkspaceProgramElement
+    
+    @State private var object_name = ""
+    @State private var from_indices = [Int](repeating: 0, count: 4) //4 info elements to output
+    @State private var to_indices = [Int](repeating: 0, count: 4) //4 registers indices to input
+    
+    let on_update: () -> ()
+    
+    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    {
+        self._element = element
+        
+        _object_name = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).object_name)
+        _from_indices = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).from_indices)
+        _to_indices = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).to_indices)
+        
+        self.on_update = on_update
+    }
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -212,42 +228,16 @@ struct ObserverElementView: View
     
     var body: some View
     {
-        //MARK: Observer subview
-        if base_workspace.placed_tools_names.count > 0
+        //MARK: tool subview
+        VStack(spacing: 0)
         {
-            //MARK: tool subview
-            #if os(macOS)
-            Picker("Name", selection: $object_name) //tool picker
+            if base_workspace.placed_tools_names.count > 0
             {
-                ForEach(base_workspace.placed_tools_names, id: \.self)
-                { name in
-                    Text(name)
-                }
-            }
-            .onChange(of: object_name)
-            { _, new_value in
-                viewed_object = base_workspace.tool_by_name(new_value)
-                base_workspace.update_view()
-            }
-            .onAppear
-            {
-                if object_name == ""
-                {
-                    object_name = base_workspace.placed_tools_names.first!
-                }
-                else
-                {
-                    viewed_object = base_workspace.tool_by_name(object_name)
-                    base_workspace.update_view()
-                }
-            }
-            .disabled(base_workspace.placed_tools_names.count == 0)
-            .frame(maxWidth: .infinity)
-            #else
-            VStack(spacing: 0)
-            {
+                #if os(iOS) || os(visionOS)
                 Text("Name")
                     .padding(.bottom)
+                #endif
+                
                 Picker("Name", selection: $object_name) //tool picker
                 {
                     if base_workspace.placed_tools_names.count > 0
@@ -280,21 +270,109 @@ struct ObserverElementView: View
                     }
                 }
                 .disabled(base_workspace.placed_tools_names.count == 0)
+                #if os(iOS) || os(visionOS)
                 .pickerStyle(.wheel)
-                .compositingGroup()
-                .clipped()
+                #endif
+                //.compositingGroup()
+                //.clipped()
+                .padding(.bottom)
+                
+                List
+                {
+                    ForEach(from_indices.indices, id: \.self)
+                    { index in
+                        OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                    }
+                }
+                .frame(width: 256, height: 256)
+                .modifier(ListBorderer())
+                .padding(.bottom)
+                
+                Button(action: { })
+                {
+                    Text("Add")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
             }
-            .frame(width: 256, height: 128)
-            #endif
+            else
+            {
+                Text("No tools placed in this workspace")
+            }
         }
-        else
+        .onChange(of: object_name)
+        { _, new_value in
+            (element as! ObserverModifierElement).object_name = new_value
+            on_update()
+        }
+        .onChange(of: from_indices)
+        { _, new_value in
+            (element as! ObserverModifierElement).from_indices = new_value
+            on_update()
+        }
+        .onChange(of: to_indices)
+        { _, new_value in
+            (element as! ObserverModifierElement).to_indices = new_value
+            print(to_indices)
+            on_update()
+        }
+    }
+}
+
+struct OutputValueItmeView: View
+{
+    @Binding var from: Int
+    @Binding var to: Int
+    
+    var body: some View
+    {
+        HStack
         {
-            Text("No tools placed in this workspace")
+            Text("From:")
+            TextField("0", value: $from, format: .number)
+            Stepper("Enter", value: $from, in: 0...10000)
+                .labelsHidden()
+            
+            RegistersSelector(text: "to: \(to)", indices: binding_for_single($to), names: [""], cards_colors: registers_colors)
         }
+    }
+    
+    private func binding_for_single(_ value: Binding<Int>) -> Binding<[Int]>
+    {
+        Binding(
+            get:
+                {
+                    [value.wrappedValue]
+                },
+            set:
+                { newValue in
+                if let firstValue = newValue.first
+                {
+                    value.wrappedValue = firstValue
+                }
+            }
+        )
     }
 }
 
 #Preview
 {
     MoverElementView(element: .constant(MoverModifierElement()), on_update: {})
+}
+
+#Preview
+{
+    ChangerElementView(element: .constant(ChangerModifierElement()), on_update: {})
+}
+
+#Preview
+{
+    WriterElementView(element: .constant(WriterModifierElement()), on_update: {})
+}
+
+#Preview
+{
+    ObserverElementView(element: .constant(ObserverModifierElement()), on_update: {})
+        .environmentObject(Workspace())
 }

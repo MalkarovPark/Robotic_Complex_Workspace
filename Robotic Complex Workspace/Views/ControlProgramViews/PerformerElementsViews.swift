@@ -59,10 +59,10 @@ struct RobotPerformerElementView: View
                 
                 if is_single_perfrom
                 {
-                    RegistersSelector(text: "Location X: \(location_indices[0]), Y: \(location_indices[1]), Z: \(location_indices[2])", indices: $location_indices, names: ["X", "Y", "Z"], cards_colors: register_colors)
+                    RegistersSelector(text: "Location X: \(location_indices[0]), Y: \(location_indices[1]), Z: \(location_indices[2])", indices: $location_indices, names: ["X", "Y", "Z"], cards_colors: registers_colors)
                         .padding(.top)
                     
-                    RegistersSelector(text: "Rotation R: \(rotation_indices[0]), P: \(rotation_indices[1]), W: \(rotation_indices[2])", indices: $rotation_indices, names: ["R", "P", "W"], cards_colors: register_colors)
+                    RegistersSelector(text: "Rotation R: \(rotation_indices[0]), P: \(rotation_indices[1]), W: \(rotation_indices[2])", indices: $rotation_indices, names: ["R", "P", "W"], cards_colors: registers_colors)
                         .padding(.top)
                 }
                 else
@@ -112,7 +112,7 @@ struct RobotPerformerElementView: View
                         
                         if is_program_by_index
                         {
-                            RegistersSelector(text: "From: \(program_index_from[0])", indices: $program_index_from, names: ["Program"], cards_colors: register_colors)
+                            RegistersSelector(text: "From: \(program_index_from[0])", indices: $program_index_from, names: ["Program"], cards_colors: registers_colors)
                         }
                         else
                         {
@@ -236,7 +236,7 @@ struct ToolPerformerElementView: View
                 
                 if is_single_perfrom
                 {
-                    RegistersSelector(text: "Opcode from", indices: $opcode_index, names: ["Operation code"], cards_colors: register_colors)
+                    RegistersSelector(text: "Opcode from", indices: $opcode_index, names: ["Operation code"], cards_colors: registers_colors)
                         .padding(.top)
                 }
                 else
@@ -286,7 +286,7 @@ struct ToolPerformerElementView: View
                         
                         if is_program_by_index
                         {
-                            RegistersSelector(text: "From: \(program_index_from[0])", indices: $program_index_from, names: ["Program"], cards_colors: register_colors)
+                            RegistersSelector(text: "From: \(program_index_from[0])", indices: $program_index_from, names: ["Program"], cards_colors: registers_colors)
                         }
                         else
                         {
