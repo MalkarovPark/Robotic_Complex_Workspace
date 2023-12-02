@@ -47,4 +47,19 @@ struct SafeAreaToggler: ViewModifier
         }
     }
 }
+
+struct PickerNamer: ViewModifier
+{
+    var name: String
+    
+    public func body(content: Content) -> some View
+    {
+        HStack(spacing: 0)
+        {
+            Text(name)
+                .padding(.trailing)
+            content
+        }
+    }
+}
 #endif

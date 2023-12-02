@@ -13,7 +13,7 @@ struct MoverElementView: View
     @Binding var element: WorkspaceProgramElement
     
     @State private var move_type: ModifierCopyType = .duplicate
-    @State private var indices = [Int](repeating: 0, count: 2)
+    @State private var indices = [Int]()
     
     let on_update: () -> ()
     
@@ -233,11 +233,6 @@ struct ObserverElementView: View
         {
             if base_workspace.placed_tools_names.count > 0
             {
-                #if os(iOS) || os(visionOS)
-                Text("Name")
-                    .padding(.bottom)
-                #endif
-                
                 Picker("Name", selection: $object_name) //tool picker
                 {
                     if base_workspace.placed_tools_names.count > 0
@@ -269,12 +264,10 @@ struct ObserverElementView: View
                         base_workspace.update_view()
                     }
                 }
-                .disabled(base_workspace.placed_tools_names.count == 0)
-                /*#if os(iOS) || os(visionOS)
-                .pickerStyle(.wheel)
+                #if os(iOS) || os(visionOS)
+                .modifier(PickerNamer(name: "Name"))
                 #endif
-                .compositingGroup()
-                .clipped()*/
+                .disabled(base_workspace.placed_tools_names.count == 0)
                 .padding(.bottom)
                 
                 if from_indices.count > 0
@@ -287,7 +280,11 @@ struct ObserverElementView: View
                         }
                         .onDelete(perform: delete_item)
                     }
+                    #if os(macOS)
                     .frame(width: 256, height: 256)
+                    #else
+                    .frame(width: 320, height: 256)
+                    #endif
                     .modifier(ListBorderer())
                     .padding(.bottom)
                 }
@@ -295,12 +292,16 @@ struct ObserverElementView: View
                 {
                     ZStack
                     {
+                        #if os(macOS)
                         Rectangle()
                             .foregroundStyle(.white)
+                        #endif
                         Text("No Items")
                     }
                     .frame(width: 256, height: 64)
+                    #if os(macOS)
                     .modifier(ListBorderer())
+                    #endif
                     .padding(.bottom)
                 }
                 
@@ -362,7 +363,7 @@ struct OutputValueItmeView: View
             Stepper("Enter", value: $from, in: 0...10000)
                 .labelsHidden()
             
-            RegistersSelector(text: "to: \(to)", indices: binding_for_single($to), names: [""], cards_colors: registers_colors)
+            RegistersSelector(text: "to: \(to)", indices: binding_for_single($to), names: ["To"], cards_colors: registers_colors)
         }
     }
     
