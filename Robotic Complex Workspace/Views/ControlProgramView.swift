@@ -117,17 +117,16 @@ struct ControlProgramView: View
         let new_program_element = app_state.new_program_element
         
         //Checking for existing workspace components for element selection
-        switch new_program_element
+        /*switch new_program_element
         {
         case let element_item as RobotPerformerElement:
             if base_workspace.placed_robots_names.count > 0
             {
                 element_item.object_name = base_workspace.placed_robots_names.first!
-                base_workspace.select_robot(name: element_item.object_name)
                 
-                if base_workspace.selected_robot.programs_count > 0
+                if base_workspace.robot_by_name(element_item.object_name).programs_count > 0
                 {
-                    element_item.object_name = base_workspace.selected_robot.programs_names.first!
+                    element_item.program_name = base_workspace.robot_by_name(element_item.object_name).programs_names.first!
                 }
                 base_workspace.deselect_robot()
             }
@@ -160,7 +159,7 @@ struct ControlProgramView: View
             }
         default:
             break
-        }
+        }*/
         
         //Add new program element and save to file
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))

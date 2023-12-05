@@ -217,7 +217,7 @@ struct AddToolView:View
             ToolPreviewSceneView()
                 .overlay(alignment: .top)
                 {
-                    Text("Add Tool")
+                    Text("New Tool")
                         .font(.title2)
                         .padding(8)
                         .background(.bar)
@@ -263,7 +263,7 @@ struct AddToolView:View
                     .buttonStyle(.bordered)
                     .padding([.top, .leading, .bottom])
                 
-                Button("Save", action: add_tool_in_workspace)
+                Button("Add", action: add_tool_in_workspace)
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
                     .padding()
@@ -693,13 +693,14 @@ struct ToolInspectorView: View
                             {
                                 ForEach(base_workspace.selected_tool.selected_program.codes)
                                 { code in
-                                    OperationItemView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code, on_delete: remove_codes)
+                                    OperationItemView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code)
                                         .onDrag
                                     {
                                         return NSItemProvider()
                                     }
                                 }
                                 .onMove(perform: code_item_move)
+                                .onDelete(perform: remove_codes)
                                 .onChange(of: base_workspace.tools)
                                 { _, _ in
                                     update_data()
@@ -1024,8 +1025,6 @@ struct OperationItemView: View
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     
-    let on_delete: (IndexSet) -> ()
-    
     var body: some View
     {
         HStack
@@ -1063,12 +1062,6 @@ struct OperationItemView: View
                 }
             }
             base_workspace.selected_tool.code_info(new_code_value).image
-            
-            Button(action: delete_code_item)
-            {
-                Image(systemName: "xmark")
-            }
-            .buttonStyle(.borderless)
             #if os(macOS)
             .padding(.leading)
             #endif
@@ -1188,7 +1181,7 @@ struct ToolsView_Previews: PreviewProvider
             ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), tool_item: .constant(Tool()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            OperationItemView(codes: .constant([OperationCode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), code_item: OperationCode(1)) { IndexSet in }
+            OperationItemView(codes: .constant([OperationCode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), code_item: OperationCode(1))
             .environmentObject(Workspace())
         }
     }

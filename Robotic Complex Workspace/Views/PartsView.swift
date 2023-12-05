@@ -213,7 +213,7 @@ struct AddPartView: View
             PartPreviewSceneView()
                 .overlay(alignment: .top)
                 {
-                    Text("Add Part")
+                    Text("New Part")
                         .font(.title2)
                         .padding(8)
                         .background(.bar)
@@ -259,7 +259,7 @@ struct AddPartView: View
                     .buttonStyle(.bordered)
                     .padding([.top, .leading, .bottom])
                 
-                Button("Save", action: add_part_in_workspace)
+                Button("Add", action: add_part_in_workspace)
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
                     .padding()

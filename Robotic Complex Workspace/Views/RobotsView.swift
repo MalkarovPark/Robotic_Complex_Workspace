@@ -332,7 +332,7 @@ struct AddRobotView: View
         #if os(macOS)
         VStack(spacing: 0)
         {
-            Text("Add Robot")
+            Text("New Robot")
                 .font(.title2)
                 .padding([.top, .leading, .trailing])
             
@@ -403,7 +403,7 @@ struct AddRobotView: View
         #else
         VStack(spacing: 0)
         {
-            Text("Add Robot")
+            Text("New Robot")
                 .font(.title2)
                 .padding()
             
@@ -459,7 +459,7 @@ struct AddRobotView: View
                 
                 Button("Cancel", action: { add_robot_view_presented.toggle() })
                     .buttonStyle(.bordered)
-                Button("Save", action: add_robot_in_workspace)
+                Button("Add", action: add_robot_in_workspace)
                     .buttonStyle(.borderedProminent)
                     .keyboardShortcut(.defaultAction)
                     .padding(.leading)
@@ -1298,13 +1298,14 @@ struct RobotInspectorView: View
                         {
                             ForEach(base_workspace.selected_robot.selected_program.points, id: \.self)
                             { point in
-                                PositionItemListView(points: $base_workspace.selected_robot.selected_program.points, document: $document, point_item: point, on_delete: remove_points)
+                                PositionItemView(points: $base_workspace.selected_robot.selected_program.points, document: $document, point_item: point, on_delete: remove_points)
                                     .onDrag
-                                {
-                                    return NSItemProvider()
-                                }
+                                    {
+                                        return NSItemProvider()
+                                    }
                             }
                             .onMove(perform: point_item_move)
+                            .onDelete(perform: remove_points)
                             .onChange(of: base_workspace.robots)
                             { _, _ in
                                 document.preset.robots = base_workspace.file_data().robots
@@ -1428,6 +1429,8 @@ struct RobotInspectorView: View
         
         document.preset.robots = base_workspace.file_data().robots
         app_state.get_scene_image = true
+        base_workspace.update_view()
+        base_workspace.selected_robot.selected_program.selected_point_index = -1
     }
     
     func delete_positions_program()
@@ -1540,7 +1543,7 @@ struct AddProgramView: View
 }
 
 //MARK: - Position item view for list
-struct PositionItemListView: View
+struct PositionItemView: View
 {
     @Binding var points: [PositionPoint]
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -1577,46 +1580,25 @@ struct PositionItemListView: View
                      arrowEdge: .leading)
             {
                 #if os(macOS)
-                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
+                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
-                PositionItemView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
+                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
                     .presentationDetents([.height(576)])
                 #endif
             }
             
             Spacer()
-            
-            Button(action: delete_point_from_program)
-            {
-                Image(systemName: "xmark")
-            }
-            .buttonStyle(.borderless)
         }
         .onTapGesture
         {
             position_item_view_presented.toggle()
         }
     }
-    
-    func delete_point_from_program()
-    {
-        delete_point()
-        base_workspace.update_view()
-        base_workspace.selected_robot.selected_program.selected_point_index = -1
-    }
-    
-    func delete_point()
-    {
-        if let index = base_workspace.selected_robot.selected_program.points.firstIndex(of: point_item)
-        {
-            self.on_delete(IndexSet(integer: index))
-        }
-    }
 }
 
 //MARK: - Position item edit view
-struct PositionItemView: View
+struct PositionPointView: View
 {
     @Binding var points: [PositionPoint]
     @Binding var point_item: PositionPoint
@@ -1939,10 +1921,10 @@ struct RobotsView_Previews: PreviewProvider
             OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0, 0, 0]))
             SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2, 2, 2]))
             
-            PositionItemListView(points: .constant([PositionPoint()]), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: PositionPoint()) { IndexSet in }
+            PositionItemView(points: .constant([PositionPoint()]), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: PositionPoint()) { IndexSet in }
                 .environmentObject(Workspace())
             
-            PositionItemView(points: .constant([PositionPoint()]), point_item: .constant(PositionPoint()), position_item_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], on_delete: { _ in })
+            PositionPointView(points: .constant([PositionPoint()]), point_item: .constant(PositionPoint()), position_item_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], on_delete: { _ in })
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
         }

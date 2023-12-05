@@ -52,6 +52,10 @@ struct WorkspaceView: View
         #else
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
+        .onAppear
+        {
+            base_workspace.elements_check()
+        }
         .sheet(isPresented: $registers_view_presented)
         {
             RegistersDataView(document: $document, is_presented: $registers_view_presented)
@@ -177,6 +181,7 @@ struct ComplexWorkspaceView: View
         {
             WorkspaceSceneView()
                 .modifier(WorkspaceMenu())
+                .disabled(add_in_view_presented)
             #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -346,20 +351,22 @@ struct WorkspaceSceneView: UIViewRepresentable
     
     func makeCoordinator() -> Coordinator
     {
-        Coordinator(self, scene_view, workspace: base_workspace)
+        Coordinator(self, scene_view, workspace: base_workspace, app_state: app_state)
     }
     
     final class Coordinator: NSObject, SCNSceneRendererDelegate, ObservableObject
     {
         var control: WorkspaceSceneView
         var workspace: Workspace
+        var app_state: AppState
         
-        init(_ control: WorkspaceSceneView, _ scn_view: SCNView, workspace: Workspace)
+        init(_ control: WorkspaceSceneView, _ scn_view: SCNView, workspace: Workspace, app_state: AppState)
         {
             self.control = control
             
             self.scn_view = scn_view
             self.workspace = workspace
+            self.app_state = app_state
             super.init()
         }
         
@@ -606,7 +613,7 @@ struct AddInWorkspaceView: View
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
                 .padding()
-                .disabled(base_workspace.selected_object_unavaliable ?? true)
+                .disabled((base_workspace.selected_object_unavaliable ?? true) || (app_state.add_selection == 1 && tool_attached && base_workspace.attachable_robots_names.count == 0))
             }
         }
         .onAppear
