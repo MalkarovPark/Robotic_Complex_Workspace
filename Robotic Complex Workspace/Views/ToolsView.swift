@@ -50,7 +50,6 @@ struct ToolsView: View
                     .padding(20)
                 }
                 .animation(.spring(), value: base_workspace.tools)
-                .modifier(DoubleModifier(update_toggle: $app_state.view_update_state))
             }
             else
             {
@@ -581,14 +580,6 @@ struct ToolView: View
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
             {
                 ready_for_save = true
-            }
-        }
-        .onDisappear
-        {
-            if is_document_updated
-            {
-                tool_item.image = app_state.hold_card_image
-                app_state.view_update_state.toggle()
             }
         }
     }

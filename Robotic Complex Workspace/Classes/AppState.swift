@@ -243,7 +243,7 @@ class AppState : ObservableObject
         }
         catch
         {
-            print("Bookmark error \(error)")
+            print(error.localizedDescription)
         }
     }
     

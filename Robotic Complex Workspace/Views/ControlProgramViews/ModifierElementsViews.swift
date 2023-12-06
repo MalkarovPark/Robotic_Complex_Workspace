@@ -331,7 +331,6 @@ struct ObserverElementView: View
         .onChange(of: to_indices)
         { _, new_value in
             (element as! ObserverModifierElement).to_indices = new_value
-            print(to_indices)
             on_update()
         }
     }
