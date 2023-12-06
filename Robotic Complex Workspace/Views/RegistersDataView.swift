@@ -13,7 +13,7 @@ struct RegistersDataView: View
     @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var is_presented: Bool
     
-    @State private var toggle = false
+    @State private var update_toggle = false
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -37,7 +37,7 @@ struct RegistersDataView: View
                     }
                 }
                 .padding()
-                .modifier(DoubleModifier(update_toggle: $toggle))
+                .modifier(DoubleModifier(update_toggle: $update_toggle))
                 #if os(macOS)
                 .padding(.vertical, 10)
                 #else
@@ -84,7 +84,7 @@ struct RegistersDataView: View
     private func clear_registers()
     {
         base_workspace.clear_registers()
-        toggle.toggle()
+        update_toggle.toggle()
     }
     
     private func save_registers()
