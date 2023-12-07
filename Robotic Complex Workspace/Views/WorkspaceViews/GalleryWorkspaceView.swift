@@ -18,6 +18,10 @@ struct GalleryWorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    #if os(iOS) || os(visionOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
+    
     var body: some View
     {
         VStack(spacing: 0)

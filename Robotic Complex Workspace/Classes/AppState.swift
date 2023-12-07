@@ -64,6 +64,9 @@ class AppState : ObservableObject
         }
     }
     
+    //Gallery workspace view
+    @Published var gallery_disabled = false
+    
     //Other
     @Published var get_scene_image = false //Flag for getting a snapshot of the scene view
     
