@@ -66,6 +66,9 @@ class AppState : ObservableObject
     
     //Gallery workspace view
     @Published var gallery_disabled = false
+    #if os(iOS) || os(visionOS)
+    @Published var locked = false //Does not allow you to make a duplicate connection to the scene caused by unknown reasons
+    #endif
     
     //Other
     @Published var get_scene_image = false //Flag for getting a snapshot of the scene view
@@ -225,8 +228,6 @@ class AppState : ObservableObject
             parts = Array(parts_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of parts
             part_name = parts.first ?? "None" //Set first array element as selected part name
         }
-        
-        //register_colors = colors_by_seed(seed: 5433) //Generate colors for registers data view
     }
     
     //MARK: - Get additive workspace objects data from external property list

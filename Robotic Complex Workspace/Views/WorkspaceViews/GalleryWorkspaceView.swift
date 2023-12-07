@@ -345,7 +345,7 @@ struct GalleryInfoView: View
                                 if old_attachment == nil
                                 {
                                     attach_robot_name = avaliable_attachments.first!
-                                    base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                                    //base_workspace.attach_tool_to(robot_name: attach_robot_name)
                                 }
                                 else
                                 {
@@ -395,9 +395,10 @@ struct GalleryInfoView: View
             case .tool:
                 if base_workspace.selected_tool.is_attached
                 {
+                    base_workspace.selected_tool.attached_to = attach_robot_name
+                    
                     if old_attachment != attach_robot_name
                     {
-                        base_workspace.selected_tool.attached_to = attach_robot_name
                         document.preset.tools = base_workspace.file_data().tools
                     }
                 }

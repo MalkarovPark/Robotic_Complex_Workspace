@@ -32,6 +32,10 @@ struct VisualWorkspaceView: View
                 .modifier(WorkspaceMenu())
                 .disabled(add_in_view_presented)
             #if os(iOS) || os(visionOS)
+                .onDisappear
+                {
+                    app_state.locked = false
+                }
                 .navigationBarTitleDisplayMode(.inline)
             #endif
             
@@ -168,7 +172,11 @@ struct WorkspaceSceneView: UIViewRepresentable
         //Connect scene to class and add placed robots and parts in workspace
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
         {
-            base_workspace.connect_scene(viewed_scene)
+            if !app_state.locked
+            {
+                base_workspace.connect_scene(viewed_scene)
+                app_state.locked = true
+            }
         }
         
         //Add gesture recognizer
