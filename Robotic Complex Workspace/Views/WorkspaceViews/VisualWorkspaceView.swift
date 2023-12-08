@@ -52,9 +52,9 @@ struct VisualWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
+                                .foregroundColor((!add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
                             #elseif os(visionOS)
-                                .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
+                                .foregroundColor((!add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -71,7 +71,7 @@ struct VisualWorkspaceView: View
                                 .frame(maxWidth: 1024)
                             #endif
                         }
-                        .disabled(!base_workspace.add_in_view_disabled || base_workspace.performed)
+                        .disabled(!add_in_view_disabled || base_workspace.performed)
                         
                         Divider()
                         
@@ -81,9 +81,9 @@ struct VisualWorkspaceView: View
                                 .imageScale(.large)
                                 .padding()
                             #if os(iOS)
-                                .foregroundColor(base_workspace.add_in_view_disabled ? Color.secondary : Color.black)
+                                .foregroundColor(add_in_view_disabled ? Color.secondary : Color.black)
                             #elseif os(visionOS)
-                                .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
+                                .foregroundColor((!app_state.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -111,6 +111,18 @@ struct VisualWorkspaceView: View
                 
                 Spacer()
             }
+        }
+    }
+    
+    private var add_in_view_disabled: Bool
+    {
+        if !base_workspace.is_selected || !app_state.add_in_view_dismissed || base_workspace.performed
+        {
+            return true
+        }
+        else
+        {
+            return false
         }
     }
 }

@@ -59,9 +59,9 @@ struct GalleryWorkspaceView: View
                         .imageScale(.large)
                         .padding()
                     #if os(iOS)
-                        .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
+                        .foregroundColor(base_workspace.performed ? Color.secondary : Color.black)
                     #elseif os(visionOS)
-                        .foregroundColor((!base_workspace.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
+                        .foregroundColor(base_workspace.performed ? Color.secondary : Color.primary)
                     #endif
                 }
                 .buttonStyle(.borderless)
@@ -78,7 +78,7 @@ struct GalleryWorkspaceView: View
                         .frame(maxWidth: 1024)
                     #endif
                 }
-                .disabled(!base_workspace.add_in_view_disabled || base_workspace.performed)
+                .disabled(base_workspace.performed)
             }
             .background(.thinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -232,9 +232,11 @@ struct ObjectCard: View
         {
             Rectangle()
                 .foregroundStyle(color)
+                .opacity(0.8)
             Text(name)
                 .foregroundStyle(.white)
                 .font(.largeTitle)
+                .fontDesign(.rounded)
                 //.font(.system(size: object_card_font_size))
         }
         .frame(width: object_card_scale, height: object_card_scale / 2)
@@ -252,6 +254,9 @@ struct ObjectCard: View
         .popover(isPresented: $info_view_presented)
         {
             GalleryInfoView(info_view_presented: $info_view_presented, document: $document)
+            #if os(iOS) || os(visionOS)
+                .presentationDetents([.height(256)])
+            #endif
         }
     }
 }
@@ -447,11 +452,9 @@ struct GalleryInfoView: View
 #if os(macOS)
 let object_card_scale: CGFloat = 160
 let object_card_spacing: CGFloat = 20
-let object_card_font_size: CGFloat = 20
 #else
-let object_card_scale: CGFloat = 112
-let object_card_spacing: CGFloat = 20
-let object_card_font_size: CGFloat = 32
+let object_card_scale: CGFloat = 192
+let object_card_spacing: CGFloat = 32
 #endif
 
 let object_card_maximum = object_card_scale + object_card_spacing

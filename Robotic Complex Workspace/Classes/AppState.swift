@@ -64,6 +64,10 @@ class AppState : ObservableObject
         }
     }
     
+    //Visual workspace view
+    //If add in view presented or not dismissed state.
+    public var add_in_view_dismissed = true
+    
     //Gallery workspace view
     @Published var gallery_disabled = false
     #if os(iOS) || os(visionOS)

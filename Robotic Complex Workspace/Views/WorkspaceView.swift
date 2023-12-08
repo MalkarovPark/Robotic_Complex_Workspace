@@ -332,7 +332,7 @@ struct AddInWorkspaceView: View
         }
         .onAppear
         {
-            base_workspace.add_in_view_dismissed = false
+            app_state.add_in_view_dismissed = false
             base_workspace.is_editing = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
@@ -345,9 +345,21 @@ struct AddInWorkspaceView: View
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
                 base_workspace.dismiss_object()
-                base_workspace.add_in_view_dismissed = true
+                app_state.add_in_view_dismissed = true
                 base_workspace.update_view()
             }
+        }
+    }
+    
+    private var add_in_view_disabled: Bool
+    {
+        if !base_workspace.is_selected || !app_state.add_in_view_dismissed || base_workspace.performed
+        {
+            return true
+        }
+        else
+        {
+            return false
         }
     }
     
