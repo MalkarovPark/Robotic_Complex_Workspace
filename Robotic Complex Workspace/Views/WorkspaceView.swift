@@ -333,7 +333,7 @@ struct AddInWorkspaceView: View
         .onAppear
         {
             app_state.add_in_view_dismissed = false
-            base_workspace.is_editing = true
+            base_workspace.in_visual_edit_mode = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
                 base_workspace.update_view()
@@ -353,7 +353,7 @@ struct AddInWorkspaceView: View
     
     private var add_in_view_disabled: Bool
     {
-        if !base_workspace.is_selected || !app_state.add_in_view_dismissed || base_workspace.performed
+        if !base_workspace.any_object_selected || !app_state.add_in_view_dismissed || base_workspace.performed
         {
             return true
         }

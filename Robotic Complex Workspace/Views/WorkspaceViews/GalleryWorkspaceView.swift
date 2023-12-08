@@ -109,7 +109,7 @@ struct PlacedRobotsGallery: View
                 {
                     ForEach(base_workspace.placed_robots_names, id: \.self)
                     { name in
-                        ObjectCard(document: $document, name: name, color: registers_colors[6])
+                        ObjectCard(document: $document, name: name, color: registers_colors[6], image: base_workspace.robot_by_name(name).card_info.image, node: nil)
                             {
                                 base_workspace.select_robot(name: name)
                             }
@@ -149,7 +149,7 @@ struct PlacedToolsGallery: View
                 {
                     ForEach(base_workspace.placed_tools_names, id: \.self)
                     { name in
-                        ObjectCard(document: $document, name: name, color: registers_colors[8])
+                        ObjectCard(document: $document, name: name, color: registers_colors[8], image: nil, node: base_workspace.tool_by_name(name).node)
                             {
                                 base_workspace.select_tool(name: name)
                             }
@@ -191,7 +191,7 @@ struct PlacedPartsGallery: View
                 {
                     ForEach(base_workspace.placed_parts_names, id: \.self)
                     { name in
-                        ObjectCard(document: $document, name: name, color: registers_colors[11])
+                        ObjectCard(document: $document, name: name, color: registers_colors[11], image: nil, node: base_workspace.part_by_name(name).node)
                             {
                                 base_workspace.select_part(name: name)
                             }
@@ -220,6 +220,9 @@ struct ObjectCard: View
     let name: String
     let color: Color
     
+    let image: UIImage?
+    let node: SCNNode?
+    
     let on_select: () -> ()
     
     @State private var info_view_presented = false
@@ -233,13 +236,48 @@ struct ObjectCard: View
             Rectangle()
                 .foregroundStyle(color)
                 .opacity(0.8)
+        }
+        .overlay(alignment: .topLeading)
+        {
             Text(name)
                 .foregroundStyle(.white)
                 .font(.largeTitle)
                 .fontDesign(.rounded)
-                //.font(.system(size: object_card_font_size))
+                .padding()
         }
-        .frame(width: object_card_scale, height: object_card_scale / 2)
+        .overlay(alignment: .bottomTrailing)
+        {
+            Rectangle()
+                .fill(.clear)
+                .overlay
+            {
+                if image != nil
+                {
+                    #if os(macOS)
+                    Image(nsImage: image!)
+                        .resizable()
+                        .scaledToFill()
+                    #else
+                    Image(uiImage: image!)
+                        .resizable()
+                        .scaledToFill()
+                    #endif
+                }
+                
+                if node != nil
+                {
+                    ObjectSceneView(node: node!)
+                        .disabled(true)
+                        .padding(8)
+                }
+            }
+            .frame(width: 40, height: 40)
+            .background(Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
+            .shadow(radius: 2)
+            .padding(8)
+        }
+        .frame(width: object_card_scale, height: object_card_scale / 1.618)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .shadow(radius: 8)
         .onTapGesture
@@ -387,11 +425,11 @@ struct GalleryInfoView: View
         }
         .onAppear
         {
-            base_workspace.is_editing = true
+            base_workspace.in_visual_edit_mode = true
         }
         .onDisappear
         {
-            base_workspace.is_editing = false
+            base_workspace.in_visual_edit_mode = false
             
             switch base_workspace.selected_object_type
             {
@@ -468,6 +506,6 @@ let object_card_maximum = object_card_scale + object_card_spacing
 
 #Preview
 {
-    ObjectCard(document: .constant(Robotic_Complex_WorkspaceDocument()), name: "Object", color: .green, on_select: {})
+    ObjectCard(document: .constant(Robotic_Complex_WorkspaceDocument()), name: "Object", color: .green, image: nil, node: nil, on_select: {})
         .environmentObject(AppState())
 }

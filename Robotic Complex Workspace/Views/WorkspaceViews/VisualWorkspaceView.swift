@@ -100,7 +100,7 @@ struct VisualWorkspaceView: View
                                 .frame(maxWidth: 1024)
                             #endif
                         }
-                        .disabled(base_workspace.add_in_view_disabled)
+                        .disabled(add_in_view_disabled)
                     }
                     .background(.thinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -116,7 +116,7 @@ struct VisualWorkspaceView: View
     
     private var add_in_view_disabled: Bool
     {
-        if !base_workspace.is_selected || !app_state.add_in_view_dismissed || base_workspace.performed
+        if !base_workspace.any_object_selected || !app_state.add_in_view_dismissed || base_workspace.performed
         {
             return true
         }
@@ -252,7 +252,7 @@ struct WorkspaceSceneView: UIViewRepresentable
         
         @objc func handle_tap(sender: UITapGestureRecognizer)
         {
-            if !workspace.is_editing && !workspace.performed
+            if !workspace.in_visual_edit_mode && !workspace.performed
             {
                 let tap_location = sender.location(in: scn_view)
                 let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -291,7 +291,7 @@ struct WorkspaceSceneView: UIViewRepresentable
     
     func scene_check() //Render functions
     {
-        if base_workspace.is_selected && base_workspace.performed
+        if base_workspace.any_object_selected && base_workspace.performed
         {
             base_workspace.selected_robot.update_model()
             
@@ -482,7 +482,7 @@ struct VisualInfoView: View
         }
         .onAppear
         {
-            base_workspace.is_editing = true
+            base_workspace.in_visual_edit_mode = true
         }
         .onDisappear
         {
@@ -502,7 +502,7 @@ struct VisualInfoView: View
                 }
             }
             
-            base_workspace.is_editing = false
+            base_workspace.in_visual_edit_mode = false
         }
     }
     
