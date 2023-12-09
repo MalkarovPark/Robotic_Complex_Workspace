@@ -17,6 +17,10 @@ struct RobotsView: View
     
     @State private var robot_view_presented = false
     
+    #if os(macOS)
+    @EnvironmentObject var app_state: AppState
+    #endif
+    
     var body: some View
     {
         ZStack
@@ -35,13 +39,12 @@ struct RobotsView: View
             {
                 //Display robot view when selected
                 RobotView(robot_view_presented: $robot_view_presented, document: $document)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                #if os(macOS)
+                    .frame(maxWidth: app_state.force_resize_view ? 32 : .infinity, maxHeight: app_state.force_resize_view ? 32 : .infinity)
+                #endif
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
         }
-        #if os(macOS)
-        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
-        #endif
     }
 }
 
@@ -507,7 +510,7 @@ struct RobotView: View
         HStack(spacing: 0)
         {
             RobotSceneView(document: $document)
-                .onDisappear(perform: close_robot)
+                .onDisappear(perform: close_view)
             #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
                 .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
@@ -525,6 +528,10 @@ struct RobotView: View
             {
                 base_workspace.selected_robot.select_program(index: 0)
             }
+            
+            #if os(macOS)
+            app_state.force_resize_view = false
+            #endif
         }
         .toolbar
         {
@@ -605,12 +612,34 @@ struct RobotView: View
         .modifier(MenuHandlingModifier(performed: $base_workspace.selected_robot.performed, toggle_perform: base_workspace.selected_robot.start_pause_moving, stop_perform: base_workspace.selected_robot.reset_moving))
     }
     
-    private func close_robot()
+    private func close_view()
     {
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         robot_view_presented = false
+        #if os(macOS)
+        app_state.force_resize_view = true
+        #endif
         base_workspace.deselect_robot()
+    }
+    
+    private func close_robot()
+    {
+        #if os(macOS)
+        base_workspace.selected_robot.reset_moving()
+        app_state.get_scene_image = true
+        base_workspace.deselect_robot()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+        {
+            app_state.force_resize_view = true
+            robot_view_presented = false
+        }
+        #else
+        base_workspace.selected_robot.reset_moving()
+        app_state.get_scene_image = true
+        robot_view_presented = false
+        base_workspace.deselect_robot()
+        #endif
     }
     
     private func compact_placement() -> ToolbarItemPlacement
@@ -797,107 +826,97 @@ struct RobotSceneView: View
     
     var body: some View
     {
-        ZStack
-        {
-            CellSceneView()
-            
-            HStack
+        CellSceneView()
+            .overlay(alignment: .bottomLeading)
             {
-                VStack
+                VStack(spacing: 0)
                 {
-                    Spacer()
-                    VStack(spacing: 0)
+                    Button(action: { origin_rotate_view_presented.toggle() })
                     {
-                        Button(action: { origin_rotate_view_presented.toggle() })
-                        {
-                            Image(systemName: "rotate.3d")
-                                .imageScale(.large)
-                                .padding()
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        .popover(isPresented: $origin_rotate_view_presented)
-                        {
-                            OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
-                                .onChange(of: base_workspace.selected_robot.origin_rotation)
-                            { _, _ in
-                                //base_workspace.selected_robot.robot_location_place()
-                                base_workspace.update_view()
-                                document.preset.robots = base_workspace.file_data().robots
-                                app_state.get_scene_image = true
-                            }
-                        }
-                        .onDisappear
-                        {
-                            origin_rotate_view_presented.toggle()
-                        }
-                        Divider()
-                        
-                        Button(action: { origin_move_view_presented.toggle() })
-                        {
-                            Image(systemName: "move.3d")
-                                .imageScale(.large)
-                                .padding()
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        .popover(isPresented: $origin_move_view_presented)
-                        {
-                            OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
-                                .onChange(of: base_workspace.selected_robot.origin_location)
-                            { _, _ in
-                                //base_workspace.selected_robot.robot_location_place()
-                                base_workspace.update_view()
-                                document.preset.robots = base_workspace.file_data().robots
-                                app_state.get_scene_image = true
-                            }
-                        }
-                        .onDisappear
-                        {
-                            origin_move_view_presented.toggle()
-                        }
-                        Divider()
-                        
-                        Button(action: { space_scale_view_presented.toggle() })
-                        {
-                            Image(systemName: "scale.3d")
-                                .imageScale(.large)
-                                .padding()
-                        }
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        .popover(isPresented: $space_scale_view_presented)
-                        {
-                            SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
-                                .onChange(of: base_workspace.selected_robot.space_scale)
-                            { _, _ in
-                                base_workspace.selected_robot.update_space_scale()
-                                base_workspace.update_view()
-                                document.preset.robots = base_workspace.file_data().robots
-                                app_state.get_scene_image = true
-                            }
-                        }
-                        .onDisappear
-                        {
-                            space_scale_view_presented.toggle()
-                        }
-                        .buttonStyle(.borderless)
+                        Image(systemName: "rotate.3d")
+                            .imageScale(.large)
+                            .padding()
                     }
-                    .background(.thinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .shadow(radius: 8)
-                    .fixedSize(horizontal: true, vertical: false)
-                    .padding()
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .foregroundColor(.black)
+                    #endif
+                    .popover(isPresented: $origin_rotate_view_presented)
+                    {
+                        OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
+                            .onChange(of: base_workspace.selected_robot.origin_rotation)
+                        { _, _ in
+                            //base_workspace.selected_robot.robot_location_place()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.get_scene_image = true
+                        }
+                    }
+                    .onDisappear
+                    {
+                        origin_rotate_view_presented.toggle()
+                    }
+                    Divider()
+                    
+                    Button(action: { origin_move_view_presented.toggle() })
+                    {
+                        Image(systemName: "move.3d")
+                            .imageScale(.large)
+                            .padding()
+                    }
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .foregroundColor(.black)
+                    #endif
+                    .popover(isPresented: $origin_move_view_presented)
+                    {
+                        OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
+                            .onChange(of: base_workspace.selected_robot.origin_location)
+                        { _, _ in
+                            //base_workspace.selected_robot.robot_location_place()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.get_scene_image = true
+                        }
+                    }
+                    .onDisappear
+                    {
+                        origin_move_view_presented.toggle()
+                    }
+                    Divider()
+                    
+                    Button(action: { space_scale_view_presented.toggle() })
+                    {
+                        Image(systemName: "scale.3d")
+                            .imageScale(.large)
+                            .padding()
+                    }
+                    #if os(iOS)
+                    .foregroundColor(.black)
+                    #endif
+                    .popover(isPresented: $space_scale_view_presented)
+                    {
+                        SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
+                            .onChange(of: base_workspace.selected_robot.space_scale)
+                        { _, _ in
+                            base_workspace.selected_robot.update_space_scale()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.get_scene_image = true
+                        }
+                    }
+                    .onDisappear
+                    {
+                        space_scale_view_presented.toggle()
+                    }
+                    .buttonStyle(.borderless)
                 }
-                
-                Spacer()
+                .background(.thinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .shadow(radius: 8)
+                .fixedSize(horizontal: true, vertical: false)
+                .padding()
             }
-        }
     }
 }
 

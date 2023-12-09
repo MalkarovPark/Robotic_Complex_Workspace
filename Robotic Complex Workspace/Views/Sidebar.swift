@@ -145,9 +145,6 @@ struct SidebarContent: View
                     {
                         //Text("None")
                     }
-                    #if os(macOS)
-                    .onAppear(perform: { sidebar_selection = .WorkspaceView }) //???
-                    #endif
                 }
             }
         }
