@@ -116,51 +116,6 @@ struct ControlProgramView: View
         base_workspace.update_view()
         let new_program_element = app_state.new_program_element
         
-        //Checking for existing workspace components for element selection
-        /*switch new_program_element
-        {
-        case let element_item as RobotPerformerElement:
-            if base_workspace.placed_robots_names.count > 0
-            {
-                element_item.object_name = base_workspace.placed_robots_names.first!
-                
-                if base_workspace.robot_by_name(element_item.object_name).programs_count > 0
-                {
-                    element_item.program_name = base_workspace.robot_by_name(element_item.object_name).programs_names.first!
-                }
-                base_workspace.deselect_robot()
-            }
-        case let element_item as ComparatorLogicElement:
-            if base_workspace.marks_names.count > 0
-            {
-                var mark_founded = false
-                
-                for mark_name in base_workspace.marks_names
-                {
-                    if mark_name == element_item.target_mark_name
-                    {
-                        mark_founded = true
-                    }
-                    
-                    if mark_founded == true
-                    {
-                        break
-                    }
-                }
-                
-                if mark_founded == false && element_item.target_mark_name == ""
-                {
-                    element_item.target_mark_name = base_workspace.marks_names[0]
-                }
-            }
-            else
-            {
-                element_item.target_mark_name = ""
-            }
-        default:
-            break
-        }*/
-        
         //Add new program element and save to file
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         base_workspace.elements_check()
@@ -263,6 +218,10 @@ struct ProgramElementItemView: View
         .disabled(is_deliting)
         .contextMenu
         {
+            Button(action: duplicate_program_element)
+            {
+                Label("Duplicate", systemImage: "square.on.square")
+            }
             Button(role: .destructive, action: {
                 delete_program_element()
             })
@@ -270,14 +229,47 @@ struct ProgramElementItemView: View
                 Label("Delete", systemImage: "xmark")
             }
         }
-        
     }
     
     //MARK: Program elements manage functions
     private func update_program_element()
     {
         base_workspace.elements_check()
+        document.preset.elements = base_workspace.file_data().elements
+    }
+    
+    private func duplicate_program_element()
+    {
+        let new_program_element_data = element.file_info
+        var new_program_element = WorkspaceProgramElement()
         
+        switch new_program_element_data.identifier
+        {
+        case .robot_perofrmer:
+            new_program_element = RobotPerformerElement(element_struct: new_program_element_data)
+        case .tool_performer:
+            new_program_element = ToolPerformerElement(element_struct: new_program_element_data)
+        case .mover_modifier:
+            new_program_element = MoverModifierElement(element_struct: new_program_element_data)
+        case .writer_modifier:
+            new_program_element = WriterModifierElement(element_struct: new_program_element_data)
+        case .cleaner_modifier:
+            new_program_element = CleanerModifierElement(element_struct: new_program_element_data)
+        case .changer_modifier:
+            new_program_element = ChangerModifierElement(element_struct: new_program_element_data)
+        case .observer_modifier:
+            new_program_element = ObserverModifierElement(element_struct: new_program_element_data)
+        case .comparator_logic:
+            new_program_element = ComparatorLogicElement(element_struct: new_program_element_data)
+        case .mark_logic:
+            new_program_element = MarkLogicElement(element_struct: new_program_element_data)
+        case .none:
+            break
+        }
+        
+        base_workspace.elements.append(new_program_element)
+        
+        base_workspace.elements_check()
         document.preset.elements = base_workspace.file_data().elements
     }
     
