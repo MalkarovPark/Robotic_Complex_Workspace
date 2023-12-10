@@ -1304,9 +1304,6 @@ struct RobotInspectorView: View
     {
         VStack(spacing: 0)
         {
-            Text("Points")
-                .padding(.top)
-            
             ZStack
             {
                 List

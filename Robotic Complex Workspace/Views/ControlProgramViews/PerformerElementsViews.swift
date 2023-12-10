@@ -20,6 +20,7 @@ struct RobotPerformerElementView: View
     
     @State private var location_indices = [Int]()
     @State private var rotation_indices = [Int]()
+    @State private var speed_index = [Int]()
     
     @EnvironmentObject var base_workspace: Workspace
     @State private var picker_is_presented = false
@@ -38,6 +39,7 @@ struct RobotPerformerElementView: View
         
         _location_indices = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).x_index, (_element.wrappedValue as! RobotPerformerElement).y_index, (_element.wrappedValue as! RobotPerformerElement).z_index])
         _rotation_indices = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).r_index, (_element.wrappedValue as! RobotPerformerElement).p_index, (_element.wrappedValue as! RobotPerformerElement).w_index])
+        _speed_index = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).speed_index])
         
         self.on_update = on_update
     }
@@ -63,6 +65,9 @@ struct RobotPerformerElementView: View
                         .padding(.top)
                     
                     RegistersSelector(text: "Rotation R: \(rotation_indices[0]), P: \(rotation_indices[1]), W: \(rotation_indices[2])", indices: $rotation_indices, names: ["R", "P", "W"], cards_colors: registers_colors)
+                        .padding(.top)
+                    
+                    RegistersSelector(text: "Speed: \(speed_index[0])", indices: $speed_index, names: ["Speed"], cards_colors: registers_colors)
                         .padding(.top)
                 }
                 else
@@ -182,6 +187,11 @@ struct RobotPerformerElementView: View
             (element as! RobotPerformerElement).r_index = new_value[0]
             (element as! RobotPerformerElement).p_index = new_value[1]
             (element as! RobotPerformerElement).w_index = new_value[2]
+            on_update()
+        }
+        .onChange(of: speed_index)
+        { _, new_value in
+            (element as! RobotPerformerElement).speed_index = new_value[0]
             on_update()
         }
     }
