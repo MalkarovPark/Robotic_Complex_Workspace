@@ -40,7 +40,7 @@ func select_tool_modules(name: String, model_controller: inout ToolModelControll
 }
 
 //MARK: - Changer modules
-let changer_modules_names = ["Module", "Module 2", "Increment"]
+let changer_modules_names = ["Module", "Module 2"]
 
 func change_by(name: String, registers: inout [Float])
 {
@@ -52,8 +52,6 @@ func change_by(name: String, registers: inout [Float])
     case "Module 2":
         registers[12] = 60
         registers[13] = 77
-    case "Increment":
-        registers[1] += 1
     default:
         break
     }

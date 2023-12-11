@@ -454,7 +454,7 @@ struct ToolView: View
                     {
                         Button(action: { program_view_presented.toggle() })
                         {
-                            Text("Inspector")
+                            Text("Operations")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.borderedProminent)
@@ -671,9 +671,6 @@ struct ToolInspectorView: View
         {
             if base_workspace.selected_tool.codes_count > 0
             {
-                Text("Operations")
-                    .padding(.vertical)
-                
                 ZStack
                 {
                     List
@@ -804,6 +801,7 @@ struct ToolInspectorView: View
                                 .frame(maxWidth: 192)
                                 .buttonStyle(.borderedProminent)
                             }
+                            .presentationDetents([.height(192)])
                             #endif
                         }
                         .padding(.trailing, 24)

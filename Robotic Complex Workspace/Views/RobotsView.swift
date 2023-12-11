@@ -1895,6 +1895,8 @@ struct PositionPointView: View
         point_item.y = item_view_pos_location[1]
         point_item.z = item_view_pos_location[2]
         
+        base_workspace.selected_robot.point_shift(&point_item)
+        
         update_workspace_data()
     }
     
