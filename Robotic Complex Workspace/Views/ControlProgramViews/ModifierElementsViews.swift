@@ -59,6 +59,141 @@ struct MoverElementView: View
     }
 }
 
+struct WriterElementView: View
+{
+    @Binding var element: WorkspaceProgramElement
+    
+    @State private var value: Float = 0
+    @State private var to_index = [Int]()
+    
+    let on_update: () -> ()
+    
+    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    {
+        self._element = element
+        
+        _value = State(initialValue: (_element.wrappedValue as! WriterModifierElement).value)
+        _to_index = State(initialValue: [(_element.wrappedValue as! WriterModifierElement).to_index])
+        
+        self.on_update = on_update
+    }
+    
+    var body: some View
+    {
+        HStack(spacing: 0)
+        {
+            HStack(spacing: 8)
+            {
+                Text("Write")
+                    .frame(width: 34)
+                TextField("0", value: $value, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                #if os(iOS) || os(visionOS)
+                    .keyboardType(.decimalPad)
+                #endif
+                Stepper("Enter", value: $value, in: -1000...1000)
+                    .labelsHidden()
+            }
+            .padding(.trailing)
+            
+            RegistersSelector(text: "to: \(to_index[0])", indices: $to_index, names: ["To"], cards_colors: registers_colors)
+        }
+        .onChange(of: value)
+        { _, new_value in
+            (element as! WriterModifierElement).value = new_value
+            on_update()
+        }
+        .onChange(of: to_index)
+        { _, new_value in
+            (element as! WriterModifierElement).to_index = new_value[0]
+            on_update()
+        }
+    }
+}
+
+struct MathElementView: View
+{
+    @Binding var element: WorkspaceProgramElement
+    
+    @State var operation: MathType = .add
+    @State var value_index = [Int]()
+    @State var value2_index = [Int]()
+    
+    let on_update: () -> ()
+    
+    @State private var picker_is_presented = false
+    
+    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    {
+        self._element = element
+        
+        _operation = State(initialValue: (_element.wrappedValue as! MathModifierElement).operation)
+        _value_index = State(initialValue: [(_element.wrappedValue as! MathModifierElement).value_index])
+        _value2_index = State(initialValue: [(_element.wrappedValue as! MathModifierElement).value2_index])
+        
+        self.on_update = on_update
+    }
+    var body: some View
+    {
+        HStack(spacing: 8)
+        {
+            Text("Value of")
+            
+            RegistersSelector(text: "\(value_index[0])", indices: $value_index, names: ["Value 1"], cards_colors: registers_colors)
+            
+            Button(operation.rawValue)
+            {
+                picker_is_presented = true
+            }
+            .popover(isPresented: $picker_is_presented)
+            {
+                MathTypePicker(operation: $operation)
+                #if os(iOS) || os(visionOS)
+                    .presentationDetents([.height(96)])
+                #endif
+            }
+            
+            Text("value of")
+            
+            RegistersSelector(text: "\(value2_index[0])", indices: $value2_index, names: ["Value 2"], cards_colors: registers_colors)
+        }
+        .onChange(of: operation)
+        { _, new_value in
+            (element as! MathModifierElement).operation = new_value
+            on_update()
+        }
+        .onChange(of: value_index)
+        { _, new_value in
+            (element as! MathModifierElement).value_index = new_value[0]
+            on_update()
+        }
+        .onChange(of: value2_index)
+        { _, new_value in
+            (element as! MathModifierElement).value2_index = new_value[0]
+            on_update()
+        }
+    }
+}
+
+struct MathTypePicker: View
+{
+    @Binding var operation: MathType
+    
+    var body: some View
+    {
+        Picker("Operation", selection: $operation)
+        {
+            ForEach(MathType.allCases, id: \.self)
+            { math_type in
+                Text(math_type.rawValue)
+            }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .padding()
+    }
+}
+
 struct ChangerElementView: View
 {
     @Binding var element: WorkspaceProgramElement
@@ -149,55 +284,39 @@ struct ChangerElementView: View
     }
 }
 
-struct WriterElementView: View
+struct OutputValueItmeView: View
 {
-    @Binding var element: WorkspaceProgramElement
-    
-    @State private var value: Float = 0
-    @State private var to_index = [Int]()
-    
-    let on_update: () -> ()
-    
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
-    {
-        self._element = element
-        
-        _value = State(initialValue: (_element.wrappedValue as! WriterModifierElement).value)
-        _to_index = State(initialValue: [(_element.wrappedValue as! WriterModifierElement).to_index])
-        
-        self.on_update = on_update
-    }
+    @Binding var from: Int
+    @Binding var to: Int
     
     var body: some View
     {
-        HStack(spacing: 0)
+        HStack
         {
-            HStack(spacing: 8)
-            {
-                Text("Write")
-                    .frame(width: 34)
-                TextField("0", value: $value, format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $value, in: -1000...1000)
-                    .labelsHidden()
-            }
-            .padding(.trailing)
+            Text("From:")
+            TextField("0", value: $from, format: .number)
+            Stepper("Enter", value: $from, in: 0...10000)
+                .labelsHidden()
             
-            RegistersSelector(text: "to: \(to_index[0])", indices: $to_index, names: ["To"], cards_colors: registers_colors)
+            RegistersSelector(text: "to: \(to)", indices: binding_for_single($to), names: ["To"], cards_colors: registers_colors)
         }
-        .onChange(of: value)
-        { _, new_value in
-            (element as! WriterModifierElement).value = new_value
-            on_update()
-        }
-        .onChange(of: to_index)
-        { _, new_value in
-            (element as! WriterModifierElement).to_index = new_value[0]
-            on_update()
-        }
+    }
+    
+    private func binding_for_single(_ value: Binding<Int>) -> Binding<[Int]>
+    {
+        Binding(
+            get:
+                {
+                    [value.wrappedValue]
+                },
+            set:
+                { newValue in
+                if let firstValue = newValue.first
+                {
+                    value.wrappedValue = firstValue
+                }
+            }
+        )
     }
 }
 
@@ -345,42 +464,6 @@ struct ObserverElementView: View
     {
         from_indices.remove(atOffsets: offsets)
         to_indices.remove(atOffsets: offsets)
-    }
-}
-
-struct OutputValueItmeView: View
-{
-    @Binding var from: Int
-    @Binding var to: Int
-    
-    var body: some View
-    {
-        HStack
-        {
-            Text("From:")
-            TextField("0", value: $from, format: .number)
-            Stepper("Enter", value: $from, in: 0...10000)
-                .labelsHidden()
-            
-            RegistersSelector(text: "to: \(to)", indices: binding_for_single($to), names: ["To"], cards_colors: registers_colors)
-        }
-    }
-    
-    private func binding_for_single(_ value: Binding<Int>) -> Binding<[Int]>
-    {
-        Binding(
-            get:
-                {
-                    [value.wrappedValue]
-                },
-            set:
-                { newValue in
-                if let firstValue = newValue.first
-                {
-                    value.wrappedValue = firstValue
-                }
-            }
-        )
     }
 }
 

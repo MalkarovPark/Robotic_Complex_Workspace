@@ -253,12 +253,14 @@ struct ProgramElementItemView: View
             new_program_element = MoverModifierElement(element_struct: new_program_element_data)
         case .writer_modifier:
             new_program_element = WriterModifierElement(element_struct: new_program_element_data)
-        case .cleaner_modifier:
-            new_program_element = CleanerModifierElement(element_struct: new_program_element_data)
+        case .math_modifier:
+            new_program_element = MathModifierElement(element_struct: new_program_element_data)
         case .changer_modifier:
             new_program_element = ChangerModifierElement(element_struct: new_program_element_data)
         case .observer_modifier:
             new_program_element = ObserverModifierElement(element_struct: new_program_element_data)
+        case .cleaner_modifier:
+            new_program_element = CleanerModifierElement(element_struct: new_program_element_data)
         case .jump_logic:
             new_program_element = JumpLogicElement(element_struct: new_program_element_data)
         case .comparator_logic:
@@ -398,15 +400,18 @@ struct AddElementView: View
         case .writer_modifier:
             element_type = .modifier
             modifier_type = .write
-        case .cleaner_modifier:
+        case .math_modifier:
             element_type = .modifier
-            modifier_type = .clear
+            modifier_type = .math
         case .changer_modifier:
             element_type = .modifier
             modifier_type = .changer
         case .observer_modifier:
             element_type = .modifier
             modifier_type = .observer
+        case .cleaner_modifier:
+            element_type = .modifier
+            modifier_type = .clear
         case .jump_logic:
             element_type = .logic
             logic_type = .jump
@@ -440,12 +445,14 @@ struct AddElementView: View
                 new_program_element = MoverModifierElement()
             case .write:
                 new_program_element = WriterModifierElement()
-            case .clear:
-                new_program_element = CleanerModifierElement()
+            case .math:
+                new_program_element = MathModifierElement()
             case .changer:
                 new_program_element = ChangerModifierElement()
             case .observer:
                 new_program_element = ObserverModifierElement()
+            case .clear:
+                new_program_element = CleanerModifierElement()
             }
         case .logic:
             switch logic_type
@@ -481,12 +488,14 @@ struct ElementView: View
                 MoverElementView(element: $element, on_update: on_update)
             case is WriterModifierElement:
                 WriterElementView(element: $element, on_update: on_update)
-            case is CleanerModifierElement:
-                EmptyView()
+            case is MathModifierElement:
+                MathElementView(element: $element, on_update: on_update)
             case is ChangerModifierElement:
                 ChangerElementView(element: $element, on_update: on_update)
             case is ObserverModifierElement:
                 ObserverElementView(element: $element, on_update: on_update)
+            case is CleanerModifierElement:
+                EmptyView()
             case is JumpLogicElement:
                 JumpElementView(element: $element, on_update: on_update)
             case is ComparatorLogicElement:
@@ -522,9 +531,10 @@ public enum ModifierType: String, Codable, Equatable, CaseIterable
 {
     case mover = "Move"
     case write = "Write"
-    case clear = "Clear"
+    case math = "Math"
     case changer = "Change"
     case observer = "Observe"
+    case clear = "Clear"
 }
 
 ///A logic program element type enum.
