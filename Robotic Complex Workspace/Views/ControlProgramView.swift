@@ -259,6 +259,8 @@ struct ProgramElementItemView: View
             new_program_element = ChangerModifierElement(element_struct: new_program_element_data)
         case .observer_modifier:
             new_program_element = ObserverModifierElement(element_struct: new_program_element_data)
+        case .jump_logic:
+            new_program_element = JumpLogicElement(element_struct: new_program_element_data)
         case .comparator_logic:
             new_program_element = ComparatorLogicElement(element_struct: new_program_element_data)
         case .mark_logic:
@@ -405,6 +407,9 @@ struct AddElementView: View
         case .observer_modifier:
             element_type = .modifier
             modifier_type = .observer
+        case .jump_logic:
+            element_type = .logic
+            logic_type = .jump
         case .comparator_logic:
             element_type = .logic
             logic_type = .comparator
@@ -445,6 +450,8 @@ struct AddElementView: View
         case .logic:
             switch logic_type
             {
+            case .jump:
+                new_program_element = JumpLogicElement()
             case .comparator:
                 new_program_element = ComparatorLogicElement()
             case .mark:
@@ -480,6 +487,8 @@ struct ElementView: View
                 ChangerElementView(element: $element, on_update: on_update)
             case is ObserverModifierElement:
                 ObserverElementView(element: $element, on_update: on_update)
+            case is JumpLogicElement:
+                JumpElementView(element: $element, on_update: on_update)
             case is ComparatorLogicElement:
                 ComparatorElementView(element: $element, on_update: on_update)
             case is MarkLogicElement:
@@ -521,6 +530,7 @@ public enum ModifierType: String, Codable, Equatable, CaseIterable
 ///A logic program element type enum.
 public enum LogicType: String, Codable, Equatable, CaseIterable
 {
+    case jump = "Jump"
     case comparator = "Comparator"
     case mark = "Mark"
 }

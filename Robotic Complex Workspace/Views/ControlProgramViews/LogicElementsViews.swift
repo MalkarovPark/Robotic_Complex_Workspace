@@ -8,6 +8,65 @@
 import SwiftUI
 import IndustrialKit
 
+struct JumpElementView: View
+{
+    @Binding var element: WorkspaceProgramElement
+    
+    @State var target_mark_name = ""
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @State private var picker_is_presented = false
+    
+    let on_update: () -> ()
+    
+    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    {
+        self._element = element
+        
+        _target_mark_name = State(initialValue: (_element.wrappedValue as! JumpLogicElement).target_mark_name)
+        
+        self.on_update = on_update
+    }
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            HStack
+            {
+                Picker("jump to:", selection: $target_mark_name) //Target mark picker
+                {
+                    if base_workspace.marks_names.count > 0
+                    {
+                        ForEach(base_workspace.marks_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    else
+                    {
+                        Text("None")
+                    }
+                }
+                .onAppear
+                {
+                    if base_workspace.marks_names.count > 0 && target_mark_name == ""
+                    {
+                        target_mark_name = base_workspace.marks_names[0]
+                    }
+                }
+                .buttonStyle(.bordered)
+                .disabled(base_workspace.marks_names.count == 0)
+            }
+        }
+        .onChange(of: target_mark_name)
+        { _, new_value in
+            (element as! JumpLogicElement).target_mark_name = new_value
+            on_update()
+        }
+    }
+}
+
 struct ComparatorElementView: View
 {
     @Binding var element: WorkspaceProgramElement
