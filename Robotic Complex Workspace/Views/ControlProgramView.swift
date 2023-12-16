@@ -245,7 +245,7 @@ struct ProgramElementItemView: View
         
         switch new_program_element_data.identifier
         {
-        case .robot_perofrmer:
+        case .robot_performer:
             new_program_element = RobotPerformerElement(element_struct: new_program_element_data)
         case .tool_performer:
             new_program_element = ToolPerformerElement(element_struct: new_program_element_data)
@@ -388,7 +388,7 @@ struct AddElementView: View
     {
         switch new_program_element.file_info.identifier
         {
-        case .robot_perofrmer:
+        case .robot_performer:
             element_type = .perofrmer
             performer_type = .robot
         case .tool_performer:
