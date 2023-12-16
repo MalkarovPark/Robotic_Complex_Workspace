@@ -83,7 +83,7 @@ struct VisualWorkspaceView: View
                             #if os(iOS)
                                 .foregroundColor(add_in_view_disabled ? Color.secondary : Color.black)
                             #elseif os(visionOS)
-                                .foregroundColor((!app_state.add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
+                                .foregroundColor((!add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
                             #endif
                         }
                         .buttonStyle(.borderless)

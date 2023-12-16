@@ -12,6 +12,8 @@ struct MoverElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
+    @EnvironmentObject var base_workspace: Workspace
+    
     @State private var move_type: ModifierCopyType = .duplicate
     @State private var indices = [Int]()
     
@@ -43,7 +45,7 @@ struct MoverElementView: View
             .buttonStyle(.bordered)
             .padding(.trailing)
             
-            RegistersSelector(text: "From \(indices[0]) to \(indices[1])", indices: $indices, names: ["From", "To"], cards_colors: registers_colors)
+            RegistersSelector(text: "From \(indices[0]) to \(indices[1])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $indices, names: ["From", "To"])
         }
         .onChange(of: move_type)
         { _, new_value in
@@ -62,6 +64,8 @@ struct MoverElementView: View
 struct WriterElementView: View
 {
     @Binding var element: WorkspaceProgramElement
+    
+    @EnvironmentObject var base_workspace: Workspace
     
     @State private var value: Float = 0
     @State private var to_index = [Int]()
@@ -96,7 +100,7 @@ struct WriterElementView: View
             }
             .padding(.trailing)
             
-            RegistersSelector(text: "to: \(to_index[0])", indices: $to_index, names: ["To"], cards_colors: registers_colors)
+            RegistersSelector(text: "to: \(to_index[0])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
         }
         .onChange(of: value)
         { _, new_value in
@@ -114,6 +118,8 @@ struct WriterElementView: View
 struct MathElementView: View
 {
     @Binding var element: WorkspaceProgramElement
+    
+    @EnvironmentObject var base_workspace: Workspace
     
     @State var operation: MathType = .add
     @State var value_index = [Int]()
@@ -139,7 +145,7 @@ struct MathElementView: View
         {
             Text("Value of")
             
-            RegistersSelector(text: "\(value_index[0])", indices: $value_index, names: ["Value 1"], cards_colors: registers_colors)
+            RegistersSelector(text: "\(value_index[0])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $value_index, names: ["Value 1"])
             
             Button(operation.rawValue)
             {
@@ -155,7 +161,7 @@ struct MathElementView: View
             
             Text("value of")
             
-            RegistersSelector(text: "\(value2_index[0])", indices: $value2_index, names: ["Value 2"], cards_colors: registers_colors)
+            RegistersSelector(text: "\(value2_index[0])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $value2_index, names: ["Value 2"])
         }
         .onChange(of: operation)
         { _, new_value in
@@ -286,6 +292,8 @@ struct ChangerElementView: View
 
 struct OutputValueItmeView: View
 {
+    @EnvironmentObject var base_workspace: Workspace
+    
     @Binding var from: Int
     @Binding var to: Int
     
@@ -298,7 +306,7 @@ struct OutputValueItmeView: View
             Stepper("Enter", value: $from, in: 0...10000)
                 .labelsHidden()
             
-            RegistersSelector(text: "to: \(to)", indices: binding_for_single($to), names: ["To"], cards_colors: registers_colors)
+            RegistersSelector(text: "to: \(to)", registers_count: base_workspace.registers.count, colors: registers_colors, indices: binding_for_single($to), names: ["To"])
         }
     }
     
@@ -470,6 +478,7 @@ struct ObserverElementView: View
 #Preview
 {
     MoverElementView(element: .constant(MoverModifierElement()), on_update: {})
+        .environmentObject(Workspace())
 }
 
 #Preview
@@ -480,6 +489,7 @@ struct ObserverElementView: View
 #Preview
 {
     WriterElementView(element: .constant(WriterModifierElement()), on_update: {})
+        .environmentObject(Workspace())
 }
 
 #Preview

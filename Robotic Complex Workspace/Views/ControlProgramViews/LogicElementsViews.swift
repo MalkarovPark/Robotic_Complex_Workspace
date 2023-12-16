@@ -101,7 +101,7 @@ struct ComparatorElementView: View
             {
                 Text("If value of")
                 
-                RegistersSelector(text: "\(value_index[0])", indices: $value_index, names: ["Value 1"], cards_colors: registers_colors)
+                RegistersSelector(text: "\(value_index[0])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $value_index, names: ["Value 1"])
                 
                 Button(compare_type.rawValue)
                 {
@@ -117,7 +117,7 @@ struct ComparatorElementView: View
                 
                 Text("value of")
                 
-                RegistersSelector(text: "\(value2_index[0])", indices: $value2_index, names: ["Value 2"], cards_colors: registers_colors)
+                RegistersSelector(text: "\(value2_index[0])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $value2_index, names: ["Value 2"])
             }
             .padding(.bottom)
             

@@ -516,11 +516,19 @@ struct RobotView: View
                 .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
             #endif
         }
+        #if os(macOS) || os(iOS)
         .inspector(isPresented: $inspector_presented)
         {
             RobotInspectorView(document: $document)
                 .disabled(base_workspace.selected_robot.performed == true)
         }
+        #else
+        .popover(isPresented: $inspector_presented)
+        {
+            RobotInspectorView(document: $document)
+                .disabled(base_workspace.selected_robot.performed == true)
+        }
+        #endif
         .onAppear()
         {
             base_workspace.selected_robot.clear_finish_handler()

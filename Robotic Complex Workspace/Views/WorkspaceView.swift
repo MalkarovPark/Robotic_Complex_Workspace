@@ -41,11 +41,19 @@ struct WorkspaceView: View
                 GalleryWorkspaceView(document: $document)
             }
         }
+        #if os(macOS) || os(iOS)
         .inspector(isPresented: $inspector_presented)
         {
             ControlProgramView(document: $document)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
         }
+        #else
+        .popover(isPresented: $inspector_presented)
+        {
+            ControlProgramView(document: $document)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+        }
+        #endif
         #if os(iOS) || os(visionOS)
         .navigationBarTitleDisplayMode(.inline)
         .modifier(SafeAreaToggler(enabled: (horizontal_size_class == .compact) || !workspace_visual_modeling))
