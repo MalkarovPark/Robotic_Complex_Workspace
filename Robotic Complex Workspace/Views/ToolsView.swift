@@ -111,10 +111,9 @@ struct ToolCardView: View
     {
         LargeCardView(color: tool_item.card_info.color, node: tool_item.node!, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
             .shadow(radius: 8)
-            .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: tool_item, objects: base_workspace.tools, on_delete: remove_tools, object_type_name: "tool"))
             .modifier(CardMenu(object: tool_item, to_rename: $to_rename, clear_preview: tool_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_tool(name: tool_item.name)
-            }, update_file: update_file, pass_preferences: {
+            }, delete_object: delete_tool, update_file: update_file, pass_preferences: {
                 
             }, pass_programs: {
                 
@@ -147,11 +146,12 @@ struct ToolCardView: View
         }
     }
     
-    private func remove_tools(at offsets: IndexSet)
+    private func delete_tool()
     {
         withAnimation
         {
-            base_workspace.tools.remove(atOffsets: offsets)
+            base_workspace.tools.remove(at: base_workspace.tools.firstIndex(of: tool_item) ?? 0)
+            base_workspace.elements_check()
             document.preset.tools = base_workspace.file_data().tools
         }
     }

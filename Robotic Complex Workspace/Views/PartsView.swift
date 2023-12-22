@@ -119,10 +119,9 @@ struct PartCardView: View
     {
         SmallCardView(color: part_item.card_info.color, node: part_item.node!, title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
             .shadow(radius: 8)
-            .modifier(BorderlessDeleteButtonModifier(workspace: base_workspace, object_item: part_item, objects: base_workspace.parts, on_delete: remove_parts, object_type_name: "part"))
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, clear_preview: part_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name)
-            }, update_file: update_file, pass_preferences: {
+            }, delete_object: delete_part, update_file: update_file, pass_preferences: {
                 
             }, pass_programs: {
                 
@@ -144,11 +143,12 @@ struct PartCardView: View
             }
     }
     
-    func remove_parts(at offsets: IndexSet)
+    private func delete_part()
     {
         withAnimation
         {
-            base_workspace.parts.remove(atOffsets: offsets)
+            base_workspace.parts.remove(at: base_workspace.parts.firstIndex(of: part_item) ?? 0)
+            base_workspace.elements_check()
             document.preset.parts = base_workspace.file_data().parts
         }
     }

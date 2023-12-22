@@ -16,11 +16,14 @@ struct CardMenu: ViewModifier
     @ObservedObject var object: WorkspaceObject //StateObject ???
     
     @Binding var to_rename: Bool
+    
     @State var is_selected = false
     @State var name = String()
+    @State private var delete_alert_presented = false
     
     let clear_preview: () -> ()
     let duplicate_object: () -> ()
+    let delete_object: () -> ()
     let update_file: () -> ()
     
     let pass_preferences: () -> ()
@@ -29,6 +32,18 @@ struct CardMenu: ViewModifier
     public func body(content: Content) -> some View
     {
         content
+            .alert(isPresented: $delete_alert_presented)
+            {
+                Alert(
+                    title: Text("Delete \(object_type_name())?"),
+                    message: Text("Do you want to delete this \(object_type_name()) – \(object.name)"),
+                    primaryButton: .destructive(Text("Delete"), action: {
+                        delete_object()
+                        update_file()
+                    }),
+                    secondaryButton: .cancel(Text("Cancel"))
+                )
+            }
             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             .contextMenu
             {
@@ -89,6 +104,13 @@ struct CardMenu: ViewModifier
                     }
                     .disabled(base_workspace.robots.count < 2)
                 }
+                
+                Divider()
+                
+                Button("Delete", systemImage: "trash", role: .destructive)
+                {
+                    delete_alert_presented = true
+                }
             }
             .onChange(of: object.is_placed)
             { _, _ in
@@ -132,6 +154,21 @@ struct CardMenu: ViewModifier
             {
                 app_state.robots_to_names.remove(at: app_state.robots_to_names.firstIndex(of: name) ?? 0)
             }
+        }
+    }
+    
+    private func object_type_name() -> String
+    {
+        switch object
+        {
+        case is Robot:
+            return "Robot"
+        case is Tool:
+            return "Tool"
+        case is Part:
+            return "Part"
+        default:
+            return ""
         }
     }
 }

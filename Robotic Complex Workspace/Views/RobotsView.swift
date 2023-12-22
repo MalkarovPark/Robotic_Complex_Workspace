@@ -224,10 +224,9 @@ struct RobotCardView: View
         {
             LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
                 .shadow(radius: 8)
-                .modifier(CircleDeleteButtonModifier(workspace: base_workspace, object_item: robot_item, objects: base_workspace.robots, on_delete: delete_robots, object_type_name: "robot"))
                 .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
                     base_workspace.duplicate_robot(name: robot_item.name)
-                }, update_file: update_file, pass_preferences: {
+                }, delete_object: delete_robot, update_file: update_file, pass_preferences: {
                     app_state.robot_from = robot_item
                     pass_preferences_presented = true
                 }, pass_programs: {
@@ -268,11 +267,12 @@ struct RobotCardView: View
         robot_view_presented = true
     }
     
-    private func delete_robots(at offsets: IndexSet)
+    private func delete_robot()
     {
         withAnimation
         {
-            base_workspace.robots.remove(atOffsets: offsets)
+            base_workspace.robots.remove(at: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
+            base_workspace.elements_check()
             document.preset.robots = base_workspace.file_data().robots
         }
     }

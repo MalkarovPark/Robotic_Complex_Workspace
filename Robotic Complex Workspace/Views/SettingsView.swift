@@ -127,7 +127,7 @@ struct GeneralSettingsView: View
                     {
                         HStack
                         {
-                            Text("Store objects previews")
+                            Text("Store robots previews")
                             
                             Spacer()
                             
