@@ -399,6 +399,10 @@ struct GalleryInfoView: View
                     }
                 case .part:
                     PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
+                        .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
+                        { _, _ in
+                            document.preset.parts = base_workspace.file_data().parts
+                        }
                 default:
                     Text("None")
                 }

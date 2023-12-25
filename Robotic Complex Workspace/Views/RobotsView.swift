@@ -236,7 +236,10 @@ struct RobotCardView: View
         }
         .onTapGesture
         {
-            view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
+            if !app_state.preferences_pass_mode && !app_state.programs_pass_mode
+            {
+                view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
+            }
         }
         .popover(isPresented: $pass_preferences_presented, arrowEdge: .bottom)
         {

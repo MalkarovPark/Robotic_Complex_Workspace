@@ -192,9 +192,6 @@ struct ProgramElementItemView: View
         ZStack
         {
             ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: base_workspace.is_current_element(element: element))
-                .frame(height: 80)
-                .background(.thinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .shadow(radius: 8)
                 .onTapGesture
             {
