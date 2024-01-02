@@ -234,7 +234,7 @@ class _6DOFController: RobotModelController
         
         //Update tool rotation chart
         axis_names = ["R", "P", "W"]
-        components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
+        components = [pointer_node_internal?.eulerAngles.z, pointer_node?.eulerAngles.x, pointer_node?.eulerAngles.y]
         for i in 0...axis_names.count - 1
         {
             charts[2].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0).to_deg))
@@ -259,7 +259,7 @@ class _6DOFController: RobotModelController
         state[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
                              StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
         
-        state.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+        state.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
         
         return state
     }
