@@ -702,13 +702,16 @@ class AppState : ObservableObject
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
     //MARK: - Visual functions
-    /*func reset_previewed_node_position()
+    @Published var sidebar_selection: navigation_item? = .WorkspaceView
+    
+    public func flip_workspace_selection()
     {
-        previewed_object?.node?.remove_all_constraints()
-        
-        previewed_object?.node?.position = SCNVector3Zero
-        previewed_object?.node?.rotation = SCNVector4Zero
-    }*/
+        sidebar_selection = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+        {
+            self.sidebar_selection = .WorkspaceView
+        }
+    }
 }
 
 //MARK - Control modifier

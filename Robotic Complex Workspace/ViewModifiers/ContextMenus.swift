@@ -179,26 +179,18 @@ struct WorkspaceMenu: ViewModifier
     
     @State private var flip = false
     
+    let flip_func: () -> ()
+    
     public func body(content: Content) -> some View
     {
-        ZStack
-        {
-            if flip
+        content
+            .contextMenu
             {
-                content
+                Button(action: flip_scene)
+                {
+                    Label("Reset Scene", systemImage: "arrow.counterclockwise")
+                }
             }
-            else
-            {
-                content
-            }
-        }
-        .contextMenu
-        {
-            Button(action: flip_scene)
-            {
-                Label("Reset Scene", systemImage: "arrow.counterclockwise")
-            }
-        }
     }
     
     private func flip_scene()
@@ -208,7 +200,7 @@ struct WorkspaceMenu: ViewModifier
             base_workspace.reset_performing()
             //base_workspace.update_view()
         }
-        flip.toggle()
+        flip_func()
     }
 }
 

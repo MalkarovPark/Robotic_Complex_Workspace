@@ -384,8 +384,6 @@ struct PartView: View
             app_state.previewed_object = part_item
             app_state.preview_update_scene = true
             
-            //app_state.reset_previewed_node_position()
-            
             let previewed_part = app_state.previewed_object as? Part
             previewed_part?.enable_physics = false
             

@@ -61,22 +61,23 @@ struct Sidebar: View
 struct SidebarContent: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
-    #if os(iOS) || os(visionOS)
+    
     @EnvironmentObject var app_state: AppState
     
+    #if os(iOS) || os(visionOS)
     @State var settings_view_presented = false
     
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     #endif
     
-    @State var sidebar_selection: navigation_item? = .WorkspaceView //Selected sidebar item
+    //@State var sidebar_selection: navigation_item? = .WorkspaceView //Selected sidebar item
     
     var body: some View
     {
         NavigationSplitView
         {
             //MARK: Sidebar
-            List(navigation_item.allCases, selection: $sidebar_selection)
+            List(navigation_item.allCases, selection: $app_state.sidebar_selection)
             { selection in
                 NavigationLink(value: selection)
                 {
@@ -130,7 +131,7 @@ struct SidebarContent: View
             ZStack
             {
                 //MARK: Content
-                switch sidebar_selection
+                switch app_state.sidebar_selection
                 {
                 case .WorkspaceView:
                     WorkspaceView(document: $document)
@@ -141,10 +142,7 @@ struct SidebarContent: View
                 case .PartsView:
                     PartsView(document: $document)
                 default:
-                    VStack
-                    {
-                        //Text("None")
-                    }
+                    EmptyView()
                 }
             }
         }

@@ -29,7 +29,7 @@ struct VisualWorkspaceView: View
         ZStack
         {
             WorkspaceSceneView()
-                .modifier(WorkspaceMenu())
+                .modifier(WorkspaceMenu(flip_func: app_state.flip_workspace_selection))
                 .disabled(add_in_view_presented)
             #if os(iOS) || os(visionOS)
                 .onDisappear
