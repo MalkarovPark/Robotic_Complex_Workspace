@@ -2,7 +2,9 @@
 
 # Robotic Complex Workspace
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Swift](https://img.shields.io/badge/swift-5.9-brightgreen.svg) ![Xcode 15.0+](https://img.shields.io/badge/Xcode-14.1%2B-blue.svg) ![macOS 14.0+](https://img.shields.io/badge/macOS-14.0%2B-blue.svg) ![iOS 17.0+](https://img.shields.io/badge/iOS-17.0%2B-blue.svg) ![visionOS 1.0+](https://img.shields.io/badge/visionOS-1.0%2B-blue.svg)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Swift](https://img.shields.io/badge/swift-5.9-brightgreen.svg) ![Xcode 15.0+](https://img.shields.io/badge/Xcode-15.0%2B-blue.svg) ![macOS 14.0+](https://img.shields.io/badge/macOS-14.0%2B-blue.svg) ![iOS 17.0+](https://img.shields.io/badge/iOS-17.0%2B-blue.svg) ![visionOS 1.0+](https://img.shields.io/badge/visionOS-1.0%2B-blue.svg)
+<a href="https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html">
+<img src="https://img.shields.io/badge/^__^-IMA-AB88FF"></a>
 <a href="https://github.com/MalkarovPark/IndustrialKit">
 <img src="https://img.shields.io/badge/-IndustrialKit-05A89D"></a>
 
@@ -74,7 +76,7 @@ When creating a robot, in addition to the *name*, the *manufacturer*, *series* a
 When creating, the *name* of the tool and its *model* are specified. Likewise robot, the *model* defines a model controller and direct connector.
 
 <p align="center">
-  <img width="743" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/47aa4f62-f37d-476d-8e93-26f32c287927">
+  <img width="743" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/9cf65e29-bb4e-462d-ae21-71c7ab306d81">
 </p>
 
 ### Parts <a name="parts">
