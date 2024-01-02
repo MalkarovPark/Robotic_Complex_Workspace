@@ -1,8 +1,8 @@
-![RCWorkspace](https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/eaefba99-e56e-4190-ba9d-e8b83effbc5c)
+![RCWorkspace](https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/0597a5a0-a6ae-40c5-9fcf-54a17d0dbb37)
 
 # Robotic Complex Workspace
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Swift](https://img.shields.io/badge/swift-5.8-brightgreen.svg) ![Xcode 14.1+](https://img.shields.io/badge/Xcode-14.1%2B-blue.svg) ![macOS 13.0+](https://img.shields.io/badge/macOS-13.0%2B-blue.svg) ![iOS 16.1+](https://img.shields.io/badge/iOS-16.1%2B-blue.svg)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Swift](https://img.shields.io/badge/swift-5.9-brightgreen.svg) ![Xcode 15.0+](https://img.shields.io/badge/Xcode-14.1%2B-blue.svg) ![macOS 14.0+](https://img.shields.io/badge/macOS-14.0%2B-blue.svg) ![iOS 17.0+](https://img.shields.io/badge/iOS-17.0%2B-blue.svg) ![visionOS 1.0+](https://img.shields.io/badge/visionOS-1.0%2B-blue.svg)
 <a href="https://github.com/MalkarovPark/IndustrialKit">
 <img src="https://img.shields.io/badge/-IndustrialKit-05A89D"></a>
 
@@ -66,7 +66,7 @@ Objects are created in the relevant items available through the sidebar. All cre
 When creating a robot, in addition to the *name*, the *manufacturer*, *series* and *model* are specified. The *model* parameter determines how the visual model is controlled and direct connector.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62340924/230922584-08fa7938-82f9-49c0-85b2-e8ef8403d5ff.png" height="448px" />
+  <img width="900" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/72d2e6c8-e29d-433d-b9bb-271190903f67">
 </p>
 
 ### Tools <a name="tools">
@@ -74,7 +74,7 @@ When creating a robot, in addition to the *name*, the *manufacturer*, *series* a
 When creating, the *name* of the tool and its *model* are specified. Likewise robot, the *model* defines a model controller and direct connector.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62340924/230924002-158efa13-34b6-4b48-85d6-11d418d96346.png" height="384px" />
+  <img width="743" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/47aa4f62-f37d-476d-8e93-26f32c287927">
 </p>
 
 ### Parts <a name="parts">
@@ -82,7 +82,7 @@ When creating, the *name* of the tool and its *model* are specified. Likewise ro
 When creating a part, its *name* and *model* are specified.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62340924/230924184-07ae403b-72cc-4fcc-bf46-ac6597ed70e6.png" height="320px" />
+  <img width="583" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/b9507683-d443-4550-9cce-12404583eacb">
 </p>
 
 # Visual Modeling & Physical Simulation<a name="visual-modeling">
@@ -100,7 +100,7 @@ Can be endabled/disabled in settings if needed.
 Connection to real equipment through connectors. For each device, the connector setting is available by pressing the ![link@8x](https://user-images.githubusercontent.com/62340924/230892411-66714a6a-f2e3-4415-a5f1-2d1e22d255ed.png) button.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62340924/230892569-2527b874-9e7a-48fd-9862-351da3f69abd.png" />
+  <img width="423" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/d0809203-ee20-4990-8233-c21f5621fc54">
 </p>
 
 The connected device can control its visual model, allowing it to be tracked in real time. The user can combine real and virtual devices in one document.
@@ -111,8 +111,7 @@ The application is available to receive statistical data from selected devices a
 The statistics data are available in the form of various types of charts and disclosure groups of parameters.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62340924/230785411-60b2646d-efcf-4cd0-a980-bf8d75693af7.png" height="448px" />
-  <img src="https://user-images.githubusercontent.com/62340924/230785427-0cf6c573-b34f-46ff-856a-9c7a2e3c2416.png" height="448px" />
+  <img width="583px" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/6f0eb97b-c18a-47e7-aa19-79148008fc85" />
 </p>
 
 To open the statistics view, press the ![chart bar@8x](https://user-images.githubusercontent.com/62340924/230895161-665df98e-6fc5-426e-9a86-60b51d25b84e.png) button next to the object of interest.
@@ -126,7 +125,7 @@ Create your controllers and connectors, new visual models. If you create your ow
 External model files and parametric files describing them (similar in structure to internal ones) can be connected in the application settings.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62340924/230897776-e1fe2990-e8c6-4883-a8da-a5c0136c5ed7.png" height="400px" />
+  <img width="408" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/946200c5-85b6-4ebc-8eb1-b41cb2c71bc7">
 </p>
 
 # Getting Help <a name="getting-help"></a>
