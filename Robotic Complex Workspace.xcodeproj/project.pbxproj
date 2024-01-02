@@ -52,7 +52,7 @@
 		622E73DE2B12AD1D0035FDD5 /* PerformerElementsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformerElementsViews.swift; sourceTree = "<group>"; };
 		622E73E02B12AD4A0035FDD5 /* ModifierElementsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifierElementsViews.swift; sourceTree = "<group>"; };
 		622E73E22B12AD710035FDD5 /* LogicElementsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogicElementsViews.swift; sourceTree = "<group>"; };
-		6236F9342AD3439B008FA7C4 /* Robotic Complex Workspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Robotic Complex Workspace.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6236F9342AD3439B008FA7C4 /* RCWorkspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RCWorkspace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceApp.swift; sourceTree = "<group>"; };
 		6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceDocument.swift; sourceTree = "<group>"; };
 		6236F93C2AD3439C008FA7C4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -272,7 +272,7 @@
 		62E0D3592719C700009D58D2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6236F9342AD3439B008FA7C4 /* Robotic Complex Workspace.app */,
+				6236F9342AD3439B008FA7C4 /* RCWorkspace.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -290,9 +290,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6236F9332AD3439B008FA7C4 /* Robotic Complex Workspace */ = {
+		6236F9332AD3439B008FA7C4 /* RCWorkspace */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6236F9452AD3439C008FA7C4 /* Build configuration list for PBXNativeTarget "Robotic Complex Workspace" */;
+			buildConfigurationList = 6236F9452AD3439C008FA7C4 /* Build configuration list for PBXNativeTarget "RCWorkspace" */;
 			buildPhases = (
 				6236F9302AD3439B008FA7C4 /* Sources */,
 				6236F9312AD3439B008FA7C4 /* Frameworks */,
@@ -302,12 +302,12 @@
 			);
 			dependencies = (
 			);
-			name = "Robotic Complex Workspace";
+			name = RCWorkspace;
 			packageProductDependencies = (
 				626EF85D2AD3493900F2A361 /* IndustrialKit */,
 			);
 			productName = "Robotic Complex Workspace";
-			productReference = 6236F9342AD3439B008FA7C4 /* Robotic Complex Workspace.app */;
+			productReference = 6236F9342AD3439B008FA7C4 /* RCWorkspace.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -341,7 +341,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6236F9332AD3439B008FA7C4 /* Robotic Complex Workspace */,
+				6236F9332AD3439B008FA7C4 /* RCWorkspace */,
 			);
 		};
 /* End PBXProject section */
@@ -622,7 +622,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6236F9452AD3439C008FA7C4 /* Build configuration list for PBXNativeTarget "Robotic Complex Workspace" */ = {
+		6236F9452AD3439C008FA7C4 /* Build configuration list for PBXNativeTarget "RCWorkspace" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6236F9432AD3439C008FA7C4 /* Debug */,
