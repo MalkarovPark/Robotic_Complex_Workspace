@@ -707,10 +707,6 @@ class AppState : ObservableObject
     public func flip_workspace_selection()
     {
         sidebar_selection = nil
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-        {
-            self.sidebar_selection = .WorkspaceView
-        }
     }
 }
 

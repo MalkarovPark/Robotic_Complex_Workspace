@@ -142,7 +142,15 @@ struct SidebarContent: View
                 case .PartsView:
                     PartsView(document: $document)
                 default:
-                    EmptyView()
+                    Rectangle()
+                        .fill(.gray)
+                        .onAppear
+                    {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
+                        {
+                            app_state.sidebar_selection = .WorkspaceView
+                        }
+                    }
                 }
             }
         }
