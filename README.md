@@ -47,7 +47,7 @@ Connect the necessary property list files in the application settings for robots
 
 *iOS & iPadOS*
 
-Official installation method coming in the 17th versions of iOS and iPadOS. Also you may install application package by your own developer profile and special installers.
+Official installation method coming in the 17th versions of iOS and iPadOS. Or you may install application package by your own developer profile and special installers. Also possible to use the app in application playground format by the [Swift Playgrounds](https://apps.apple.com/us/app/swift-playgrounds/id908519492) (iPadOS only).
 
 ### Project Editing <a name="project-editing"></a>
 
