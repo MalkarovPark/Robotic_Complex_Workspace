@@ -43,7 +43,7 @@ Connect the necessary property list files in the application settings for robots
 
 *macOS*
 
-[Copy](https://support.apple.com/guide/mac-help/mh35835/mac) a package with the *app* extension to the Applications folder. [Confirm launch](https://support.apple.com/guide/mac-help/mh40616/13.0/mac/13.0).
+[Copy](https://support.apple.com/guide/mac-help/mh35835/mac) a package with the *app* extension to the Applications folder. [Confirm launch](https://support.apple.com/guide/mac-help/mh40616/mac).
 
 *iOS & iPadOS*
 
