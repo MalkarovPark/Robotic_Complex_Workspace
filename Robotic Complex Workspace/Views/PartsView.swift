@@ -17,6 +17,7 @@ struct PartsView: View
     @State private var add_part_view_presented = false
     @State private var part_view_presented = false
     @State private var dragged_part: Part?
+    @State private var is_physics_reset = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -29,27 +30,30 @@ struct PartsView: View
         {
             if base_workspace.parts.count > 0
             {
-                //MARK: Scroll view for parts
-                ScrollView(.vertical, showsIndicators: true)
+                if is_physics_reset
                 {
-                    LazyVGrid(columns: columns, spacing: 24)
+                    //MARK: Scroll view for parts
+                    ScrollView(.vertical, showsIndicators: true)
                     {
-                        ForEach(base_workspace.parts)
-                        { part_item in
-                            PartCardView(document: $document, part_item: part_item)
-                            .onDrag({
-                                self.dragged_part = part_item
-                                return NSItemProvider(object: part_item.id.uuidString as NSItemProviderWriting)
-                            }, preview: {
-                                SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
-                            })
-                            .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, document: $document, workspace_parts: base_workspace.file_data().parts, part: part_item))
-                            .transition(AnyTransition.scale)
+                        LazyVGrid(columns: columns, spacing: 24)
+                        {
+                            ForEach(base_workspace.parts)
+                            { part_item in
+                                PartCardView(document: $document, part_item: part_item)
+                                .onDrag({
+                                    self.dragged_part = part_item
+                                    return NSItemProvider(object: part_item.id.uuidString as NSItemProviderWriting)
+                                }, preview: {
+                                    SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
+                                })
+                                .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, document: $document, workspace_parts: base_workspace.file_data().parts, part: part_item))
+                                .transition(AnyTransition.scale)
+                            }
                         }
+                        .padding(20)
                     }
-                    .padding(20)
+                    .modifier(DoubleModifier(update_toggle: $app_state.view_update_state))
                 }
-                .modifier(DoubleModifier(update_toggle: $app_state.view_update_state))
             }
             else
             {
@@ -91,16 +95,34 @@ struct PartsView: View
                 }
             }
         }
+        .onAppear
+        {
+            reset_all_parts_nodes()
+        }
     }
     
     //MARK: Parts manage functions
-    func remove_parts(at offsets: IndexSet)
+    private func remove_parts(at offsets: IndexSet)
     {
         withAnimation
         {
             base_workspace.parts.remove(atOffsets: offsets)
             document.preset.parts = base_workspace.file_data().parts
         }
+    }
+    
+    private func reset_all_parts_nodes()
+    {
+        for part in base_workspace.parts
+        {
+            part.node?.remove_all_constraints()
+            part.node?.physicsBody = nil
+            
+            part.node?.position = SCNVector3Zero
+            part.node?.rotation = SCNVector4Zero
+        }
+        
+        is_physics_reset = true
     }
 }
 
@@ -362,7 +384,7 @@ struct PartView: View
             app_state.previewed_object = part_item
             app_state.preview_update_scene = true
             
-            app_state.reset_previewed_node_position()
+            //app_state.reset_previewed_node_position()
             
             let previewed_part = app_state.previewed_object as? Part
             previewed_part?.enable_physics = false

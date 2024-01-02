@@ -255,7 +255,7 @@ class AppState : ObservableObject
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
         }
     }
     
@@ -325,7 +325,7 @@ class AppState : ObservableObject
             }
             catch
             {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             }
             
             return names
@@ -342,7 +342,7 @@ class AppState : ObservableObject
         }
         catch
         {
-            print(error)
+            //print(error)
             return []
         }
     }
@@ -398,7 +398,7 @@ class AppState : ObservableObject
                 }
                 catch
                 {
-                    print(error.localizedDescription)
+                    //print(error.localizedDescription)
                 }
             }
             update_series_info()
@@ -430,7 +430,7 @@ class AppState : ObservableObject
                 }
                 catch
                 {
-                    print(error.localizedDescription)
+                    //print(error.localizedDescription)
                 }
             }
             //update_tool_info()
@@ -462,7 +462,7 @@ class AppState : ObservableObject
                 }
                 catch
                 {
-                    print(error.localizedDescription)
+                    //print(error.localizedDescription)
                 }
             }
             //update_part_info()
@@ -561,7 +561,7 @@ class AppState : ObservableObject
             }
             catch
             {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             }
         }
         preview_update_scene = true
@@ -593,7 +593,7 @@ class AppState : ObservableObject
             }
             catch
             {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             }
         }
         preview_update_scene = true
@@ -651,7 +651,7 @@ class AppState : ObservableObject
             }
             catch
             {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             }
         }
         else
@@ -669,7 +669,7 @@ class AppState : ObservableObject
             }
             catch
             {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             }
         }
         else
@@ -687,7 +687,7 @@ class AppState : ObservableObject
             }
             catch
             {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             }
         }
         else
@@ -702,13 +702,13 @@ class AppState : ObservableObject
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
     //MARK: - Visual functions
-    func reset_previewed_node_position()
+    /*func reset_previewed_node_position()
     {
         previewed_object?.node?.remove_all_constraints()
         
         previewed_object?.node?.position = SCNVector3Zero
         previewed_object?.node?.rotation = SCNVector4Zero
-    }
+    }*/
 }
 
 //MARK - Control modifier

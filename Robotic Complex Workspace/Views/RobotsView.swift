@@ -966,14 +966,14 @@ struct CellSceneView: UIViewRepresentable
         base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
         
         //Add gesture recognizer
-        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        //let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         
         //Add reset double tap recognizer for macOS
         let double_tap_gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_reset_double_tap(_:)))
         double_tap_gesture.numberOfClicksRequired = 2
         scene_view.addGestureRecognizer(double_tap_gesture)
         
-        scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        //scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         scene_view.allowsCameraControl = true
         scene_view.rendersContinuously = true
@@ -988,8 +988,8 @@ struct CellSceneView: UIViewRepresentable
         base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
         
         //Add gesture recognizer
-        let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
-        scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        //let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
+        //scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
         scene_view.allowsCameraControl = true
         scene_view.rendersContinuously = true
@@ -1049,7 +1049,7 @@ struct CellSceneView: UIViewRepresentable
         private var on_reset_view = false
         #endif
         
-        @objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
+        /*@objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
             let tap_location = gesture_recognize.location(in: scn_view)
             let hit_results = scn_view.hitTest(tap_location, options: [:])
@@ -1062,7 +1062,7 @@ struct CellSceneView: UIViewRepresentable
                 print(result.localCoordinates)
                 print("🍮 tapped – \(result.node.name!)")
             }
-        }
+        }*/
         
         #if os(macOS)
         @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
