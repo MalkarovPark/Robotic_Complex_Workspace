@@ -374,79 +374,71 @@ struct ObserverElementView: View
             switch object_type
             {
             case .robot:
-                Picker("Name", selection: $object_name) //robot picker
+                if base_workspace.placed_robots_names.count > 0
                 {
-                    if base_workspace.placed_robots_names.count > 0
+                    Picker("Name", selection: $object_name) //robot picker
                     {
                         ForEach(base_workspace.placed_robots_names, id: \.self)
                         { name in
                             Text(name)
                         }
                     }
-                    else
-                    {
-                        Text("None")
-                    }
-                }
-                .onChange(of: object_name)
-                { _, new_value in
-                    viewed_object = base_workspace.robot_by_name(new_value)
-                    base_workspace.update_view()
-                }
-                .onAppear
-                {
-                    if object_name == ""
-                    {
-                        object_name = base_workspace.placed_robots_names[0]
-                    }
-                    else
-                    {
-                        viewed_object = base_workspace.robot_by_name(object_name)
+                    .onChange(of: object_name)
+                    { _, new_value in
+                        viewed_object = base_workspace.robot_by_name(new_value)
                         base_workspace.update_view()
                     }
+                    .onAppear
+                    {
+                        if object_name == ""
+                        {
+                            object_name = base_workspace.placed_robots_names[0]
+                        }
+                        else
+                        {
+                            viewed_object = base_workspace.robot_by_name(object_name)
+                            base_workspace.update_view()
+                        }
+                    }
+                    #if os(iOS) || os(visionOS)
+                    .modifier(PickerNamer(name: "Name"))
+                    #endif
+                    .disabled(base_workspace.placed_robots_names.count == 0)
+                    .padding(.bottom)
                 }
-                #if os(iOS) || os(visionOS)
-                .modifier(PickerNamer(name: "Name"))
-                #endif
-                .disabled(base_workspace.placed_robots_names.count == 0)
-                .padding(.bottom)
             case .tool:
-                Picker("Name", selection: $object_name) //tool picker
+                if base_workspace.placed_tools_names.count > 0
                 {
-                    if base_workspace.placed_tools_names.count > 0
+                    Picker("Name", selection: $object_name) //tool picker
                     {
                         ForEach(base_workspace.placed_tools_names, id: \.self)
                         { name in
                             Text(name)
                         }
                     }
-                    else
-                    {
-                        Text("None")
-                    }
-                }
-                .onChange(of: object_name)
-                { _, new_value in
-                    viewed_object = base_workspace.tool_by_name(new_value)
-                    base_workspace.update_view()
-                }
-                .onAppear
-                {
-                    if object_name == ""
-                    {
-                        object_name = base_workspace.placed_tools_names[0]
-                    }
-                    else
-                    {
-                        viewed_object = base_workspace.tool_by_name(object_name)
+                    .onChange(of: object_name)
+                    { _, new_value in
+                        viewed_object = base_workspace.tool_by_name(new_value)
                         base_workspace.update_view()
                     }
+                    .onAppear
+                    {
+                        if object_name == ""
+                        {
+                            object_name = base_workspace.placed_tools_names[0]
+                        }
+                        else
+                        {
+                            viewed_object = base_workspace.tool_by_name(object_name)
+                            base_workspace.update_view()
+                        }
+                    }
+                    #if os(iOS) || os(visionOS)
+                    .modifier(PickerNamer(name: "Name"))
+                    #endif
+                    .disabled(base_workspace.placed_tools_names.count == 0)
+                    .padding(.bottom)
                 }
-                #if os(iOS) || os(visionOS)
-                .modifier(PickerNamer(name: "Name"))
-                #endif
-                .disabled(base_workspace.placed_tools_names.count == 0)
-                .padding(.bottom)
             }
             if base_workspace.placed_tools_names.count > 0
             {
