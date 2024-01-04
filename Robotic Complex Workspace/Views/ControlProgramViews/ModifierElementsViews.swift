@@ -332,6 +332,7 @@ struct ObserverElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
+    @State private var object_type: ObserverObjectType = .robot
     @State private var object_name = ""
     @State private var from_indices = [Int]()
     @State private var to_indices = [Int]()
@@ -342,6 +343,7 @@ struct ObserverElementView: View
     {
         self._element = element
         
+        _object_type = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).object_type)
         _object_name = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).object_name)
         _from_indices = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).from_indices)
         _to_indices = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).to_indices)
@@ -351,15 +353,64 @@ struct ObserverElementView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
-    @State private var viewed_object: Tool?
+    @State private var viewed_object: WorkspaceObject?
     
     var body: some View
     {
         //MARK: tool subview
         VStack(spacing: 0)
         {
-            if base_workspace.placed_tools_names.count > 0
+            Picker("Type", selection: $object_type)
             {
+                ForEach(ObserverObjectType.allCases, id: \.self)
+                { object_type in
+                    Text(object_type.rawValue)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .padding(.bottom)
+            
+            switch object_type
+            {
+            case .robot:
+                Picker("Name", selection: $object_name) //robot picker
+                {
+                    if base_workspace.placed_robots_names.count > 0
+                    {
+                        ForEach(base_workspace.placed_robots_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    else
+                    {
+                        Text("None")
+                    }
+                }
+                .onChange(of: object_name)
+                { _, new_value in
+                    viewed_object = base_workspace.robot_by_name(new_value)
+                    base_workspace.update_view()
+                }
+                .onAppear
+                {
+                    if object_name == ""
+                    {
+                        object_name = base_workspace.placed_robots_names[0]
+                    }
+                    else
+                    {
+                        viewed_object = base_workspace.robot_by_name(object_name)
+                        base_workspace.update_view()
+                    }
+                }
+                #if os(iOS) || os(visionOS)
+                .modifier(PickerNamer(name: "Name"))
+                #endif
+                .disabled(base_workspace.placed_robots_names.count == 0)
+                .padding(.bottom)
+            case .tool:
                 Picker("Name", selection: $object_name) //tool picker
                 {
                     if base_workspace.placed_tools_names.count > 0
@@ -396,7 +447,9 @@ struct ObserverElementView: View
                 #endif
                 .disabled(base_workspace.placed_tools_names.count == 0)
                 .padding(.bottom)
-                
+            }
+            if base_workspace.placed_tools_names.count > 0
+            {
                 if from_indices.count > 0
                 {
                     List
@@ -444,6 +497,33 @@ struct ObserverElementView: View
             {
                 Text("No tools placed in this workspace")
             }
+        }
+        .onChange(of: object_type)
+        { _, new_value in
+            switch object_type
+            {
+            case .robot:
+                if base_workspace.placed_robots_names.count > 0
+                {
+                    object_name = base_workspace.placed_robots_names[0]
+                }
+                else
+                {
+                    object_name = ""
+                }
+            case .tool:
+                if base_workspace.placed_tools_names.count > 0
+                {
+                    object_name = base_workspace.placed_tools_names[0]
+                }
+                else
+                {
+                    object_name = ""
+                }
+            }
+            
+            (element as! ObserverModifierElement).object_type = new_value
+            on_update()
         }
         .onChange(of: object_name)
         { _, new_value in
