@@ -96,6 +96,8 @@ struct GeneralSettingsView: View
     
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
     
+    @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
+    
     var body: some View
     {
         Form
@@ -134,6 +136,34 @@ struct GeneralSettingsView: View
                             Toggle("Visual", isOn: $workspace_images_store)
                                 .toggleStyle(.switch)
                                 .labelsHidden()
+                        }
+                        .padding(4)
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                }
+                .padding(.bottom)
+                
+                GroupBox(label: Text("Registers").font(.headline))
+                {
+                    VStack(spacing: 4)
+                    {
+                        HStack
+                        {
+                            Text("Default count")
+                                .frame(width: 96, alignment: .leading)
+                            
+                            Spacer()
+                            
+                            Slider(value: Binding(
+                                get: { Double(self.workspace_registers_count) },
+                                set: { newValue in
+                                    self.workspace_registers_count = Int(newValue)
+                                    Workspace.default_registers_count = self.workspace_registers_count
+                                    print(Workspace.default_registers_count)
+                                }
+                            ), in: 1...1000)
+                            
+                            Text("\(Int(workspace_registers_count))")
                         }
                         .padding(4)
                     }

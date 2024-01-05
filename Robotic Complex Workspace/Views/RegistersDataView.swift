@@ -14,6 +14,7 @@ struct RegistersDataView: View
     @Binding var is_presented: Bool
     
     @State private var update_toggle = false
+    @State private var is_registers_count_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -30,16 +31,34 @@ struct RegistersDataView: View
             {
                 Button(role: .destructive, action: clear_registers)
                 {
-                    Text("Clear All")
-                        .frame(maxWidth: .infinity)
+                    Image(systemName: "eraser")
+                        //.frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 .padding(.trailing)
                 
                 Button(action: save_registers)
                 {
-                    Text("Save")
-                        .frame(maxWidth: .infinity)
+                    Image(systemName: "arrow.down.doc")
+                        //.frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .padding(.trailing)
+                
+                Button(action: { is_registers_count_presented = true })
+                {
+                    Image(systemName: "square.grid.2x2")
+                        //.frame(maxWidth: .infinity)
+                }
+                .popover(isPresented: $is_registers_count_presented)
+                {
+                    RegistersCountView(is_presented: $is_registers_count_presented, registers_count: base_workspace.registers.count)
+                    {
+                        update_toggle.toggle()
+                    }
+                    #if os(iOS)
+                    .presentationDetents([.height(96)])
+                    #endif
                 }
                 .buttonStyle(.bordered)
                 .padding(.trailing)
@@ -69,6 +88,71 @@ struct RegistersDataView: View
     private func save_registers()
     {
         document.preset.registers = base_workspace.file_data().registers
+    }
+    
+    private func update_registers_count()
+    {
+        base_workspace.update_registers_count(Workspace.default_registers_count)
+        update_toggle.toggle()
+    }
+}
+
+struct RegistersCountView: View
+{
+    @Binding var is_presented: Bool
+    @State var registers_count: Int
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    let additive_func: () -> ()
+    
+    var body: some View
+    {
+        HStack(spacing: 8)
+        {
+            Button(action: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                {
+                    base_workspace.update_registers_count(Workspace.default_registers_count)
+                    additive_func()
+                    //registers_count = Workspace.default_registers_count
+                }
+                is_presented.toggle()
+            })
+            {
+                Image(systemName: "arrow.counterclockwise")
+            }
+            .buttonStyle(.borderedProminent)
+            #if os(macOS)
+            .foregroundColor(Color.white)
+            #else
+            .padding(.leading, 8)
+            #endif
+            
+            TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)
+                .textFieldStyle(.roundedBorder)
+            #if os(macOS)
+                .frame(width: 64)
+            #else
+                .frame(width: 128)
+            #endif
+            
+            Stepper("Enter", value: $registers_count, in: 1...1000)
+                .labelsHidden()
+            #if os(iOS) || os(visionOS)
+                .padding(.trailing, 8)
+            #endif
+        }
+        .onChange(of: registers_count)
+        { _, new_value in
+            if new_value > 0
+            {
+                base_workspace.update_registers_count(new_value)
+                additive_func()
+            }
+        }
+        .padding(8)
+        .controlSize(.regular)
     }
 }
 

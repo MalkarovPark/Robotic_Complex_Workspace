@@ -28,6 +28,8 @@ struct ContentView: View
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
     @AppStorage("PartsEmpty") private var parts_empty: Bool?
     
+    @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
+    
     @Binding var document: Robotic_Complex_WorkspaceDocument //Opened document
     
     @State var first_loaded = true //Fade in workspace scene property
@@ -55,6 +57,7 @@ struct ContentView: View
     private func set_internal_scenes_address()
     {
         Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
+        Workspace.default_registers_count = workspace_registers_count
         
         Robot.scene_folder = "Components.scnassets/Robots"
         Tool.scene_folder = "Components.scnassets/Tools"
