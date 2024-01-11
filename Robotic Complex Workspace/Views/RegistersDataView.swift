@@ -113,11 +113,9 @@ struct RegistersCountView: View
             Button(action: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
                 {
-                    base_workspace.update_registers_count(Workspace.default_registers_count)
-                    additive_func()
-                    //registers_count = Workspace.default_registers_count
+                    registers_count = Workspace.default_registers_count
+                    update_count()
                 }
-                is_presented.toggle()
             })
             {
                 Image(systemName: "arrow.counterclockwise")
@@ -145,14 +143,20 @@ struct RegistersCountView: View
         }
         .onChange(of: registers_count)
         { _, new_value in
-            if new_value > 0
-            {
-                base_workspace.update_registers_count(new_value)
-                additive_func()
-            }
+            update_count()
+            additive_func()
         }
         .padding(8)
         .controlSize(.regular)
+    }
+    
+    private func update_count()
+    {
+        if registers_count > 0
+        {
+            base_workspace.update_registers_count(registers_count)
+            //additive_func()
+        }
     }
 }
 

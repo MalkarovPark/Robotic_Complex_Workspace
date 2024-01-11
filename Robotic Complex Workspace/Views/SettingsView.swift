@@ -143,27 +143,24 @@ struct GeneralSettingsView: View
                 }
                 .padding(.bottom)
                 
-                GroupBox(label: Text("Registers").font(.headline))
+                GroupBox(label: Text("Workspace").font(.headline))
                 {
                     VStack(spacing: 4)
                     {
                         HStack
                         {
-                            Text("Default count")
-                                .frame(width: 96, alignment: .leading)
+                            Text("Default registers count")
+                                .frame(alignment: .leading)
                             
                             Spacer()
                             
-                            Slider(value: Binding(
-                                get: { Double(self.workspace_registers_count) },
-                                set: { newValue in
-                                    self.workspace_registers_count = Int(newValue)
-                                    Workspace.default_registers_count = self.workspace_registers_count
-                                    print(Workspace.default_registers_count)
-                                }
-                            ), in: 1...1000)
+                            TextField("", value: $workspace_registers_count, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .labelsHidden()
+                                .frame(width: 48)
                             
-                            Text("\(Int(workspace_registers_count))")
+                            Stepper("", value: $workspace_registers_count, in: 1...1000)
+                                .labelsHidden()
                         }
                         .padding(4)
                     }
@@ -171,18 +168,34 @@ struct GeneralSettingsView: View
                 }
             }
             #else
-            Section
+            Section("View")
             {
                 Toggle("Use visual modeling for workspace", isOn: $workspace_visual_modeling)
                     .toggleStyle(.switch)
                     .tint(.accentColor)
-            }
-            
-            Section
-            {
-                Toggle("Store objects previews", isOn: $workspace_images_store)
+                
+                Toggle("Store robots previews", isOn: $workspace_images_store)
                     .toggleStyle(.switch)
                     .tint(.accentColor)
+            }
+            
+            Section("Workspace")
+            {
+                HStack(spacing: 0)
+                {
+                    Text("Default registers count")
+                    
+                    Spacer()
+                    
+                    TextField("Default registers count", value: $workspace_registers_count, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .labelsHidden()
+                        .frame(width: 64)
+                        .padding(.trailing, 8)
+                    
+                    Stepper("", value: $workspace_registers_count, in: 1...1000)
+                        .labelsHidden()
+                }
             }
             #endif
         }
