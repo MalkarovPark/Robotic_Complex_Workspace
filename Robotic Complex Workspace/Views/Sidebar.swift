@@ -143,12 +143,20 @@ struct SidebarContent: View
                     PartsView(document: $document)
                 default:
                     Rectangle()
+                    #if os(macOS)
                         .fill(.gray)
+                    #else
+                        .fill(.clear)
+                    #endif
                         .onAppear
                     {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
+                        if app_state.perform_workspace_view_reset
                         {
-                            app_state.sidebar_selection = .WorkspaceView
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
+                            {
+                                app_state.sidebar_selection = .WorkspaceView
+                                app_state.perform_workspace_view_reset = false
+                            }
                         }
                     }
                 }

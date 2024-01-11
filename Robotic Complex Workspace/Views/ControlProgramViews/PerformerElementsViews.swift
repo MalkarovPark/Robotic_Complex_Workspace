@@ -50,6 +50,38 @@ struct RobotPerformerElementView: View
         {
             if base_workspace.placed_robots_names.count > 0
             {
+                //MARK: Robot subview
+                Picker("Name", selection: $object_name) //Robot picker
+                {
+                    ForEach(base_workspace.placed_robots_names, id: \.self)
+                    { name in
+                        Text(name)
+                    }
+                }
+                .onChange(of: object_name)
+                { _, name in
+                    if base_workspace.robot_by_name(name).programs_names.count > 0
+                    {
+                        program_name = base_workspace.robot_by_name(name).programs_names.first ?? ""
+                    }
+                    base_workspace.update_view()
+                }
+                .onAppear
+                {
+                    if object_name == ""
+                    {
+                        object_name = base_workspace.placed_robots_names.first!
+                    }
+                    else
+                    {
+                        base_workspace.update_view()
+                    }
+                }
+                .buttonStyle(.bordered)
+                .disabled(base_workspace.placed_robots_names.count == 0)
+                .frame(maxWidth: .infinity)
+                .padding(.bottom)
+                
                 Picker("", selection: $is_single_perfrom)
                 {
                     Text("Single").tag(true)
@@ -74,38 +106,6 @@ struct RobotPerformerElementView: View
                 {
                     VStack(spacing: 0)
                     {
-                        //MARK: Robot subview
-                        Picker("Name", selection: $object_name) //Robot picker
-                        {
-                            ForEach(base_workspace.placed_robots_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        .onChange(of: object_name)
-                        { _, name in
-                            if base_workspace.robot_by_name(name).programs_names.count > 0
-                            {
-                                program_name = base_workspace.robot_by_name(name).programs_names.first ?? ""
-                            }
-                            base_workspace.update_view()
-                        }
-                        .onAppear
-                        {
-                            if object_name == ""
-                            {
-                                object_name = base_workspace.placed_robots_names.first!
-                            }
-                            else
-                            {
-                                base_workspace.update_view()
-                            }
-                        }
-                        .buttonStyle(.bordered)
-                        .disabled(base_workspace.placed_robots_names.count == 0)
-                        .frame(maxWidth: .infinity)
-                        .padding(.bottom)
-                        
                         Picker("", selection: $is_program_by_index)
                         {
                             Text("Name").tag(false)
@@ -235,6 +235,38 @@ struct ToolPerformerElementView: View
         {
             if base_workspace.placed_tools_names.count > 0
             {
+                //MARK: Robot subview
+                Picker("Name", selection: $object_name) //Robot picker
+                {
+                    ForEach(base_workspace.placed_tools_names, id: \.self)
+                    { name in
+                        Text(name)
+                    }
+                }
+                .onChange(of: object_name)
+                { _, name in
+                    if base_workspace.tool_by_name(name).programs_names.count > 0
+                    {
+                        program_name = base_workspace.tool_by_name(name).programs_names.first ?? ""
+                    }
+                    base_workspace.update_view()
+                }
+                .onAppear
+                {
+                    if object_name == ""
+                    {
+                        object_name = base_workspace.placed_tools_names.first!
+                    }
+                    else
+                    {
+                        base_workspace.update_view()
+                    }
+                }
+                .buttonStyle(.bordered)
+                .disabled(base_workspace.placed_tools_names.count == 0)
+                .frame(maxWidth: .infinity)
+                .padding(.bottom)
+                
                 Picker("", selection: $is_single_perfrom)
                 {
                     Text("Single").tag(true)
@@ -253,38 +285,6 @@ struct ToolPerformerElementView: View
                 {
                     VStack(spacing: 0)
                     {
-                        //MARK: Robot subview
-                        Picker("Name", selection: $object_name) //Robot picker
-                        {
-                            ForEach(base_workspace.placed_tools_names, id: \.self)
-                            { name in
-                                Text(name)
-                            }
-                        }
-                        .onChange(of: object_name)
-                        { _, name in
-                            if base_workspace.tool_by_name(name).programs_names.count > 0
-                            {
-                                program_name = base_workspace.tool_by_name(name).programs_names.first ?? ""
-                            }
-                            base_workspace.update_view()
-                        }
-                        .onAppear
-                        {
-                            if object_name == ""
-                            {
-                                object_name = base_workspace.placed_tools_names.first!
-                            }
-                            else
-                            {
-                                base_workspace.update_view()
-                            }
-                        }
-                        .buttonStyle(.bordered)
-                        .disabled(base_workspace.placed_tools_names.count == 0)
-                        .frame(maxWidth: .infinity)
-                        .padding(.bottom)
-                        
                         Picker("", selection: $is_program_by_index)
                         {
                             Text("Name").tag(false)

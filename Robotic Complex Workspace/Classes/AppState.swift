@@ -707,7 +707,10 @@ class AppState : ObservableObject
     public func flip_workspace_selection()
     {
         sidebar_selection = nil
+        perform_workspace_view_reset = true
     }
+    
+    @Published var perform_workspace_view_reset = false
 }
 
 //MARK - Control modifier
