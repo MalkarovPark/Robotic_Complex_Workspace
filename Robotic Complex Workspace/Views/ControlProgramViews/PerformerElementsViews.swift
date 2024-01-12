@@ -278,7 +278,7 @@ struct ToolPerformerElementView: View
                 
                 if is_single_perfrom
                 {
-                    RegistersSelector(text: "Opcode from", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $opcode_index, names: ["Operation code"])
+                    RegistersSelector(text: "Opcode from \(opcode_index[0])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $opcode_index, names: ["Operation code"])
                         .padding(.top)
                 }
                 else
