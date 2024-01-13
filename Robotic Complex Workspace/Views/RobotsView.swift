@@ -227,7 +227,7 @@ struct RobotCardView: View
                 .shadow(radius: 8)
                 .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
                     base_workspace.duplicate_robot(name: robot_item.name)
-                }, delete_object: delete_robot, update_file: update_file, pass_preferences: {
+                }, delete_object: delete_robot, update_file: update_file, set_default_position: {}, clear_default_position: {}, reset_robot_to: {}, pass_preferences: {
                     app_state.robot_from = robot_item
                     pass_preferences_presented = true
                 }, pass_programs: {

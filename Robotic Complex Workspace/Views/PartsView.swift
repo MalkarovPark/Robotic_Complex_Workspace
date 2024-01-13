@@ -143,11 +143,7 @@ struct PartCardView: View
             .shadow(radius: 8)
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, clear_preview: part_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name)
-            }, delete_object: delete_part, update_file: update_file, pass_preferences: {
-                
-            }, pass_programs: {
-                
-            }))
+            }, delete_object: delete_part, update_file: update_file, set_default_position: { }, clear_default_position: { }, reset_robot_to: { }, pass_preferences: { }, pass_programs: { }))
             .onTapGesture
             {
                 part_view_presented = true

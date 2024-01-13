@@ -113,11 +113,7 @@ struct ToolCardView: View
             .shadow(radius: 8)
             .modifier(CardMenu(object: tool_item, to_rename: $to_rename, clear_preview: tool_item.clear_preview, duplicate_object: {
                 base_workspace.duplicate_tool(name: tool_item.name)
-            }, delete_object: delete_tool, update_file: update_file, pass_preferences: {
-                
-            }, pass_programs: {
-                
-            }))
+            }, delete_object: delete_tool, update_file: update_file, set_default_position: { }, clear_default_position: { }, reset_robot_to: { }, pass_preferences: { }, pass_programs: { }))
             .modifier(DoubleModifier(update_toggle: $update_toggle))
             .onTapGesture
             {

@@ -26,6 +26,10 @@ struct CardMenu: ViewModifier
     let delete_object: () -> ()
     let update_file: () -> ()
     
+    let set_default_position: () -> ()
+    let clear_default_position: () -> ()
+    let reset_robot_to: () -> ()
+    
     let pass_preferences: () -> ()
     let pass_programs: () -> ()
     
@@ -86,6 +90,34 @@ struct CardMenu: ViewModifier
                 
                 if object is Robot
                 {
+                    #if os(macOS)
+                    Divider()
+                    #endif
+                    
+                    Menu("Default Position")
+                    {
+                        Button(action: set_default_position)
+                        {
+                            Label("Set", systemImage: "scope")
+                        }
+                        
+                        Button(action: clear_default_position)
+                        {
+                            Label("Clear", systemImage: "xmark")
+                        }
+                        .disabled(true)
+                        
+                        #if os(macOS)
+                        Divider()
+                        #endif
+                        
+                        Button(action: reset_robot_to)
+                        {
+                            Label("Reset to it", systemImage: "arrow.counterclockwise")
+                        }
+                        .disabled(true)
+                    }
+                    
                     #if os(macOS)
                     Divider()
                     #endif
