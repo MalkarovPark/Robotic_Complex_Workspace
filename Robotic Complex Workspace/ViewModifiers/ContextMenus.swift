@@ -98,7 +98,7 @@ struct CardMenu: ViewModifier
                     {
                         Button(action: set_default_position)
                         {
-                            Label("Set", systemImage: "scope")
+                            Label("Set", systemImage: "dot.scope")
                         }
                         
                         Button(action: clear_default_position)
@@ -163,7 +163,7 @@ struct CardMenu: ViewModifier
                     .frame(width: 64, height: 64)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2))) //.transition(AnyTransition.opacity.animation(.spring))
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     .onTapGesture(perform: update_selection)
                     .onDisappear
                     {
