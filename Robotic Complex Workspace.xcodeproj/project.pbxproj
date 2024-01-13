@@ -647,8 +647,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/MalkarovPark/IndustrialKit";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = exactVersion;
+				version = 2.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
