@@ -396,7 +396,7 @@ struct AddElementView: View
             modifier_type = .mover
         case .writer_modifier:
             element_type = .modifier
-            modifier_type = .write
+            modifier_type = .writer
         case .math_modifier:
             element_type = .modifier
             modifier_type = .math
@@ -408,7 +408,7 @@ struct AddElementView: View
             modifier_type = .observer
         case .cleaner_modifier:
             element_type = .modifier
-            modifier_type = .clear
+            modifier_type = .cleaner
         case .jump_logic:
             element_type = .logic
             logic_type = .jump
@@ -440,7 +440,7 @@ struct AddElementView: View
             {
             case .mover:
                 new_program_element = MoverModifierElement()
-            case .write:
+            case .writer:
                 new_program_element = WriterModifierElement()
             case .math:
                 new_program_element = MathModifierElement()
@@ -448,7 +448,7 @@ struct AddElementView: View
                 new_program_element = ChangerModifierElement()
             case .observer:
                 new_program_element = ObserverModifierElement()
-            case .clear:
+            case .cleaner:
                 new_program_element = CleanerModifierElement()
             }
         case .logic:
@@ -526,12 +526,12 @@ public enum PerformerType: String, Codable, Equatable, CaseIterable
 ///A modifier program element type enum.
 public enum ModifierType: String, Codable, Equatable, CaseIterable
 {
-    case mover = "Move"
-    case write = "Write"
+    case mover = "Mover"
+    case writer = "Writer"
     case math = "Math"
-    case changer = "Change"
-    case observer = "Observe"
-    case clear = "Clear"
+    case changer = "Changer"
+    case observer = "Observer"
+    case cleaner = "Cleaner"
 }
 
 ///A logic program element type enum.
