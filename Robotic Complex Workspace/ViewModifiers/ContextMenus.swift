@@ -105,7 +105,7 @@ struct CardMenu: ViewModifier
                         {
                             Label("Clear", systemImage: "xmark")
                         }
-                        .disabled(true)
+                        .disabled(!(base_workspace.robot_by_name(name).has_default_position))
                         
                         #if os(macOS)
                         Divider()
@@ -115,7 +115,7 @@ struct CardMenu: ViewModifier
                         {
                             Label("Reset to it", systemImage: "arrow.counterclockwise")
                         }
-                        .disabled(true)
+                        .disabled(!(base_workspace.robot_by_name(name).has_default_position))
                     }
                     
                     #if os(macOS)
