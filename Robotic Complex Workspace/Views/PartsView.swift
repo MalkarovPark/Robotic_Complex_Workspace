@@ -445,24 +445,11 @@ struct PartPreviewSceneView: View
 
 struct PartSceneView: View
 {
-    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
-    
-    @EnvironmentObject var app_state: AppState
-    
     @Binding var part: Part
     
     var body: some View
     {
-        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, node: part.node ?? SCNNode(), on_render: update_view_node(scene_view:), on_tap: { _, _ in })
-    }
-    
-    private func update_view_node(scene_view: SCNView)
-    {
-        if app_state.get_scene_image && workspace_images_store
-        {
-            app_state.get_scene_image = false
-            app_state.previewed_object?.image = scene_view.snapshot()
-        }
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, node: part.node ?? SCNNode())
     }
 }
 
