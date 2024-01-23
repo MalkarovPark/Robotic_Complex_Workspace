@@ -35,6 +35,7 @@ struct WorkspaceView: View
             {
                 VisualWorkspaceView(document: $document)
                     .onDisappear(perform: stop_perform)
+                    .onAppear(perform: update_constrainted_positions)
             }
             else
             {
@@ -165,6 +166,17 @@ struct WorkspaceView: View
         #else
         return toolbar_item_placement_trailing
         #endif
+    }
+    
+    private func update_constrainted_positions()
+    {
+        for placed_tool_name in base_workspace.placed_tools_names
+        {
+            if !base_workspace.tool_by_name(placed_tool_name).is_attached
+            {
+                base_workspace.tool_by_name(placed_tool_name).node?.remove_all_constraints()
+            }
+        }
     }
 }
 

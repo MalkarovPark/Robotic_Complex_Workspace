@@ -356,6 +356,7 @@ struct VisualInfoView: View
                         Image(systemName: "pin.fill")
                     }
                     .toggleStyle(.button)
+                    .disabled(base_workspace.placed_robots_names.count == 0)
                     .padding()
                     .onChange(of: base_workspace.selected_tool.is_attached)
                     { _, new_value in

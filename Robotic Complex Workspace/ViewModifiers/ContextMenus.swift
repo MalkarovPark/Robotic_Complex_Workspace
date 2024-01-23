@@ -48,6 +48,21 @@ struct CardMenu: ViewModifier
                     secondaryButton: .cancel(Text("Cancel"))
                 )
             }
+            .onChange(of: object.is_placed)
+            { _, new_value in
+                if !new_value
+                {
+                    if object is Robot
+                    {
+                        tool_unplace(from_robot_name: object.name)
+                    }
+                    else if object is Tool
+                    {
+                        (object as! Tool).attached_to = nil
+                        (object as! Tool).is_attached = false
+                    }
+                }
+            }
             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             .contextMenu
             {
@@ -201,6 +216,19 @@ struct CardMenu: ViewModifier
             return "Part"
         default:
             return ""
+        }
+    }
+    
+    private func tool_unplace(from_robot_name: String)
+    {
+        for placed_tools_name in base_workspace.placed_tools_names
+        {
+            let viewed_tool = base_workspace.tool_by_name(placed_tools_name)
+            if viewed_tool.is_placed && viewed_tool.is_attached && viewed_tool.attached_to == from_robot_name
+            {
+                viewed_tool.attached_to = nil
+                viewed_tool.is_attached = false
+            }
         }
     }
 }

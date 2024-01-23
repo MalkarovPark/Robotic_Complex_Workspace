@@ -330,11 +330,31 @@ struct GalleryInfoView: View
                 case .tool:
                     if !base_workspace.selected_tool.is_attached
                     {
-                        PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                            .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
-                            { _, _ in
+                        VStack(spacing: 0)
+                        {
+                            Toggle(isOn: $base_workspace.selected_tool.is_attached)
+                            {
+                                Image(systemName: "pin.fill")
+                            }
+                            .toggleStyle(.button)
+                            .padding(.bottom)
+                            .onChange(of: base_workspace.selected_tool.is_attached)
+                            { _, new_value in
+                                if !new_value
+                                {
+                                    base_workspace.remove_attachment()
+                                }
                                 document.preset.tools = base_workspace.file_data().tools
                             }
+                            
+                            DynamicStack(content: {
+                                PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                                    .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                                    { _, _ in
+                                        document.preset.tools = base_workspace.file_data().tools
+                                    }
+                            }, is_compact: $is_compact, spacing: 12)
+                        }
                     }
                     else
                     {
