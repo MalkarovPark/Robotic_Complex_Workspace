@@ -17,7 +17,7 @@ struct CardMenu: ViewModifier
     
     @Binding var to_rename: Bool
     
-    @State var is_selected = false
+    @State private var is_selected = false
     @State var name = String()
     @State private var delete_alert_presented = false
     
@@ -32,6 +32,42 @@ struct CardMenu: ViewModifier
     
     let pass_preferences: () -> ()
     let pass_programs: () -> ()
+    
+    //Full
+    public init(object: WorkspaceObject, to_rename: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, clear_preview: @escaping () -> Void, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void, set_default_position: @escaping () -> Void, clear_default_position: @escaping () -> Void, reset_robot_to: @escaping () -> Void, pass_preferences: @escaping () -> Void, pass_programs: @escaping () -> Void)
+    {
+        self.object = object
+        self._to_rename = to_rename
+        self.name = name
+        self.delete_alert_presented = delete_alert_presented
+        self.clear_preview = clear_preview
+        self.duplicate_object = duplicate_object
+        self.delete_object = delete_object
+        self.update_file = update_file
+        self.set_default_position = set_default_position
+        self.clear_default_position = clear_default_position
+        self.reset_robot_to = reset_robot_to
+        self.pass_preferences = pass_preferences
+        self.pass_programs = pass_programs
+    }
+    
+    //Tool & Part
+    public init(object: WorkspaceObject, to_rename: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void)
+    {
+        self.object = object
+        self._to_rename = to_rename
+        self.name = name
+        self.delete_alert_presented = delete_alert_presented
+        self.clear_preview = {}
+        self.duplicate_object = duplicate_object
+        self.delete_object = delete_object
+        self.update_file = update_file
+        self.set_default_position = {}
+        self.clear_default_position = {}
+        self.reset_robot_to = {}
+        self.pass_preferences = {}
+        self.pass_programs = {}
+    }
     
     public func body(content: Content) -> some View
     {
@@ -54,7 +90,7 @@ struct CardMenu: ViewModifier
                 {
                     if object is Robot
                     {
-                        tool_unplace(from_robot_name: object.name)
+                        tool_unplace(workspace: base_workspace, from_robot_name: object.name)
                     }
                     else if object is Tool
                     {
@@ -218,17 +254,17 @@ struct CardMenu: ViewModifier
             return ""
         }
     }
-    
-    private func tool_unplace(from_robot_name: String)
+}
+
+func tool_unplace(workspace: Workspace, from_robot_name: String)
+{
+    for placed_tools_name in workspace.placed_tools_names
     {
-        for placed_tools_name in base_workspace.placed_tools_names
+        let viewed_tool = workspace.tool_by_name(placed_tools_name)
+        if viewed_tool.is_placed && viewed_tool.is_attached && viewed_tool.attached_to == from_robot_name
         {
-            let viewed_tool = base_workspace.tool_by_name(placed_tools_name)
-            if viewed_tool.is_placed && viewed_tool.is_attached && viewed_tool.attached_to == from_robot_name
-            {
-                viewed_tool.attached_to = nil
-                viewed_tool.is_attached = false
-            }
+            viewed_tool.attached_to = nil
+            viewed_tool.is_attached = false
         }
     }
 }

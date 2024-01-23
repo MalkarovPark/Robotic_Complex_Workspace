@@ -111,9 +111,9 @@ struct ToolCardView: View
     {
         LargeCardView(color: tool_item.card_info.color, node: tool_item.node!, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
             .shadow(radius: 8)
-            .modifier(CardMenu(object: tool_item, to_rename: $to_rename, clear_preview: tool_item.clear_preview, duplicate_object: {
+            .modifier(CardMenu(object: tool_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_tool(name: tool_item.name)
-            }, delete_object: delete_tool, update_file: update_file, set_default_position: { }, clear_default_position: { }, reset_robot_to: { }, pass_preferences: { }, pass_programs: { }))
+            }, delete_object: delete_tool, update_file: update_file))
             .modifier(DoubleModifier(update_toggle: $update_toggle))
             .onTapGesture
             {
@@ -1223,15 +1223,6 @@ struct ToolInternalSceneView: UIViewRepresentable
         scene_view.autoenablesDefaultLighting = true
         
         scene_view.backgroundColor = UIColor.clear
-        
-        if !inited_with_scene //&& inited_with_node
-        {
-            let camera_node = SCNNode()
-            camera_node.camera = SCNCamera()
-            camera_node.position = SCNVector3(0, 0, 2)
-            viewed_scene.rootNode.addChildNode(camera_node)
-            scene_view.pointOfView = camera_node
-        }
         
         return scn_scene(context: context)
     }

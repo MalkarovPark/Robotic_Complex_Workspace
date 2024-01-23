@@ -290,6 +290,11 @@ struct RobotCardView: View
     private func update_file()
     {
         document.preset.robots = base_workspace.file_data().robots
+        if !robot_item.is_placed
+        {
+            tool_unplace(workspace: base_workspace, from_robot_name: robot_item.name)
+        }
+        document.preset.tools = base_workspace.file_data().tools
     }
 }
 

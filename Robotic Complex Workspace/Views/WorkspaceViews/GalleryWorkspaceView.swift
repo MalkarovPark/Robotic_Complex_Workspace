@@ -76,6 +76,7 @@ struct GalleryWorkspaceView: View
                     #else
                     AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
                         .frame(maxWidth: 1024)
+                        .background(.ultraThinMaterial)
                     #endif
                 }
                 .disabled(base_workspace.performed)
@@ -217,6 +218,10 @@ struct ObjectCard: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    #if os(iOS) || os(visionOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    #endif
+    
     let name: String
     let color: Color
     
@@ -291,9 +296,13 @@ struct ObjectCard: View
         }
         .popover(isPresented: $info_view_presented)
         {
+            #if os(macOS)
             GalleryInfoView(info_view_presented: $info_view_presented, document: $document)
-            #if os(iOS) || os(visionOS)
-                .presentationDetents([.height(256)])
+                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+            #else
+            GalleryInfoView(info_view_presented: $info_view_presented, document: $document, is_compact: horizontal_size_class == .compact)
+                .frame(maxWidth: 1024)
+                .background(.ultraThinMaterial)
             #endif
         }
     }
@@ -353,7 +362,7 @@ struct GalleryInfoView: View
                                     { _, _ in
                                         document.preset.tools = base_workspace.file_data().tools
                                     }
-                            }, is_compact: $is_compact, spacing: 12)
+                            }, is_compact: $is_compact, spacing: 16)
                         }
                     }
                     else
@@ -426,7 +435,7 @@ struct GalleryInfoView: View
                 default:
                     Text("None")
                 }
-            }, is_compact: $is_compact, spacing: 12)
+            }, is_compact: $is_compact, spacing: 16)
             .padding([.horizontal, .top])
             
             #if os(iOS) || os(visionOS)

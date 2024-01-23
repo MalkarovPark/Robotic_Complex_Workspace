@@ -141,9 +141,9 @@ struct PartCardView: View
     {
         SmallCardView(color: part_item.card_info.color, node: part_item.node!, title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
             .shadow(radius: 8)
-            .modifier(CardMenu(object: part_item, to_rename: $to_rename, clear_preview: part_item.clear_preview, duplicate_object: {
+            .modifier(CardMenu(object: part_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name)
-            }, delete_object: delete_part, update_file: update_file, set_default_position: { }, clear_default_position: { }, reset_robot_to: { }, pass_preferences: { }, pass_programs: { }))
+            }, delete_object: delete_part, update_file: update_file))
             .onTapGesture
             {
                 part_view_presented = true
