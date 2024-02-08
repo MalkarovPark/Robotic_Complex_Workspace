@@ -32,6 +32,9 @@ struct ConnectorView: View
             Text("Link Object")
                 .font(.title2)
                 .padding([.top, .horizontal])
+            #if os(visionOS)
+                .padding(.vertical)
+            #endif
             
             VStack(spacing: 0)
             {
@@ -58,10 +61,13 @@ struct ConnectorView: View
                 #else
                 ZStack
                 {
+                    #if os(iOS)
                     Rectangle()
                         .foregroundColor(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                         .shadow(radius: 1)
+                    #endif
+                    
                     GroupBox(label: Text("Parameters"))
                     {
                         if connector.parameters.count > 0
@@ -81,7 +87,9 @@ struct ConnectorView: View
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
                     }
+                    #if os(iOS)
                     .backgroundStyle(.white)
+                    #endif
                 }
                 .padding([.horizontal, .bottom])
                 #endif
@@ -89,8 +97,13 @@ struct ConnectorView: View
                 HStack(spacing: 8)
                 {
                     TextEditor(text: $connector.output)
+                    #if os(visionOS)
+                        .textEditorStyle(.roundedBorder)
+                    #endif
                         .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    #if !os(visionOS)
                         .shadow(radius: 1)
+                    #endif
                     
                     VStack(spacing: 0)
                     {
@@ -102,6 +115,9 @@ struct ConnectorView: View
                         #if os(iOS) || os(visionOS)
                         .buttonStyle(.bordered)
                         #endif
+                        #if os(visionOS)
+                        .buttonBorderShape(.circle)
+                        #endif
                         .toggleStyle(.button)
                         
                         Button(action: {
@@ -112,6 +128,9 @@ struct ConnectorView: View
                         }
                         .frame(maxHeight: .infinity)
                         .buttonStyle(.bordered)
+                        #if os(visionOS)
+                        .buttonBorderShape(.circle)
+                        #endif
                     }
                     //.padding(.leading)
                     .controlSize(.large)
@@ -168,6 +187,9 @@ struct ConnectorView: View
                 #else
                 .buttonStyle(.bordered)
                 #endif
+                #if os(visionOS)
+                .buttonBorderShape(.circle)
+                #endif
                 .toggleStyle(.button)
                 .padding(.trailing)
                 
@@ -217,16 +239,16 @@ struct ConnectorView: View
         }
         #if os(macOS)
         .frame(minWidth: 320, idealWidth: 400, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
-        .modifier(ViewCloseButton(is_presented: $is_presented))
-        .controlSize(.regular)
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         #endif
+        .modifier(ViewCloseButton(is_presented: $is_presented))
         .onAppear
         {
             connected = connector.connected
             toggle_enabled = false
         }
+        .controlSize(.regular)
     }
     
     /*private func close_connector()

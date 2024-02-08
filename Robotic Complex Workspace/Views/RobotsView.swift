@@ -226,8 +226,8 @@ struct RobotCardView: View
             LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
             #if !os(visionOS)
                 .shadow(radius: 8)
-            #else
-                .frame(depth: 24)
+            /*#else
+                .frame(depth: 24)*/
             #endif
                 .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
                     base_workspace.duplicate_robot(name: robot_item.name)

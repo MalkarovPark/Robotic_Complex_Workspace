@@ -77,11 +77,16 @@ struct CaptionModifier: ViewModifier
                 Text(label)
                     .font(.title2)
                     .padding()
+                #if os(visionOS)
+                    .padding(.vertical)
+                #endif
             }
             .frame(maxWidth: .infinity)
             .modifier(ViewCloseButton(is_presented: $app_state.settings_view_presented))
-
+            
+            #if os(iOS)
             Divider()
+            #endif
             
             content
         }

@@ -112,8 +112,6 @@ struct ToolCardView: View
         LargeCardView(color: tool_item.card_info.color, node: tool_item.node!, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
         #if !os(visionOS)
             .shadow(radius: 8)
-        #else
-            .frame(depth: 24)
         #endif
             .modifier(CardMenu(object: tool_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_tool(name: tool_item.name)
