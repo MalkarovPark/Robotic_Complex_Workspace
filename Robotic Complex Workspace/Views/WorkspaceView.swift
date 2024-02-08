@@ -81,6 +81,7 @@ struct WorkspaceView: View
             ToolbarItem(placement: compact_placement())
             {
                 //MARK: Workspace performing elements
+                #if !os(visionOS)
                 HStack(alignment: .center)
                 {
                     Button(action: { registers_view_presented = true })
@@ -128,6 +129,23 @@ struct WorkspaceView: View
                         #endif
                     }
                 }
+                #else
+                HStack(alignment: .center, spacing: 0)
+                {
+                    Button(action: { registers_view_presented = true })
+                    {
+                        Label("Registers", systemImage: "number")
+                    }
+                    .buttonBorderShape(.circle)
+                    .padding(.trailing)
+                    
+                    Button(action: { inspector_presented.toggle() })
+                    {
+                        Image(systemName: "slider.horizontal.2.square")
+                    }
+                    .buttonBorderShape(.circle)
+                }
+                #endif
             }
         }
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))

@@ -26,92 +26,120 @@ struct VisualWorkspaceView: View
     
     var body: some View
     {
-        ZStack
-        {
-            WorkspaceSceneView()
-                .modifier(WorkspaceMenu(flip_func: app_state.flip_workspace_selection))
-                .disabled(add_in_view_presented)
-            #if os(iOS) || os(visionOS)
-                .onDisappear
-                {
-                    app_state.locked = false
-                }
-                .navigationBarTitleDisplayMode(.inline)
-            #endif
-            
-            HStack
+        WorkspaceSceneView()
+            .modifier(WorkspaceMenu(flip_func: app_state.flip_workspace_selection))
+            .disabled(add_in_view_presented)
+        #if os(iOS) || os(visionOS)
+            .onDisappear
             {
-                VStack
-                {
-                    Spacer()
-                    VStack(spacing: 0)
-                    {
-                        Button(action: { add_in_view_presented.toggle() })
-                        {
-                            Image(systemName: "plus")
-                                .imageScale(.large)
-                                .padding()
-                            #if os(iOS)
-                                .foregroundColor((!add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
-                            #elseif os(visionOS)
-                                .foregroundColor((!add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
-                            #endif
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        .popover(isPresented: $add_in_view_presented)
-                        {
-                            #if os(macOS)
-                            AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented)
-                                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                            #else
-                            AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
-                                .frame(maxWidth: 1024)
-                            #endif
-                        }
-                        .disabled(!add_in_view_disabled || base_workspace.performed)
-                        
-                        Divider()
-                        
-                        Button(action: { info_view_presented.toggle() })
-                        {
-                            Image(systemName: "pencil")
-                                .imageScale(.large)
-                                .padding()
-                            #if os(iOS)
-                                .foregroundColor(add_in_view_disabled ? Color.secondary : Color.black)
-                            #elseif os(visionOS)
-                                .foregroundColor((!add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.primary)
-                            #endif
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        .popover(isPresented: $info_view_presented)
-                        {
-                            #if os(macOS)
-                            VisualInfoView(info_view_presented: $info_view_presented, document: $document)
-                                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                            #else
-                            VisualInfoView(info_view_presented: $info_view_presented, document: $document, is_compact: horizontal_size_class == .compact)
-                                .frame(maxWidth: 1024)
-                            #endif
-                        }
-                        .disabled(add_in_view_disabled)
-                    }
-                    .background(.thinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .shadow(radius: 8)
-                    .fixedSize(horizontal: true, vertical: false)
-                    .padding()
-                }
-                
-                Spacer()
+                app_state.locked = false
             }
+            .navigationBarTitleDisplayMode(.inline)
+        #endif
+        #if !os(visionOS)
+            .overlay(alignment: .bottomLeading)
+            {
+                VStack(spacing: 0)
+                {
+                    Button(action: { add_in_view_presented.toggle() })
+                    {
+                        Image(systemName: "plus")
+                            .imageScale(.large)
+                            .padding()
+                        #if os(iOS)
+                            .foregroundColor((!add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
+                        #endif
+                    }
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .foregroundColor(.black)
+                    #endif
+                    .popover(isPresented: $add_in_view_presented)
+                    {
+                        #if os(macOS)
+                        AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented)
+                            .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                        #else
+                        AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
+                            .frame(maxWidth: 1024)
+                        #endif
+                    }
+                    .disabled(!add_in_view_disabled || base_workspace.performed)
+                    
+                    Divider()
+                    
+                    Button(action: { info_view_presented.toggle() })
+                    {
+                        Image(systemName: "pencil")
+                            .imageScale(.large)
+                            .padding()
+                        #if os(iOS)
+                            .foregroundColor(add_in_view_disabled ? Color.secondary : Color.black)
+                        #endif
+                    }
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .foregroundColor(.black)
+                    #endif
+                    .popover(isPresented: $info_view_presented)
+                    {
+                        #if os(macOS)
+                        VisualInfoView(info_view_presented: $info_view_presented, document: $document)
+                            .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                        #else
+                        VisualInfoView(info_view_presented: $info_view_presented, document: $document, is_compact: horizontal_size_class == .compact)
+                            .frame(maxWidth: 1024)
+                        #endif
+                    }
+                    .disabled(add_in_view_disabled)
+                }
+                .background(.thinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .shadow(radius: 8)
+                .fixedSize(horizontal: true, vertical: false)
+                .padding()
+            }
+        #else
+        .ornament(attachmentAnchor: .scene(.bottom))
+        {
+            HStack(spacing: 0)
+            {
+                Button(action: { add_in_view_presented.toggle() })
+                {
+                    Image(systemName: "plus")
+                        .imageScale(.large)
+                        .padding()
+                }
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
+                .popover(isPresented: $add_in_view_presented)
+                {
+                    AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented)
+                        .frame(maxWidth: 1024)
+                }
+                .disabled(!add_in_view_disabled || base_workspace.performed)
+                .padding(.trailing)
+                
+                Button(action: { info_view_presented.toggle() })
+                {
+                    Image(systemName: "pencil")
+                        .imageScale(.large)
+                        .padding()
+                }
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
+                .popover(isPresented: $info_view_presented)
+                {
+                    VisualInfoView(info_view_presented: $info_view_presented, document: $document)
+                        .frame(maxWidth: 1024)
+                }
+                .disabled(add_in_view_disabled)
+            }
+            .padding()
+            .labelStyle(.iconOnly)
+            .glassBackgroundEffect()
         }
+        #endif
     }
     
     private var add_in_view_disabled: Bool

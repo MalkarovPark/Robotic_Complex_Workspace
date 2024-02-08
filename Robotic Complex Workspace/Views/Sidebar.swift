@@ -98,7 +98,7 @@ struct SidebarContent: View
                 }
             }
             .navigationTitle("View")
-            #if os(iOS) || os(visionOS)
+            #if !os(macOS)
             .toolbar
             {
                 //Settings button for iOS/iPadOS sidebar toolbar

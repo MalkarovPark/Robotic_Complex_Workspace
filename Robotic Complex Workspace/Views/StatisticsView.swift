@@ -92,11 +92,14 @@ struct StatisticsView: View
             
             HStack(spacing: 0)
             {
-                Button(action: clear_chart_view)
+                Button(role: .destructive, action: clear_chart_view)
                 {
                     Image(systemName: "eraser")
                 }
                 .buttonStyle(.bordered)
+                #if os(visionOS)
+                .buttonBorderShape(.circle)
+                #endif
                 .padding([.vertical, .leading])
                 
                 Button(action: update_file_data)
@@ -104,6 +107,9 @@ struct StatisticsView: View
                     Image(systemName: "arrow.down.doc")
                 }
                 .buttonStyle(.bordered)
+                #if os(visionOS)
+                .buttonBorderShape(.circle)
+                #endif
                 .padding([.vertical, .leading])
                 
                 Picker("Statistics", selection: $stats_selection)

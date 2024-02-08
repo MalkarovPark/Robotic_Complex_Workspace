@@ -224,7 +224,11 @@ struct RobotCardView: View
         ZStack
         {
             LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+            #if !os(visionOS)
                 .shadow(radius: 8)
+            #else
+                .frame(depth: 24)
+            #endif
                 .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
                     base_workspace.duplicate_robot(name: robot_item.name)
                 }, delete_object: delete_robot, update_file: update_file, set_default_position: {
@@ -425,7 +429,9 @@ struct AddRobotView: View
                 .font(.title2)
                 .padding()
             
+            #if os(iOS)
             Divider()
+            #endif
             
             //MARK: Robot model selection
             Form
@@ -569,10 +575,14 @@ struct RobotView: View
                     Image(systemName: "xmark")
                     #endif
                 }
+                #if os(visionOS)
+                .buttonBorderShape(.circle)
+                #endif
             }
             
             ToolbarItem(placement: compact_placement())
             {
+                #if !os(visionOS)
                 HStack(alignment: .center)
                 {
                     
@@ -630,6 +640,42 @@ struct RobotView: View
                         #endif
                     }
                 }
+                #else
+                HStack(alignment: .center, spacing: 0)
+                {
+                    
+                    Button(action: { connector_view_presented.toggle() })
+                    {
+                        Image(systemName: "link")
+                    }
+                    .buttonBorderShape(.circle)
+                    .padding(.trailing)
+                    
+                    Button(action: { statistics_view_presented.toggle()
+                    })
+                    {
+                        Image(systemName: "chart.bar")
+                    }
+                    .buttonBorderShape(.circle)
+                    .padding(.trailing)
+                    .sheet(isPresented: $connector_view_presented)
+                    {
+                        ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                            .frame(width: 512, height: 512)
+                    }
+                    .sheet(isPresented: $statistics_view_presented)
+                    {
+                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                            .frame(width: 512, height: 512)
+                    }
+                    
+                    /*Button(action: { inspector_presented.toggle() })
+                    {
+                        Image(systemName: "slider.horizontal.2.square")
+                    }
+                    .buttonBorderShape(.circle)*/
+                }
+                #endif
             }
         }
         .modifier(MenuHandlingModifier(performed: $base_workspace.selected_robot.performed, toggle_perform: base_workspace.selected_robot.start_pause_moving, stop_perform: base_workspace.selected_robot.reset_moving))
@@ -850,6 +896,7 @@ struct RobotSceneView: View
     var body: some View
     {
         CellSceneView()
+        #if !os(visionOS)
             .overlay(alignment: .bottomLeading)
             {
                 VStack(spacing: 0)
@@ -940,6 +987,88 @@ struct RobotSceneView: View
                 .fixedSize(horizontal: true, vertical: false)
                 .padding()
             }
+        #else
+            .ornament(attachmentAnchor: .scene(.bottom))
+            {
+                HStack(spacing: 0)
+                {
+                    Button(action: { origin_rotate_view_presented.toggle() })
+                    {
+                        Image(systemName: "rotate.3d")
+                            .imageScale(.large)
+                            .padding()
+                    }
+                    .buttonStyle(.borderless)
+                    .buttonBorderShape(.circle)
+                    .popover(isPresented: $origin_rotate_view_presented)
+                    {
+                        OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
+                            .onChange(of: base_workspace.selected_robot.origin_rotation)
+                        { _, _ in
+                            //base_workspace.selected_robot.robot_location_place()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.get_scene_image = true
+                        }
+                    }
+                    .onDisappear
+                    {
+                        origin_rotate_view_presented.toggle()
+                    }
+                    
+                    Button(action: { origin_move_view_presented.toggle() })
+                    {
+                        Image(systemName: "move.3d")
+                            .imageScale(.large)
+                            .padding()
+                    }
+                    .buttonStyle(.borderless)
+                    .buttonBorderShape(.circle)
+                    .popover(isPresented: $origin_move_view_presented)
+                    {
+                        OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
+                            .onChange(of: base_workspace.selected_robot.origin_location)
+                        { _, _ in
+                            //base_workspace.selected_robot.robot_location_place()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.get_scene_image = true
+                        }
+                    }
+                    .onDisappear
+                    {
+                        origin_move_view_presented.toggle()
+                    }
+                    
+                    Button(action: { space_scale_view_presented.toggle() })
+                    {
+                        Image(systemName: "scale.3d")
+                            .imageScale(.large)
+                            .padding()
+                    }
+                    .buttonBorderShape(.circle)
+                    .popover(isPresented: $space_scale_view_presented)
+                    {
+                        SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
+                            .onChange(of: base_workspace.selected_robot.space_scale)
+                        { _, _ in
+                            base_workspace.selected_robot.update_space_scale()
+                            base_workspace.update_view()
+                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.get_scene_image = true
+                        }
+                    }
+                    .onDisappear
+                    {
+                        space_scale_view_presented.toggle()
+                    }
+                    .buttonStyle(.borderless)
+                }
+                .padding()
+                .labelStyle(.iconOnly)
+                .glassBackgroundEffect()
+            }
+        #endif
     }
 }
 
@@ -1261,7 +1390,7 @@ struct OriginRotateView: View
             HStack(spacing: 8)
             {
                 Text("R:")
-                    .frame(width: 20)
+                    .frame(width: label_width)
                 TextField("0", value: $origin_view_pos_rotation[0], format: .number)
                     .textFieldStyle(.roundedBorder)
                 #if os(iOS) || os(visionOS)
@@ -1274,7 +1403,7 @@ struct OriginRotateView: View
             HStack(spacing: 8)
             {
                 Text("P:")
-                    .frame(width: 20)
+                    .frame(width: label_width)
                 TextField("0", value: $origin_view_pos_rotation[1], format: .number)
                     .textFieldStyle(.roundedBorder)
                 #if os(iOS) || os(visionOS)
@@ -1287,7 +1416,7 @@ struct OriginRotateView: View
             HStack(spacing: 8)
             {
                 Text("W:")
-                    .frame(width: 20)
+                    .frame(width: label_width)
                 TextField("0", value: $origin_view_pos_rotation[2], format: .number)
                     .textFieldStyle(.roundedBorder)
                 #if os(iOS) || os(visionOS)
@@ -1300,11 +1429,19 @@ struct OriginRotateView: View
         .padding([.bottom, .leading, .trailing])
         #if os(macOS)
         .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
-        #else
+        #elseif os(iOS)
         .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
+        #else
+        .frame(minWidth: 256, idealWidth: 288, maxWidth: 320)
         #endif
     }
 }
+
+#if !os(visionOS)
+let label_width = 20.0
+#else
+let label_width = 26.0
+#endif
 
 //MARK: - Robot inspector view
 struct RobotInspectorView: View

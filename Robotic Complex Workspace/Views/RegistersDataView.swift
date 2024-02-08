@@ -35,6 +35,9 @@ struct RegistersDataView: View
                         //.frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                #if os(visionOS)
+                .buttonBorderShape(.circle)
+                #endif
                 .padding(.trailing)
                 
                 Button(action: save_registers)
@@ -43,6 +46,9 @@ struct RegistersDataView: View
                         //.frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                #if os(visionOS)
+                .buttonBorderShape(.circle)
+                #endif
                 .padding(.trailing)
                 
                 Button(action: { is_registers_count_presented = true })
@@ -61,6 +67,9 @@ struct RegistersDataView: View
                     #endif
                 }
                 .buttonStyle(.bordered)
+                #if os(visionOS)
+                .buttonBorderShape(.circle)
+                #endif
                 .padding(.trailing)
                 
                 Button(action: { is_presented = false })

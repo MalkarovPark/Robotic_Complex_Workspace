@@ -49,6 +49,7 @@ struct GalleryWorkspaceView: View
             }
             .padding(.horizontal, 8)
         }
+        #if !os(visionOS)
         .overlay(alignment: .bottomLeading)
         {
             VStack(spacing: 0)
@@ -60,8 +61,6 @@ struct GalleryWorkspaceView: View
                         .padding()
                     #if os(iOS)
                         .foregroundColor(base_workspace.performed ? Color.secondary : Color.black)
-                    #elseif os(visionOS)
-                        .foregroundColor(base_workspace.performed ? Color.secondary : Color.primary)
                     #endif
                 }
                 .buttonStyle(.borderless)
@@ -87,6 +86,27 @@ struct GalleryWorkspaceView: View
             .fixedSize(horizontal: true, vertical: false)
             .padding()
         }
+        #else
+        .ornament(attachmentAnchor: .scene(.bottom))
+        {
+            Button(action: { add_in_view_presented.toggle() })
+            {
+                Image(systemName: "plus")
+                    .imageScale(.large)
+                    .padding()
+            }
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            .popover(isPresented: $add_in_view_presented)
+            {
+                AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
+                    .frame(maxWidth: 1024)
+            }
+            .disabled(base_workspace.performed)
+            .padding()
+            .glassBackgroundEffect()
+        }
+        #endif
     }
 }
 
@@ -279,12 +299,20 @@ struct ObjectCard: View
             .frame(width: 40, height: 40)
             .background(Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
+            #if !os(visionOS)
             .shadow(radius: 2)
+            #else
+            .frame(depth: 8)
+            #endif
             .padding(8)
         }
         .frame(width: object_card_scale, height: object_card_scale / 1.618)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        #if !os(visionOS)
         .shadow(radius: 8)
+        #else
+        .frame(depth: 24)
+        #endif
         .onTapGesture
         {
             if !app_state.gallery_disabled
@@ -438,7 +466,7 @@ struct GalleryInfoView: View
             }, is_compact: $is_compact, spacing: 16)
             .padding([.horizontal, .top])
             
-            #if os(iOS) || os(visionOS)
+            #if os(iOS)
             if is_compact
             {
                 Spacer()

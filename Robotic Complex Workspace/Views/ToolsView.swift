@@ -110,7 +110,11 @@ struct ToolCardView: View
     var body: some View
     {
         LargeCardView(color: tool_item.card_info.color, node: tool_item.node!, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+        #if !os(visionOS)
             .shadow(radius: 8)
+        #else
+            .frame(depth: 24)
+        #endif
             .modifier(CardMenu(object: tool_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_tool(name: tool_item.name)
             }, delete_object: delete_tool, update_file: update_file))
@@ -394,7 +398,7 @@ struct ToolView: View
             
             ToolInspectorView(document: $document, new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
                 .frame(width: 256)
-            #else
+            #elseif os(iOS)
             if horizontal_size_class == .compact
             {
                 VStack(spacing: 0)
@@ -543,6 +547,40 @@ struct ToolView: View
                 
                 ToolInspectorView(document: $document, new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
                     .frame(width: 256)
+            }
+            #else
+            HStack(spacing: 0)
+            {
+                ToolSceneView(tool: $tool_item)
+            }
+            .modifier(ViewCloseFuncButton(close_action: close_tool))
+            .overlay(alignment: .bottom)
+            {
+                HStack(spacing: 0)
+                {
+                    Button(action: { connector_view_presented.toggle() })
+                    {
+                        Image(systemName: "link")
+                            .frame(height: 16)
+                    }
+                    .buttonStyle(.borderless)
+                    .buttonBorderShape(.circle)
+                    .keyboardShortcut(.cancelAction)
+                    .padding([.vertical, .leading])
+                    
+                    Button(action: { statistics_view_presented.toggle() })
+                    {
+                        Image(systemName: "chart.bar")
+                            .frame(height: 16)
+                    }
+                    .buttonStyle(.borderless)
+                    .buttonBorderShape(.circle)
+                    .keyboardShortcut(.cancelAction)
+                    .padding()
+                }
+                .disabled(tool_item.codes_count == 0)
+                .glassBackgroundEffect()
+                .padding()
             }
             #endif
         }

@@ -140,7 +140,11 @@ struct PartCardView: View
     var body: some View
     {
         SmallCardView(color: part_item.card_info.color, node: part_item.node!, title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
+        #if !os(visionOS)
             .shadow(radius: 8)
+        #else
+            .frame(depth: 24)
+        #endif
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name)
             }, delete_object: delete_part, update_file: update_file))
