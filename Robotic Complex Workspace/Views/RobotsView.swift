@@ -1096,6 +1096,10 @@ struct CellSceneView: UIViewRepresentable
         base_camera_position_node.rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
         #endif
         
+        #if os(visionOS)
+        scene_view.scene?.background.contents = UIColor.clear
+        #endif
+        
         return scene_view
     }
     
@@ -1130,6 +1134,9 @@ struct CellSceneView: UIViewRepresentable
         //Add gesture recognizer
         //let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
         //scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        #if os(visionOS)
+        scene_view.backgroundColor = UIColor.clear
+        #endif
         
         scene_view.allowsCameraControl = true
         scene_view.rendersContinuously = true

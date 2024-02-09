@@ -177,6 +177,10 @@ struct WorkspaceSceneView: UIViewRepresentable
         base_camera_position_node.rotation = base_workspace.camera_node?.rotation ?? SCNVector4Zero
         #endif
         
+        #if os(visionOS)
+        scene_view.scene?.background.contents = UIColor.clear
+        #endif
+        
         return scene_view
     }
     
@@ -222,6 +226,10 @@ struct WorkspaceSceneView: UIViewRepresentable
         //Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
+        
+        #if os(visionOS)
+        scene_view.backgroundColor = UIColor.clear
+        #endif
         
         base_workspace.scene = viewed_scene
         
