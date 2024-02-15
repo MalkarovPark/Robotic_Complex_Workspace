@@ -729,7 +729,7 @@ struct ToolInspectorView: View
                             }
                         }
                     }
-                    #if os(iOS) || os(visionOS)
+                    #if os(iOS)
                     .listStyle(.plain)
                     #endif
                     
@@ -845,7 +845,7 @@ struct ToolInspectorView: View
                 
                 HStack(spacing: 0)
                 {
-                    #if os(iOS) || os(visionOS)
+                    #if os(iOS)
                     Text("Program")
                         .font(.subheadline)
                     #endif
@@ -870,7 +870,7 @@ struct ToolInspectorView: View
                     .pickerStyle(.menu)
                     .disabled(base_workspace.selected_tool.programs_names.count == 0)
                     .frame(maxWidth: .infinity)
-                    #if os(iOS) || os(visionOS)
+                    #if os(iOS)
                     .buttonStyle(.borderedProminent)
                     #endif
                     

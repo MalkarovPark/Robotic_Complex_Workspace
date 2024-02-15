@@ -72,6 +72,10 @@ struct Robotic_Complex_WorkspaceApp: App
                 .environmentObject(app_state)
         }
         #endif
+        
+        #if os(visionOS)
+        SpatialPendant()
+        #endif
     }
 }
 

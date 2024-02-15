@@ -27,6 +27,11 @@ struct WorkspaceView: View
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
     #endif
     
+    #if os(visionOS)
+    @Environment(\.openWindow) var open_window
+    //@Environment(\.dismissWindow) var dismiss_window
+    #endif
+    
     var body: some View
     {
         HStack(spacing: 0)
@@ -139,7 +144,7 @@ struct WorkspaceView: View
                     .buttonBorderShape(.circle)
                     .padding(.trailing)
                     
-                    Button(action: { inspector_presented.toggle() })
+                    Button(action: { open_window(id: SPendantDefaultID) /*inspector_presented.toggle()*/ })
                     {
                         Image(systemName: "slider.horizontal.2.square")
                     }

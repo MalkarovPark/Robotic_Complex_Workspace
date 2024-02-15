@@ -537,14 +537,8 @@ struct RobotView: View
                 .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
             #endif
         }
-        #if os(macOS) || os(iOS)
+        #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
-        {
-            RobotInspectorView(document: $document)
-                .disabled(base_workspace.selected_robot.performed == true)
-        }
-        #else
-        .popover(isPresented: $inspector_presented)
         {
             RobotInspectorView(document: $document)
                 .disabled(base_workspace.selected_robot.performed == true)
@@ -1595,7 +1589,7 @@ struct RobotInspectorView: View
         }
     }
     
-    func point_item_move(from source: IndexSet, to destination: Int)
+    private func point_item_move(from source: IndexSet, to destination: Int)
     {
         base_workspace.selected_robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
         base_workspace.selected_robot.selected_program.visual_build()
@@ -1603,7 +1597,7 @@ struct RobotInspectorView: View
         app_state.get_scene_image = true
     }
     
-    func remove_points(at offsets: IndexSet) //Remove robot point function
+    private func remove_points(at offsets: IndexSet) //Remove robot point function
     {
         withAnimation
         {
@@ -1616,7 +1610,7 @@ struct RobotInspectorView: View
         base_workspace.selected_robot.selected_program.selected_point_index = -1
     }
     
-    func delete_positions_program()
+    private func delete_positions_program()
     {
         if base_workspace.selected_robot.programs_names.count > 0
         {
@@ -1637,7 +1631,7 @@ struct RobotInspectorView: View
         }
     }
     
-    func add_point_to_program()
+    private func add_point_to_program()
     {
         base_workspace.selected_robot.selected_program.add_point(PositionPoint(x: base_workspace.selected_robot.pointer_location[0], y: base_workspace.selected_robot.pointer_location[1], z: base_workspace.selected_robot.pointer_location[2], r: base_workspace.selected_robot.pointer_rotation[0], p: base_workspace.selected_robot.pointer_rotation[1], w: base_workspace.selected_robot.pointer_rotation[2]))
         
@@ -1810,177 +1804,27 @@ struct PositionPointView: View
         VStack(spacing: 0)
         {
             #if os(macOS)
-            HStack(spacing: 0)
+            HStack
             {
-                ForEach(PositionComponents.allCases, id: \.self)
-                { position_component in
-                    GroupBox(label: Text(position_component.rawValue)
-                        .font(.headline))
-                    {
-                        VStack(spacing: 12)
-                        {
-                            switch position_component
-                            {
-                            case .location:
-                                ForEach(LocationComponents.allCases, id: \.self)
-                                { location_component in
-                                    HStack(spacing: 8)
-                                    {
-                                        Text(location_component.info.text)
-                                            .frame(width: 20)
-                                        TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
-                                            .textFieldStyle(.roundedBorder)
-                                            #if os(iOS) || os(visionOS)
-                                            .keyboardType(.decimalPad)
-                                            #endif
-                                        Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
-                                            .labelsHidden()
-                                    }
-                                }
-                                .onChange(of: item_view_pos_location)
-                                { _, _ in
-                                    update_point_location()
-                                }
-                            case .rotation:
-                                ForEach(RotationComponents.allCases, id: \.self)
-                                { rotation_component in
-                                    HStack(spacing: 8)
-                                    {
-                                        Text(rotation_component.info.text)
-                                            .frame(width: 20)
-                                        TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
-                                            .textFieldStyle(.roundedBorder)
-                                            #if os(iOS) || os(visionOS)
-                                            .keyboardType(.decimalPad)
-                                            #endif
-                                        Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
-                                            .labelsHidden()
-                                    }
-                                    .onChange(of: item_view_pos_rotation)
-                                    { _, _ in
-                                        update_point_rotation()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .padding([.top, .trailing])
-                }
+                PositionView(location: $item_view_pos_location, rotation: $item_view_pos_rotation)
             }
-            .padding(.leading)
+            .padding([.horizontal, .top])
             #else
             if !is_compact
             {
-                HStack(spacing: 0)
+                HStack
                 {
-                    ForEach(PositionComponents.allCases, id: \.self)
-                    { position_component in
-                        GroupBox(label: Text(position_component.rawValue)
-                            .font(.headline))
-                        {
-                            VStack(spacing: 12)
-                            {
-                                switch position_component
-                                {
-                                case .location:
-                                    ForEach(LocationComponents.allCases, id: \.self)
-                                    { location_component in
-                                        HStack(spacing: 8)
-                                        {
-                                            Text(location_component.info.text)
-                                                .frame(width: 20)
-                                            TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
-                                                .textFieldStyle(.roundedBorder)
-                                                .keyboardType(.decimalPad)
-                                            Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
-                                                .labelsHidden()
-                                        }
-                                    }
-                                    .onChange(of: item_view_pos_location)
-                                    { _, _ in
-                                        update_point_location()
-                                    }
-                                case .rotation:
-                                    ForEach(RotationComponents.allCases, id: \.self)
-                                    { rotation_component in
-                                        HStack(spacing: 8)
-                                        {
-                                            Text(rotation_component.info.text)
-                                                .frame(width: 20)
-                                            TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
-                                                .textFieldStyle(.roundedBorder)
-                                                .keyboardType(.decimalPad)
-                                            Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
-                                                .labelsHidden()
-                                        }
-                                        .onChange(of: item_view_pos_rotation)
-                                        { _, _ in
-                                            update_point_rotation()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        .padding([.top, .trailing])
-                    }
+                    PositionView(location: $item_view_pos_location, rotation: $item_view_pos_rotation)
                 }
-                .padding(.leading)
+                .padding([.horizontal, .top])
             }
             else
             {
-                VStack(spacing: 0)
+                VStack
                 {
-                    ForEach(PositionComponents.allCases, id: \.self)
-                    { position_component in
-                        GroupBox(label: Text(position_component.rawValue)
-                            .font(.headline))
-                        {
-                            VStack(spacing: 12)
-                            {
-                                switch position_component
-                                {
-                                case .location:
-                                    ForEach(LocationComponents.allCases, id: \.self)
-                                    { location_component in
-                                        HStack(spacing: 8)
-                                        {
-                                            Text(location_component.info.text)
-                                                .frame(width: 20)
-                                            TextField("0", value: $item_view_pos_location[location_component.info.index], format: .number)
-                                                .textFieldStyle(.roundedBorder)
-                                                .keyboardType(.decimalPad)
-                                            Stepper("Enter", value: $item_view_pos_location[location_component.info.index], in: 0...Float(base_workspace.selected_robot.space_scale[location_component.info.index]))
-                                                .labelsHidden()
-                                        }
-                                    }
-                                    .onChange(of: item_view_pos_location)
-                                    { _, _ in
-                                        update_point_location()
-                                    }
-                                case .rotation:
-                                    ForEach(RotationComponents.allCases, id: \.self)
-                                    { rotation_component in
-                                        HStack(spacing: 8)
-                                        {
-                                            Text(rotation_component.info.text)
-                                                .frame(width: 20)
-                                            TextField("0", value: $item_view_pos_rotation[rotation_component.info.index], format: .number)
-                                                .textFieldStyle(.roundedBorder)
-                                                .keyboardType(.decimalPad)
-                                            Stepper("Enter", value: $item_view_pos_rotation[rotation_component.info.index], in: -180...180)
-                                                .labelsHidden()
-                                        }
-                                        .onChange(of: item_view_pos_rotation)
-                                        { _, _ in
-                                            update_point_rotation()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        .padding([.horizontal, .top])
-                    }
+                    PositionView(location: $item_view_pos_location, rotation: $item_view_pos_rotation)
                 }
+                .padding([.horizontal, .top])
                 
                 Spacer()
             }
@@ -2037,6 +1881,14 @@ struct PositionPointView: View
                     update_workspace_data()
                 }
             }
+        }
+        .onChange(of: item_view_pos_location)
+        { _, _ in
+            update_point_location()
+        }
+        .onChange(of: item_view_pos_rotation)
+        { _, _ in
+            update_point_rotation()
         }
         .onAppear()
         {
