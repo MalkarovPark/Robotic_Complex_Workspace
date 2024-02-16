@@ -46,14 +46,8 @@ struct WorkspaceView: View
                 GalleryWorkspaceView(document: $document)
             }
         }
-        #if os(macOS) || os(iOS)
+        #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
-        {
-            ControlProgramView(document: $document)
-                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-        }
-        #else
-        .popover(isPresented: $inspector_presented)
         {
             ControlProgramView(document: $document)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
@@ -106,10 +100,12 @@ struct WorkspaceView: View
                             Label("One", systemImage: "repeat.1")
                         }
                     }
+                    
                     Button(action: stop_perform)
                     {
                         Label("Reset", systemImage: "stop")
                     }
+                    
                     Button(action: toggle_perform)
                     {
                         Label("PlayPause", systemImage: "playpause")
@@ -143,7 +139,23 @@ struct WorkspaceView: View
                     .buttonBorderShape(.circle)
                     .padding(.trailing)
                     
-                    Button(action: pendant_controller.open_pendant)
+                    Button(action: change_cycle)
+                    {
+                        if base_workspace.cycled
+                        {
+                            Label("Repeat", systemImage: "repeat")
+                        }
+                        else
+                        {
+                            Label("One", systemImage: "repeat.1")
+                        }
+                    }
+                    .buttonBorderShape(.circle)
+                    .padding(.trailing)
+                    
+                    Button(action: { pendant_controller.open_pendant()
+                        pendant_controller.view_workspace()
+                    })
                     {
                         Image(systemName: "slider.horizontal.2.square")
                     }
@@ -157,11 +169,16 @@ struct WorkspaceView: View
     
     private func stop_perform()
     {
+        base_workspace.reset_performing()
+        
         if base_workspace.performed
         {
-            base_workspace.reset_performing()
             base_workspace.update_view()
         }
+        
+        #if os(visionOS)
+        pendant_controller.view_dismiss()
+        #endif
     }
     
     private func toggle_perform()
@@ -199,6 +216,10 @@ struct WorkspaceView: View
                 base_workspace.tool_by_name(placed_tool_name).node?.remove_all_constraints()
             }
         }
+        
+        #if os(visionOS)
+        pendant_controller.view_workspace()
+        #endif
     }
 }
 

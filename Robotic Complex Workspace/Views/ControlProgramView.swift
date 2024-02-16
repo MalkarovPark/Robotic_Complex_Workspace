@@ -24,7 +24,7 @@ struct ControlProgramView: View
     
     var body: some View
     {
-        ZStack
+        VStack
         {
             //MARK: Scroll view for program elements
             ScrollView
@@ -50,63 +50,57 @@ struct ControlProgramView: View
                 .disabled(base_workspace.performed)
             }
             .animation(.spring(), value: base_workspace.elements)
-            
+        }
+        .overlay(alignment: .bottomTrailing)
+        {
             //MARK: New program element button
-            VStack
+            ZStack(alignment: .trailing)
             {
-                Spacer()
-                HStack
+                Button(action: add_new_program_element) //Add element button
                 {
-                    Spacer()
-                    ZStack(alignment: .trailing)
+                    HStack
                     {
-                        Button(action: add_new_program_element) //Add element button
-                        {
-                            HStack
-                            {
-                                Image(systemName: "plus")
-                                Spacer()
-                            }
-                            .padding()
-                        }
-                        #if os(macOS)
-                        .frame(maxWidth: 80, alignment: .leading)
-                        #else
-                        .frame(maxWidth: 86, alignment: .leading)
-                        #endif
-                        .background(.thinMaterial)
-                        .cornerRadius(32)
-                        .shadow(radius: 4)
-                        #if os(macOS)
-                        .buttonStyle(BorderlessButtonStyle())
-                        #endif
-                        .padding()
-                        
-                        Button(action: { add_element_view_presented.toggle() }) //Configure new element button
-                        {
-                            Circle()
-                                .foregroundStyle(app_state.new_program_element.color)
-                                .overlay(
-                                    app_state.new_program_element.image
-                                        .foregroundColor(.white)
-                                        .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
-                                )
-                                .frame(width: 32, height: 32)
-                                .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.color)
-                        }
-                        .popover(isPresented: $add_element_view_presented)
-                        {
-                            AddElementView(add_element_view_presented: $add_element_view_presented, new_program_element: $app_state.new_program_element)
-                            #if os(iOS) || os(visionOS)
-                                .presentationDetents([.height(128)])
-                            #endif
-                        }
-                        #if os(macOS)
-                        .buttonStyle(BorderlessButtonStyle())
-                        #endif
-                        .padding(.trailing, 24)
+                        Image(systemName: "plus")
+                        Spacer()
                     }
+                    .padding()
                 }
+                #if os(macOS)
+                .frame(maxWidth: 80, alignment: .leading)
+                #else
+                .frame(maxWidth: 86, alignment: .leading)
+                #endif
+                .background(.thinMaterial)
+                .cornerRadius(32)
+                .shadow(radius: 4)
+                #if os(macOS)
+                .buttonStyle(BorderlessButtonStyle())
+                #endif
+                .padding()
+                
+                Button(action: { add_element_view_presented.toggle() }) //Configure new element button
+                {
+                    Circle()
+                        .foregroundStyle(app_state.new_program_element.color)
+                        .overlay(
+                            app_state.new_program_element.image
+                                .foregroundColor(.white)
+                                .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
+                        )
+                        .frame(width: 32, height: 32)
+                        .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.color)
+                }
+                .popover(isPresented: $add_element_view_presented)
+                {
+                    AddElementView(add_element_view_presented: $add_element_view_presented, new_program_element: $app_state.new_program_element)
+                    #if os(iOS) || os(visionOS)
+                        .presentationDetents([.height(128)])
+                    #endif
+                }
+                #if os(macOS)
+                .buttonStyle(BorderlessButtonStyle())
+                #endif
+                .padding(.trailing, 24)
             }
         }
     }

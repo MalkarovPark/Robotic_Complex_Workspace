@@ -22,6 +22,10 @@ struct PartsView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    #if os(visionOS)
+    @EnvironmentObject var controller: PendantController
+    #endif
+    
     var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
     
     var body: some View
@@ -98,6 +102,9 @@ struct PartsView: View
         .onAppear
         {
             reset_all_parts_nodes()
+            #if os(visionOS)
+            controller.view_dismiss()
+            #endif
         }
     }
     

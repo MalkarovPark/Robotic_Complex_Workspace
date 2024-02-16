@@ -693,9 +693,6 @@ struct RobotView: View
     
     private func close_view()
     {
-        #if os(visionOS)
-        controller.view_dismiss()
-        #endif
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         robot_view_presented = false
