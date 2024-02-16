@@ -15,12 +15,25 @@ struct Robotic_Complex_WorkspaceApp: App
     @StateObject var app_state = AppState() //Init application state
     @State var first_loaded = true //First flag for fade in workspace scene if app first loaded
     
+    #if os(visionOS)
+    @Environment(\.openWindow) var openWindow
+    @Environment(\.dismissWindow) var dismissWindow
+    
+    @StateObject var base_workspace = Workspace() //Workspace object for opened file
+    
+    @StateObject var pendant_controller = PendantController()
+    #endif
+    
     var body: some Scene
     {
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
         {
             file in ContentView(document: file.$document) //Pass document instance to main app view in closure
                 .environmentObject(app_state)
+            #if os(visionOS)
+                .environmentObject(base_workspace)
+                .environmentObject(pendant_controller)
+            #endif
                 .onAppear
                 {
                     if first_loaded
@@ -33,7 +46,43 @@ struct Robotic_Complex_WorkspaceApp: App
                         
                         first_loaded = false
                     }
+                    
+                    #if os(visionOS)
+                    pendant_controller.set_windows_functions
+                    {
+                        openWindow(id: SPendantDefaultID)
+                    }
+                    _:
+                    {
+                        dismissWindow(id: SPendantDefaultID)
+                    }
+                    
+                    pendant_controller.workspace = base_workspace
+                    
+                    app_state.sidebar_selection = nil
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                    {
+                        app_state.sidebar_selection = .WorkspaceView
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                        {
+                            app_state.sidebar_selection = nil
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                app_state.sidebar_selection = .WorkspaceView
+                            }
+                        }
+                    }
+                    #endif
                 }
+            #if os(visionOS)
+                .onDisappear
+                {
+                    app_state.sidebar_selection = .WorkspaceView
+                }
+            #endif
         }
         .commands
         {
@@ -74,7 +123,7 @@ struct Robotic_Complex_WorkspaceApp: App
         #endif
         
         #if os(visionOS)
-        SpatialPendant()
+        SpatialPendant(controller: pendant_controller, workspace: base_workspace)
         #endif
     }
 }

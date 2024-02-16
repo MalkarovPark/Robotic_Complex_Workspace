@@ -34,7 +34,11 @@ struct ContentView: View
     
     @State var first_loaded = true //Fade in workspace scene property
     
+    #if !os(visionOS)
     @StateObject private var base_workspace = Workspace() //Workspace object for opened file
+    #else
+    @EnvironmentObject var base_workspace: Workspace
+    #endif
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
@@ -44,7 +48,9 @@ struct ContentView: View
     @ViewBuilder var body: some View
     {
         Sidebar(document: $document)
+        #if !os(visionOS)
             .environmentObject(base_workspace)
+        #endif
             .onAppear
             {
                 set_internal_scenes_address()

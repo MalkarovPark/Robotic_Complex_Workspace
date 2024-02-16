@@ -317,12 +317,16 @@ struct ToolView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS) || os(visionOS)
+    #if os(iOS)
     //MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     
     //Picker data for thin window size
     @State private var program_view_presented = false
+    #endif
+    
+    #if os(visionOS)
+    @EnvironmentObject var controller: PendantController
     #endif
     
     var body: some View
@@ -613,9 +617,14 @@ struct ToolView: View
             {
                 ready_for_save = true
             }
+            
+            #if os(visionOS)
+            controller.view_tool()
+            #endif
         }
     }
     
+    #if !os(visionOS)
     func update_data()
     {
         if ready_for_save
@@ -670,14 +679,19 @@ struct ToolView: View
         
         update_data()
     }
+    #endif
     
     func close_tool()
     {
+        #if os(visionOS)
+        controller.view_dismiss()
+        #endif
         tool_view_presented = false
         base_workspace.deselect_tool()
     }
 }
 
+#if !os(visionOS)
 struct ToolInspectorView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -1106,6 +1120,7 @@ struct OperationItemView: View
         document.preset.tools = base_workspace.file_data().tools
     }
 }
+#endif
 
 //MARK: - Scene views
 struct ToolPreviewSceneView: View
@@ -1340,14 +1355,16 @@ struct ToolsView_Previews: PreviewProvider
             ToolsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            AddToolView(add_tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
-                .environmentObject(AppState())
-                .environmentObject(Workspace())
             ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), tool_item: .constant(Tool()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
+            #if !os(visionOS)
+            AddToolView(add_tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+                .environmentObject(AppState())
+                .environmentObject(Workspace())
             OperationItemView(codes: .constant([OperationCode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), code_item: OperationCode(1))
-            .environmentObject(Workspace())
+                .environmentObject(Workspace())
+            #endif
         }
     }
 }

@@ -219,6 +219,10 @@ struct RobotCardView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    #if os(visionOS)
+    @EnvironmentObject var controller: PendantController
+    #endif
+    
     var body: some View
     {
         ZStack
@@ -279,6 +283,10 @@ struct RobotCardView: View
     {
         base_workspace.select_robot(index: robot_index)
         robot_view_presented = true
+        
+        #if os(visionOS)
+        controller.view_robot()
+        #endif
     }
     
     private func delete_robot()
@@ -521,9 +529,13 @@ struct RobotView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS) || os(visionOS)
+    #if os(iOS)
     //MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
+    #endif
+    
+    #if os(visionOS)
+    @EnvironmentObject var controller: PendantController
     #endif
     
     var body: some View
@@ -534,7 +546,11 @@ struct RobotView: View
                 .onDisappear(perform: close_view)
             #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
+            #endif
+            #if os(iOS)
                 .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
+            #elseif os(visionOS)
+                .ignoresSafeArea(.container, edges: .bottom)
             #endif
         }
         #if !os(visionOS)
@@ -677,6 +693,9 @@ struct RobotView: View
     
     private func close_view()
     {
+        #if os(visionOS)
+        controller.view_dismiss()
+        #endif
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         robot_view_presented = false
@@ -688,6 +707,9 @@ struct RobotView: View
     
     private func close_robot()
     {
+        #if os(visionOS)
+        controller.view_dismiss()
+        #endif
         #if os(macOS)
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
@@ -707,7 +729,7 @@ struct RobotView: View
     
     private func compact_placement() -> ToolbarItemPlacement
     {
-        #if os(iOS) || os(visionOS)
+        #if os(iOS)
         if horizontal_size_class == .compact
         {
             return .bottomBar
@@ -1445,6 +1467,7 @@ let label_width = 26.0
 #endif
 
 //MARK: - Robot inspector view
+#if !os(visionOS)
 struct RobotInspectorView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -1936,6 +1959,7 @@ struct PositionPointView: View
         app_state.get_scene_image = true
     }
 }
+#endif
 
 //MARK: - Previews
 struct RobotsView_Previews: PreviewProvider
@@ -1958,12 +1982,14 @@ struct RobotsView_Previews: PreviewProvider
             OriginMoveView(origin_move_view_presented: .constant(true), origin_view_pos_location: .constant([0, 0, 0]))
             SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2, 2, 2]))
             
+            #if !os(visionOS)
             PositionItemView(points: .constant([PositionPoint()]), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: PositionPoint()) { IndexSet in }
                 .environmentObject(Workspace())
             
             PositionPointView(points: .constant([PositionPoint()]), point_item: .constant(PositionPoint()), position_item_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], on_delete: { _ in })
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
+            #endif
         }
     }
 }

@@ -28,8 +28,7 @@ struct WorkspaceView: View
     #endif
     
     #if os(visionOS)
-    @Environment(\.openWindow) var open_window
-    //@Environment(\.dismissWindow) var dismiss_window
+    @EnvironmentObject var pendant_controller: PendantController
     #endif
     
     var body: some View
@@ -144,7 +143,7 @@ struct WorkspaceView: View
                     .buttonBorderShape(.circle)
                     .padding(.trailing)
                     
-                    Button(action: { open_window(id: SPendantDefaultID) /*inspector_presented.toggle()*/ })
+                    Button(action: pendant_controller.open_pendant)
                     {
                         Image(systemName: "slider.horizontal.2.square")
                     }
