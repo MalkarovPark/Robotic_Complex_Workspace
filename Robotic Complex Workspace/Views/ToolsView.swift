@@ -555,10 +555,6 @@ struct ToolView: View
             {
                 ToolSceneView(tool: $tool_item)
             }
-            .onAppear
-            {
-                controller.view_dismiss()
-            }
             .modifier(ViewCloseFuncButton(close_action: close_tool))
             .overlay(alignment: .bottom)
             {
