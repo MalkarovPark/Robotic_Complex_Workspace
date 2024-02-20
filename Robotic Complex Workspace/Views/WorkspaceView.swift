@@ -59,6 +59,12 @@ struct WorkspaceView: View
         #else
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
+        #if os(visionOS)
+        .onAppear
+        {
+            pendant_controller.view_workspace()
+        }
+        #endif
         .onAppear
         {
             base_workspace.elements_check()
@@ -149,15 +155,6 @@ struct WorkspaceView: View
                         {
                             Label("One", systemImage: "repeat.1")
                         }
-                    }
-                    .buttonBorderShape(.circle)
-                    .padding(.trailing)
-                    
-                    Button(action: { pendant_controller.open_pendant()
-                        pendant_controller.view_workspace()
-                    })
-                    {
-                        Image(systemName: "slider.horizontal.2.square")
                     }
                     .buttonBorderShape(.circle)
                 }

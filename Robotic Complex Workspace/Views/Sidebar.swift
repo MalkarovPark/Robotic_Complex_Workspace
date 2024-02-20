@@ -135,10 +135,19 @@ struct SidebarContent: View
                 {
                 case .WorkspaceView:
                     WorkspaceView(document: $document)
+                    #if os(visionOS)
+                        .modifier(ViewPendantButton())
+                    #endif
                 case .RobotsView:
                     RobotsView(document: $document)
+                    #if os(visionOS)
+                        .modifier(ViewPendantButton())
+                    #endif
                 case .ToolsView:
                     ToolsView(document: $document)
+                    #if os(visionOS)
+                        .modifier(ViewPendantButton())
+                    #endif
                 case .PartsView:
                     PartsView(document: $document)
                 default:
