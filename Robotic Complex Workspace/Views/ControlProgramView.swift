@@ -5,6 +5,7 @@
 //  Created by Malkarov Park on 23.12.2022.
 //
 
+#if !os(visionOS)
 import SwiftUI
 import UniformTypeIdentifiers
 import IndustrialKit
@@ -550,3 +551,4 @@ struct ControlProgramView_Previews: PreviewProvider
         }
     }
 }
+#endif

@@ -20,14 +20,17 @@ struct ContentView: View
     @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
     @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
     
+    //Default components resouces bookmarks
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
     @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
     @AppStorage("PartsBookmark") private var parts_bookmark: Data?
     
+    //If resources not defined
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
     @AppStorage("ToolsEmpty") private var tools_empty: Bool?
     @AppStorage("PartsEmpty") private var parts_empty: Bool?
     
+    //Default count of new registers
     @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
     
     @Binding var document: Robotic_Complex_WorkspaceDocument //Opened document
@@ -38,6 +41,7 @@ struct ContentView: View
     @StateObject private var base_workspace = Workspace() //Workspace object for opened file
     #else
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var pendant_controller: PendantController
     #endif
     
     #if os(iOS) || os(visionOS)
@@ -50,6 +54,19 @@ struct ContentView: View
         Sidebar(document: $document)
         #if !os(visionOS)
             .environmentObject(base_workspace)
+        #else
+            .onChange(of: pendant_controller.elements_document_data_update)
+            { _, _ in
+                document.preset.elements = base_workspace.file_data().elements
+            }
+            .onChange(of: pendant_controller.robots_document_data_update)
+            { _, _ in
+                document.preset.robots = base_workspace.file_data().robots
+            }
+            .onChange(of: pendant_controller.tools_document_data_update)
+            { _, _ in
+                document.preset.tools = base_workspace.file_data().tools
+            }
         #endif
             .onAppear
             {
