@@ -103,6 +103,10 @@ struct GeneralSettingsView: View
     
     @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
     
+    #if os(visionOS)
+    @EnvironmentObject var app_state: AppState
+    #endif
+    
     var body: some View
     {
         Form
@@ -183,6 +187,23 @@ struct GeneralSettingsView: View
                     .toggleStyle(.switch)
                     .tint(.accentColor)
             }
+            #if os(visionOS)
+            .onChange(of: workspace_visual_modeling)
+            { _, new_value in
+                if new_value
+                {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                    {
+                        app_state.sidebar_selection = nil
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                        {
+                            app_state.sidebar_selection = .WorkspaceView
+                        }
+                    }
+                }
+            }
+            #endif
             
             Section("Workspace")
             {

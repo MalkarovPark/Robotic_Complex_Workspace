@@ -13,6 +13,7 @@ import IndustrialKit
 struct Robotic_Complex_WorkspaceApp: App
 {
     @StateObject var app_state = AppState() //Init application state
+    
     @State var first_loaded = true //First flag for fade in workspace scene if app first loaded
     
     #if os(visionOS)
@@ -20,7 +21,6 @@ struct Robotic_Complex_WorkspaceApp: App
     @Environment(\.dismissWindow) var dismissWindow
     
     @StateObject var base_workspace = Workspace() //Workspace object for opened file
-    
     @StateObject var pendant_controller = PendantController()
     #endif
     
@@ -36,6 +36,8 @@ struct Robotic_Complex_WorkspaceApp: App
             #endif
                 .onAppear
                 {
+                    app_state.sidebar_selection = .WorkspaceView
+                    
                     if first_loaded
                     {
                         for type in WorkspaceObjectType.allCases
@@ -59,7 +61,7 @@ struct Robotic_Complex_WorkspaceApp: App
                     
                     pendant_controller.workspace = base_workspace
                     
-                    app_state.sidebar_selection = nil
+                    //app_state.sidebar_selection = nil
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                     {
