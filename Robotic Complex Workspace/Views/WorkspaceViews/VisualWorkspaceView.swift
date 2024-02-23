@@ -508,9 +508,9 @@ struct VisualInfoView: View
             
             HStack
             {
-                Button(role: .destructive, action: remove_object)
+                Button(role: .destructive, action: unplace_object)
                 {
-                    Text("Remove from workspace")
+                    Text("Unplace from workspace")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -543,10 +543,10 @@ struct VisualInfoView: View
         }
     }
     
-    private func remove_object()
+    private func unplace_object()
     {
         let type_for_save = base_workspace.selected_object_type
-        base_workspace.remove_selected_object()
+        base_workspace.unplace_selected_object()
         
         switch type_for_save
         {
