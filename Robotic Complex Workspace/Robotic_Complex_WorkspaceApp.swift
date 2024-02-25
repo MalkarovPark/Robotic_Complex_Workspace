@@ -61,8 +61,6 @@ struct Robotic_Complex_WorkspaceApp: App
                     
                     pendant_controller.workspace = base_workspace
                     
-                    //app_state.sidebar_selection = nil
-                    
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                     {
                         app_state.sidebar_selection = .WorkspaceView
