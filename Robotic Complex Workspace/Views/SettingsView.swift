@@ -105,6 +105,7 @@ struct GeneralSettingsView: View
     
     #if os(visionOS)
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var sidebar_controller: SidebarController
     #endif
     
     var body: some View
@@ -194,11 +195,11 @@ struct GeneralSettingsView: View
                 {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                     {
-                        app_state.sidebar_selection = nil
+                        sidebar_controller.sidebar_selection = nil
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                         {
-                            app_state.sidebar_selection = .WorkspaceView
+                            sidebar_controller.sidebar_selection = .WorkspaceView
                         }
                     }
                 }

@@ -71,13 +71,18 @@ struct SidebarContent: View
     #endif
     
     //@State var sidebar_selection: navigation_item? = .WorkspaceView //Selected sidebar item
+    #if os(visionOS)
+    @EnvironmentObject var sidebar_controller: SidebarController
+    #else
+    @StateObject var sidebar_controller = SidebarController()
+    #endif
     
     var body: some View
     {
         NavigationSplitView
         {
             //MARK: Sidebar
-            List(navigation_item.allCases, selection: $app_state.sidebar_selection)
+            List(navigation_item.allCases, selection: $sidebar_controller.sidebar_selection)
             { selection in
                 NavigationLink(value: selection)
                 {
@@ -131,12 +136,14 @@ struct SidebarContent: View
             ZStack
             {
                 //MARK: Content
-                switch app_state.sidebar_selection
+                switch sidebar_controller.sidebar_selection
                 {
                 case .WorkspaceView:
                     WorkspaceView(document: $document)
                     #if os(visionOS)
                         .modifier(ViewPendantButton())
+                    #else
+                        .environmentObject(sidebar_controller)
                     #endif
                 case .RobotsView:
                     RobotsView(document: $document)
@@ -150,6 +157,9 @@ struct SidebarContent: View
                     #endif
                 case .PartsView:
                     PartsView(document: $document)
+                    #if os(visionOS)
+                        .modifier(ViewPendantButton())
+                    #endif
                 default:
                     Rectangle()
                     #if os(macOS)
@@ -159,12 +169,12 @@ struct SidebarContent: View
                     #endif
                         .onAppear
                     {
-                        if app_state.perform_workspace_view_reset
+                        if sidebar_controller.perform_workspace_view_reset
                         {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
                             {
-                                app_state.sidebar_selection = .WorkspaceView
-                                app_state.perform_workspace_view_reset = false
+                                sidebar_controller.sidebar_selection = .WorkspaceView
+                                sidebar_controller.perform_workspace_view_reset = false
                             }
                         }
                     }

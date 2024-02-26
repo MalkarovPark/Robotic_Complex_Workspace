@@ -19,6 +19,7 @@ struct VisualWorkspaceView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var sidebar_controller: SidebarController
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
@@ -27,7 +28,7 @@ struct VisualWorkspaceView: View
     var body: some View
     {
         WorkspaceSceneView()
-            .modifier(WorkspaceMenu(flip_func: app_state.flip_workspace_selection))
+            .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
             .disabled(add_in_view_presented)
         #if os(iOS) || os(visionOS)
             .onDisappear

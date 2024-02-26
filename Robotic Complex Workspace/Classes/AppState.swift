@@ -11,7 +11,7 @@ import SwiftUI
 import IndustrialKit
 
 //MARK: - Class for work with various application data
-class AppState : ObservableObject
+class AppState: ObservableObject
 {
     //Bookmarks for the workspace objects model data
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
@@ -700,17 +700,6 @@ class AppState : ObservableObject
     
     //MARK: - Program elements functions
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
-    
-    //MARK: - Visual functions
-    @Published var sidebar_selection: navigation_item? = .WorkspaceView
-    
-    public func flip_workspace_selection()
-    {
-        sidebar_selection = nil
-        perform_workspace_view_reset = true
-    }
-    
-    @Published var perform_workspace_view_reset = false
 }
 
 //MARK - Control modifier
@@ -759,3 +748,17 @@ func colors_by_seed(seed: Int) -> [Color]
 }
 
 let registers_colors = colors_by_seed(seed: 5433)
+
+//MARK: - Class for sidebar handling
+class SidebarController: ObservableObject
+{
+    @Published var sidebar_selection: navigation_item? = .WorkspaceView
+    
+    public func flip_workspace_selection()
+    {
+        sidebar_selection = nil
+        perform_workspace_view_reset = true
+    }
+    
+    @Published var perform_workspace_view_reset = false
+}
