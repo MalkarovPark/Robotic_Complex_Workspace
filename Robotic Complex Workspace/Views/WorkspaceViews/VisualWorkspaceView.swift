@@ -2,7 +2,7 @@
 //  VisualWorkspaceView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Artiom Malkarov on 06.12.2023.
+//  Created by Malkarov Park on 06.12.2023.
 //
 
 import SwiftUI

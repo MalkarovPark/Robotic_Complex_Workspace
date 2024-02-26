@@ -2,7 +2,7 @@
 //  RegistersDataView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Artiom Malkarov on 15.10.2023.
+//  Created by Malkarov Park on 15.10.2023.
 //
 
 import SwiftUI

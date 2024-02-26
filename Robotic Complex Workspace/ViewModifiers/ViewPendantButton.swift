@@ -2,7 +2,7 @@
 //  ViewPendantButton.swift
 //  RCWorkspace
 //
-//  Created by Artiom Malkarov on 21.02.2024.
+//  Created by Malkarov Park on 21.02.2024.
 //
 
 #if os(visionOS)

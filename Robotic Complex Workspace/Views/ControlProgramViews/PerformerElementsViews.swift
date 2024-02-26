@@ -2,7 +2,7 @@
 //  PerformerElementsViews.swift
 //  Robotic Complex Workspace
 //
-//  Created by Artiom Malkarov on 26.11.2023.
+//  Created by Malkarov Park on 26.11.2023.
 //
 
 import SwiftUI

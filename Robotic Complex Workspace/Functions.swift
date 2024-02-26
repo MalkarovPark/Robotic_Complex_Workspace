@@ -2,7 +2,7 @@
 //  Functions.swift
 //  Robotic Complex Workspace
 //
-//  Created by Artiom Malkarov on 04.10.2023.
+//  Created by Malkarov Park on 04.10.2023.
 //
 
 import Foundation
