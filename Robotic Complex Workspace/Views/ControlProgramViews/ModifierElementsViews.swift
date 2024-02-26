@@ -100,7 +100,7 @@ struct WriterElementView: View
             }
             .padding(.trailing)
             
-            RegistersSelector(text: "to: \(to_index[0])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
+            RegistersSelector(text: "to \(to_index[0])", registers_count: base_workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
         }
         .onChange(of: value)
         { _, new_value in
@@ -301,12 +301,15 @@ struct OutputValueItmeView: View
     {
         HStack
         {
-            Text("From:")
+            Text("From")
             TextField("0", value: $from, format: .number)
             Stepper("Enter", value: $from, in: 0...10000)
                 .labelsHidden()
+            #if os(iOS) || os(visionOS)
+                .keyboardType(.decimalPad)
+            #endif
             
-            RegistersSelector(text: "to: \(to)", registers_count: base_workspace.registers.count, colors: registers_colors, indices: binding_for_single($to), names: ["To"])
+            RegistersSelector(text: "to \(to)", registers_count: base_workspace.registers.count, colors: registers_colors, indices: binding_for_single($to), names: ["To"])
         }
     }
     

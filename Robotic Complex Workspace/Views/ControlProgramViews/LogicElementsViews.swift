@@ -34,7 +34,11 @@ struct JumpElementView: View
         {
             HStack
             {
-                Picker("jump to:", selection: $target_mark_name) //Target mark picker
+                #if os(iOS)
+                Text("Jump to")
+                #endif
+                
+                Picker("Jump to", selection: $target_mark_name) //Target mark picker
                 {
                     if base_workspace.marks_names.count > 0
                     {
@@ -123,7 +127,11 @@ struct ComparatorElementView: View
             
             HStack
             {
-                Picker("Jump to:", selection: $target_mark_name) //Target mark picker
+                #if os(iOS)
+                Text("Jump to")
+                #endif
+                
+                Picker("Jump to", selection: $target_mark_name) //Target mark picker
                 {
                     if base_workspace.marks_names.count > 0
                     {
