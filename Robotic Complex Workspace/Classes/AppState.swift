@@ -748,17 +748,3 @@ func colors_by_seed(seed: Int) -> [Color]
 }
 
 let registers_colors = colors_by_seed(seed: 5433)
-
-//MARK: - Class for sidebar handling
-class SidebarController: ObservableObject
-{
-    @Published var sidebar_selection: navigation_item? = .WorkspaceView
-    
-    public func flip_workspace_selection()
-    {
-        sidebar_selection = nil
-        perform_workspace_view_reset = true
-    }
-    
-    @Published var perform_workspace_view_reset = false
-}
