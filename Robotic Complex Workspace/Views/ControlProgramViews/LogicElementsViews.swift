@@ -128,10 +128,10 @@ struct ComparatorElementView: View
             HStack
             {
                 #if os(iOS)
-                Text("Jump to")
+                Text("jump to")
                 #endif
                 
-                Picker("Jump to", selection: $target_mark_name) //Target mark picker
+                Picker("jump to", selection: $target_mark_name) //Target mark picker
                 {
                     if base_workspace.marks_names.count > 0
                     {
