@@ -68,7 +68,7 @@ Objects are created in the relevant items available through the sidebar. All cre
 When creating a robot, in addition to the *name*, the *manufacturer*, *series* and *model* are specified. The *model* parameter determines how the visual model is controlled and direct connector.
 
 <p align="center">
-  <img width="900" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/72d2e6c8-e29d-433d-b9bb-271190903f67">
+  <img width="900" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/6338ced4-8298-4adb-b9bf-e14cb421ee2c">
 </p>
 
 ### Tools <a name="tools">
@@ -76,7 +76,7 @@ When creating a robot, in addition to the *name*, the *manufacturer*, *series* a
 When creating, the *name* of the tool and its *model* are specified. Likewise robot, the *model* defines a model controller and direct connector.
 
 <p align="center">
-  <img width="743" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/9cf65e29-bb4e-462d-ae21-71c7ab306d81">
+  <img width="743" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/7bb0bebc-15b7-40a9-8312-c9eeeac17522">
 </p>
 
 ### Parts <a name="parts">
@@ -84,7 +84,7 @@ When creating, the *name* of the tool and its *model* are specified. Likewise ro
 When creating a part, its *name* and *model* are specified.
 
 <p align="center">
-  <img width="583" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/b9507683-d443-4550-9cce-12404583eacb">
+  <img width="583" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/c730d3a5-4c3a-45d6-b351-9d4c27ba35c2">
 </p>
 
 # Visual Modeling & Physical Simulation<a name="visual-modeling">
