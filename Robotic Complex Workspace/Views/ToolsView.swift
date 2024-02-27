@@ -326,7 +326,7 @@ struct ToolView: View
     #endif
     
     #if os(visionOS)
-    @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var pendant_controller: PendantController
     #endif
     
     var body: some View
@@ -619,7 +619,7 @@ struct ToolView: View
             }
             
             #if os(visionOS)
-            controller.view_tool()
+            pendant_controller.view_tool()
             #endif
         }
     }
@@ -684,7 +684,7 @@ struct ToolView: View
     func close_tool()
     {
         #if os(visionOS)
-        controller.view_dismiss()
+        pendant_controller.view_dismiss()
         #endif
         tool_view_presented = false
         base_workspace.deselect_tool()

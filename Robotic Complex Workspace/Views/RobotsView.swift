@@ -220,7 +220,7 @@ struct RobotCardView: View
     @EnvironmentObject var app_state: AppState
     
     #if os(visionOS)
-    @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var pendant_controller: PendantController
     #endif
     
     var body: some View
@@ -285,7 +285,7 @@ struct RobotCardView: View
         robot_view_presented = true
         
         #if os(visionOS)
-        controller.view_robot()
+        pendant_controller.view_robot()
         #endif
     }
     
@@ -535,7 +535,7 @@ struct RobotView: View
     #endif
     
     #if os(visionOS)
-    @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var pendant_controller: PendantController
     @EnvironmentObject var sidebar_controller: SidebarController
     #endif
     
@@ -699,11 +699,11 @@ struct RobotView: View
         #if os(visionOS)
         if sidebar_controller.sidebar_selection != .WorkspaceView
         {
-            controller.view_dismiss()
+            pendant_controller.view_dismiss()
         }
         else
         {
-            controller.view_workspace()
+            pendant_controller.view_workspace()
         }
         #endif
         #if os(macOS)
@@ -715,7 +715,7 @@ struct RobotView: View
     private func close_robot()
     {
         #if os(visionOS)
-        controller.view_dismiss()
+        pendant_controller.view_dismiss()
         #endif
         #if os(macOS)
         base_workspace.selected_robot.reset_moving()

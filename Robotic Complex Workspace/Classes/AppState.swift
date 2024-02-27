@@ -79,7 +79,7 @@ class AppState: ObservableObject
     
     public var previewed_object: WorkspaceObject? //Part for preview view
     public var preview_update_scene = false //Flag for update previewed part node in scene
-    public var object_view_was_open = false //Flag for provide model controller for model in scene
+    public var object_view_was_open = false //Flag for provide model pendant_controller for model in scene
     
     @Published var view_update_state = false //Flag for update parts view grid
     @Published var add_selection = 0 //Selected item of object type for AddInWorkspace view

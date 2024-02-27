@@ -23,7 +23,7 @@ struct PartsView: View
     @EnvironmentObject var app_state: AppState
     
     #if os(visionOS)
-    @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var pendant_controller: PendantController
     #endif
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
@@ -103,7 +103,7 @@ struct PartsView: View
         {
             reset_all_parts_nodes()
             #if os(visionOS)
-            controller.view_dismiss()
+            pendant_controller.view_dismiss()
             #endif
         }
     }
