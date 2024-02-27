@@ -536,6 +536,7 @@ struct RobotView: View
     
     #if os(visionOS)
     @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var sidebar_controller: SidebarController
     #endif
     
     var body: some View
@@ -696,7 +697,14 @@ struct RobotView: View
         app_state.get_scene_image = true
         robot_view_presented = false
         #if os(visionOS)
-        controller.view_dismiss()
+        if sidebar_controller.sidebar_selection != .WorkspaceView
+        {
+            controller.view_dismiss()
+        }
+        else
+        {
+            controller.view_workspace()
+        }
         #endif
         #if os(macOS)
         app_state.force_resize_view = true
