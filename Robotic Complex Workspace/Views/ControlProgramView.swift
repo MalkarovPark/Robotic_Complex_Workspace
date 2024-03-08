@@ -12,8 +12,6 @@ import IndustrialKit
 
 struct ControlProgramView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
     @State private var dragged_element: WorkspaceProgramElement?
     @State private var add_element_view_presented = false
@@ -34,14 +32,14 @@ struct ControlProgramView: View
                 {
                     ForEach(base_workspace.elements)
                     { element in
-                        ProgramElementItemView(elements: $base_workspace.elements, document: $document, element: element, on_delete: remove_elements)
+                        ProgramElementItemView(elements: $base_workspace.elements, element: element, on_delete: remove_elements)
                         .onDrag({
                             self.dragged_element = element
                             return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
                         }, preview: {
                             ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color)
                         })
-                        .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, document: $document, workspace_elements: base_workspace.file_data().elements, element: element))
+                        .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, workspace_elements: base_workspace.file_data().elements, element: element, app_state: app_state))
                     }
                     .padding(4)
                     
@@ -115,7 +113,7 @@ struct ControlProgramView: View
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         base_workspace.elements_check()
         
-        document.preset.elements = base_workspace.file_data().elements
+        app_state.update_elements_document_notify.toggle()
     }
     
     func remove_elements(at offsets: IndexSet) //Remove program element function
@@ -125,7 +123,7 @@ struct ControlProgramView: View
             base_workspace.elements.remove(atOffsets: offsets)
         }
         
-        document.preset.elements = base_workspace.file_data().elements
+        app_state.update_elements_document_notify.toggle()
     }
 }
 
@@ -134,15 +132,15 @@ struct WorkspaceDropDelegate : DropDelegate
 {
     @Binding var elements : [WorkspaceProgramElement]
     @Binding var dragged_element : WorkspaceProgramElement?
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var workspace_elements: [WorkspaceProgramElementStruct]
     
     let element: WorkspaceProgramElement
+    let app_state: AppState
     
     func performDrop(info: DropInfo) -> Bool
     {
-        document.preset.elements = workspace_elements //Update file after elements reordering
+        app_state.update_elements_document_notify.toggle() //Update file after elements reordering
         return true
     }
     
@@ -169,7 +167,6 @@ struct WorkspaceDropDelegate : DropDelegate
 struct ProgramElementItemView: View
 {
     @Binding var elements: [WorkspaceProgramElement]
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var element: WorkspaceProgramElement
     @State var element_view_presented = false
@@ -227,7 +224,7 @@ struct ProgramElementItemView: View
     private func update_program_element()
     {
         base_workspace.elements_check()
-        document.preset.elements = base_workspace.file_data().elements
+        app_state.update_elements_document_notify.toggle()
     }
     
     private func duplicate_program_element()
@@ -266,7 +263,7 @@ struct ProgramElementItemView: View
         base_workspace.elements.append(new_program_element)
         
         base_workspace.elements_check()
-        document.preset.elements = base_workspace.file_data().elements
+        app_state.update_elements_document_notify.toggle()
     }
     
     private func delete_program_element()
@@ -544,7 +541,7 @@ struct ControlProgramView_Previews: PreviewProvider
     {
         Group
         {
-            ControlProgramView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            ControlProgramView()
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
             ElementView(element: .constant(WorkspaceProgramElement()), on_update: {})

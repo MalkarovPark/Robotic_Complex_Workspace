@@ -14,7 +14,7 @@ struct WorkspaceView: View
 {
     @AppStorage("WorkspaceVisualModeling") private var workspace_visual_modeling: Bool = true
     
-    @Binding var document: Robotic_Complex_WorkspaceDocument
+    //@Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var worked = false
     @State private var registers_view_presented = false
@@ -37,19 +37,19 @@ struct WorkspaceView: View
         {
             if workspace_visual_modeling
             {
-                VisualWorkspaceView(document: $document)
+                VisualWorkspaceView()
                     .onDisappear(perform: stop_perform)
                     .onAppear(perform: update_constrainted_positions)
             }
             else
             {
-                GalleryWorkspaceView(document: $document)
+                GalleryWorkspaceView()
             }
         }
         #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
         {
-            ControlProgramView(document: $document)
+            ControlProgramView()
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
         }
         #endif
@@ -71,7 +71,7 @@ struct WorkspaceView: View
         }
         .sheet(isPresented: $registers_view_presented)
         {
-            RegistersDataView(document: $document, is_presented: $registers_view_presented)
+            RegistersDataView(is_presented: $registers_view_presented)
                 .onDisappear()
                 {
                     registers_view_presented = false
@@ -230,7 +230,7 @@ struct AddInWorkspaceView: View
     @State var tool_attached = false
     @State var attach_robot_name = String()
     
-    @Binding var document: Robotic_Complex_WorkspaceDocument
+    //@Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var add_in_view_presented: Bool
     
     @EnvironmentObject var base_workspace: Workspace
@@ -438,13 +438,13 @@ struct AddInWorkspaceView: View
         switch type_for_save
         {
         case .robot:
-            document.preset.robots = base_workspace.file_data().robots
+            app_state.update_robots_document_notify
             base_workspace.elements_check()
         case .tool:
-            document.preset.tools = base_workspace.file_data().tools
+            app_state.update_tools_document_notify
             base_workspace.elements_check()
         case .part:
-            document.preset.parts = base_workspace.file_data().parts
+            app_state.update_parts_document_notify
         default:
             break
         }
@@ -513,13 +513,13 @@ struct WorkspaceView_Previews: PreviewProvider
     {
         Group
         {
-            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            WorkspaceView()
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            AddInWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()), add_in_view_presented: .constant(true))
+            AddInWorkspaceView(add_in_view_presented: .constant(true))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            VisualInfoView(info_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            VisualInfoView(info_view_presented: .constant(true))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
         }

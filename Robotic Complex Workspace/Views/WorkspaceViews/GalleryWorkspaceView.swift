@@ -11,7 +11,7 @@ import SceneKit
 
 struct GalleryWorkspaceView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
+    //@Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var add_in_view_presented = false
     
@@ -30,18 +30,18 @@ struct GalleryWorkspaceView: View
             {
                 GroupBox
                 {
-                    PlacedRobotsGallery(document: $document)
+                    PlacedRobotsGallery()
                 }
                 .padding(.top, 8)
                 
                 GroupBox
                 {
-                    PlacedToolsGallery(document: $document)
+                    PlacedToolsGallery()
                 }
                 
                 GroupBox
                 {
-                    PlacedPartsGallery(document: $document)
+                    PlacedPartsGallery()
                 }
                 .padding(.bottom, 8)
                 
@@ -70,7 +70,7 @@ struct GalleryWorkspaceView: View
                 .popover(isPresented: $add_in_view_presented)
                 {
                     #if os(macOS)
-                    AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented)
+                    AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
                         .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                     #else
                     AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
@@ -99,7 +99,7 @@ struct GalleryWorkspaceView: View
             .buttonBorderShape(.circle)
             .popover(isPresented: $add_in_view_presented)
             {
-                AddInWorkspaceView(document: $document, add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
+                AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
                     .frame(maxWidth: 1024)
             }
             .disabled(base_workspace.performed)
@@ -112,7 +112,7 @@ struct GalleryWorkspaceView: View
 
 struct PlacedRobotsGallery: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
+    //@Binding var document: Robotic_Complex_WorkspaceDocument
     
     @EnvironmentObject var base_workspace: Workspace
     
@@ -130,7 +130,7 @@ struct PlacedRobotsGallery: View
                 {
                     ForEach(base_workspace.placed_robots_names, id: \.self)
                     { name in
-                        ObjectCard(document: $document, name: name, color: registers_colors[6], image: base_workspace.robot_by_name(name).card_info.image, node: nil)
+                        ObjectCard(name: name, color: registers_colors[6], image: base_workspace.robot_by_name(name).card_info.image, node: nil)
                             {
                                 base_workspace.select_robot(name: name)
                             }
@@ -154,8 +154,6 @@ struct PlacedRobotsGallery: View
 
 struct PlacedToolsGallery: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @EnvironmentObject var base_workspace: Workspace
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: object_card_maximum, maximum: object_card_maximum), spacing: 0)]
@@ -170,7 +168,7 @@ struct PlacedToolsGallery: View
                 {
                     ForEach(base_workspace.placed_tools_names, id: \.self)
                     { name in
-                        ObjectCard(document: $document, name: name, color: registers_colors[8], image: nil, node: base_workspace.tool_by_name(name).node)
+                        ObjectCard(name: name, color: registers_colors[8], image: nil, node: base_workspace.tool_by_name(name).node)
                             {
                                 base_workspace.select_tool(name: name)
                             }
@@ -194,8 +192,6 @@ struct PlacedToolsGallery: View
 
 struct PlacedPartsGallery: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @EnvironmentObject var base_workspace: Workspace
     
     private let numbers = (0...7).map { $0 }
@@ -212,7 +208,7 @@ struct PlacedPartsGallery: View
                 {
                     ForEach(base_workspace.placed_parts_names, id: \.self)
                     { name in
-                        ObjectCard(document: $document, name: name, color: registers_colors[11], image: nil, node: base_workspace.part_by_name(name).node)
+                        ObjectCard(name: name, color: registers_colors[11], image: nil, node: base_workspace.part_by_name(name).node)
                             {
                                 base_workspace.select_part(name: name)
                             }
@@ -236,7 +232,7 @@ struct PlacedPartsGallery: View
 
 struct ObjectCard: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
+    //@Binding var document: Robotic_Complex_WorkspaceDocument
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
@@ -325,10 +321,10 @@ struct ObjectCard: View
         .popover(isPresented: $info_view_presented)
         {
             #if os(macOS)
-            GalleryInfoView(info_view_presented: $info_view_presented, document: $document)
+            GalleryInfoView(info_view_presented: $info_view_presented)
                 .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
             #else
-            GalleryInfoView(info_view_presented: $info_view_presented, document: $document, is_compact: horizontal_size_class == .compact)
+            GalleryInfoView(info_view_presented: $info_view_presented, is_compact: horizontal_size_class == .compact)
                 .frame(maxWidth: 1024)
                 .background(.ultraThinMaterial)
             #endif
@@ -339,7 +335,6 @@ struct ObjectCard: View
 struct GalleryInfoView: View
 {
     @Binding var info_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -362,7 +357,7 @@ struct GalleryInfoView: View
                     PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
                         .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
                         { _, _ in
-                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.update_robots_document_notify.toggle()
                         }
                 case .tool:
                     if !base_workspace.selected_tool.is_attached
@@ -381,14 +376,14 @@ struct GalleryInfoView: View
                                 {
                                     base_workspace.remove_attachment()
                                 }
-                                document.preset.tools = base_workspace.file_data().tools
+                                app_state.update_tools_document_notify.toggle()
                             }
                             
                             DynamicStack(content: {
                                 PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
                                     .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
                                     { _, _ in
-                                        document.preset.tools = base_workspace.file_data().tools
+                                        app_state.update_tools_document_notify.toggle()
                                     }
                             }, is_compact: $is_compact, spacing: 16)
                         }
@@ -424,7 +419,7 @@ struct GalleryInfoView: View
                                     {
                                         base_workspace.selected_tool.attached_to = nil
                                     }
-                                    document.preset.tools = base_workspace.file_data().tools
+                                    app_state.update_tools_document_notify.toggle()
                                 }
                             }
                             else
@@ -458,7 +453,7 @@ struct GalleryInfoView: View
                     PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
                         .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
                         { _, _ in
-                            document.preset.parts = base_workspace.file_data().parts
+                            app_state.update_parts_document_notify.toggle()
                         }
                 default:
                     Text("None")
@@ -503,7 +498,7 @@ struct GalleryInfoView: View
                     
                     if old_attachment != attach_robot_name
                     {
-                        document.preset.tools = base_workspace.file_data().tools
+                        app_state.update_tools_document_notify.toggle()
                     }
                 }
                 else
@@ -530,16 +525,16 @@ struct GalleryInfoView: View
         switch type_for_save
         {
         case .robot:
-            document.preset.robots = base_workspace.file_data().robots
+            app_state.update_robots_document_notify.toggle()
         case .tool:
             if base_workspace.selected_tool.is_attached
             {
                 base_workspace.selected_tool.attached_to = nil
                 base_workspace.selected_tool.is_attached = false
             }
-            document.preset.tools = base_workspace.file_data().tools
+            app_state.update_tools_document_notify.toggle()
         case.part:
-            document.preset.parts = base_workspace.file_data().parts
+            app_state.update_parts_document_notify.toggle()
         default:
             break
         }
@@ -560,13 +555,13 @@ let object_card_maximum = object_card_scale + object_card_spacing
 
 #Preview
 {
-    GalleryWorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+    GalleryWorkspaceView()
         .environmentObject(Workspace())
         .environmentObject(AppState())
 }
 
 #Preview
 {
-    ObjectCard(document: .constant(Robotic_Complex_WorkspaceDocument()), name: "Object", color: .green, image: nil, node: nil, on_select: {})
+    ObjectCard(name: "Object", color: .green, image: nil, node: nil, on_select: {})
         .environmentObject(AppState())
 }

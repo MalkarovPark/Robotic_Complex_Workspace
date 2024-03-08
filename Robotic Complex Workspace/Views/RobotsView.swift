@@ -13,8 +13,6 @@ import IndustrialKit
 
 struct RobotsView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @State private var robot_view_presented = false
     
     #if os(macOS)
@@ -28,7 +26,7 @@ struct RobotsView: View
             if !robot_view_presented
             {
                 //Display robots table view
-                RobotsTableView(robot_view_presented: $robot_view_presented, document: $document)
+                RobotsTableView(robot_view_presented: $robot_view_presented)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 #if os(macOS) || os(iOS)
@@ -38,7 +36,7 @@ struct RobotsView: View
             else
             {
                 //Display robot view when selected
-                RobotView(robot_view_presented: $robot_view_presented, document: $document)
+                RobotView(robot_view_presented: $robot_view_presented)
                 #if os(macOS)
                     .frame(maxWidth: app_state.force_resize_view ? 32 : .infinity, maxHeight: app_state.force_resize_view ? 32 : .infinity)
                 #endif
@@ -51,7 +49,6 @@ struct RobotsView: View
 struct RobotsTableView: View
 {
     @Binding var robot_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var add_robot_view_presented = false
     @State private var dragged_robot: Robot?
@@ -74,14 +71,14 @@ struct RobotsTableView: View
                     {
                         ForEach(base_workspace.robots)
                         { robot_item in
-                            RobotCardView(document: $document, robot_view_presented: $robot_view_presented, add_robot_view_presented: $add_robot_view_presented, robot_item: robot_item)
+                            RobotCardView(robot_view_presented: $robot_view_presented, add_robot_view_presented: $add_robot_view_presented, robot_item: robot_item)
                                 .onDrag({
                                     self.dragged_robot = robot_item
                                     return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
                                     LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
                                 })
-                                .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, document: $document, workspace_robots: base_workspace.file_data().robots, robot: robot_item))
+                                .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, workspace_robots: base_workspace.file_data().robots, robot: robot_item, app_state: app_state))
                                 .transition(AnyTransition.scale)
                         }
                     }
@@ -121,7 +118,7 @@ struct RobotsTableView: View
                     }
                     .sheet(isPresented: $add_robot_view_presented)
                     {
-                        AddRobotView(add_robot_view_presented: $add_robot_view_presented, document: $document)
+                        AddRobotView(add_robot_view_presented: $add_robot_view_presented)
                         #if os(iOS) || os(visionOS)
                             .presentationDetents([.height(512), .large])
                         #endif
@@ -199,7 +196,7 @@ struct RobotsTableView: View
             }
         }
         
-        document.preset.robots = base_workspace.file_data().robots
+        app_state.update_robots_document_notify.toggle()
         
         dismiss_pass()
     }
@@ -207,7 +204,6 @@ struct RobotsTableView: View
 
 struct RobotCardView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var robot_view_presented: Bool
     @Binding var add_robot_view_presented: Bool
     
@@ -237,10 +233,10 @@ struct RobotCardView: View
                     base_workspace.duplicate_robot(name: robot_item.name)
                 }, delete_object: delete_robot, update_file: update_file, set_default_position: {
                     robot_item.set_default_pointer_position()
-                    document.preset.robots = base_workspace.file_data().robots
+                    app_state.update_robots_document_notify.toggle()
                 }, clear_default_position: {
                     robot_item.clear_default_pointer_position()
-                    document.preset.robots = base_workspace.file_data().robots
+                    app_state.update_robots_document_notify.toggle()
                 }, reset_robot_to: robot_item.reset_pointer_to_default, pass_preferences: {
                     app_state.robot_from = robot_item
                     pass_preferences_presented = true
@@ -295,18 +291,18 @@ struct RobotCardView: View
         {
             base_workspace.robots.remove(at: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
             base_workspace.elements_check()
-            document.preset.robots = base_workspace.file_data().robots
+            app_state.update_robots_document_notify.toggle()
         }
     }
     
     private func update_file()
     {
-        document.preset.robots = base_workspace.file_data().robots
+        app_state.update_robots_document_notify.toggle()
         if !robot_item.is_placed
         {
             tool_unplace(workspace: base_workspace, from_robot_name: robot_item.name)
         }
-        document.preset.tools = base_workspace.file_data().tools
+        app_state.update_tools_document_notify.toggle()
     }
 }
 
@@ -315,15 +311,15 @@ struct RobotDropDelegate : DropDelegate
 {
     @Binding var robots : [Robot]
     @Binding var dragged_robot : Robot?
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var workspace_robots: [RobotStruct]
     
     let robot: Robot
+    let app_state: AppState
     
     func performDrop(info: DropInfo) -> Bool
     {
-        document.preset.robots = workspace_robots //Update file after elements reordering
+        app_state.update_robots_document_notify.toggle() //Update file after elements reordering
         return true
     }
     
@@ -350,7 +346,6 @@ struct RobotDropDelegate : DropDelegate
 struct AddRobotView: View
 {
     @Binding var add_robot_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var new_robot_name = ""
     
@@ -509,7 +504,7 @@ struct AddRobotView: View
         }
         
         base_workspace.add_robot(Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_dictionary))
-        document.preset.robots = base_workspace.file_data().robots
+        app_state.update_robots_document_notify.toggle()
         
         add_robot_view_presented.toggle()
     }
@@ -519,7 +514,6 @@ struct AddRobotView: View
 struct RobotView: View
 {
     @Binding var robot_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var connector_view_presented = false
     @State private var statistics_view_presented = false
@@ -543,7 +537,7 @@ struct RobotView: View
     {
         HStack(spacing: 0)
         {
-            RobotSceneView(document: $document)
+            RobotSceneView()
                 .onDisappear(perform: close_view)
             #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
@@ -557,7 +551,7 @@ struct RobotView: View
         #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
         {
-            RobotInspectorView(document: $document)
+            RobotInspectorView()
                 .disabled(base_workspace.selected_robot.performed == true)
         }
         #endif
@@ -609,14 +603,14 @@ struct RobotView: View
                     }
                     .sheet(isPresented: $connector_view_presented)
                     {
-                        ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { app_state.update_robots_document_notify.toggle() })
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
-                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { app_state.update_robots_document_notify.toggle() })
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif
@@ -670,12 +664,12 @@ struct RobotView: View
                     .buttonBorderShape(.circle)
                     .sheet(isPresented: $connector_view_presented)
                     {
-                        ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { app_state.update_robots_document_notify.toggle() })
                             .frame(width: 512, height: 512)
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
-                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { document.preset.robots = base_workspace.file_data().robots })
+                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { app_state.update_robots_document_notify.toggle() })
                             .frame(width: 512, height: 512)
                     }
                     
@@ -903,8 +897,6 @@ struct PassProgramsView: View
 //MARK: - Cell scene views
 struct RobotSceneView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @State private var origin_move_view_presented = false
     @State private var origin_rotate_view_presented = false
     @State private var space_scale_view_presented = false
@@ -941,7 +933,7 @@ struct RobotSceneView: View
                         { _, _ in
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.update_robots_document_notify.toggle()
                             app_state.get_scene_image = true
                         }
                     }
@@ -968,7 +960,7 @@ struct RobotSceneView: View
                         { _, _ in
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.update_robots_document_notify.toggle()
                             app_state.get_scene_image = true
                         }
                     }
@@ -994,7 +986,7 @@ struct RobotSceneView: View
                         { _, _ in
                             base_workspace.selected_robot.update_space_scale()
                             base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.update_robots_document_notify.toggle()
                             app_state.get_scene_image = true
                         }
                     }
@@ -1030,7 +1022,7 @@ struct RobotSceneView: View
                         { _, _ in
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.update_robots_document_notify.toggle()
                             app_state.get_scene_image = true
                         }
                     }
@@ -1054,7 +1046,7 @@ struct RobotSceneView: View
                         { _, _ in
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.update_robots_document_notify.toggle()
                             app_state.get_scene_image = true
                         }
                     }
@@ -1077,7 +1069,7 @@ struct RobotSceneView: View
                         { _, _ in
                             base_workspace.selected_robot.update_space_scale()
                             base_workspace.update_view()
-                            document.preset.robots = base_workspace.file_data().robots
+                            app_state.update_robots_document_notify.toggle()
                             app_state.get_scene_image = true
                         }
                     }
@@ -1477,8 +1469,6 @@ let label_width = 26.0
 #if !os(visionOS)
 struct RobotInspectorView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @State private var add_program_view_presented = false
     @State var ppv_presented_location = [false, false, false]
     @State var ppv_presented_rotation = [false, false, false]
@@ -1505,7 +1495,7 @@ struct RobotInspectorView: View
                         {
                             ForEach(base_workspace.selected_robot.selected_program.points, id: \.self)
                             { point in
-                                PositionItemView(points: $base_workspace.selected_robot.selected_program.points, document: $document, point_item: point, on_delete: remove_points)
+                                PositionItemView(points: $base_workspace.selected_robot.selected_program.points, point_item: point, on_delete: remove_points)
                                     .onDrag
                                     {
                                         return NSItemProvider()
@@ -1515,7 +1505,7 @@ struct RobotInspectorView: View
                             .onDelete(perform: remove_points)
                             .onChange(of: base_workspace.robots)
                             { _, _ in
-                                document.preset.robots = base_workspace.file_data().robots
+                                app_state.update_robots_document_notify.toggle()
                                 app_state.get_scene_image = true
                             }
                         }
@@ -1609,7 +1599,7 @@ struct RobotInspectorView: View
                 }
                 .popover(isPresented: $add_program_view_presented)
                 {
-                    AddProgramView(add_program_view_presented: $add_program_view_presented, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
+                    AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_robot.selected_program_index)
                     #if os(iOS)
                         .presentationDetents([.height(96)])
                     #endif
@@ -1623,8 +1613,8 @@ struct RobotInspectorView: View
     {
         base_workspace.selected_robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
         base_workspace.selected_robot.selected_program.visual_build()
-        document.preset.robots = base_workspace.file_data().robots
-        app_state.get_scene_image = true
+        
+        update_data()
     }
     
     private func remove_points(at offsets: IndexSet) //Remove robot point function
@@ -1634,9 +1624,8 @@ struct RobotInspectorView: View
             base_workspace.selected_robot.selected_program.points.remove(atOffsets: offsets)
         }
         
-        document.preset.robots = base_workspace.file_data().robots
-        app_state.get_scene_image = true
-        base_workspace.update_view()
+        update_data()
+        
         base_workspace.selected_robot.selected_program.selected_point_index = -1
     }
     
@@ -1655,9 +1644,7 @@ struct RobotInspectorView: View
                 base_workspace.selected_robot.selected_program_index = 0
             }
             
-            document.preset.robots = base_workspace.file_data().robots
-            app_state.get_scene_image = true
-            base_workspace.update_view()
+            update_data()
         }
     }
     
@@ -1665,9 +1652,17 @@ struct RobotInspectorView: View
     {
         base_workspace.selected_robot.selected_program.add_point(PositionPoint(x: base_workspace.selected_robot.pointer_location[0], y: base_workspace.selected_robot.pointer_location[1], z: base_workspace.selected_robot.pointer_location[2], r: base_workspace.selected_robot.pointer_rotation[0], p: base_workspace.selected_robot.pointer_rotation[1], w: base_workspace.selected_robot.pointer_rotation[2]))
         
-        document.preset.robots = base_workspace.file_data().robots
-        app_state.get_scene_image = true
-        base_workspace.update_view()
+        update_data()
+    }
+    
+    private func update_data()
+    {
+        withAnimation
+        {
+            app_state.update_robots_document_notify.toggle()
+            app_state.get_scene_image = true
+            base_workspace.update_view()
+        }
     }
 }
 
@@ -1706,7 +1701,6 @@ struct PositionDropDelegate: DropDelegate
 struct AddProgramView: View
 {
     @Binding var add_program_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var selected_program_index: Int
     
     @State var new_program_name = ""
@@ -1737,7 +1731,7 @@ struct AddProgramView: View
                     base_workspace.selected_robot.add_program(PositionsProgram(name: new_program_name))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                     
-                    document.preset.robots = base_workspace.file_data().robots
+                    app_state.update_robots_document_notify.toggle()
                     app_state.get_scene_image = true
                     add_program_view_presented.toggle()
                 }
@@ -1753,7 +1747,6 @@ struct AddProgramView: View
 struct PositionItemView: View
 {
     @Binding var points: [PositionPoint]
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var point_item: PositionPoint
     @State var position_item_view_presented = false
@@ -1787,10 +1780,10 @@ struct PositionItemView: View
                      arrowEdge: .leading)
             {
                 #if os(macOS)
-                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
+                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
-                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, document: $document, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
+                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
                     .presentationDetents([.height(576)])
                 #endif
             }
@@ -1810,7 +1803,6 @@ struct PositionPointView: View
     @Binding var points: [PositionPoint]
     @Binding var point_item: PositionPoint
     @Binding var position_item_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var item_view_pos_location = [Float]()
     @State var item_view_pos_rotation = [Float]()
@@ -1962,7 +1954,7 @@ struct PositionPointView: View
     {
         base_workspace.update_view()
         base_workspace.selected_robot.selected_program.visual_build()
-        document.preset.robots = base_workspace.file_data().robots
+        app_state.update_robots_document_notify.toggle()
         app_state.get_scene_image = true
     }
 }
@@ -1975,13 +1967,13 @@ struct RobotsView_Previews: PreviewProvider
     {
         Group
         {
-            RobotsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            RobotsView()
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
-            AddRobotView(add_robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            AddRobotView(add_robot_view_presented: .constant(true))
                 .environmentObject(AppState())
             
-            RobotView(robot_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            RobotView(robot_view_presented: .constant(true))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             
@@ -1990,10 +1982,10 @@ struct RobotsView_Previews: PreviewProvider
             SpaceScaleView(space_scale_view_presented: .constant(true), space_scale: .constant([2, 2, 2]))
             
             #if !os(visionOS)
-            PositionItemView(points: .constant([PositionPoint()]), document: .constant(Robotic_Complex_WorkspaceDocument()), point_item: PositionPoint()) { IndexSet in }
+            PositionItemView(points: .constant([PositionPoint()]), point_item: PositionPoint()) { IndexSet in }
                 .environmentObject(Workspace())
             
-            PositionPointView(points: .constant([PositionPoint()]), point_item: .constant(PositionPoint()), position_item_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], on_delete: { _ in })
+            PositionPointView(points: .constant([PositionPoint()]), point_item: .constant(PositionPoint()), position_item_view_presented: .constant(true), item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], on_delete: { _ in })
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             #endif

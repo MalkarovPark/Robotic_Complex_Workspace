@@ -10,13 +10,14 @@ import IndustrialKit
 
 struct RegistersDataView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
+    //@Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var is_presented: Bool
     
     @State private var update_toggle = false
     @State private var is_registers_count_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
@@ -96,7 +97,7 @@ struct RegistersDataView: View
     
     private func save_registers()
     {
-        document.preset.registers = base_workspace.file_data().registers
+        app_state.update_registers_document_notify.toggle()
     }
     
     private func update_registers_count()
@@ -171,7 +172,7 @@ struct RegistersCountView: View
 
 #Preview
 {
-    RegistersDataView(document: .constant(Robotic_Complex_WorkspaceDocument()), is_presented: .constant(true))
+    RegistersDataView(is_presented: .constant(true))
         .environmentObject(Workspace())
         .environmentObject(AppState())
         .frame(width: 400)

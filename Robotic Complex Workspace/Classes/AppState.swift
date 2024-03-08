@@ -192,6 +192,15 @@ class AppState: ObservableObject
     private var parts_data: Data //Data store from parts property list
     private var additive_parts_dictionary = [String: [String: Any]]() //Parts dictionary from plist file
     
+    //MARK: - File handling
+    //@Published var update_document_notify = true
+    @Published var update_elements_document_notify = true
+    @Published var update_registers_document_notify = true
+    
+    @Published var update_robots_document_notify = true
+    @Published var update_tools_document_notify = true
+    @Published var update_parts_document_notify = true
+    
     //MARK: - Application state init function
     init()
     {

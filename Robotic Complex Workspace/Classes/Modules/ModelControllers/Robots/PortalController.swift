@@ -42,8 +42,10 @@ class PortalController: RobotModelController
         
         if without_lengths
         {
-            lengths.append(Float(nodes[0].position.y)) //Append base height [8]
+            lengths.append(Float(node.childNode(withName: "frame", recursively: true)!.position.y)) //Append base height [8]
         }
+        
+        nodes.append(node.childNode(withName: "base", recursively: true)!) //Base pillar node [4]
     }
     
     //MARK: - Inverse kinematic parts calculation for roataion angles of portal
@@ -114,34 +116,46 @@ class PortalController: RobotModelController
     
     override func update_nodes_lengths()
     {
-        let node = nodes.first!
+        var modified_node = SCNNode()
+        var saved_material = SCNMaterial()
         
+        //Base
+        modified_node = nodes[4]
+        saved_material = (modified_node.geometry?.firstMaterial)!
+        
+        modified_node.geometry = SCNCylinder(radius: 80, height: CGFloat(lengths[8]))
         #if os(macOS)
+        modified_node.position.y = CGFloat(lengths[8] / 2)
+        #else
+        modified_node.position.y = lengths[8] / 2
+        #endif
+        
+        modified_node.geometry?.firstMaterial = saved_material
+        
+        //Frames
+        var node = nodes.first!
+        
+        modified_node = node.childNode(withName: "part_v", recursively: true)!
+        
+        saved_material = (modified_node.geometry?.firstMaterial)!
+        
+        print(lengths)
+        let vf_length = lengths[0] - 40
+        modified_node.geometry = SCNBox(width: 80, height: CGFloat(vf_length), length: 80, chamferRadius: 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.y = CGFloat(vf_length / 2)
+        #else
+        modified_node.position.y = vf_length / 2 + lengths[8] / 2
+        #endif
+        
+        node = nodes.first!
+        #if os(macOS)
+        node.position.y = CGFloat(lengths[8])
         node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lengths[0]) //Set vertical position for frame portal
         #else
         node.childNode(withName: "frame2", recursively: true)!.position.y = lengths[0] //Set vertical position for frame portal
         #endif
-        
-        var modified_node = SCNNode()
-        var saved_material = SCNMaterial()
-        
-        modified_node = node.childNode(withName: "part_v", recursively: true)!
-        if lengths[0] - 40 > 0
-        {
-            saved_material = (modified_node.geometry?.firstMaterial)!
-            
-            modified_node.geometry = SCNBox(width: 80, height: CGFloat(lengths[0]) - 40, length: 80, chamferRadius: 10)
-            modified_node.geometry?.firstMaterial = saved_material
-            #if os(macOS)
-            modified_node.position.y = CGFloat(lengths[0] - 40) / 2
-            #else
-            modified_node.position.y = (lengths[0] - 40) / 2
-            #endif
-        }
-        else
-        {
-            modified_node.removeFromParentNode() //Remove the model of Z element if the frame is too low
-        }
         
         var frame_element_length: CGFloat
         

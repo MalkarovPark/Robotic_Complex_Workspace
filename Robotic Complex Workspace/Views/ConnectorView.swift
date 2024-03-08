@@ -11,7 +11,6 @@ import IndustrialKit
 struct ConnectorView: View
 {
     @Binding var is_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @Binding var demo: Bool
     @Binding var update_model: Bool
@@ -19,6 +18,7 @@ struct ConnectorView: View
     @StateObject var connector: WorkspaceObjectConnector
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var update_file_data: () -> Void
     
@@ -401,7 +401,7 @@ struct ConnectorView_Previews: PreviewProvider
     {
         Group
         {
-            ConnectorView(is_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), demo: .constant(true), update_model: .constant(true), connector: PortalConnector(), update_file_data: {})
+            ConnectorView(is_presented: .constant(true), demo: .constant(true), update_model: .constant(true), connector: PortalConnector(), update_file_data: {})
                 //.environmentObject(Workspace())
             
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")), update_file_data: {})

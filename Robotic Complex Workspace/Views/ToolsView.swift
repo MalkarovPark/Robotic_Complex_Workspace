@@ -12,8 +12,6 @@ import IndustrialKit
 
 struct ToolsView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @State private var add_tool_view_presented = false
     @State private var tool_view_presented = false
     @State private var dragged_tool: Tool?
@@ -36,14 +34,14 @@ struct ToolsView: View
                     {
                         ForEach(base_workspace.tools)
                         { tool_item in
-                            ToolCardView(document: $document, tool_item: tool_item)
+                            ToolCardView(tool_item: tool_item)
                             .onDrag({
                                 self.dragged_tool = tool_item
                                 return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
                             }, preview: {
                                 LargeCardView(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
                             })
-                            .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, document: $document, workspace_tools: base_workspace.file_data().tools, tool: tool_item))
+                            .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, workspace_tools: base_workspace.file_data().tools, tool: tool_item, app_state: app_state))
                             .transition(AnyTransition.scale)
                         }
                     }
@@ -83,7 +81,7 @@ struct ToolsView: View
                     }
                     .sheet(isPresented: $add_tool_view_presented)
                     {
-                        AddToolView(add_tool_view_presented: $add_tool_view_presented, document: $document)
+                        AddToolView(add_tool_view_presented: $add_tool_view_presented)
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif
@@ -97,8 +95,6 @@ struct ToolsView: View
 //MARK: - Tools card view
 struct ToolCardView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @State var tool_item: Tool
     @State private var tool_view_presented = false
     @State private var to_rename = false
@@ -106,6 +102,7 @@ struct ToolCardView: View
     @State private var update_toggle = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
@@ -124,7 +121,7 @@ struct ToolCardView: View
             }
             .sheet(isPresented: $tool_view_presented)
             {
-                ToolView(tool_view_presented: $tool_view_presented, document: $document, tool_item: $tool_item)
+                ToolView(tool_view_presented: $tool_view_presented, tool_item: $tool_item)
                 #if os(visionOS)
                     .frame(width: 512, height: 512)
                 #endif
@@ -150,13 +147,13 @@ struct ToolCardView: View
         {
             base_workspace.tools.remove(at: base_workspace.tools.firstIndex(of: tool_item) ?? 0)
             base_workspace.elements_check()
-            document.preset.tools = base_workspace.file_data().tools
+            app_state.update_tools_document_notify.toggle()
         }
     }
     
     private func update_file()
     {
-        document.preset.tools = base_workspace.file_data().tools
+        app_state.update_tools_document_notify.toggle()
     }
 }
 
@@ -165,15 +162,15 @@ struct ToolDropDelegate : DropDelegate
 {
     @Binding var tools : [Tool]
     @Binding var dragged_tool : Tool?
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var workspace_tools: [ToolStruct]
     
     let tool: Tool
+    let app_state: AppState
     
     func performDrop(info: DropInfo) -> Bool
     {
-        document.preset.tools = workspace_tools //Update file after elements reordering
+        app_state.update_tools_document_notify.toggle() //Update file after elements reordering
         return true
     }
     
@@ -200,7 +197,6 @@ struct ToolDropDelegate : DropDelegate
 struct AddToolView:View
 {
     @Binding var add_tool_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var new_tool_name = ""
     
@@ -291,7 +287,7 @@ struct AddToolView:View
         app_state.previewed_object?.name = new_tool_name
         base_workspace.add_tool(app_state.previewed_object! as! Tool)
         
-        document.preset.tools = base_workspace.file_data().tools
+        app_state.update_tools_document_notify.toggle()
         
         add_tool_view_presented.toggle()
     }
@@ -301,7 +297,6 @@ struct AddToolView:View
 struct ToolView: View
 {
     @Binding var tool_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var tool_item: Tool
     
     @State private var add_program_view_presented = false
@@ -398,7 +393,7 @@ struct ToolView: View
             
             Divider()
             
-            ToolInspectorView(document: $document, new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+            ToolInspectorView(new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
                 .frame(width: 256)
             #elseif os(iOS)
             if horizontal_size_class == .compact
@@ -466,7 +461,7 @@ struct ToolView: View
                         {
                             VStack
                             {
-                                ToolInspectorView(document: $document, new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+                                ToolInspectorView(new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
                                     //.disabled(base_workspace.selected_robot.performed == true)
                                     .presentationDetents([.medium, .large])
                             }
@@ -547,7 +542,7 @@ struct ToolView: View
                 
                 Divider()
                 
-                ToolInspectorView(document: $document, new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
+                ToolInspectorView(new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
                     .frame(width: 256)
             }
             #else
@@ -588,14 +583,14 @@ struct ToolView: View
         }
         .sheet(isPresented: $connector_view_presented)
         {
-            ConnectorView(is_presented: $connector_view_presented, document: $document, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: tool_item.connector as WorkspaceObjectConnector, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+            ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: tool_item.connector as WorkspaceObjectConnector, update_file_data: { app_state.update_tools_document_notify.toggle() })
             #if os(visionOS)
                 .frame(width: 512, height: 512)
             #endif
         }
         .sheet(isPresented: $statistics_view_presented)
         {
-            StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $tool_item.state_data, clear_chart_data: { tool_item.clear_chart_data() }, clear_state_data: tool_item.clear_state_data, update_file_data: { document.preset.tools = base_workspace.file_data().tools })
+            StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $tool_item.state_data, clear_chart_data: { tool_item.clear_chart_data() }, clear_state_data: tool_item.clear_state_data, update_file_data: { app_state.update_tools_document_notify.toggle() })
             #if os(visionOS)
                 .frame(width: 512, height: 512)
             #endif
@@ -629,10 +624,10 @@ struct ToolView: View
     {
         if ready_for_save
         {
-            app_state.get_scene_image = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+            withAnimation
             {
-                document.preset.tools = base_workspace.file_data().tools
+                app_state.get_scene_image = true
+                app_state.update_tools_document_notify.toggle()
                 is_document_updated = true
             }
         }
@@ -694,7 +689,6 @@ struct ToolView: View
 #if !os(visionOS)
 struct ToolInspectorView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var new_operation_code: Int
     
     @State private var add_program_view_presented = false
@@ -728,7 +722,7 @@ struct ToolInspectorView: View
                             {
                                 ForEach(base_workspace.selected_tool.selected_program.codes)
                                 { code in
-                                    OperationItemView(codes: $base_workspace.selected_tool.selected_program.codes, document: $document, code_item: code)
+                                    OperationItemView(codes: $base_workspace.selected_tool.selected_program.codes, code_item: code)
                                         .onDrag
                                     {
                                         return NSItemProvider()
@@ -1034,7 +1028,6 @@ struct AddOperationProgramView: View
                     base_workspace.selected_tool.add_program(OperationsProgram(name: new_program_name))
                     selected_program_index = base_workspace.selected_tool.programs_names.count - 1
                     
-                    //app_state.get_scene_image = true
                     add_program_view_presented.toggle()
                 }
                 .fixedSize()
@@ -1049,13 +1042,13 @@ struct AddOperationProgramView: View
 struct OperationItemView: View
 {
     @Binding var codes: [OperationCode]
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var code_item: OperationCode
     @State private var new_code_value = 0
     @State private var update_data = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
@@ -1094,7 +1087,7 @@ struct OperationItemView: View
                 if update_data == true
                 {
                     code_item.value = new_code_value
-                    document.preset.tools = base_workspace.file_data().tools
+                    app_state.update_tools_document_notify.toggle()
                 }
             }
             base_workspace.selected_tool.code_info(new_code_value).image
@@ -1112,12 +1105,6 @@ struct OperationItemView: View
                 update_data = true
             }
         }
-    }
-    
-    func delete_code_item()
-    {
-        base_workspace.selected_tool.selected_program.delete_code(index: base_workspace.selected_tool.selected_program.codes.firstIndex(of: code_item) ?? 0)
-        document.preset.tools = base_workspace.file_data().tools
     }
 }
 #endif
@@ -1352,17 +1339,17 @@ struct ToolsView_Previews: PreviewProvider
     {
         Group
         {
-            ToolsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            ToolsView()
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            ToolView(tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), tool_item: .constant(Tool()))
+            ToolView(tool_view_presented: .constant(true), tool_item: .constant(Tool()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             #if !os(visionOS)
-            AddToolView(add_tool_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            AddToolView(add_tool_view_presented: .constant(true))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
-            OperationItemView(codes: .constant([OperationCode]()), document: .constant(Robotic_Complex_WorkspaceDocument()), code_item: OperationCode(1))
+            OperationItemView(codes: .constant([OperationCode]()), code_item: OperationCode(1))
                 .environmentObject(Workspace())
             #endif
         }

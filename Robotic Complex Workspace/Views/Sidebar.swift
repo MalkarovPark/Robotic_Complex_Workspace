@@ -139,24 +139,24 @@ struct SidebarContent: View
                 switch sidebar_controller.sidebar_selection
                 {
                 case .WorkspaceView:
-                    WorkspaceView(document: $document)
+                    WorkspaceView()
                     #if os(visionOS)
                         .modifier(ViewPendantButton())
                     #else
                         .environmentObject(sidebar_controller)
                     #endif
                 case .RobotsView:
-                    RobotsView(document: $document)
+                    RobotsView()
                     #if os(visionOS)
                         .modifier(ViewPendantButton())
                     #endif
                 case .ToolsView:
-                    ToolsView(document: $document)
+                    ToolsView()
                     #if os(visionOS)
                         .modifier(ViewPendantButton())
                     #endif
                 case .PartsView:
-                    PartsView(document: $document)
+                    PartsView()
                     #if os(visionOS)
                         .modifier(ViewPendantButton())
                     #endif

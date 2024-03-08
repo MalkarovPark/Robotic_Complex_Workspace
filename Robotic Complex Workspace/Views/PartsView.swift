@@ -12,8 +12,6 @@ import IndustrialKit
 
 struct PartsView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @State private var add_part_view_presented = false
     @State private var part_view_presented = false
     @State private var dragged_part: Part?
@@ -43,14 +41,14 @@ struct PartsView: View
                         {
                             ForEach(base_workspace.parts)
                             { part_item in
-                                PartCardView(document: $document, part_item: part_item)
+                                PartCardView(part_item: part_item)
                                 .onDrag({
                                     self.dragged_part = part_item
                                     return NSItemProvider(object: part_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
                                     SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
                                 })
-                                .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, document: $document, workspace_parts: base_workspace.file_data().parts, part: part_item))
+                                .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, workspace_parts: base_workspace.file_data().parts, part: part_item, app_state: app_state))
                                 .transition(AnyTransition.scale)
                             }
                         }
@@ -91,7 +89,7 @@ struct PartsView: View
                     }
                     .sheet(isPresented: $add_part_view_presented)
                     {
-                        AddPartView(add_part_view_presented: $add_part_view_presented, document: $document)
+                        AddPartView(add_part_view_presented: $add_part_view_presented)
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif
@@ -114,7 +112,7 @@ struct PartsView: View
         withAnimation
         {
             base_workspace.parts.remove(atOffsets: offsets)
-            document.preset.parts = base_workspace.file_data().parts
+            app_state.update_parts_document_notify.toggle()
         }
     }
     
@@ -136,7 +134,7 @@ struct PartsView: View
 //MARK: - Parts card view
 struct PartCardView: View
 {
-    @Binding var document: Robotic_Complex_WorkspaceDocument
+    @EnvironmentObject var app_state: AppState
     
     @State var part_item: Part
     @State private var part_view_presented = false
@@ -159,7 +157,7 @@ struct PartCardView: View
             }
             .sheet(isPresented: $part_view_presented)
             {
-                PartView(part_view_presented: $part_view_presented, document: $document, part_item: $part_item)
+                PartView(part_view_presented: $part_view_presented, part_item: $part_item)
                     .onDisappear()
                     {
                         part_view_presented = false
@@ -176,13 +174,13 @@ struct PartCardView: View
         {
             base_workspace.parts.remove(at: base_workspace.parts.firstIndex(of: part_item) ?? 0)
             base_workspace.elements_check()
-            document.preset.parts = base_workspace.file_data().parts
+            app_state.update_parts_document_notify.toggle()
         }
     }
     
     private func update_file()
     {
-        document.preset.parts = base_workspace.file_data().parts
+        app_state.update_parts_document_notify.toggle()
     }
 }
 
@@ -191,15 +189,16 @@ struct PartDropDelegate : DropDelegate
 {
     @Binding var parts : [Part]
     @Binding var dragged_part : Part?
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State var workspace_parts: [PartStruct]
     
     let part: Part
     
+    let app_state: AppState
+    
     func performDrop(info: DropInfo) -> Bool
     {
-        document.preset.parts = workspace_parts //Update file after elements reordering
+        app_state.update_parts_document_notify.toggle()
         return true
     }
     
@@ -226,7 +225,6 @@ struct PartDropDelegate : DropDelegate
 struct AddPartView: View
 {
     @Binding var add_part_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @State private var new_part_name = ""
     
@@ -315,7 +313,7 @@ struct AddPartView: View
         
         app_state.previewed_object?.name = new_part_name
         base_workspace.add_part(app_state.previewed_object! as! Part)
-        document.preset.parts = base_workspace.file_data().parts
+        app_state.update_parts_document_notify.toggle()
         
         add_part_view_presented.toggle()
     }
@@ -325,10 +323,8 @@ struct AddPartView: View
 struct PartView: View
 {
     @Binding var part_view_presented: Bool
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var part_item: Part
     
-    //@State private var new_part_name = ""
     @State var new_physics: PhysicsType = .ph_none
     @State var new_color: Color = .accentColor
     
@@ -419,7 +415,7 @@ struct PartView: View
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
-                document.preset.parts = base_workspace.file_data().parts
+                app_state.update_parts_document_notify.toggle()
             }
             is_document_updated = true
         }
@@ -476,12 +472,12 @@ struct PartsView_Previews: PreviewProvider
     {
         Group
         {
-            PartsView(document: .constant(Robotic_Complex_WorkspaceDocument()))
+            PartsView()
                 .environmentObject(Workspace())
-            AddPartView(add_part_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()))
+            AddPartView(add_part_view_presented: .constant(true))
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
-            PartView(part_view_presented: .constant(true), document: .constant(Robotic_Complex_WorkspaceDocument()), part_item: .constant(Part(name: "None", dictionary: ["String" : "Any"])), new_physics: .ph_none)
+            PartView(part_view_presented: .constant(true), part_item: .constant(Part(name: "None", dictionary: ["String" : "Any"])), new_physics: .ph_none)
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
         }

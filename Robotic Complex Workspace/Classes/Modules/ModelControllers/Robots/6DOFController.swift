@@ -37,8 +37,10 @@ class _6DOFController: RobotModelController
         
         if without_lengths
         {
-            lengths.append(Float(nodes[0].position.y)) //Append base height [8]
+            lengths.append(Float(nodes[0].position.y)) //Append base height [6]
         }
+        
+        nodes.append(node.childNode(withName: "base", recursively: true)!) //Base pillar node [7]
     }
     
     //MARK: - Inverse kinematic parts calculation for roataion angles of 6DOF
@@ -152,9 +154,23 @@ class _6DOFController: RobotModelController
         var modified_node = SCNNode()
         var saved_material = SCNMaterial()
         
+        //Change height of base
+        modified_node = nodes[7]
+        saved_material = (modified_node.geometry?.firstMaterial)!
+        
+        modified_node.geometry = SCNCylinder(radius: 80, height: CGFloat(lengths[6]))
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lengths[6] / 2)
+        #else
+        modified_node.position.y = lengths[6] / 2
+        #endif
+        
+        modified_node.geometry?.firstMaterial = saved_material
+        
+        //Change other lengths
         saved_material = (nodes[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial)! //Save material from part box
         
-        for i in 0..<nodes.count - 1
+        for i in 0..<nodes.count - 2
         {
             //Get length 0 if first robot part selected and get previous length for all next parts
             #if os(macOS)
@@ -166,7 +182,7 @@ class _6DOFController: RobotModelController
             if i < 5
             {
                 //Change box model size and move that node vertical for parts 0-4
-                modified_node = nodes[i].childNode(withName: "box", recursively: false)!
+                modified_node = nodes[i].childNode(withName: "box", recursively: false) ?? SCNNode()
                 if i < 3
                 {
                     modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[i]), length: 60, chamferRadius: 10) //Set geometry for 0-2 parts with width 6 and chamfer
@@ -234,7 +250,7 @@ class _6DOFController: RobotModelController
         
         //Update tool rotation chart
         axis_names = ["R", "P", "W"]
-        components = [pointer_node_internal?.eulerAngles.z, pointer_node?.eulerAngles.x, pointer_node?.eulerAngles.y]
+        components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
         for i in 0...axis_names.count - 1
         {
             charts[2].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0).to_deg))
@@ -259,7 +275,7 @@ class _6DOFController: RobotModelController
         state[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
                              StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
         
-        state.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+        state.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
         
         return state
     }
