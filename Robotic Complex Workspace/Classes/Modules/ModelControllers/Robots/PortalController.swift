@@ -139,7 +139,6 @@ class PortalController: RobotModelController
         
         saved_material = (modified_node.geometry?.firstMaterial)!
         
-        print(lengths)
         let vf_length = lengths[0] - 40
         modified_node.geometry = SCNBox(width: 80, height: CGFloat(vf_length), length: 80, chamferRadius: 10)
         modified_node.geometry?.firstMaterial = saved_material

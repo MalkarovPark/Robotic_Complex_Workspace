@@ -147,13 +147,13 @@ struct ToolCardView: View
         {
             base_workspace.tools.remove(at: base_workspace.tools.firstIndex(of: tool_item) ?? 0)
             base_workspace.elements_check()
-            app_state.update_tools_document_notify.toggle()
+            app_state.document_update_tools()
         }
     }
     
     private func update_file()
     {
-        app_state.update_tools_document_notify.toggle()
+        app_state.document_update_tools()
     }
 }
 
@@ -170,7 +170,7 @@ struct ToolDropDelegate : DropDelegate
     
     func performDrop(info: DropInfo) -> Bool
     {
-        app_state.update_tools_document_notify.toggle() //Update file after elements reordering
+        app_state.document_update_tools() //Update file after elements reordering
         return true
     }
     
@@ -287,7 +287,7 @@ struct AddToolView:View
         app_state.previewed_object?.name = new_tool_name
         base_workspace.add_tool(app_state.previewed_object! as! Tool)
         
-        app_state.update_tools_document_notify.toggle()
+        app_state.document_update_tools()
         
         add_tool_view_presented.toggle()
     }
@@ -583,14 +583,14 @@ struct ToolView: View
         }
         .sheet(isPresented: $connector_view_presented)
         {
-            ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: tool_item.connector as WorkspaceObjectConnector, update_file_data: { app_state.update_tools_document_notify.toggle() })
+            ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: tool_item.connector as WorkspaceObjectConnector, update_file_data: { app_state.document_update_tools() })
             #if os(visionOS)
                 .frame(width: 512, height: 512)
             #endif
         }
         .sheet(isPresented: $statistics_view_presented)
         {
-            StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $tool_item.state_data, clear_chart_data: { tool_item.clear_chart_data() }, clear_state_data: tool_item.clear_state_data, update_file_data: { app_state.update_tools_document_notify.toggle() })
+            StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $tool_item.state_data, clear_chart_data: { tool_item.clear_chart_data() }, clear_state_data: tool_item.clear_state_data, update_file_data: { app_state.document_update_tools() })
             #if os(visionOS)
                 .frame(width: 512, height: 512)
             #endif
@@ -627,7 +627,7 @@ struct ToolView: View
             withAnimation
             {
                 app_state.get_scene_image = true
-                app_state.update_tools_document_notify.toggle()
+                app_state.document_update_tools()
                 is_document_updated = true
             }
         }
@@ -1087,7 +1087,7 @@ struct OperationItemView: View
                 if update_data == true
                 {
                     code_item.value = new_code_value
-                    app_state.update_tools_document_notify.toggle()
+                    app_state.document_update_tools()
                 }
             }
             base_workspace.selected_tool.code_info(new_code_value).image

@@ -196,7 +196,7 @@ struct RobotsTableView: View
             }
         }
         
-        app_state.update_robots_document_notify.toggle()
+        app_state.document_update_robots()
         
         dismiss_pass()
     }
@@ -233,10 +233,10 @@ struct RobotCardView: View
                     base_workspace.duplicate_robot(name: robot_item.name)
                 }, delete_object: delete_robot, update_file: update_file, set_default_position: {
                     robot_item.set_default_pointer_position()
-                    app_state.update_robots_document_notify.toggle()
+                    app_state.document_update_robots()
                 }, clear_default_position: {
                     robot_item.clear_default_pointer_position()
-                    app_state.update_robots_document_notify.toggle()
+                    app_state.document_update_robots()
                 }, reset_robot_to: robot_item.reset_pointer_to_default, pass_preferences: {
                     app_state.robot_from = robot_item
                     pass_preferences_presented = true
@@ -291,18 +291,18 @@ struct RobotCardView: View
         {
             base_workspace.robots.remove(at: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
             base_workspace.elements_check()
-            app_state.update_robots_document_notify.toggle()
+            app_state.document_update_robots()
         }
     }
     
     private func update_file()
     {
-        app_state.update_robots_document_notify.toggle()
+        app_state.document_update_robots()
         if !robot_item.is_placed
         {
             tool_unplace(workspace: base_workspace, from_robot_name: robot_item.name)
         }
-        app_state.update_tools_document_notify.toggle()
+        app_state.document_update_tools()
     }
 }
 
@@ -319,7 +319,7 @@ struct RobotDropDelegate : DropDelegate
     
     func performDrop(info: DropInfo) -> Bool
     {
-        app_state.update_robots_document_notify.toggle() //Update file after elements reordering
+        app_state.document_update_robots() //Update file after elements reordering
         return true
     }
     
@@ -504,7 +504,7 @@ struct AddRobotView: View
         }
         
         base_workspace.add_robot(Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_dictionary))
-        app_state.update_robots_document_notify.toggle()
+        app_state.document_update_robots()
         
         add_robot_view_presented.toggle()
     }
@@ -603,14 +603,14 @@ struct RobotView: View
                     }
                     .sheet(isPresented: $connector_view_presented)
                     {
-                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { app_state.update_robots_document_notify.toggle() })
+                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { app_state.document_update_robots() })
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
-                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { app_state.update_robots_document_notify.toggle() })
+                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { app_state.document_update_robots() })
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif
@@ -664,20 +664,14 @@ struct RobotView: View
                     .buttonBorderShape(.circle)
                     .sheet(isPresented: $connector_view_presented)
                     {
-                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { app_state.update_robots_document_notify.toggle() })
+                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: app_state.document_update_robots)
                             .frame(width: 512, height: 512)
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
-                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { app_state.update_robots_document_notify.toggle() })
+                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: base_workspace.selected_robot.clear_chart_data, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: app_state.document_update_robots)
                             .frame(width: 512, height: 512)
                     }
-                    
-                    /*Button(action: { inspector_presented.toggle() })
-                    {
-                        Image(systemName: "slider.horizontal.2.square")
-                    }
-                    .buttonBorderShape(.circle)*/
                 }
                 #endif
             }
@@ -933,7 +927,7 @@ struct RobotSceneView: View
                         { _, _ in
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
-                            app_state.update_robots_document_notify.toggle()
+                            app_state.document_update_robots()
                             app_state.get_scene_image = true
                         }
                     }
@@ -960,7 +954,7 @@ struct RobotSceneView: View
                         { _, _ in
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
-                            app_state.update_robots_document_notify.toggle()
+                            app_state.document_update_robots()
                             app_state.get_scene_image = true
                         }
                     }
@@ -986,7 +980,7 @@ struct RobotSceneView: View
                         { _, _ in
                             base_workspace.selected_robot.update_space_scale()
                             base_workspace.update_view()
-                            app_state.update_robots_document_notify.toggle()
+                            app_state.document_update_robots()
                             app_state.get_scene_image = true
                         }
                     }
@@ -1022,7 +1016,7 @@ struct RobotSceneView: View
                         { _, _ in
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
-                            app_state.update_robots_document_notify.toggle()
+                            app_state.document_update_robots()
                             app_state.get_scene_image = true
                         }
                     }
@@ -1046,7 +1040,7 @@ struct RobotSceneView: View
                         { _, _ in
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
-                            app_state.update_robots_document_notify.toggle()
+                            app_state.document_update_robots()
                             app_state.get_scene_image = true
                         }
                     }
@@ -1069,7 +1063,7 @@ struct RobotSceneView: View
                         { _, _ in
                             base_workspace.selected_robot.update_space_scale()
                             base_workspace.update_view()
-                            app_state.update_robots_document_notify.toggle()
+                            app_state.document_update_robots()
                             app_state.get_scene_image = true
                         }
                     }
@@ -1505,7 +1499,7 @@ struct RobotInspectorView: View
                             .onDelete(perform: remove_points)
                             .onChange(of: base_workspace.robots)
                             { _, _ in
-                                app_state.update_robots_document_notify.toggle()
+                                app_state.document_update_robots()
                                 app_state.get_scene_image = true
                             }
                         }
@@ -1659,7 +1653,7 @@ struct RobotInspectorView: View
     {
         withAnimation
         {
-            app_state.update_robots_document_notify.toggle()
+            app_state.document_update_robots()
             app_state.get_scene_image = true
             base_workspace.update_view()
         }
@@ -1731,7 +1725,7 @@ struct AddProgramView: View
                     base_workspace.selected_robot.add_program(PositionsProgram(name: new_program_name))
                     selected_program_index = base_workspace.selected_robot.programs_names.count - 1
                     
-                    app_state.update_robots_document_notify.toggle()
+                    app_state.document_update_robots()
                     app_state.get_scene_image = true
                     add_program_view_presented.toggle()
                 }
@@ -1954,7 +1948,7 @@ struct PositionPointView: View
     {
         base_workspace.update_view()
         base_workspace.selected_robot.selected_program.visual_build()
-        app_state.update_robots_document_notify.toggle()
+        app_state.document_update_robots()
         app_state.get_scene_image = true
     }
 }

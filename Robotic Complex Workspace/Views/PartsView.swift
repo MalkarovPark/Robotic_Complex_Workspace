@@ -112,7 +112,7 @@ struct PartsView: View
         withAnimation
         {
             base_workspace.parts.remove(atOffsets: offsets)
-            app_state.update_parts_document_notify.toggle()
+            app_state.document_update_parts()
         }
     }
     
@@ -174,13 +174,13 @@ struct PartCardView: View
         {
             base_workspace.parts.remove(at: base_workspace.parts.firstIndex(of: part_item) ?? 0)
             base_workspace.elements_check()
-            app_state.update_parts_document_notify.toggle()
+            app_state.document_update_parts()
         }
     }
     
     private func update_file()
     {
-        app_state.update_parts_document_notify.toggle()
+        app_state.document_update_parts()
     }
 }
 
@@ -198,7 +198,7 @@ struct PartDropDelegate : DropDelegate
     
     func performDrop(info: DropInfo) -> Bool
     {
-        app_state.update_parts_document_notify.toggle()
+        app_state.document_update_parts()
         return true
     }
     
@@ -313,7 +313,7 @@ struct AddPartView: View
         
         app_state.previewed_object?.name = new_part_name
         base_workspace.add_part(app_state.previewed_object! as! Part)
-        app_state.update_parts_document_notify.toggle()
+        app_state.document_update_parts()
         
         add_part_view_presented.toggle()
     }
@@ -415,7 +415,7 @@ struct PartView: View
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
-                app_state.update_parts_document_notify.toggle()
+                app_state.document_update_parts()
             }
             is_document_updated = true
         }

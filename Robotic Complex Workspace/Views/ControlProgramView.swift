@@ -113,7 +113,7 @@ struct ControlProgramView: View
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         base_workspace.elements_check()
         
-        app_state.update_elements_document_notify.toggle()
+        app_state.document_update_elements()
     }
     
     func remove_elements(at offsets: IndexSet) //Remove program element function
@@ -123,7 +123,7 @@ struct ControlProgramView: View
             base_workspace.elements.remove(atOffsets: offsets)
         }
         
-        app_state.update_elements_document_notify.toggle()
+        app_state.document_update_elements()
     }
 }
 
@@ -140,7 +140,7 @@ struct WorkspaceDropDelegate : DropDelegate
     
     func performDrop(info: DropInfo) -> Bool
     {
-        app_state.update_elements_document_notify.toggle() //Update file after elements reordering
+        app_state.document_update_elements() //Update file after elements reordering
         return true
     }
     
@@ -224,7 +224,7 @@ struct ProgramElementItemView: View
     private func update_program_element()
     {
         base_workspace.elements_check()
-        app_state.update_elements_document_notify.toggle()
+        app_state.document_update_elements()
     }
     
     private func duplicate_program_element()
@@ -263,7 +263,7 @@ struct ProgramElementItemView: View
         base_workspace.elements.append(new_program_element)
         
         base_workspace.elements_check()
-        app_state.update_elements_document_notify.toggle()
+        app_state.document_update_elements()
     }
     
     private func delete_program_element()

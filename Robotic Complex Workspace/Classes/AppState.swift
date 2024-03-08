@@ -193,13 +193,19 @@ class AppState: ObservableObject
     private var additive_parts_dictionary = [String: [String: Any]]() //Parts dictionary from plist file
     
     //MARK: - File handling
-    //@Published var update_document_notify = true
     @Published var update_elements_document_notify = true
     @Published var update_registers_document_notify = true
     
     @Published var update_robots_document_notify = true
     @Published var update_tools_document_notify = true
     @Published var update_parts_document_notify = true
+    
+    public func document_update_elements() { update_elements_document_notify.toggle() }
+    public func document_update_registers() { document_update_registers() }
+    
+    public func document_update_robots() { update_robots_document_notify.toggle() }
+    public func document_update_tools() { update_tools_document_notify.toggle() }
+    public func document_update_parts() { update_parts_document_notify.toggle() }
     
     //MARK: - Application state init function
     init()

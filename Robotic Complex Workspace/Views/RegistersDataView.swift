@@ -10,7 +10,6 @@ import IndustrialKit
 
 struct RegistersDataView: View
 {
-    //@Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var is_presented: Bool
     
     @State private var update_toggle = false
@@ -33,7 +32,6 @@ struct RegistersDataView: View
                 Button(role: .destructive, action: clear_registers)
                 {
                     Image(systemName: "eraser")
-                        //.frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 #if os(visionOS)
@@ -44,7 +42,6 @@ struct RegistersDataView: View
                 Button(action: save_registers)
                 {
                     Image(systemName: "arrow.down.doc")
-                        //.frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 #if os(visionOS)
@@ -55,7 +52,6 @@ struct RegistersDataView: View
                 Button(action: { is_registers_count_presented = true })
                 {
                     Image(systemName: "square.grid.2x2")
-                        //.frame(maxWidth: .infinity)
                 }
                 .popover(isPresented: $is_registers_count_presented)
                 {
@@ -97,7 +93,7 @@ struct RegistersDataView: View
     
     private func save_registers()
     {
-        app_state.update_registers_document_notify.toggle()
+        app_state.document_update_registers()
     }
     
     private func update_registers_count()
@@ -165,7 +161,6 @@ struct RegistersCountView: View
         if registers_count > 0
         {
             base_workspace.update_registers_count(registers_count)
-            //additive_func()
         }
     }
 }

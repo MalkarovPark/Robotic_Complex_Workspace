@@ -402,7 +402,6 @@ struct ConnectorView_Previews: PreviewProvider
         Group
         {
             ConnectorView(is_presented: .constant(true), demo: .constant(true), update_model: .constant(true), connector: PortalConnector(), update_file_data: {})
-                //.environmentObject(Workspace())
             
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")), update_file_data: {})
             ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Int", value: 8)), update_file_data: {})

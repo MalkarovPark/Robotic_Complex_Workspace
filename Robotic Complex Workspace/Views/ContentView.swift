@@ -70,26 +70,7 @@ struct ContentView: View
                 document.preset.tools = base_workspace.file_data().tools
             }
         #endif
-            .onChange(of: app_state.update_robots_document_notify)
-            { _, _ in
-                document.preset.robots = base_workspace.file_data().robots
-            }
-            .onChange(of: app_state.update_tools_document_notify)
-            { _, _ in
-                document.preset.tools = base_workspace.file_data().tools
-            }
-            .onChange(of: app_state.update_parts_document_notify)
-            { _, _ in
-                document.preset.parts = base_workspace.file_data().parts
-            }
-            .onChange(of: app_state.update_elements_document_notify)
-            { _, _ in
-                document.preset.elements = base_workspace.file_data().elements
-            }
-            .onChange(of: app_state.update_registers_document_notify)
-            { _, _ in
-                document.preset.registers = base_workspace.file_data().registers
-            }
+            .modifier(DocumentUpdateHandler(document: $document, base_workspace: base_workspace))
             .onAppear
             {
                 set_internal_scenes_address()

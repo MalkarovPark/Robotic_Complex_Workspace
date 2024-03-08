@@ -14,8 +14,6 @@ struct WorkspaceView: View
 {
     @AppStorage("WorkspaceVisualModeling") private var workspace_visual_modeling: Bool = true
     
-    //@Binding var document: Robotic_Complex_WorkspaceDocument
-    
     @State private var worked = false
     @State private var registers_view_presented = false
     @State private var inspector_presented = false
@@ -230,7 +228,6 @@ struct AddInWorkspaceView: View
     @State var tool_attached = false
     @State var attach_robot_name = String()
     
-    //@Binding var document: Robotic_Complex_WorkspaceDocument
     @Binding var add_in_view_presented: Bool
     
     @EnvironmentObject var base_workspace: Workspace
