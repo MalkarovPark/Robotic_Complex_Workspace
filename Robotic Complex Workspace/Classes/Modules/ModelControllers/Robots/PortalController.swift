@@ -153,6 +153,7 @@ class PortalController: RobotModelController
         node.position.y = CGFloat(lengths[8])
         node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lengths[0]) //Set vertical position for frame portal
         #else
+        node.position.y = lengths[8]
         node.childNode(withName: "frame2", recursively: true)!.position.y = lengths[0] //Set vertical position for frame portal
         #endif
         
