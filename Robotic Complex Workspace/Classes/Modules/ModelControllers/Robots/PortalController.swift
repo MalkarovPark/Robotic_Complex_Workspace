@@ -145,7 +145,7 @@ class PortalController: RobotModelController
         #if os(macOS)
         modified_node.position.y = CGFloat(vf_length / 2)
         #else
-        modified_node.position.y = vf_length / 2 + lengths[8] / 2
+        modified_node.position.y = vf_length / 2
         #endif
         
         node = nodes.first!

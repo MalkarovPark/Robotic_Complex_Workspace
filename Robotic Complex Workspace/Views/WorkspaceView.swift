@@ -435,13 +435,13 @@ struct AddInWorkspaceView: View
         switch type_for_save
         {
         case .robot:
-            app_state.update_robots_document_notify
+            app_state.document_update_robots()
             base_workspace.elements_check()
         case .tool:
-            app_state.update_tools_document_notify
+            app_state.document_update_tools()
             base_workspace.elements_check()
         case .part:
-            app_state.update_parts_document_notify
+            app_state.document_update_parts()
         default:
             break
         }
