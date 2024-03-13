@@ -168,7 +168,7 @@ class _6DOFController: RobotModelController
         modified_node.geometry?.firstMaterial = saved_material
         
         //Change other lengths
-        saved_material = (nodes[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial)! //Save material from part box
+        saved_material = (nodes[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial) ?? SCNMaterial() //Save material from part box
         
         for i in 0..<nodes.count - 2
         {

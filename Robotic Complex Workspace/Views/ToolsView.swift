@@ -462,7 +462,6 @@ struct ToolView: View
                             VStack
                             {
                                 ToolInspectorView(new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
-                                    //.disabled(base_workspace.selected_robot.performed == true)
                                     .presentationDetents([.medium, .large])
                             }
                             .onDisappear()
@@ -1084,7 +1083,7 @@ struct OperationItemView: View
             .labelsHidden()
             .onChange(of: new_code_value)
             { _, new_value in
-                if update_data == true
+                if update_data
                 {
                     code_item.value = new_code_value
                     app_state.document_update_tools()
@@ -1168,7 +1167,7 @@ struct ToolSceneView: View
         
         if base_workspace.selected_object_type == .tool
         {
-            if tool.performing_completed == true
+            if tool.performing_completed
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                 {

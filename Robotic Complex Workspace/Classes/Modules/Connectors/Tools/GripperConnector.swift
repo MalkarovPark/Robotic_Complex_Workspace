@@ -38,7 +38,7 @@ class GripperConnector: ToolConnector
         
         sleep(4)
         
-        if parameters[3].value as! Bool == true
+        if parameters[3].value as! Bool
         {
             output += "Connected"
             return true

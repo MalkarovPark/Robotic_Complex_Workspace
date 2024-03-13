@@ -153,8 +153,8 @@ struct WorkspaceDropDelegate : DropDelegate
         
         if dragged_element != element
         {
-            let from = elements.firstIndex(of: dragged_element)!
-            let to = elements.firstIndex(of: element)!
+            let from = elements.firstIndex(of: dragged_element) ?? 0
+            let to = elements.firstIndex(of: element) ?? 0
             withAnimation(.default)
             {
                 self.elements.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)

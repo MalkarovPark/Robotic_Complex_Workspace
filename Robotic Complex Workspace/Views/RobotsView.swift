@@ -332,8 +332,8 @@ struct RobotDropDelegate : DropDelegate
         
         if dragged_robot != robot
         {
-            let from = robots.firstIndex(of: dragged_robot)!
-            let to = robots.firstIndex(of: robot)!
+            let from = robots.firstIndex(of: dragged_robot) ?? 0
+            let to = robots.firstIndex(of: robot) ?? 0
             withAnimation(.default)
             {
                 self.robots.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
@@ -552,7 +552,7 @@ struct RobotView: View
         .inspector(isPresented: $inspector_presented)
         {
             RobotInspectorView()
-                .disabled(base_workspace.selected_robot.performed == true)
+                .disabled(base_workspace.selected_robot.performed)
         }
         #endif
         .onAppear()
@@ -1244,7 +1244,7 @@ struct CellSceneView: UIViewRepresentable
     {
         //base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
         
-        if base_workspace.selected_robot.moving_completed == true
+        if base_workspace.selected_robot.moving_completed
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
@@ -1253,7 +1253,7 @@ struct CellSceneView: UIViewRepresentable
             }
         }
         
-        if base_workspace.selected_robot.performed == true
+        if base_workspace.selected_robot.performed
         {
             base_workspace.selected_robot.update_model()
             

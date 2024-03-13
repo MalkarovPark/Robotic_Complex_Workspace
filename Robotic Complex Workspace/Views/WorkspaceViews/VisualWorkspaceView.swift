@@ -46,7 +46,7 @@ struct VisualWorkspaceView: View
                             .imageScale(.large)
                             .padding()
                         #if os(iOS)
-                            .foregroundColor((!add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
+                            .foregroundColor((add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
                         #endif
                     }
                     .buttonStyle(.borderless)
@@ -63,7 +63,7 @@ struct VisualWorkspaceView: View
                             .frame(maxWidth: 1024)
                         #endif
                     }
-                    .disabled(!add_in_view_disabled || base_workspace.performed)
+                    .disabled(add_in_view_disabled || base_workspace.performed)
                     
                     Divider()
                     
@@ -73,7 +73,7 @@ struct VisualWorkspaceView: View
                             .imageScale(.large)
                             .padding()
                         #if os(iOS)
-                            .foregroundColor(add_in_view_disabled ? Color.secondary : Color.black)
+                            .foregroundColor(!add_in_view_disabled ? Color.secondary : Color.black)
                         #endif
                     }
                     .buttonStyle(.borderless)
@@ -90,7 +90,7 @@ struct VisualWorkspaceView: View
                             .frame(maxWidth: 1024)
                         #endif
                     }
-                    .disabled(add_in_view_disabled)
+                    .disabled(!add_in_view_disabled)
                 }
                 .background(.thinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -116,7 +116,7 @@ struct VisualWorkspaceView: View
                     AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
                         .frame(maxWidth: 1024)
                 }
-                .disabled(!add_in_view_disabled || base_workspace.performed)
+                .disabled(add_in_view_disabled || base_workspace.performed)
                 .padding(.trailing)
                 
                 Button(action: { info_view_presented.toggle() })
@@ -132,7 +132,7 @@ struct VisualWorkspaceView: View
                     VisualInfoView(info_view_presented: $info_view_presented)
                         .frame(maxWidth: 1024)
                 }
-                .disabled(add_in_view_disabled)
+                .disabled(!add_in_view_disabled)
             }
             .padding()
             .labelStyle(.iconOnly)
@@ -143,7 +143,7 @@ struct VisualWorkspaceView: View
     
     private var add_in_view_disabled: Bool
     {
-        if !base_workspace.any_object_selected || !app_state.add_in_view_dismissed || base_workspace.performed
+        if base_workspace.any_object_selected && app_state.add_in_view_dismissed && !base_workspace.performed
         {
             return true
         }

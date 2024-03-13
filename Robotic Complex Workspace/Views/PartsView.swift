@@ -144,7 +144,7 @@ struct PartCardView: View
     
     var body: some View
     {
-        SmallCardView(color: part_item.card_info.color, node: part_item.node!, title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
+        SmallCardView(color: part_item.card_info.color, node: part_item.node ?? SCNNode(), title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
         #if !os(visionOS)
             .shadow(radius: 8)
         #endif
@@ -211,8 +211,8 @@ struct PartDropDelegate : DropDelegate
         
         if dragged_part != part
         {
-            let from = parts.firstIndex(of: dragged_part)!
-            let to = parts.firstIndex(of: part)!
+            let from = parts.firstIndex(of: dragged_part) ?? 0
+            let to = parts.firstIndex(of: part) ?? 0
             withAnimation(.default)
             {
                 self.parts.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
@@ -429,7 +429,7 @@ struct PartPreviewSceneView: View
     
     var body: some View
     {
-        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, on_render: update_preview_node(scene_view:), on_tap: { _, _ in })
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn") ?? SCNScene(), on_render: update_preview_node(scene_view:), on_tap: { _, _ in })
     }
     
     private func update_preview_node(scene_view: SCNView)
@@ -454,7 +454,7 @@ struct PartSceneView: View
     
     var body: some View
     {
-        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, node: part.node ?? SCNNode())
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn") ?? SCNScene(), node: part.node ?? SCNNode())
     }
 }
 
