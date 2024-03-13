@@ -5,6 +5,7 @@
 //  Created by Malkarov Park on 26.11.2023.
 //
 
+#if !os(visionOS)
 import SwiftUI
 import IndustrialKit
 
@@ -242,3 +243,4 @@ struct MarkLogicElementView: View
         .environmentObject(Workspace())
         .frame(width: 256)
 }
+#endif

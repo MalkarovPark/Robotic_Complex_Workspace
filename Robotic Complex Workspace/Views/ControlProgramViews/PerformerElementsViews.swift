@@ -5,6 +5,7 @@
 //  Created by Malkarov Park on 26.11.2023.
 //
 
+#if !os(visionOS)
 import SwiftUI
 import IndustrialKit
 
@@ -373,3 +374,4 @@ struct ToolPerformerElementView: View
     ToolPerformerElementView(element: .constant(ToolPerformerElement()), on_update: {})
         .environmentObject(Workspace())
 }
+#endif
