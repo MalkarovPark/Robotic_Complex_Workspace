@@ -2,7 +2,7 @@
 //  StatisticsView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 06.12.2022.
+//  Created by Artem on 06.12.2022.
 //
 
 import SwiftUI

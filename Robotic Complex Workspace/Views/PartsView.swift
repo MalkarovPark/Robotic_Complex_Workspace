@@ -2,7 +2,7 @@
 //  PartsView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 28.08.2022.
+//  Created by Artem on 28.08.2022.
 //
 
 import SwiftUI

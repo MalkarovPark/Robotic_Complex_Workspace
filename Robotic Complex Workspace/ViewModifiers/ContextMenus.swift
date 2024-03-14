@@ -2,7 +2,7 @@
 //  ContextMenus.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 20.04.2023.
+//  Created by Artem on 20.04.2023.
 //
 
 import SwiftUI

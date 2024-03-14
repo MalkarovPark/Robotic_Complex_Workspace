@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 18.08.2022.
+//  Created by Artem on 18.08.2022.
 //
 
 import SwiftUI

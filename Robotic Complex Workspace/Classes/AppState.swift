@@ -2,7 +2,7 @@
 //  AppState.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 20.05.2022.
+//  Created by Artem on 20.05.2022.
 //
 
 import Foundation

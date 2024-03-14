@@ -2,7 +2,7 @@
 //  ConnectorView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 13.01.2023.
+//  Created by Artem on 13.01.2023.
 //
 
 import SwiftUI

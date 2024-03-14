@@ -2,7 +2,7 @@
 //  ControlProgramView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 23.12.2022.
+//  Created by Artem on 23.12.2022.
 //
 
 #if !os(visionOS)

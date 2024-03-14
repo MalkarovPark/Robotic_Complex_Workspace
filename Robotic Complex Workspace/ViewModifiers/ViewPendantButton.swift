@@ -1,8 +1,8 @@
 //
 //  ViewPendantButton.swift
-//  RCWorkspace
+//  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 21.02.2024.
+//  Created by Artem on 21.02.2024.
 //
 
 #if os(visionOS)

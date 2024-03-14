@@ -2,7 +2,7 @@
 //  GalleryWorkspaceView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 06.12.2023.
+//  Created by Artem on 06.12.2023.
 //
 
 import SwiftUI

@@ -2,7 +2,7 @@
 //  Robotic_Complex_WorkspaceApp.swift
 //  Shared
 //
-//  Created by Malkarov Park on 15.10.2021.
+//  Created by Artem on 15.10.2021.
 //
 
 import SwiftUI

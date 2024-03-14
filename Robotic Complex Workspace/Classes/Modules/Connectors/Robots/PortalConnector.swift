@@ -2,7 +2,7 @@
 //  PortalConnector.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 16.01.2023.
+//  Created by Artem on 16.01.2023.
 //
 
 import Foundation

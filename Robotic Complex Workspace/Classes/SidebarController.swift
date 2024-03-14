@@ -1,8 +1,8 @@
 //
 //  SidebarController.swift
-//  RCWorkspace
+//  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 26.02.2024.
+//  Created by Artem on 26.02.2024.
 //
 
 import Foundation

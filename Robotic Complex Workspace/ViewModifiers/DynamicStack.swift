@@ -2,7 +2,7 @@
 //  DynamicStack.swift
 //  Robotic Complex Workspace (iOS)
 //
-//  Created by Malkarov Park on 24.11.2022.
+//  Created by Artem on 24.11.2022.
 //
 
 import SwiftUI
