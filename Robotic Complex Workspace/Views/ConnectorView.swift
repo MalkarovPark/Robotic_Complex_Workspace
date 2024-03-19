@@ -163,12 +163,12 @@ struct ConnectorView: View
                 .labelsHidden()
                 #endif
                 .onChange(of: demo)
-                { _, _ in
-                    if update_model
+                { _, new_value in
+                    if new_value && connected
                     {
-                        update_model.toggle()
+                        connected = false
+                        //connector.disconnect()
                     }
-                    update_file_data()
                 }
                 
                 Spacer()
