@@ -17,9 +17,8 @@ struct ControlProgramView: View
     @State private var add_element_view_presented = false
     
     @EnvironmentObject var app_state: AppState
-    //@State private var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
-    
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     var body: some View
     {
@@ -39,7 +38,7 @@ struct ControlProgramView: View
                         }, preview: {
                             ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color)
                         })
-                        .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, workspace_elements: base_workspace.file_data().elements, element: element, app_state: app_state))
+                        .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, workspace_elements: base_workspace.file_data().elements, element: element, document_handler: document_handler))
                     }
                     .padding(4)
                     
@@ -113,7 +112,7 @@ struct ControlProgramView: View
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         base_workspace.elements_check()
         
-        app_state.document_update_elements()
+        document_handler.document_update_elements()
     }
     
     func remove_elements(at offsets: IndexSet) //Remove program element function
@@ -123,7 +122,7 @@ struct ControlProgramView: View
             base_workspace.elements.remove(atOffsets: offsets)
         }
         
-        app_state.document_update_elements()
+        document_handler.document_update_elements()
     }
 }
 
@@ -136,11 +135,11 @@ struct WorkspaceDropDelegate : DropDelegate
     @State var workspace_elements: [WorkspaceProgramElementStruct]
     
     let element: WorkspaceProgramElement
-    let app_state: AppState
+    let document_handler: DocumentUpdateHandler
     
     func performDrop(info: DropInfo) -> Bool
     {
-        app_state.document_update_elements() //Update file after elements reordering
+        document_handler.document_update_elements() //Update file after elements reordering
         return true
     }
     
@@ -176,6 +175,7 @@ struct ProgramElementItemView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     let on_delete: (IndexSet) -> ()
     
@@ -224,7 +224,7 @@ struct ProgramElementItemView: View
     private func update_program_element()
     {
         base_workspace.elements_check()
-        app_state.document_update_elements()
+        document_handler.document_update_elements()
     }
     
     private func duplicate_program_element()
@@ -263,7 +263,7 @@ struct ProgramElementItemView: View
         base_workspace.elements.append(new_program_element)
         
         base_workspace.elements_check()
-        app_state.document_update_elements()
+        document_handler.document_update_elements()
     }
     
     private func delete_program_element()

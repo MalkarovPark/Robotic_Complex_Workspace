@@ -16,7 +16,7 @@ struct RegistersDataView: View
     @State private var is_registers_count_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     var body: some View
     {
@@ -93,7 +93,7 @@ struct RegistersDataView: View
     
     private func save_registers()
     {
-        app_state.document_update_registers()
+        document_handler.document_update_registers()
     }
     
     private func update_registers_count()

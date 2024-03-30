@@ -357,6 +357,7 @@ struct VisualInfoView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     @State private var avaliable_attachments = [String]()
     @State private var attach_robot_name = String()
@@ -398,7 +399,7 @@ struct VisualInfoView: View
                         {
                             base_workspace.remove_attachment()
                         }
-                        app_state.document_update_tools()
+                        document_handler.document_update_tools()
                     }
                 }
             case .part:
@@ -418,7 +419,7 @@ struct VisualInfoView: View
                         .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
                         { _, _ in
                             base_workspace.update_object_position()
-                            app_state.document_update_robots()
+                            document_handler.document_update_robots()
                         }
                 case .tool:
                     if !base_workspace.selected_tool.is_attached
@@ -427,7 +428,7 @@ struct VisualInfoView: View
                             .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
                             { _, _ in
                                 base_workspace.update_object_position()
-                                app_state.document_update_tools()
+                                document_handler.document_update_tools()
                             }
                     }
                     else
@@ -489,7 +490,7 @@ struct VisualInfoView: View
                         .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
                         { _, _ in
                             base_workspace.update_object_position()
-                            app_state.document_update_parts()
+                            document_handler.document_update_parts()
                         }
                 default:
                     Text("None")
@@ -528,7 +529,7 @@ struct VisualInfoView: View
                     if old_attachment != attach_robot_name
                     {
                         base_workspace.selected_tool.attached_to = attach_robot_name
-                        app_state.document_update_tools()
+                        document_handler.document_update_tools()
                     }
                 }
                 else
@@ -549,16 +550,16 @@ struct VisualInfoView: View
         switch type_for_save
         {
         case .robot:
-            app_state.document_update_robots()
+            document_handler.document_update_robots()
         case .tool:
             if base_workspace.selected_tool.is_attached
             {
                 base_workspace.remove_attachment()
                 base_workspace.selected_tool.is_attached = false
             }
-            app_state.document_update_tools()
+            document_handler.document_update_tools()
         case.part:
-            app_state.document_update_parts()
+            document_handler.document_update_parts()
         default:
             break
         }

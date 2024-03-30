@@ -232,6 +232,7 @@ struct AddInWorkspaceView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     @State var is_compact = false
     
@@ -435,13 +436,13 @@ struct AddInWorkspaceView: View
         switch type_for_save
         {
         case .robot:
-            app_state.document_update_robots()
+            document_handler.document_update_robots()
             base_workspace.elements_check()
         case .tool:
-            app_state.document_update_tools()
+            document_handler.document_update_tools()
             base_workspace.elements_check()
         case .part:
-            app_state.document_update_parts()
+            document_handler.document_update_parts()
         default:
             break
         }

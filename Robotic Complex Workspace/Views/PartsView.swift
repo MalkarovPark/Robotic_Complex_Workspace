@@ -19,6 +19,7 @@ struct PartsView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     #if os(visionOS)
     @EnvironmentObject var pendant_controller: PendantController
@@ -48,7 +49,7 @@ struct PartsView: View
                                 }, preview: {
                                     SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
                                 })
-                                .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, workspace_parts: base_workspace.file_data().parts, part: part_item, app_state: app_state))
+                                .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, workspace_parts: base_workspace.file_data().parts, part: part_item, document_handler: document_handler))
                                 .transition(AnyTransition.scale)
                             }
                         }
@@ -112,7 +113,7 @@ struct PartsView: View
         withAnimation
         {
             base_workspace.parts.remove(atOffsets: offsets)
-            app_state.document_update_parts()
+            document_handler.document_update_parts()
         }
     }
     
@@ -134,13 +135,12 @@ struct PartsView: View
 //MARK: - Parts card view
 struct PartCardView: View
 {
-    @EnvironmentObject var app_state: AppState
-    
     @State var part_item: Part
     @State private var part_view_presented = false
     @State private var to_rename = false
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     var body: some View
     {
@@ -174,13 +174,13 @@ struct PartCardView: View
         {
             base_workspace.parts.remove(at: base_workspace.parts.firstIndex(of: part_item) ?? 0)
             base_workspace.elements_check()
-            app_state.document_update_parts()
+            document_handler.document_update_parts()
         }
     }
     
     private func update_file()
     {
-        app_state.document_update_parts()
+        document_handler.document_update_parts()
     }
 }
 
@@ -194,11 +194,11 @@ struct PartDropDelegate : DropDelegate
     
     let part: Part
     
-    let app_state: AppState
+    let document_handler: DocumentUpdateHandler
     
     func performDrop(info: DropInfo) -> Bool
     {
-        app_state.document_update_parts()
+        document_handler.document_update_parts()
         return true
     }
     
@@ -230,6 +230,7 @@ struct AddPartView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     var body: some View
     {
@@ -313,7 +314,7 @@ struct AddPartView: View
         
         app_state.previewed_object?.name = new_part_name
         base_workspace.add_part(app_state.previewed_object! as! Part)
-        app_state.document_update_parts()
+        document_handler.document_update_parts()
         
         add_part_view_presented.toggle()
     }
@@ -333,6 +334,7 @@ struct PartView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     var body: some View
     {
@@ -415,7 +417,7 @@ struct PartView: View
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {
-                app_state.document_update_parts()
+                document_handler.document_update_parts()
             }
             is_document_updated = true
         }

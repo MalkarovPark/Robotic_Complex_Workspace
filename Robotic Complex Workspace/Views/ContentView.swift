@@ -50,6 +50,8 @@ struct ContentView: View
     
     @EnvironmentObject var app_state: AppState
     
+    @StateObject private var document_handler = DocumentUpdateHandler()
+    
     //MARK: Main view
     @ViewBuilder var body: some View
     {
@@ -70,7 +72,8 @@ struct ContentView: View
                 document.preset.tools = base_workspace.file_data().tools
             }
         #endif
-            .modifier(DocumentUpdateHandler(document: $document, base_workspace: base_workspace))
+            .modifier(DocumentUpdateModifier(document: $document, base_workspace: base_workspace))
+            .environmentObject(document_handler)
             .onAppear
             {
                 set_internal_scenes_address()
