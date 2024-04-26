@@ -608,16 +608,10 @@ struct RobotView: View
                     .sheet(isPresented: $connector_view_presented)
                     {
                         ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_robots() })
-                        #if os(visionOS)
-                            .frame(width: 512, height: 512)
-                        #endif
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
                         StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { document_handler.document_update_robots() })
-                        #if os(visionOS)
-                            .frame(width: 512, height: 512)
-                        #endif
                     }
                     
                     Button(action: { base_workspace.selected_robot.reset_moving()
@@ -652,7 +646,6 @@ struct RobotView: View
                 #else
                 HStack(alignment: .center, spacing: 0)
                 {
-                    
                     Button(action: { connector_view_presented.toggle() })
                     {
                         Image(systemName: "link")
@@ -668,12 +661,12 @@ struct RobotView: View
                     .buttonBorderShape(.circle)
                     .sheet(isPresented: $connector_view_presented)
                     {
-                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: app_state.document_update_robots)
+                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_robots() })
                             .frame(width: 512, height: 512)
                     }
                     .sheet(isPresented: $statistics_view_presented)
                     {
-                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: base_workspace.selected_robot.clear_chart_data, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: app_state.document_update_robots)
+                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: $base_workspace.selected_robot.charts_data, state_data: $base_workspace.selected_robot.state_data, clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_state_data: base_workspace.selected_robot.clear_state_data, update_file_data: { document_handler.document_update_robots() })
                             .frame(width: 512, height: 512)
                     }
                 }

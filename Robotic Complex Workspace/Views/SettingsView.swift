@@ -27,8 +27,8 @@ struct SettingsView: View
         TabView
         {
             GeneralSettingsView()
-            #if os(iOS) || os(visionOS) || os(visionOS)
-                .modifier(CaptionModifier(label: "General"))
+            #if os(iOS) || os(visionOS)
+                .modifier(Caption(is_presented: $setting_view_presented, label: "General"))
             #endif
                 .tabItem
             {
@@ -38,7 +38,7 @@ struct SettingsView: View
             
             PropertiesSettingsView()
             #if os(iOS) || os(visionOS)
-                .modifier(CaptionModifier(label: "Properties"))
+                .modifier(Caption(is_presented: $setting_view_presented, label: "Properties"))
             #endif
                 .tabItem
             {
@@ -47,7 +47,7 @@ struct SettingsView: View
             
             CellSettingsView()
             #if os(iOS) || os(visionOS)
-                .modifier(CaptionModifier(label: "Cell"))
+                .modifier(Caption(is_presented: $setting_view_presented, label: "Cell"))
             #endif
                 .tabItem
             {
@@ -62,29 +62,49 @@ struct SettingsView: View
 }
 
 #if os(iOS) || os(visionOS)
-struct CaptionModifier: ViewModifier
+struct Caption: ViewModifier
 {
-    @EnvironmentObject var app_state: AppState
+    @Binding var is_presented: Bool
     
-    var label: String
+    let label: String
     
     func body(content: Content) -> some View
     {
         VStack(spacing: 0)
         {
-            HStack(spacing: 0)
+            ZStack
             {
-                Text(label)
-                    .font(.title2)
+                HStack(alignment: .center)
+                {
+                    Text(label)
+                        .padding(0)
+                    #if os(visionOS)
+                        .font(.title2)
+                        .padding(.vertical)
+                    #endif
+                }
+                
+                HStack(spacing: 0)
+                {
+                    Button(action: { is_presented = false })
+                    {
+                        Image(systemName: "xmark")
+                    }
+                    .keyboardShortcut(.cancelAction)
+                    #if !os(visionOS)
+                    .buttonStyle(.borderless)
+                    .controlSize(.extraLarge)
+                    #else
+                    .buttonBorderShape(.circle)
+                    .buttonStyle(.bordered)
+                    #endif
                     .padding()
-                #if os(visionOS)
-                    .padding(.vertical)
-                #endif
+                    
+                    Spacer()
+                }
             }
-            .frame(maxWidth: .infinity)
-            .modifier(ViewCloseButton(is_presented: $app_state.settings_view_presented))
             
-            #if os(iOS)
+            #if !os(visionOS)
             Divider()
             #endif
             
