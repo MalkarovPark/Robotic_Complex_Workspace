@@ -105,9 +105,9 @@ struct ContentView: View
     private func get_file_data() //Store preset file data into workspace
     {
         //Pass bookmarks data into workspace for the models access
-        base_workspace.robots_bookmark = robots_empty ?? true ? nil : robots_bookmark
-        base_workspace.tools_bookmark = tools_empty ?? true ? nil : tools_bookmark
-        base_workspace.parts_bookmark = parts_empty ?? true ? nil : parts_bookmark
+        Workspace.robots_bookmark = robots_empty ?? true ? nil : robots_bookmark
+        Workspace.tools_bookmark = tools_empty ?? true ? nil : tools_bookmark
+        Workspace.parts_bookmark = parts_empty ?? true ? nil : parts_bookmark
         
         base_workspace.file_view(preset: document.preset) //Get file data from document
     }

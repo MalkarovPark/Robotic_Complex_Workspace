@@ -190,7 +190,7 @@ struct PartDropDelegate : DropDelegate
     @Binding var parts : [Part]
     @Binding var dragged_part : Part?
     
-    @State var workspace_parts: [PartStruct]
+    @State var workspace_parts: [Part]
     
     let part: Part
     
