@@ -33,7 +33,12 @@ struct RegistersDataView: View
                 {
                     Image(systemName: "eraser")
                 }
+                #if !os(iOS)
                 .buttonStyle(.bordered)
+                #else
+                .modifier(Squarer(side: 48))
+                .modifier(ButtonBorderer())
+                #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
                 #endif
@@ -43,7 +48,12 @@ struct RegistersDataView: View
                 {
                     Image(systemName: "arrow.down.doc")
                 }
+                #if !os(iOS)
                 .buttonStyle(.bordered)
+                #else
+                .modifier(Squarer(side: 48))
+                .modifier(ButtonBorderer())
+                #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
                 #endif
@@ -53,6 +63,12 @@ struct RegistersDataView: View
                 {
                     Image(systemName: "square.grid.2x2")
                 }
+                #if !os(iOS)
+                .buttonStyle(.bordered)
+                #else
+                .modifier(Squarer(side: 48))
+                .modifier(ButtonBorderer())
+                #endif
                 .popover(isPresented: $is_registers_count_presented)
                 {
                     RegistersCountView(is_presented: $is_registers_count_presented, registers_count: base_workspace.registers.count)
@@ -63,7 +79,6 @@ struct RegistersDataView: View
                     .presentationDetents([.height(96)])
                     #endif
                 }
-                .buttonStyle(.bordered)
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
                 #endif

@@ -38,5 +38,4 @@ struct ViewPendantButton: ViewModifier
             }
     }
 }
-
 #endif

@@ -96,7 +96,12 @@ struct StatisticsView: View
                 {
                     Image(systemName: "eraser")
                 }
+                #if !os(iOS)
                 .buttonStyle(.bordered)
+                #else
+                .modifier(Squarer(side: 34))
+                .modifier(ButtonBorderer())
+                #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
                 #endif
@@ -106,7 +111,12 @@ struct StatisticsView: View
                 {
                     Image(systemName: "arrow.down.doc")
                 }
+                #if !os(iOS)
                 .buttonStyle(.bordered)
+                #else
+                .modifier(Squarer(side: 34))
+                .modifier(ButtonBorderer())
+                #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
                 #endif
@@ -121,7 +131,11 @@ struct StatisticsView: View
                 }
                 .frame(maxWidth: 128)
                 .labelsHidden()
+                #if !os(iOS)
                 .buttonStyle(.bordered)
+                #else
+                .modifier(PickerBorderer())
+                #endif
                 .padding([.vertical, .leading])
                 
                 Button(action: { is_presented.toggle() })

@@ -313,3 +313,13 @@ struct ListBorderer: ViewModifier
         #endif
     }
 }
+
+struct Squarer: ViewModifier
+{
+    let side: CGFloat
+    public func body(content: Content) -> some View
+    {
+        content
+            .frame(width: side, height: side)
+    }
+}

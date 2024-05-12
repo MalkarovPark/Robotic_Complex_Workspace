@@ -415,7 +415,7 @@ struct ToolView: View
                                 Image(systemName: "stop")
                                     .frame(maxWidth: .infinity, maxHeight: 16)
                             }
-                            .buttonStyle(.bordered)
+                            .modifier(ButtonBorderer())
                             
                             Button(action: {
                                 base_workspace.selected_tool.start_pause_performing()
@@ -428,23 +428,21 @@ struct ToolView: View
                                 Image(systemName: "playpause")
                                     .frame(maxWidth: .infinity, maxHeight: 16)
                             }
-                            .buttonStyle(.bordered)
+                            .modifier(ButtonBorderer())
                             
                             Button(action: { connector_view_presented.toggle() })
                             {
                                 Image(systemName: "link")
                                     .frame(maxWidth: .infinity, maxHeight: 16)
                             }
-                            .buttonStyle(.bordered)
-                            .keyboardShortcut(.cancelAction)
+                            .modifier(ButtonBorderer())
                             
                             Button(action: { statistics_view_presented.toggle() })
                             {
                                 Image(systemName: "chart.bar")
                                     .frame(maxWidth: .infinity, maxHeight: 16)
                             }
-                            .buttonStyle(.bordered)
-                            .keyboardShortcut(.cancelAction)
+                            .modifier(ButtonBorderer())
                         }
                         .padding()
                     }
@@ -496,7 +494,7 @@ struct ToolView: View
                             Image(systemName: "stop")
                                 .frame(height: 16)
                         }
-                        .buttonStyle(.bordered)
+                        .modifier(ButtonBorderer())
                         .padding([.vertical, .leading])
                         
                         Button(action: {
@@ -510,7 +508,7 @@ struct ToolView: View
                             Image(systemName: "playpause")
                                 .frame(height: 16)
                         }
-                        .buttonStyle(.bordered)
+                        .modifier(ButtonBorderer())
                         .padding()
                     }
                     .disabled(base_workspace.selected_tool.codes_count == 0)
@@ -525,8 +523,7 @@ struct ToolView: View
                             Image(systemName: "link")
                                 .frame(height: 16)
                         }
-                        .buttonStyle(.bordered)
-                        .keyboardShortcut(.cancelAction)
+                        .modifier(ButtonBorderer())
                         .padding([.vertical, .leading])
                         
                         Button(action: { statistics_view_presented.toggle() })
@@ -534,8 +531,7 @@ struct ToolView: View
                             Image(systemName: "chart.bar")
                                 .frame(height: 16)
                         }
-                        .buttonStyle(.bordered)
-                        .keyboardShortcut(.cancelAction)
+                        .modifier(ButtonBorderer())
                         .padding()
                     }
                     .disabled(base_workspace.selected_tool.codes_count == 0)
