@@ -302,7 +302,7 @@ struct OperationParameterView: View
             
             Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
                 .labelsHidden()
-            #if os(iOS) || os(visionOS)
+            #if os(iOS)
                 .padding(.trailing, 8)
             #endif
         }
@@ -329,7 +329,7 @@ struct AddOperationProgramView: View
             {
                 TextField("Name", text: $new_program_name)
                     .frame(minWidth: 128, maxWidth: 256)
-                #if os(iOS) || os(visionOS)
+                #if os(iOS)
                     .frame(idealWidth: 256)
                     .textFieldStyle(.roundedBorder)
                 #endif
@@ -366,7 +366,7 @@ struct OperationItemView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    #if os(iOS) || os(visionOS)
+    #if os(iOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     
