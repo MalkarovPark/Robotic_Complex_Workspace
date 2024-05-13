@@ -772,7 +772,7 @@ struct PassPreferencesView: View
                     Text("Scale")
                 }
             }
-            .modifier(ListBorderer())
+            .modifier(BackgroundListBorderer())
             .padding(.bottom)
             
             HStack(spacing: 0)
@@ -1504,20 +1504,20 @@ struct RobotInspectorView: View
                         }
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .modifier(BackgroundListBorderer())
                 .padding([.horizontal, .top])
                 
                 if base_workspace.selected_robot.programs_count == 0
                 {
                     Text("No program selected")
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
                 else
                 {
                     if base_workspace.selected_robot.selected_program.points_count == 0
                     {
                         Text("Empty Program")
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -1553,11 +1553,6 @@ struct RobotInspectorView: View
             
             HStack(spacing: 0) //(spacing: 12)
             {
-                #if os(iOS) || os(visionOS)
-                Text("Program")
-                    .font(.subheadline)
-                #endif
-                
                 Picker("Program", selection: $base_workspace.selected_robot.selected_program_index)
                 {
                     if base_workspace.selected_robot.programs_names.count > 0
@@ -1576,6 +1571,9 @@ struct RobotInspectorView: View
                 .disabled(base_workspace.selected_robot.programs_names.count == 0)
                 .frame(maxWidth: .infinity)
                 #if os(iOS) || os(visionOS)
+                .modifier(PickerNamer(name: "Program"))
+                #endif
+                #if os(visionOS)
                 .buttonStyle(.borderedProminent)
                 #endif
                 

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import IndustrialKit
 
 struct DynamicStack<Content: View>: View
 {
@@ -57,8 +58,10 @@ struct PickerNamer: ViewModifier
         HStack(spacing: 0)
         {
             Text(name)
+                .font(.subheadline)
                 .padding(.trailing)
             content
+                .modifier(PickerBorderer())
         }
     }
 }

@@ -306,10 +306,45 @@ struct ListBorderer: ViewModifier
     {
         content
         #if os(macOS)
-            .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-            .shadow(radius: 1)
+            .clipShape(RoundedRectangle(cornerRadius: 4.5, style: .continuous))
         #else
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 7.5, style: .continuous))
+        #endif
+            .shadow(radius: 1)
+    }
+}
+
+struct BackgroundListBorderer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        ZStack
+        {
+            Rectangle()
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            content
+                .listStyle(.plain)
+        }
+        #if os(macOS)
+        .clipShape(RoundedRectangle(cornerRadius: 4.5, style: .continuous))
+        #else
+        .clipShape(RoundedRectangle(cornerRadius: 7.5, style: .continuous))
+        #endif
+        .shadow(radius: 1)
+    }
+}
+
+struct Framer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        content
+        #if os(macOS)
+            .clipShape(RoundedRectangle(cornerRadius: 4.5, style: .continuous))
+        #else
+            .clipShape(RoundedRectangle(cornerRadius: 7.5, style: .continuous))
         #endif
     }
 }

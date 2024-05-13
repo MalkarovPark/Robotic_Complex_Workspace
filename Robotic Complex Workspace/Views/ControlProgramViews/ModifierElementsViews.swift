@@ -428,23 +428,20 @@ struct ObserverElementView: View
                         #else
                         .frame(width: 320, height: 256)
                         #endif
-                        .modifier(ListBorderer())
+                        .modifier(BackgroundListBorderer())
                         .padding(.bottom)
                     }
                     else
                     {
                         ZStack
                         {
-                            #if os(macOS)
                             Rectangle()
                                 .foregroundStyle(.white)
-                            #endif
+                            
                             Text("No items to ouput")
                         }
                         .frame(width: 256, height: 64)
-                        #if os(macOS)
-                        .modifier(ListBorderer())
-                        #endif
+                        .modifier(BackgroundListBorderer())
                         .padding(.bottom)
                     }
                     
@@ -511,23 +508,20 @@ struct ObserverElementView: View
                         #else
                         .frame(width: 320, height: 256)
                         #endif
-                        .modifier(ListBorderer())
+                        .modifier(BackgroundListBorderer())
                         .padding(.bottom)
                     }
                     else
                     {
                         ZStack
                         {
-                            #if os(macOS)
                             Rectangle()
                                 .foregroundStyle(.white)
-                            #endif
+                            
                             Text("No items to ouput")
                         }
                         .frame(width: 256, height: 64)
-                        #if os(macOS)
-                        .modifier(ListBorderer())
-                        #endif
+                        .modifier(BackgroundListBorderer())
                         .padding(.bottom)
                     }
                     

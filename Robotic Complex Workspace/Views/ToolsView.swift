@@ -540,7 +540,7 @@ struct ToolView: View
                 Divider()
                 
                 ToolInspectorView(new_operation_code: $new_operation_code, remove_codes: remove_codes(at:), code_item_move: code_item_move(from:to:), add_operation_to_program: add_operation_to_program, delete_operations_program: delete_operations_program, update_data: update_data)
-                    .frame(width: 256)
+                    .frame(width: 300)
             }
             #else
             HStack(spacing: 0)
@@ -734,9 +734,8 @@ struct ToolInspectorView: View
                             }
                         }
                     }
-                    #if os(iOS)
-                    .listStyle(.plain)
-                    #endif
+                    .modifier(BackgroundListBorderer())
+                    .padding([.horizontal, .top])
                     
                     if base_workspace.selected_tool.programs_count == 0
                     {
@@ -843,18 +842,12 @@ struct ToolInspectorView: View
                             #endif
                         }
                         .padding(.trailing, 24)
-                        
                     }
-                    .padding(8)
+                    .padding(.trailing, 14)
                 }
                 
                 HStack(spacing: 0)
                 {
-                    #if os(iOS)
-                    Text("Program")
-                        .font(.subheadline)
-                    #endif
-                    
                     Picker("Program", selection: $base_workspace.selected_tool.selected_program_index)
                     {
                         if base_workspace.selected_tool.programs_names.count > 0
@@ -876,7 +869,7 @@ struct ToolInspectorView: View
                     .disabled(base_workspace.selected_tool.programs_names.count == 0)
                     .frame(maxWidth: .infinity)
                     #if os(iOS)
-                    .buttonStyle(.borderedProminent)
+                    .modifier(PickerNamer(name: "Program"))
                     #endif
                     
                     Button("-")
