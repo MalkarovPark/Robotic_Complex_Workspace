@@ -428,7 +428,7 @@ struct ObserverElementView: View
                         #else
                         .frame(width: 320, height: 256)
                         #endif
-                        .modifier(BackgroundListBorderer())
+                        .modifier(ListBorderer())
                         .padding(.bottom)
                     }
                     else
@@ -441,7 +441,7 @@ struct ObserverElementView: View
                             Text("No items to ouput")
                         }
                         .frame(width: 256, height: 64)
-                        .modifier(BackgroundListBorderer())
+                        .modifier(ListBorderer())
                         .padding(.bottom)
                     }
                     
@@ -508,7 +508,7 @@ struct ObserverElementView: View
                         #else
                         .frame(width: 320, height: 256)
                         #endif
-                        .modifier(BackgroundListBorderer())
+                        .modifier(ListBorderer())
                         .padding(.bottom)
                     }
                     else
@@ -521,7 +521,7 @@ struct ObserverElementView: View
                             Text("No items to ouput")
                         }
                         .frame(width: 256, height: 64)
-                        .modifier(BackgroundListBorderer())
+                        .modifier(ListBorderer())
                         .padding(.bottom)
                     }
                     

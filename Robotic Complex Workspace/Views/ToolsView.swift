@@ -734,7 +734,7 @@ struct ToolInspectorView: View
                             }
                         }
                     }
-                    .modifier(BackgroundListBorderer())
+                    .modifier(ListBorderer())
                     .padding([.horizontal, .top])
                     
                     if base_workspace.selected_tool.programs_count == 0

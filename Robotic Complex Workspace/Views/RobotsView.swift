@@ -772,7 +772,7 @@ struct PassPreferencesView: View
                     Text("Scale")
                 }
             }
-            .modifier(BackgroundListBorderer())
+            .modifier(ListBorderer())
             .padding(.bottom)
             
             HStack(spacing: 0)
@@ -1504,7 +1504,7 @@ struct RobotInspectorView: View
                         }
                     }
                 }
-                .modifier(BackgroundListBorderer())
+                .modifier(ListBorderer())
                 .padding([.horizontal, .top])
                 
                 if base_workspace.selected_robot.programs_count == 0
