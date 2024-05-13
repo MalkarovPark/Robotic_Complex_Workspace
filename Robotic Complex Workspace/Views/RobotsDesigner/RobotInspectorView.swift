@@ -121,11 +121,8 @@ struct RobotInspectorView: View
                 .pickerStyle(.menu)
                 .disabled(base_workspace.selected_robot.programs_names.count == 0)
                 .frame(maxWidth: .infinity)
-                #if os(iOS) || os(visionOS)
+                #if os(iOS)
                 .modifier(PickerNamer(name: "Program"))
-                #endif
-                #if os(visionOS)
-                .buttonStyle(.borderedProminent)
                 #endif
                 
                 Button("-")
@@ -259,7 +256,7 @@ struct AddProgramView: View
             {
                 TextField("Name", text: $new_program_name)
                     .frame(minWidth: 128, maxWidth: 256)
-                #if os(iOS) || os(visionOS)
+                #if os(iOS)
                     .frame(idealWidth: 256)
                     .textFieldStyle(.roundedBorder)
                 #endif
@@ -296,7 +293,7 @@ struct PositionItemView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
-    #if os(iOS) || os(visionOS)
+    #if os(iOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
     #endif
     
@@ -358,7 +355,7 @@ struct PositionPointView: View
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    #if os(iOS) || os(visionOS)
+    #if os(iOS)
     @State var is_compact = false
     #endif
     
