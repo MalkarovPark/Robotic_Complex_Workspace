@@ -130,7 +130,7 @@ class DrillConnector: ToolConnector
     }
     
     //MARK: - State functions
-    override func state() -> [StateItem]?
+    override func state_data() -> [StateItem]?
     {
         var state = [StateItem]()
         state.append(StateItem(name: "Rotation frequency", value: "40 Hz", image: "arrow.triangle.2.circlepath"))

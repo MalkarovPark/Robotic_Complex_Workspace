@@ -61,7 +61,9 @@ struct PickerNamer: ViewModifier
                 .font(.subheadline)
                 .padding(.trailing)
             content
+            #if os(iOS)
                 .modifier(PickerBorderer())
+            #endif
         }
     }
 }
