@@ -301,7 +301,7 @@ struct ToolView: View
         }
         .sheet(isPresented: $statistics_view_presented)
         {
-            StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: $base_workspace.selected_tool.charts_data, state_data: $tool_item.states_data, clear_chart_data: { tool_item.clear_chart_data() }, clear_state_data: tool_item.clear_state_data, update_file_data: { document_handler.document_update_tools() })
+            StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: base_workspace.selected_tool.charts_binding(), states_data: tool_item.states_binding(), clear_chart_data: { tool_item.clear_chart_data() }, clear_states_data: tool_item.clear_states_data, update_file_data: { document_handler.document_update_tools() })
             #if os(visionOS)
                 .frame(width: 512, height: 512)
             #endif

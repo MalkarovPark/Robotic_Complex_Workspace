@@ -111,7 +111,7 @@ class _6DOFConnector: RobotConnector
     }
     
     //MARK: - State functions
-    override func states_data() -> [StateItem]?
+    override func updated_states_data() -> [StateItem]?
     {
         var state = [StateItem]()
         state.append(StateItem(name: "Rotation frequency", value: "40 Hz", image: "arrow.triangle.2.circlepath"))

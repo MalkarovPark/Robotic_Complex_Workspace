@@ -228,7 +228,7 @@ class PortalController: RobotModelController
     private var chart_ik_values = [Float](repeating: 0, count: 3)
     private var domain_index: Float = 0
     
-    override func charts_data() -> [WorkspaceObjectChart]?
+    override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         if charts.count == 0
         {
@@ -266,7 +266,7 @@ class PortalController: RobotModelController
         charts = [WorkspaceObjectChart]()
     }
     
-    override func state_data() -> [StateItem]?
+    override func updated_states_data() -> [StateItem]?
     {
         var state = [StateItem]()
         state.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))

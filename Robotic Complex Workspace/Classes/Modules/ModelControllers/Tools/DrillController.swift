@@ -76,7 +76,7 @@ class DrillController: ToolModelController
     private var charts = [WorkspaceObjectChart]()
     private var domain_index: Float = 0
     
-    override func charts_data() -> [WorkspaceObjectChart]?
+    override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         guard nodes.count == 1 else
         {
@@ -157,7 +157,7 @@ class DrillController: ToolModelController
         charts = [WorkspaceObjectChart]()
     }
     
-    override func state_data() -> [StateItem]?
+    override func updated_states_data() -> [StateItem]?
     {
         var state = [StateItem]()
         
