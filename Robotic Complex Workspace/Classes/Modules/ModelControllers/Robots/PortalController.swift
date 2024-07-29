@@ -237,7 +237,7 @@ class PortalController: RobotModelController
         }
         
         //Update tool location chart
-        let tool_node = nodes.last
+        let tool_node = pointer_node
         
         var axis_names = ["X", "Y", "Z"]
         var components = [tool_node?.worldPosition.x, tool_node?.worldPosition.z, tool_node?.worldPosition.y]

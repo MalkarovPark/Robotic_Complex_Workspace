@@ -29,7 +29,7 @@ struct RobotsTableView: View
             if base_workspace.robots.count > 0
             {
                 //MARK: Scroll view for robots
-                ScrollView(.vertical, showsIndicators: true)
+                ScrollView(.vertical)
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
