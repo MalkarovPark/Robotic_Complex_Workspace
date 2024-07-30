@@ -11,7 +11,7 @@ import IndustrialKit
 
 class DrillController: ToolModelController
 {
-    override func nodes_connect(_ node: SCNNode)
+    override func connect_nodes(_ node: SCNNode)
     {
         guard let drill_node = node.childNode(withName: "drill", recursively: true)
         else
@@ -66,7 +66,7 @@ class DrillController: ToolModelController
         }
     }
     
-    override func reset_model()
+    override func reset_nodes()
     {
         rotated[0] = false
         rotated[1] = false
@@ -151,7 +151,7 @@ class DrillController: ToolModelController
         return (acceleration_values, velocity_values)
     }
     
-    override func clear_charts_data()
+    override func reset_charts_data()
     {
         domain_index = 0
         charts = [WorkspaceObjectChart]()

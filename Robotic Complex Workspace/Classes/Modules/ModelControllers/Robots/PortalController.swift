@@ -12,7 +12,7 @@ import IndustrialKit
 class PortalController: RobotModelController
 {
     //MARK: - Portal nodes connect
-    override func nodes_connect(_ node: SCNNode)
+    override func connect_nodes(_ node: SCNNode)
     {
         let without_lengths = lengths.count == 0
         
@@ -49,7 +49,7 @@ class PortalController: RobotModelController
     }
     
     //MARK: - Inverse kinematic parts calculation for roataion angles of portal
-    override func inverse_kinematic_calculate(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
+    override func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
     {
         var px, py, pz: Float
         
@@ -99,7 +99,7 @@ class PortalController: RobotModelController
         return [px, py, pz]
     }
     
-    override func nodes_update(values: [Float])
+    override func update_nodes(values: [Float])
     {
         #if os(macOS)
         nodes[1].position.x = CGFloat(values[1])
@@ -259,7 +259,7 @@ class PortalController: RobotModelController
         return charts
     }
     
-    override func clear_charts_data()
+    override func reset_charts_data()
     {
         domain_index = 0
         chart_ik_values = [Float](repeating: 0, count: 3)

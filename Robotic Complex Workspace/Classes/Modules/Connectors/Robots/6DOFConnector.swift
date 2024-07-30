@@ -91,7 +91,7 @@ class _6DOFConnector: RobotConnector
             sum_y = lpart_y * Float(i)
             sum_z = lpart_z * Float(i)
 
-            model_controller?.nodes_update(pointer_location: [sum_x, sum_y, sum_z], pointer_roation: [point.r, point.p, point.w], origin_location: origin_location, origin_rotation: origin_rotation)
+            model_controller?.update_nodes(pointer_location: [sum_x, sum_y, sum_z], pointer_rotation: [point.r, point.p, point.w], origin_location: origin_location, origin_rotation: origin_rotation)
             
             if canceled
             {
@@ -103,7 +103,7 @@ class _6DOFConnector: RobotConnector
         
         if canceled
         {
-            model_controller?.nodes_update(pointer_location: [0, 0, 0], pointer_roation: [0, 0, 0], origin_location: origin_location, origin_rotation: origin_rotation)
+            model_controller?.update_nodes(pointer_location: [0, 0, 0], pointer_rotation: [0, 0, 0], origin_location: origin_location, origin_rotation: origin_rotation)
         }
         
         //model_controller?.nodes_update(pointer_location: [point.x, point.y, point.z], pointer_roation: [point.r, point.p, point.w], origin_location: origin_location, origin_rotation: origin_rotation)

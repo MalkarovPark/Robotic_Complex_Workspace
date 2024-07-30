@@ -11,7 +11,7 @@ import IndustrialKit
 
 class GripperController: ToolModelController
 {
-    override func nodes_connect(_ node: SCNNode)
+    override func connect_nodes(_ node: SCNNode)
     {
         guard let jaw_node = node.childNode(withName: "jaw", recursively: true)
         else
@@ -89,7 +89,7 @@ class GripperController: ToolModelController
         }
     }
     
-    override func reset_model()
+    override func reset_nodes()
     {
         closed = false
         moved = false
@@ -127,7 +127,7 @@ class GripperController: ToolModelController
         return charts
     }
     
-    override func clear_charts_data()
+    override func reset_charts_data()
     {
         domain_index = 0
         charts = [WorkspaceObjectChart]()

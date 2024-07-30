@@ -124,7 +124,7 @@ class DrillConnector: ToolConnector
         
         if update_model
         {
-            model_controller?.reset_model()
+            model_controller?.reset_nodes()
             //remove_all_model_actions()
         }
     }
