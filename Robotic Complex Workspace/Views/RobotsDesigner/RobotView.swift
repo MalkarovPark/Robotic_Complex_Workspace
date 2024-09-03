@@ -66,17 +66,17 @@ struct RobotView: View
             app_state.force_resize_view = false
             #endif
         }
-        .toolbar
+        .toolbar(id: "robot")
         {
             //MARK: Toolbar items
-            ToolbarItem(placement: toolbar_item_placement_leading)
+            ToolbarItem(id: "Back", placement: toolbar_item_placement_leading)
             {
                 Button(action: close_robot)
                 {
                     #if os(macOS)
-                    Image(systemName: "chevron.left")
+                    Label("Back", systemImage: "chevron.left")
                     #else
-                    Image(systemName: "xmark")
+                    Label("Back", systemImage: "xmark")
                     #endif
                 }
                 #if os(visionOS)
@@ -84,90 +84,76 @@ struct RobotView: View
                 #endif
             }
             
-            ToolbarItem(placement: compact_placement())
+            ToolbarItem(id: "Connector", placement: compact_placement())
             {
-                #if !os(visionOS)
-                HStack(alignment: .center)
+                Button(action: { connector_view_presented.toggle() })
                 {
-                    
-                    Button(action: { connector_view_presented.toggle() })
-                    {
-                        Image(systemName: "link")
-                    }
-                    
-                    Button(action: { statistics_view_presented.toggle()
-                    })
-                    {
-                        Image(systemName: "chart.bar")
-                    }
-                    .sheet(isPresented: $connector_view_presented)
-                    {
-                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_robots() })
-                    }
-                    .sheet(isPresented: $statistics_view_presented)
-                    {
-                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: base_workspace.selected_robot.charts_binding(), states_data: base_workspace.selected_robot.states_binding(), clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_states_data: base_workspace.selected_robot.clear_states_data, update_file_data: { document_handler.document_update_robots() })
-                    }
-                    
+                    Label("Connector", systemImage:"link")
+                }
+                .sheet(isPresented: $connector_view_presented)
+                {
+                    ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_robots() })
+                    #if os(visionOS)
+                        .frame(width: 512, height: 512)
+                    #endif
+                }
+            }
+            
+            ToolbarItem(id: "Statistics", placement: compact_placement())
+            {
+                Button(action: { statistics_view_presented.toggle()
+                })
+                {
+                    Label("Statistics", systemImage:"chart.bar")
+                }
+                .sheet(isPresented: $statistics_view_presented)
+                {
+                    StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: base_workspace.selected_robot.charts_binding(), states_data: base_workspace.selected_robot.states_binding(), clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_states_data: base_workspace.selected_robot.clear_states_data, update_file_data: { document_handler.document_update_robots() })
+                    #if os(visionOS)
+                        .frame(width: 512, height: 512)
+                    #endif
+                }
+            }
+            
+            ToolbarItem(id: "Controls", placement: compact_placement())
+            {
+                ControlGroup
+                {
                     Button(action: { base_workspace.selected_robot.reset_moving()
                     })
                     {
-                        Image(systemName: "stop")
+                        Label("Stop", systemImage: "stop")
                     }
                     Button(action: { base_workspace.selected_robot.start_pause_moving()
                     })
                     {
-                        Image(systemName: "playpause")
-                    }
-                    
-                    Divider()
-                    
-                    Button(action: { inspector_presented.toggle() })
-                    {
-                        #if os(macOS)
-                        Image(systemName: "sidebar.right")
-                        #else
-                        if !(horizontal_size_class == .compact)
-                        {
-                            Image(systemName: "sidebar.right")
-                        }
-                        else
-                        {
-                            Image(systemName: "rectangle.portrait.bottomthird.inset.filled")
-                        }
-                        #endif
+                        Label("Perform", systemImage: "playpause")
                     }
                 }
-                #else
-                HStack(alignment: .center, spacing: 0)
-                {
-                    Button(action: { connector_view_presented.toggle() })
-                    {
-                        Image(systemName: "link")
-                    }
-                    .buttonBorderShape(.circle)
-                    .padding(.trailing)
-                    
-                    Button(action: { statistics_view_presented.toggle()
-                    })
-                    {
-                        Image(systemName: "chart.bar")
-                    }
-                    .buttonBorderShape(.circle)
-                    .sheet(isPresented: $connector_view_presented)
-                    {
-                        ConnectorView(is_presented: $connector_view_presented, demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_robots() })
-                            .frame(width: 512, height: 512)
-                    }
-                    .sheet(isPresented: $statistics_view_presented)
-                    {
-                        StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: base_workspace.selected_robot.charts_binding(), states_data: base_workspace.selected_robot.states_binding(), clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_states_data: base_workspace.selected_robot.clear_states_data, update_file_data: { document_handler.document_update_robots() })
-                            .frame(width: 512, height: 512)
-                    }
-                }
-                #endif
             }
+            
+            #if !os(visionOS)
+            ToolbarItem(id: "pendant", placement: compact_placement())
+            {
+                Button(action: { inspector_presented.toggle() })
+                {
+                    #if os(macOS)
+                    Label("Pendant", systemImage: "sidebar.right")
+                    #else
+                    if !(horizontal_size_class == .compact)
+                    {
+                        Label("Pendant", systemImage: "sidebar.right")
+                    }
+                    else
+                    {
+                        Label("Pendant", systemImage: "rectangle.portrait.bottomthird.inset.filled")
+                    }
+                    #endif
+                }
+            }
+            #endif
         }
+        .toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.selected_robot.performed, toggle_perform: base_workspace.selected_robot.start_pause_moving, stop_perform: base_workspace.selected_robot.reset_moving))
     }
     

@@ -78,87 +78,89 @@ struct WorkspaceView: View
                 .frame(width: 600, height: 600)
             #endif
         }
-        .toolbar
+        .toolbar(id: "workspace")
         {
-            ToolbarItem(placement: compact_placement())
+            #if !os(visionOS)
+            ToolbarItem(id: "Registers")
             {
-                //MARK: Workspace performing elements
-                #if !os(visionOS)
-                HStack(alignment: .center)
+                Button(action: { registers_view_presented = true })
                 {
-                    Button(action: { registers_view_presented = true })
-                    {
-                        Label("Registers", systemImage: "number")
-                    }
-                    
-                    Divider()
-                    
+                    Label("Registers", systemImage: "number")
+                }
+            }
+            
+            ToolbarItem(id: "Controls", placement: compact_placement())
+            {
+                ControlGroup
+                {
                     Button(action: change_cycle)
                     {
                         if base_workspace.cycled
                         {
-                            Label("Repeat", systemImage: "repeat")
+                            Label("Cycle", systemImage: "repeat")
                         }
                         else
                         {
-                            Label("One", systemImage: "repeat.1")
+                            Label("Cycle", systemImage: "repeat.1")
                         }
                     }
                     
                     Button(action: stop_perform)
                     {
-                        Label("Reset", systemImage: "stop")
+                        Label("Stop", systemImage: "stop")
                     }
                     
                     Button(action: toggle_perform)
                     {
-                        Label("PlayPause", systemImage: "playpause")
-                    }
-                    
-                    Divider()
-                    
-                    Button(action: { inspector_presented.toggle() })
-                    {
-                        #if os(macOS)
-                        Image(systemName: "sidebar.right")
-                        #else
-                        if !(horizontal_size_class == .compact)
-                        {
-                            Image(systemName: "sidebar.right")
-                        }
-                        else
-                        {
-                            Image(systemName: "rectangle.portrait.bottomthird.inset.filled")
-                        }
-                        #endif
+                        Label("Perform", systemImage: "playpause")
                     }
                 }
-                #else
-                HStack(alignment: .center, spacing: 0)
-                {
-                    Button(action: { registers_view_presented = true })
-                    {
-                        Label("Registers", systemImage: "number")
-                    }
-                    .buttonBorderShape(.circle)
-                    .padding(.trailing)
-                    
-                    Button(action: change_cycle)
-                    {
-                        if base_workspace.cycled
-                        {
-                            Label("Repeat", systemImage: "repeat")
-                        }
-                        else
-                        {
-                            Label("One", systemImage: "repeat.1")
-                        }
-                    }
-                    .buttonBorderShape(.circle)
-                }
-                #endif
             }
+            
+            ToolbarItem(id: "Sidebar")
+            {
+                Button(action: { inspector_presented.toggle() })
+                {
+                    #if os(macOS)
+                    Label("Pendant", systemImage: "sidebar.right")
+                    #else
+                    if !(horizontal_size_class == .compact)
+                    {
+                        Label("Pendant", systemImage: "sidebar.right")
+                    }
+                    else
+                    {
+                        Label("Pendant", systemImage: "rectangle.portrait.bottomthird.inset.filled")
+                    }
+                    #endif
+                }
+            }
+            #else
+            ToolbarItemGroup
+            {
+                Button(action: { registers_view_presented = true })
+                {
+                    Label("Registers", systemImage: "number")
+                }
+                .buttonBorderShape(.circle)
+                .padding(.trailing)
+                
+                Button(action: change_cycle)
+                {
+                    if base_workspace.cycled
+                    {
+                        Label("Cycle", systemImage: "repeat")
+                    }
+                    else
+                    {
+                        Label("Cycle", systemImage: "repeat.1")
+                    }
+                }
+                .buttonBorderShape(.circle)
+            }
+            #endif
         }
+        .toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
     }
     

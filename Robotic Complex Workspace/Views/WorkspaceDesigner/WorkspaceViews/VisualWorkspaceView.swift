@@ -326,18 +326,25 @@ struct WorkspaceSceneView: UIViewRepresentable
     
     func scene_check() //Render functions
     {
-        if base_workspace.any_object_selected && base_workspace.performed
+        switch base_workspace.selected_object_type
         {
+        case .robot:
             base_workspace.selected_robot.update_model()
             
-            if base_workspace.selected_robot.moving_completed
+            /*if base_workspace.selected_robot.moving_completed
             {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
                 {
                     base_workspace.selected_robot.moving_completed = false
                     base_workspace.update_view()
                 }
-            }
+            }*/
+        case .tool:
+            base_workspace.selected_tool.update_statistics_data()
+        case .part:
+            break
+        case .none:
+            break
         }
         
         if base_workspace.element_changed

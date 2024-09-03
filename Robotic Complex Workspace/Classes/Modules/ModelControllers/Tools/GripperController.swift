@@ -131,6 +131,7 @@ class GripperController: ToolModelController
     {
         domain_index = 0
         charts = [WorkspaceObjectChart]()
+        charts_data = nil
     }
     
     override func updated_states_data() -> [StateItem]?
