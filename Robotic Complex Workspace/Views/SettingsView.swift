@@ -211,7 +211,11 @@ struct GeneralSettingsView: View
 //MARK: - Modules settings view
 struct ModulesSettingsView: View
 {
+    //@AppStorage("ModulesFolderBookmark") private var modules_folder_bookmark: Data?
+    
     @EnvironmentObject var app_state: AppState
+    
+    @State private var folder_picker_is_presented: Bool = false
     
     var body: some View
     {
@@ -230,36 +234,36 @@ struct ModulesSettingsView: View
                             VStack
                             {
                                 Text(app_state.property_files_info.Brands)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Robot")
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
                             
                             VStack
                             {
                                 Text(app_state.property_files_info.Series)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Tool")
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
                             
                             VStack
                             {
                                 Text(app_state.property_files_info.Series)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Part")
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
                             
                             VStack
                             {
                                 Text(app_state.property_files_info.Models)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Changer")
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
                         }
@@ -269,16 +273,16 @@ struct ModulesSettingsView: View
                         
                         HStack
                         {
-                            Text("Modules Folder")
-                                .foregroundColor(Color.gray)
+                            Text(app_state.modules_folder_name)
+                                .foregroundColor(.secondary)
                                 .frame(maxWidth: .infinity)
                             
-                            Button(action: {  })
+                            Button(action: { folder_picker_is_presented = true })
                             {
                                 Image(systemName: "folder")
                             }
                             
-                            Button(action: {  })
+                            Button(action: { app_state.clear_modules() })
                             {
                                 Image(systemName: "arrow.counterclockwise")
                             }
@@ -299,36 +303,36 @@ struct ModulesSettingsView: View
                             VStack
                             {
                                 Text(app_state.property_files_info.Brands)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Robot")
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
                             
                             VStack
                             {
                                 Text(app_state.property_files_info.Series)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Tool")
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
                             
                             VStack
                             {
                                 Text(app_state.property_files_info.Series)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Part")
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
                             
                             VStack
                             {
                                 Text(app_state.property_files_info.Models)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Changer")
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
                         }
@@ -346,36 +350,36 @@ struct ModulesSettingsView: View
                     VStack
                     {
                         Text(app_state.property_files_info.Brands)
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                         Text("Robot")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                     }
                     Spacer()
                     
                     VStack
                     {
                         Text(app_state.property_files_info.Series)
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                         Text("Tool")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                     }
                     Spacer()
                     
                     VStack
                     {
                         Text(app_state.property_files_info.Series)
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                         Text("Part")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                     }
                     Spacer()
                     
                     VStack
                     {
                         Text(app_state.property_files_info.Models)
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                         Text("Changer")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                     }
                 }
                 .padding(.horizontal)
@@ -383,17 +387,17 @@ struct ModulesSettingsView: View
                 HStack(spacing: 16)
                 {
                     Text("Modules Folder")
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity)
                     
-                    Button(action: {  })
+                    Button(action: { folder_picker_is_presented = true })
                     {
                         Image(systemName: "folder")
                             .frame(height: 24)
                     }
                     .modifier(ButtonBorderer())
                     
-                    Button(action: {  })
+                    Button(action: { app_state.clear_modules() })
                     {
                         Image(systemName: "arrow.counterclockwise")
                             .frame(height: 24)
@@ -410,36 +414,36 @@ struct ModulesSettingsView: View
                     VStack
                     {
                         Text(app_state.property_files_info.Brands)
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                         Text("Robot")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                     }
                     Spacer()
                     
                     VStack
                     {
                         Text(app_state.property_files_info.Series)
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                         Text("Tool")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                     }
                     Spacer()
                     
                     VStack
                     {
                         Text(app_state.property_files_info.Series)
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                         Text("Part")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                     }
                     Spacer()
                     
                     VStack
                     {
                         Text(app_state.property_files_info.Models)
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                         Text("Changer")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(.secondary)
                     }
                 }
                 .padding(.horizontal)
@@ -449,6 +453,23 @@ struct ModulesSettingsView: View
         #if os(macOS)
         .frame(width: 320)
         #endif
+        .fileImporter(isPresented: $folder_picker_is_presented,
+                              allowedContentTypes: [.folder],
+                              allowsMultipleSelection: true)
+        { result in
+            switch result
+            {
+            case .success(let urls):
+                if let url = urls.first
+                {
+                    app_state.update_modules_bookmark(url: url)
+                    print("Selected folder: \(url)")
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+                break
+            }
+        }
     }
 }
 

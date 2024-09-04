@@ -236,6 +236,80 @@ class AppState: ObservableObject
             parts = Array(parts_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of parts
             part_name = parts.first ?? "None" //Set first array element as selected part name
         }
+        
+        import_modules(bookmark: modules_folder_bookmark)
+    }
+    
+    //MARK: - Modules handling functions
+    @AppStorage("ModulesFolderBookmark") private var modules_folder_bookmark: Data?
+    
+    public var modules: [String] = []
+    public var modules_folder_url: URL? = nil
+    
+    public func update_modules_bookmark(url: URL?)
+    {
+        guard url!.startAccessingSecurityScopedResource() else
+        {
+            return
+        }
+        
+        do { url?.stopAccessingSecurityScopedResource() }
+        
+        do
+        {
+            modules_folder_bookmark = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
+            //modules_folder_url = url
+            import_modules(bookmark: modules_folder_bookmark)
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+    }
+    
+    public func import_modules(bookmark: Data?)
+    {
+        do
+        {
+            var is_stale = false
+            modules_folder_url = try URL(resolvingBookmarkData: bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            
+            for plist_url in directory_contents(url: modules_folder_url!)
+            {
+                modules.append(plist_url.lastPathComponent) //Append file name
+            }
+            //names = names.filter{ $0.contains(".plist") } //Remove non-plist files names
+            //names = names.compactMap { $0.components(separatedBy: ".").first } //Remove extension from names
+        }
+        catch
+        {
+            //print(error.localizedDescription)
+        }
+    }
+    
+    public func directory_contents(url: URL) -> [URL] //Get all files URLs from frolder url
+    {
+        do
+        {
+            return try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+        }
+        catch
+        {
+            //print(error)
+            return []
+        }
+    }
+    
+    public func clear_modules()
+    {
+        modules_folder_bookmark = nil
+        modules.removeAll()
+        modules_folder_url = nil
+    }
+    
+    public var modules_folder_name: String
+    {
+        return modules_folder_url?.deletingLastPathComponent().lastPathComponent ?? "Modules Folder"
     }
     
     //MARK: - Get additive workspace objects data from external property list
@@ -332,19 +406,6 @@ class AppState: ObservableObject
         }
         
         return plist_names
-    }
-    
-    public func directory_contents(url: URL) -> [URL] //Get all files URLs from frolder url
-    {
-        do
-        {
-            return try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
-        }
-        catch
-        {
-            //print(error)
-            return []
-        }
     }
     
     public func get_defaults_plist_names(type: WorkspaceObjectType) //Pass plist names from user defaults to AppState variables
