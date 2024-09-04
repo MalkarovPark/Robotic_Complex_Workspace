@@ -51,9 +51,6 @@ struct StatisticsView: View
                 }
                 else
                 {
-                    Text("Statistics")
-                        .font(.title2)
-                        .padding([.top, .horizontal])
                     EmptyStatisticsView()
                 }
             }
@@ -65,9 +62,6 @@ struct StatisticsView: View
                 }
                 else
                 {
-                    Text("Statistics")
-                        .font(.title2)
-                        .padding([.top, .horizontal])
                     EmptyStatisticsView()
                 }
             }
@@ -142,25 +136,18 @@ struct StatisticsView: View
                         Text(stats_items[index]).tag(index)
                     }
                 }
-                .frame(maxWidth: 128)
+                .pickerStyle(.segmented)
+                .frame(maxWidth: .infinity)
                 .labelsHidden()
                 #if !os(iOS)
                 .buttonStyle(.bordered)
                 #else
                 .modifier(PickerBorderer())
                 #endif
-                .padding([.vertical, .leading])
-                
-                Button(action: { is_presented.toggle() })
-                {
-                    Text("Dismiss")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
                 .padding()
             }
         }
+        .modifier(SheetCaption(is_presented: $is_presented, label: caption_text()))
         #if os(macOS)
         .controlSize(.large)
         .frame(minWidth: 448, idealWidth: 480, maxWidth: 512, minHeight: 448, idealHeight: 480, maxHeight: 512)
@@ -181,6 +168,11 @@ struct StatisticsView: View
         }
         
         base_workspace.update_view()
+    }
+    
+    private func caption_text() -> String
+    {
+        return "Statistics"
     }
 }
 

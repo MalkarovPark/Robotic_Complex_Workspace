@@ -28,7 +28,7 @@ struct SettingsView: View
         {
             GeneralSettingsView()
             #if os(iOS) || os(visionOS)
-                .modifier(Caption(is_presented: $setting_view_presented, label: "General"))
+                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "General"))
             #endif
                 .tabItem
             {
@@ -36,18 +36,27 @@ struct SettingsView: View
             }
             .tag(Tabs.general)
             
-            PropertiesSettingsView()
+            ModulesSettingsView()
             #if os(iOS) || os(visionOS)
-                .modifier(Caption(is_presented: $setting_view_presented, label: "Properties"))
+                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Modules"))
+            #endif
+                .tabItem
+            {
+                Label("Modules", systemImage: "puzzlepiece.extension")
+            }
+            
+            /*PropertiesSettingsView()
+            #if os(iOS) || os(visionOS)
+                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Properties"))
             #endif
                 .tabItem
             {
                 Label("Properties", systemImage: "doc.text")
-            }
+            }*/
             
             CellSettingsView()
             #if os(iOS) || os(visionOS)
-                .modifier(Caption(is_presented: $setting_view_presented, label: "Cell"))
+                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Cell"))
             #endif
                 .tabItem
             {
@@ -60,59 +69,6 @@ struct SettingsView: View
         #endif
     }
 }
-
-#if os(iOS) || os(visionOS)
-struct Caption: ViewModifier
-{
-    @Binding var is_presented: Bool
-    
-    let label: String
-    
-    func body(content: Content) -> some View
-    {
-        VStack(spacing: 0)
-        {
-            ZStack
-            {
-                HStack(alignment: .center)
-                {
-                    Text(label)
-                        .padding(0)
-                    #if os(visionOS)
-                        .font(.title2)
-                        .padding(.vertical)
-                    #endif
-                }
-                
-                HStack(spacing: 0)
-                {
-                    Button(action: { is_presented = false })
-                    {
-                        Image(systemName: "xmark")
-                    }
-                    .keyboardShortcut(.cancelAction)
-                    #if !os(visionOS)
-                    .buttonStyle(.borderless)
-                    .controlSize(.extraLarge)
-                    #else
-                    .buttonBorderShape(.circle)
-                    .buttonStyle(.bordered)
-                    #endif
-                    .padding()
-                    
-                    Spacer()
-                }
-            }
-            
-            #if !os(visionOS)
-            Divider()
-            #endif
-            
-            content
-        }
-    }
-}
-#endif
 
 //MARK: - Settings view with tab bar
 struct GeneralSettingsView: View
@@ -248,6 +204,250 @@ struct GeneralSettingsView: View
         }
         #if os(macOS)
         .frame(width: 300)//, height: 256)
+        #endif
+    }
+}
+
+//MARK: - Modules settings view
+struct ModulesSettingsView: View
+{
+    @EnvironmentObject var app_state: AppState
+    
+    var body: some View
+    {
+        Form
+        {
+            #if os(macOS)
+            VStack(alignment: .leading, spacing: 0)
+            {
+                //MARK: External modules handling
+                GroupBox(label: Text("External").font(.headline))
+                {
+                    VStack(spacing: 4)
+                    {
+                        HStack
+                        {
+                            VStack
+                            {
+                                Text(app_state.property_files_info.Brands)
+                                    .foregroundColor(Color.gray)
+                                Text("Robot")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .frame(width: 64)
+                            
+                            VStack
+                            {
+                                Text(app_state.property_files_info.Series)
+                                    .foregroundColor(Color.gray)
+                                Text("Tool")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .frame(width: 64)
+                            
+                            VStack
+                            {
+                                Text(app_state.property_files_info.Series)
+                                    .foregroundColor(Color.gray)
+                                Text("Part")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .frame(width: 64)
+                            
+                            VStack
+                            {
+                                Text(app_state.property_files_info.Models)
+                                    .foregroundColor(Color.gray)
+                                Text("Changer")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .frame(width: 64)
+                        }
+                        .padding(4)
+                        
+                        Divider()
+                        
+                        HStack
+                        {
+                            Text("Modules Folder")
+                                .foregroundColor(Color.gray)
+                                .frame(maxWidth: .infinity)
+                            
+                            Button(action: {  })
+                            {
+                                Image(systemName: "folder")
+                            }
+                            
+                            Button(action: {  })
+                            {
+                                Image(systemName: "arrow.counterclockwise")
+                            }
+                        }
+                        .padding(4)
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                }
+                .padding(.bottom)
+                
+                //MARK: Internal modules handling
+                GroupBox(label: Text("Internal").font(.headline))
+                {
+                    VStack(spacing: 4)
+                    {
+                        HStack
+                        {
+                            VStack
+                            {
+                                Text(app_state.property_files_info.Brands)
+                                    .foregroundColor(Color.gray)
+                                Text("Robot")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .frame(width: 64)
+                            
+                            VStack
+                            {
+                                Text(app_state.property_files_info.Series)
+                                    .foregroundColor(Color.gray)
+                                Text("Tool")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .frame(width: 64)
+                            
+                            VStack
+                            {
+                                Text(app_state.property_files_info.Series)
+                                    .foregroundColor(Color.gray)
+                                Text("Part")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .frame(width: 64)
+                            
+                            VStack
+                            {
+                                Text(app_state.property_files_info.Models)
+                                    .foregroundColor(Color.gray)
+                                Text("Changer")
+                                    .foregroundColor(Color.gray)
+                            }
+                            .frame(width: 64)
+                        }
+                        .padding(4)
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                }
+            }
+            #else
+            //MARK: External modules handling
+            Section(header: Text("External"))
+            {
+                HStack
+                {
+                    VStack
+                    {
+                        Text(app_state.property_files_info.Brands)
+                            .foregroundColor(Color.gray)
+                        Text("Robot")
+                            .foregroundColor(Color.gray)
+                    }
+                    Spacer()
+                    
+                    VStack
+                    {
+                        Text(app_state.property_files_info.Series)
+                            .foregroundColor(Color.gray)
+                        Text("Tool")
+                            .foregroundColor(Color.gray)
+                    }
+                    Spacer()
+                    
+                    VStack
+                    {
+                        Text(app_state.property_files_info.Series)
+                            .foregroundColor(Color.gray)
+                        Text("Part")
+                            .foregroundColor(Color.gray)
+                    }
+                    Spacer()
+                    
+                    VStack
+                    {
+                        Text(app_state.property_files_info.Models)
+                            .foregroundColor(Color.gray)
+                        Text("Changer")
+                            .foregroundColor(Color.gray)
+                    }
+                }
+                .padding(.horizontal)
+                
+                HStack(spacing: 16)
+                {
+                    Text("Modules Folder")
+                        .foregroundColor(Color.gray)
+                        .frame(maxWidth: .infinity)
+                    
+                    Button(action: {  })
+                    {
+                        Image(systemName: "folder")
+                            .frame(height: 24)
+                    }
+                    .modifier(ButtonBorderer())
+                    
+                    Button(action: {  })
+                    {
+                        Image(systemName: "arrow.counterclockwise")
+                            .frame(height: 24)
+                    }
+                    .modifier(ButtonBorderer())
+                }
+            }
+            
+            //MARK: Internal modules handling
+            Section(header: Text("Internal"))
+            {
+                HStack
+                {
+                    VStack
+                    {
+                        Text(app_state.property_files_info.Brands)
+                            .foregroundColor(Color.gray)
+                        Text("Robot")
+                            .foregroundColor(Color.gray)
+                    }
+                    Spacer()
+                    
+                    VStack
+                    {
+                        Text(app_state.property_files_info.Series)
+                            .foregroundColor(Color.gray)
+                        Text("Tool")
+                            .foregroundColor(Color.gray)
+                    }
+                    Spacer()
+                    
+                    VStack
+                    {
+                        Text(app_state.property_files_info.Series)
+                            .foregroundColor(Color.gray)
+                        Text("Part")
+                            .foregroundColor(Color.gray)
+                    }
+                    Spacer()
+                    
+                    VStack
+                    {
+                        Text(app_state.property_files_info.Models)
+                            .foregroundColor(Color.gray)
+                        Text("Changer")
+                            .foregroundColor(Color.gray)
+                    }
+                }
+                .padding(.horizontal)
+            }
+            #endif
+        }
+        #if os(macOS)
+        .frame(width: 320)
         #endif
     }
 }
@@ -936,8 +1136,13 @@ struct SettingsView_Previews: PreviewProvider
                 .environmentObject(AppState())
             #endif
             GeneralSettingsView()
+                .padding()
+            ModulesSettingsView()
+                .environmentObject(AppState())
+                .padding()
             PropertiesSettingsView()
                 .environmentObject(AppState())
+                .padding()
             CellSettingsView()
         }
     }
