@@ -195,6 +195,9 @@ class AppState: ObservableObject
     //MARK: - Application state init function
     init()
     {
+        //
+        //
+        
         robots_data = Data()
         tools_data = Data()
         parts_data = Data()
@@ -237,14 +240,24 @@ class AppState: ObservableObject
             part_name = parts.first ?? "None" //Set first array element as selected part name
         }
         
+        //
+        //
+        
         import_modules(bookmark: modules_folder_bookmark)
     }
     
     //MARK: - Modules handling functions
     @AppStorage("ModulesFolderBookmark") private var modules_folder_bookmark: Data?
     
-    public var modules: [String] = []
+    //public var modules_names: [String] = []
     public var modules_folder_url: URL? = nil
+    
+    @Published public var external_modules: [String: [String]] = [
+        "Robot": [String](),
+        "Tool": [String](),
+        "Part": [String](),
+        "Changer": [String]()
+    ]
     
     public func update_modules_bookmark(url: URL?)
     {
@@ -253,7 +266,7 @@ class AppState: ObservableObject
             return
         }
         
-        do { url?.stopAccessingSecurityScopedResource() }
+        //do { url?.stopAccessingSecurityScopedResource() }
         
         do
         {
@@ -265,6 +278,8 @@ class AppState: ObservableObject
         {
             print(error.localizedDescription)
         }
+        
+        do { url?.stopAccessingSecurityScopedResource() }
     }
     
     public func import_modules(bookmark: Data?)
@@ -274,12 +289,25 @@ class AppState: ObservableObject
             var is_stale = false
             modules_folder_url = try URL(resolvingBookmarkData: bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
             
-            for plist_url in directory_contents(url: modules_folder_url!)
+            guard !is_stale else
             {
-                modules.append(plist_url.lastPathComponent) //Append file name
+                return
             }
-            //names = names.filter{ $0.contains(".plist") } //Remove non-plist files names
-            //names = names.compactMap { $0.components(separatedBy: ".").first } //Remove extension from names
+            
+            var modules_names: [String] = []
+            
+            for plist_url in directory_contents(url: try URL(resolvingBookmarkData: bookmark ?? Data(), bookmarkDataIsStale: &is_stale))
+            {
+                modules_names.append(plist_url.lastPathComponent) //Append file name
+            }
+            
+            external_modules["Robot"] = modules_names.filter{ $0.contains(".robot") }
+            external_modules["Tool"] = modules_names.filter{ $0.contains(".tool") }
+            external_modules["Part"] = modules_names.filter{ $0.contains(".part") }
+            external_modules["Changer"] = modules_names.filter{ $0.contains(".changer") }
+            
+            print(modules_names)
+            print(external_modules)
         }
         catch
         {
@@ -295,7 +323,7 @@ class AppState: ObservableObject
         }
         catch
         {
-            //print(error)
+            print(error)
             return []
         }
     }
@@ -303,13 +331,13 @@ class AppState: ObservableObject
     public func clear_modules()
     {
         modules_folder_bookmark = nil
-        modules.removeAll()
+        external_modules.removeAll()
         modules_folder_url = nil
     }
     
     public var modules_folder_name: String
     {
-        return get_relative_path(from: modules_folder_url) ?? "No Folder Selected"
+        return get_relative_path(from: modules_folder_url) ?? "No folder selected"
         //return modules_folder_url?.lastPathComponent ?? "<no selected>"
     }
     

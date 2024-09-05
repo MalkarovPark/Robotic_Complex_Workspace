@@ -38,7 +38,7 @@ struct Robotic_Complex_WorkspaceApp: App
             #endif
                 .onAppear
                 {
-                    if first_loaded
+                    /*if first_loaded
                     {
                         for type in WorkspaceObjectType.allCases
                         {
@@ -47,7 +47,7 @@ struct Robotic_Complex_WorkspaceApp: App
                         }
                         
                         first_loaded = false
-                    }
+                    }*/
                     
                     #if os(visionOS)
                     pendant_controller.set_windows_functions

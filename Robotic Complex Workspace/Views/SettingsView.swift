@@ -231,7 +231,7 @@ struct ModulesSettingsView: View
                         {
                             VStack
                             {
-                                Text(app_state.property_files_info.Brands)
+                                Text("\(app_state.external_modules["Robot"]?.count ?? 0)")
                                     .foregroundColor(.secondary)
                                 Text("Robot")
                                     .foregroundColor(.secondary)
@@ -240,7 +240,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text(app_state.property_files_info.Series)
+                                Text("\(app_state.external_modules["Tool"]?.count ?? 0)")
                                     .foregroundColor(.secondary)
                                 Text("Tool")
                                     .foregroundColor(.secondary)
@@ -249,7 +249,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text(app_state.property_files_info.Series)
+                                Text("\(app_state.external_modules["Part"]?.count ?? 0)")
                                     .foregroundColor(.secondary)
                                 Text("Part")
                                     .foregroundColor(.secondary)
@@ -258,7 +258,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text(app_state.property_files_info.Models)
+                                Text("\(app_state.external_modules["Changer"]?.count ?? 0)")
                                     .foregroundColor(.secondary)
                                 Text("Changer")
                                     .foregroundColor(.secondary)
