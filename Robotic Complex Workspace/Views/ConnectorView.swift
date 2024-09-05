@@ -29,13 +29,6 @@ struct ConnectorView: View
     {
         VStack(spacing: 0)
         {
-            Text("Link Object")
-                .font(.title2)
-                .padding([.top, .horizontal])
-            #if os(visionOS)
-                .padding(.vertical)
-            #endif
-            
             VStack(spacing: 0)
             {
                 #if os(macOS)
@@ -237,12 +230,12 @@ struct ConnectorView: View
             }
             .padding([.bottom, .horizontal])
         }
+        .modifier(SheetCaption(is_presented: $is_presented, label: "Link Object"))
         #if os(macOS)
         .frame(minWidth: 320, idealWidth: 400, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         #endif
-        .modifier(ViewCloseButton(is_presented: $is_presented))
         .onAppear
         {
             connected = connector.connected

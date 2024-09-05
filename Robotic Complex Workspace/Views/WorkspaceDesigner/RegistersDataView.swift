@@ -22,79 +22,75 @@ struct RegistersDataView: View
     {
         VStack(spacing: 0)
         {
-            RegistersView(registers: $base_workspace.registers, colors: registers_colors)
+            RegistersView(registers: $base_workspace.registers, colors: registers_colors, bottom_spacing: 48)
                 .modifier(DoubleModifier(update_toggle: $update_toggle))
-            
-            Divider()
-            
-            HStack(spacing: 0)
-            {
-                Button(role: .destructive, action: clear_registers)
+                .overlay(alignment: .bottom)
                 {
-                    Image(systemName: "eraser")
-                }
-                #if !os(iOS)
-                .buttonStyle(.bordered)
-                #else
-                .modifier(Squarer(side: 48))
-                .modifier(ButtonBorderer())
-                #endif
-                #if os(visionOS)
-                .buttonBorderShape(.circle)
-                #endif
-                .padding(.trailing)
-                
-                Button(action: save_registers)
-                {
-                    Image(systemName: "arrow.down.doc")
-                }
-                #if !os(iOS)
-                .buttonStyle(.bordered)
-                #else
-                .modifier(Squarer(side: 48))
-                .modifier(ButtonBorderer())
-                #endif
-                #if os(visionOS)
-                .buttonBorderShape(.circle)
-                #endif
-                .padding(.trailing)
-                
-                Button(action: { is_registers_count_presented = true })
-                {
-                    Image(systemName: "square.grid.2x2")
-                }
-                #if !os(iOS)
-                .buttonStyle(.bordered)
-                #else
-                .modifier(Squarer(side: 48))
-                .modifier(ButtonBorderer())
-                #endif
-                .popover(isPresented: $is_registers_count_presented)
-                {
-                    RegistersCountView(is_presented: $is_registers_count_presented, registers_count: base_workspace.registers.count)
+                    HStack(spacing: 0)
                     {
-                        update_toggle.toggle()
+                        Button(role: .destructive, action: clear_registers)
+                        {
+                            Image(systemName: "eraser")
+                        }
+                        #if !os(iOS)
+                        .buttonStyle(.bordered)
+                        #else
+                        .modifier(Squarer(side: 48))
+                        .modifier(ButtonBorderer())
+                        #endif
+                        #if os(visionOS)
+                        .buttonBorderShape(.circle)
+                        #endif
+                        .padding(.trailing)
+                        
+                        Button(action: save_registers)
+                        {
+                            Image(systemName: "arrow.down.doc")
+                        }
+                        #if !os(iOS)
+                        .buttonStyle(.bordered)
+                        #else
+                        .modifier(Squarer(side: 48))
+                        .modifier(ButtonBorderer())
+                        #endif
+                        #if os(visionOS)
+                        .buttonBorderShape(.circle)
+                        #endif
+                        .padding(.trailing)
+                        
+                        Button(action: { is_registers_count_presented = true })
+                        {
+                            Image(systemName: "square.grid.2x2")
+                        }
+                        #if !os(iOS)
+                        .buttonStyle(.bordered)
+                        #else
+                        .modifier(Squarer(side: 48))
+                        .modifier(ButtonBorderer())
+                        #endif
+                        .popover(isPresented: $is_registers_count_presented)
+                        {
+                            RegistersCountView(is_presented: $is_registers_count_presented, registers_count: base_workspace.registers.count)
+                            {
+                                update_toggle.toggle()
+                            }
+                            #if os(iOS)
+                            .presentationDetents([.height(96)])
+                            #endif
+                        }
+                        #if os(visionOS)
+                        .buttonBorderShape(.circle)
+                        #endif
                     }
-                    #if os(iOS)
-                    .presentationDetents([.height(96)])
-                    #endif
+                    .padding()
+                    .background(.bar)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    //.shadow(radius: 4)
+                    .padding()
                 }
-                #if os(visionOS)
-                .buttonBorderShape(.circle)
-                #endif
-                .padding(.trailing)
-                
-                Button(action: { is_presented = false })
-                {
-                    Text("Dismiss")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
-            }
-            .padding()
         }
         .controlSize(.large)
+        .modifier(SheetCaption(is_presented: $is_presented, label: "Registers"))
         #if os(macOS)
         .frame(minWidth: 420, maxWidth: 512, minHeight: 400, maxHeight: 480)
         #endif
