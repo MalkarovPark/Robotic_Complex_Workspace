@@ -211,8 +211,6 @@ struct GeneralSettingsView: View
 //MARK: - Modules settings view
 struct ModulesSettingsView: View
 {
-    //@AppStorage("ModulesFolderBookmark") private var modules_folder_bookmark: Data?
-    
     @EnvironmentObject var app_state: AppState
     
     @State private var folder_picker_is_presented: Bool = false
@@ -276,6 +274,9 @@ struct ModulesSettingsView: View
                             Text(app_state.modules_folder_name)
                                 .foregroundColor(.secondary)
                                 .frame(maxWidth: .infinity)
+                                .lineLimit(1)
+                                .truncationMode(.head)
+                                .help(app_state.modules_folder_name)
                             
                             Button(action: { folder_picker_is_presented = true })
                             {
@@ -389,6 +390,9 @@ struct ModulesSettingsView: View
                     Text("Modules Folder")
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity)
+                        .lineLimit(1)
+                        .truncationMode(.head)
+                        .help(app_state.modules_folder_name)
                     
                     Button(action: { folder_picker_is_presented = true })
                     {

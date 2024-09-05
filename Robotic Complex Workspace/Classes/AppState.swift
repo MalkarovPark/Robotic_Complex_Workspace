@@ -309,7 +309,19 @@ class AppState: ObservableObject
     
     public var modules_folder_name: String
     {
-        return modules_folder_url?.deletingLastPathComponent().lastPathComponent ?? "Modules Folder"
+        return get_relative_path(from: modules_folder_url) ?? "No Folder Selected"
+        //return modules_folder_url?.lastPathComponent ?? "<no selected>"
+    }
+    
+    private func get_relative_path(from urlString: URL?) -> String?
+    {
+        if let fileURL = URL(string: urlString?.absoluteString ?? "")
+        {
+            let pathComponents = fileURL.pathComponents
+            let filteredComponents = pathComponents.dropFirst(2) // Убираем системные директории (например, "/", "Users")
+            return filteredComponents.joined(separator: "/")
+        }
+        return nil
     }
     
     //MARK: - Get additive workspace objects data from external property list
