@@ -16,7 +16,7 @@ struct ToolView: View
     
     @State private var add_program_view_presented = false
     @State private var add_operation_view_presented = false
-    @State private var new_operation_code = 0
+    @State private var new_operation_code = OperationCodeInfo()
     
     @State private var ready_for_save = false
     @State private var is_document_updated = false
@@ -79,7 +79,7 @@ struct ToolView: View
                     .buttonStyle(.bordered)
                     .padding()
                 }
-                .disabled(tool_item.codes_count == 0)
+                .disabled(tool_item.codes.count == 0)
                 .modifier(MenuHandlingModifier(performed: $tool_item.performed, toggle_perform: tool_item.start_pause_performing, stop_perform: tool_item.reset_performing))
             }
             .overlay(alignment: .bottomTrailing)
@@ -104,7 +104,7 @@ struct ToolView: View
                     .keyboardShortcut(.cancelAction)
                     .padding()
                 }
-                .disabled(tool_item.codes_count == 0)
+                .disabled(tool_item.codes.count == 0)
             }
             
             Divider()
@@ -186,7 +186,7 @@ struct ToolView: View
                     }
                 }
                 .modifier(ViewCloseFuncButton(close_action: close_tool))
-                .disabled(base_workspace.selected_tool.codes_count == 0)
+                .disabled(base_workspace.selected_tool.codes.count == 0)
                 .modifier(MenuHandlingModifier(performed: $base_workspace.selected_tool.performed, toggle_perform: base_workspace.selected_tool.start_pause_performing, stop_perform: base_workspace.selected_tool.reset_performing))
             }
             else
@@ -225,7 +225,7 @@ struct ToolView: View
                         .modifier(ButtonBorderer())
                         .padding()
                     }
-                    .disabled(base_workspace.selected_tool.codes_count == 0)
+                    .disabled(base_workspace.selected_tool.codes.count == 0)
                     .modifier(MenuHandlingModifier(performed: $base_workspace.selected_tool.performed, toggle_perform: base_workspace.selected_tool.start_pause_performing, stop_perform: base_workspace.selected_tool.reset_performing))
                 }
                 .overlay(alignment: .bottomTrailing)
@@ -248,7 +248,7 @@ struct ToolView: View
                         .modifier(ButtonBorderer())
                         .padding()
                     }
-                    .disabled(base_workspace.selected_tool.codes_count == 0)
+                    .disabled(base_workspace.selected_tool.codes.count == 0)
                 }
                 
                 Divider()
@@ -314,9 +314,9 @@ struct ToolView: View
         {
             app_state.preview_update_scene = true
             
-            if tool_item.codes_count > 0
+            if tool_item.codes.count > 0
             {
-                new_operation_code = tool_item.codes.first ?? 0
+                new_operation_code = tool_item.codes.first ?? OperationCodeInfo()
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
@@ -381,7 +381,7 @@ struct ToolView: View
     
     func add_operation_to_program()
     {
-        tool_item.selected_program.add_code(OperationCode(new_operation_code))
+        tool_item.selected_program.add_code(OperationCode(new_operation_code.value))
         
         update_data()
     }

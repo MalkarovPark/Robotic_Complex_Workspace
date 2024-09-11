@@ -12,7 +12,7 @@ import IndustrialKit
 #if !os(visionOS)
 struct ToolInspectorView: View
 {
-    @Binding var new_operation_code: Int
+    @Binding var new_operation_code: OperationCodeInfo
     
     @State private var add_program_view_presented = false
     @State private var add_operation_view_presented = false
@@ -33,7 +33,7 @@ struct ToolInspectorView: View
     {
         VStack(spacing: 0)
         {
-            if base_workspace.selected_tool.codes_count > 0
+            if base_workspace.selected_tool.codes.count > 0
             {
                 ZStack
                 {
@@ -108,9 +108,9 @@ struct ToolInspectorView: View
                             Circle()
                                 .foregroundColor(.accentColor)
                                 .overlay(
-                                    base_workspace.selected_tool.code_info(new_operation_code).image
+                                    new_operation_code.image
                                         .foregroundColor(.white)
-                                        .animation(.easeInOut(duration: 0.2), value: base_workspace.selected_tool.code_info(new_operation_code).image)
+                                        .animation(.easeInOut(duration: 0.2), value: new_operation_code.image)
                                 )
                                 .frame(width: 32, height: 32)
                         }
@@ -124,11 +124,11 @@ struct ToolInspectorView: View
                             {
                                 Picker("Code", selection: $new_operation_code)
                                 {
-                                    if base_workspace.selected_tool.codes_count > 0
+                                    if base_workspace.selected_tool.codes.count > 0
                                     {
                                         ForEach(base_workspace.selected_tool.codes, id:\.self)
                                         { code in
-                                            Text(base_workspace.selected_tool.code_info(code).label)
+                                            Text(code.name)
                                         }
                                     }
                                     else
@@ -137,7 +137,7 @@ struct ToolInspectorView: View
                                     }
                                 }
                                 .padding()
-                                .disabled(base_workspace.selected_tool.codes_count == 0)
+                                .disabled(base_workspace.selected_tool.codes.count == 0)
                                 .frame(maxWidth: .infinity)
                                 .pickerStyle(.radioGroup)
                                 .labelsHidden()
@@ -147,11 +147,11 @@ struct ToolInspectorView: View
                             {
                                 Picker("Code", selection: $new_operation_code)
                                 {
-                                    if base_workspace.selected_tool.codes_count > 0
+                                    if base_workspace.selected_tool.codes.count > 0
                                     {
                                         ForEach(base_workspace.selected_tool.codes, id:\.self)
                                         { code in
-                                            Text(base_workspace.selected_tool.code_info(code).label)
+                                            Text(code.name)
                                         }
                                     }
                                     else
@@ -159,7 +159,7 @@ struct ToolInspectorView: View
                                         Text("None")
                                     }
                                 }
-                                .disabled(base_workspace.selected_tool.codes_count == 0)
+                                .disabled(base_workspace.selected_tool.codes.count == 0)
                                 .pickerStyle(.wheel)
                                 .frame(maxWidth: 192)
                                 .buttonStyle(.borderedProminent)
@@ -360,7 +360,7 @@ struct OperationItemView: View
     @Binding var codes: [OperationCode]
     
     @State var code_item: OperationCode
-    @State private var new_code_value = 0
+    @State private var new_code = OperationCodeInfo()
     @State private var update_data = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -380,13 +380,13 @@ struct OperationItemView: View
                 .padding(.trailing)
             #endif
             
-            Picker("Code", selection: $new_code_value)
+            Picker("Code", selection: $new_code)
             {
-                if base_workspace.selected_tool.codes_count > 0
+                if base_workspace.selected_tool.codes.count > 0
                 {
                     ForEach(base_workspace.selected_tool.codes, id:\.self)
                     { code in
-                        Text(base_workspace.selected_tool.code_info(code).label)
+                        Text(code.name)
                     }
                 }
                 else
@@ -394,19 +394,19 @@ struct OperationItemView: View
                     Text("None")
                 }
             }
-            .disabled(base_workspace.selected_tool.codes_count == 0)
+            .disabled(base_workspace.selected_tool.codes.count == 0)
             .frame(maxWidth: .infinity)
             .pickerStyle(.menu)
             .labelsHidden()
-            .onChange(of: new_code_value)
+            .onChange(of: new_code)
             { _, new_value in
                 if update_data
                 {
-                    code_item.value = new_code_value
+                    code_item.value = new_code.value
                     document_handler.document_update_tools()
                 }
             }
-            base_workspace.selected_tool.code_info(new_code_value).image
+            new_code.image
             #if os(macOS)
             .padding(.leading)
             #endif
@@ -414,7 +414,7 @@ struct OperationItemView: View
         .onAppear
         {
             update_data = false
-            new_code_value = code_item.value
+            new_code = base_workspace.selected_tool.code_info(code_item.value)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
@@ -427,7 +427,7 @@ struct OperationItemView: View
 //MARK: - Previews
 #Preview
 {
-    ToolInspectorView(new_operation_code: .constant(0))
+    ToolInspectorView(new_operation_code: .constant(OperationCodeInfo()))
     { _ in
         
     } code_item_move: { _, _ in

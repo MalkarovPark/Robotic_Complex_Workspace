@@ -249,10 +249,16 @@ class AppState: ObservableObject
     //MARK: - Modules handling functions
     @AppStorage("ModulesFolderBookmark") private var modules_folder_bookmark: Data?
     
-    //public var modules_names: [String] = []
     public var modules_folder_url: URL? = nil
     
     @Published public var external_modules: [String: [String]] = [
+        "Robot": [String](),
+        "Tool": [String](),
+        "Part": [String](),
+        "Changer": [String]()
+    ]
+    
+    @Published public var internal_modules: [String: [String]] = [
         "Robot": [String](),
         "Tool": [String](),
         "Part": [String](),
@@ -265,8 +271,6 @@ class AppState: ObservableObject
         {
             return
         }
-        
-        //do { url?.stopAccessingSecurityScopedResource() }
         
         do
         {
@@ -346,7 +350,7 @@ class AppState: ObservableObject
         if let fileURL = URL(string: urlString?.absoluteString ?? "")
         {
             let pathComponents = fileURL.pathComponents
-            let filteredComponents = pathComponents.dropFirst(2) // Убираем системные директории (например, "/", "Users")
+            let filteredComponents = pathComponents.dropFirst(2)
             return filteredComponents.joined(separator: "/")
         }
         return nil
