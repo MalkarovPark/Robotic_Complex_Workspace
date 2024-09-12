@@ -243,10 +243,48 @@ class AppState: ObservableObject
         //
         //
         
-        import_modules(bookmark: modules_folder_bookmark)
+        import_internal_modules()
+        import_external_modules(bookmark: modules_folder_bookmark)
     }
     
     //MARK: - Modules handling functions
+    //MARK: Internal
+    @Published public var internal_modules: [String: [String]] = [
+        "Robot": [String](),
+        "Tool": [String](),
+        "Part": [String](),
+        "Changer": [String]()
+    ]
+    
+    public func import_internal_modules()
+    {
+        Robot.modules = robot_modules
+        Tool.modules = tool_modules
+        Part.modules = part_modules
+        //Changer.modules = changer_modules
+        
+        for module in robot_modules
+        {
+            internal_modules["Robot"]?.append(module.name)
+        }
+        
+        for module in tool_modules
+        {
+            internal_modules["Tool"]?.append(module.name)
+        }
+        
+        for module in part_modules
+        {
+            internal_modules["Part"]?.append(module.name)
+        }
+        
+        for module in changer_modules
+        {
+            internal_modules["Changer"]?.append(module.name)
+        }
+    }
+    
+    //MARK: External
     @AppStorage("ModulesFolderBookmark") private var modules_folder_bookmark: Data?
     
     public var modules_folder_url: URL? = nil
@@ -258,14 +296,7 @@ class AppState: ObservableObject
         "Changer": [String]()
     ]
     
-    @Published public var internal_modules: [String: [String]] = [
-        "Robot": [String](),
-        "Tool": [String](),
-        "Part": [String](),
-        "Changer": [String]()
-    ]
-    
-    public func update_modules_bookmark(url: URL?)
+    public func update_external_modules_bookmark(url: URL?)
     {
         guard url!.startAccessingSecurityScopedResource() else
         {
@@ -276,7 +307,7 @@ class AppState: ObservableObject
         {
             modules_folder_bookmark = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
             //modules_folder_url = url
-            import_modules(bookmark: modules_folder_bookmark)
+            import_external_modules(bookmark: modules_folder_bookmark)
         }
         catch
         {
@@ -286,7 +317,7 @@ class AppState: ObservableObject
         do { url?.stopAccessingSecurityScopedResource() }
     }
     
-    public func import_modules(bookmark: Data?)
+    public func import_external_modules(bookmark: Data?)
     {
         do
         {
@@ -354,6 +385,64 @@ class AppState: ObservableObject
             return filteredComponents.joined(separator: "/")
         }
         return nil
+    }
+    
+    //MARK: UI Output
+    private func names_to_list(_ names: [String]) -> String
+    {
+        return "· " + names.map { $0.components(separatedBy: ".")[0] }.joined(separator: "\n· ")
+    }
+    
+    //Internal
+    
+    public var internal_robot_modules_names: String
+    {
+        guard let names = internal_modules["Robot"], !names.isEmpty else { return "No Modules" }
+        return names_to_list(names)
+    }
+    
+    public var internal_tool_modules_names: String
+    {
+        guard let names = internal_modules["Tool"], !names.isEmpty else { return "No Modules" }
+        return names_to_list(names)
+    }
+    
+    public var internal_part_modules_names: String
+    {
+        guard let names = internal_modules["Part"], !names.isEmpty else { return "No Modules" }
+        return names_to_list(names)
+    }
+    
+    public var internal_changer_modules_names: String
+    {
+        guard let names = internal_modules["Changer"], !names.isEmpty else { return "No Modules" }
+        return names_to_list(names)
+    }
+    
+    //External
+    
+    public var external_robot_modules_names: String
+    {
+        guard let names = external_modules["Robot"], !names.isEmpty else { return "No Modules" }
+        return names_to_list(names)
+    }
+    
+    public var external_tool_modules_names: String
+    {
+        guard let names = external_modules["Tool"], !names.isEmpty else { return "No Modules" }
+        return names_to_list(names)
+    }
+    
+    public var external_part_modules_names: String
+    {
+        guard let names = external_modules["Part"], !names.isEmpty else { return "No Modules" }
+        return names_to_list(names)
+    }
+    
+    public var external_changer_modules_names: String
+    {
+        guard let names = external_modules["Changer"], !names.isEmpty else { return "No Modules" }
+        return names_to_list(names)
     }
     
     //MARK: - Get additive workspace objects data from external property list

@@ -237,6 +237,7 @@ struct ModulesSettingsView: View
                                     .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
+                            .help(app_state.external_robot_modules_names)
                             
                             VStack
                             {
@@ -246,6 +247,7 @@ struct ModulesSettingsView: View
                                     .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
+                            .help(app_state.external_tool_modules_names)
                             
                             VStack
                             {
@@ -255,6 +257,7 @@ struct ModulesSettingsView: View
                                     .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
+                            .help(app_state.external_part_modules_names)
                             
                             VStack
                             {
@@ -264,6 +267,7 @@ struct ModulesSettingsView: View
                                     .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
+                            .help(app_state.external_changer_modules_names)
                         }
                         .padding(4)
                         
@@ -303,39 +307,43 @@ struct ModulesSettingsView: View
                         {
                             VStack
                             {
-                                Text(app_state.property_files_info.Brands)
+                                Text("\(app_state.internal_modules["Robot"]?.count ?? 0)")
                                     .foregroundColor(.secondary)
                                 Text("Robot")
                                     .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
+                            .help(app_state.internal_robot_modules_names)
                             
                             VStack
                             {
-                                Text(app_state.property_files_info.Series)
+                                Text("\(app_state.internal_modules["Tool"]?.count ?? 0)")
                                     .foregroundColor(.secondary)
                                 Text("Tool")
                                     .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
+                            .help(app_state.internal_tool_modules_names)
                             
                             VStack
                             {
-                                Text(app_state.property_files_info.Series)
+                                Text("\(app_state.internal_modules["Part"]?.count ?? 0)")
                                     .foregroundColor(.secondary)
                                 Text("Part")
                                     .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
+                            .help(app_state.internal_part_modules_names)
                             
                             VStack
                             {
-                                Text(app_state.property_files_info.Models)
+                                Text("\(app_state.internal_modules["Changer"]?.count ?? 0)")
                                     .foregroundColor(.secondary)
                                 Text("Changer")
                                     .foregroundColor(.secondary)
                             }
                             .frame(width: 64)
+                            .help(app_state.internal_changer_modules_names)
                         }
                         .padding(4)
                     }
@@ -355,6 +363,7 @@ struct ModulesSettingsView: View
                         Text("Robot")
                             .foregroundColor(.secondary)
                     }
+                    .help(app_state.external_robot_modules_names)
                     Spacer()
                     
                     VStack
@@ -364,6 +373,7 @@ struct ModulesSettingsView: View
                         Text("Tool")
                             .foregroundColor(.secondary)
                     }
+                    .help(app_state.external_tool_modules_names)
                     Spacer()
                     
                     VStack
@@ -373,6 +383,7 @@ struct ModulesSettingsView: View
                         Text("Part")
                             .foregroundColor(.secondary)
                     }
+                    .help(app_state.external_part_modules_names)
                     Spacer()
                     
                     VStack
@@ -382,6 +393,7 @@ struct ModulesSettingsView: View
                         Text("Changer")
                             .foregroundColor(.secondary)
                     }
+                    .help(app_state.external_changer_modules_names)
                 }
                 .padding(.horizontal)
                 
@@ -417,38 +429,42 @@ struct ModulesSettingsView: View
                 {
                     VStack
                     {
-                        Text(app_state.property_files_info.Brands)
+                        Text("\(app_state.internal_modules["Robot"]?.count ?? 0)")
                             .foregroundColor(.secondary)
                         Text("Robot")
                             .foregroundColor(.secondary)
                     }
+                    .help(app_state.internal_robot_modules_names)
                     Spacer()
                     
                     VStack
                     {
-                        Text(app_state.property_files_info.Series)
+                        Text("\(app_state.internal_modules["Tool"]?.count ?? 0)")
                             .foregroundColor(.secondary)
                         Text("Tool")
                             .foregroundColor(.secondary)
                     }
+                    .help(app_state.internal_tool_modules_names)
                     Spacer()
                     
                     VStack
                     {
-                        Text(app_state.property_files_info.Series)
+                        Text("\(app_state.internal_modules["Part"]?.count ?? 0)")
                             .foregroundColor(.secondary)
                         Text("Part")
                             .foregroundColor(.secondary)
                     }
+                    .help(app_state.internal_part_modules_names)
                     Spacer()
                     
                     VStack
                     {
-                        Text(app_state.property_files_info.Models)
+                        Text("\(app_state.internal_modules["Changer"]?.count ?? 0)")
                             .foregroundColor(.secondary)
                         Text("Changer")
                             .foregroundColor(.secondary)
                     }
+                    .help(app_state.internal_changer_modules_names)
                 }
                 .padding(.horizontal)
             }
@@ -466,7 +482,7 @@ struct ModulesSettingsView: View
             case .success(let urls):
                 if let url = urls.first
                 {
-                    app_state.update_modules_bookmark(url: url)
+                    app_state.update_external_modules_bookmark(url: url)
                     print("Selected folder: \(url)")
                 }
             case .failure(let error):
