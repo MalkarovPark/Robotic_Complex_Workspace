@@ -261,7 +261,7 @@ class AppState: ObservableObject
         Robot.modules = robot_modules
         Tool.modules = tool_modules
         Part.modules = part_modules
-        //Changer.modules = changer_modules
+        ChangerModifierElement.modules = changer_modules
         
         for module in robot_modules
         {
@@ -341,8 +341,12 @@ class AppState: ObservableObject
             external_modules["Part"] = modules_names.filter{ $0.contains(".part") }
             external_modules["Changer"] = modules_names.filter{ $0.contains(".changer") }
             
-            print(modules_names)
-            print(external_modules)
+            WorkspaceObject.modules_folder_bookmark = bookmark
+            
+            Robot.modules.append(contentsOf: external_robot_modules)
+            Tool.modules.append(contentsOf: external_tool_modules)
+            Part.modules.append(contentsOf: external_part_modules)
+            ChangerModifierElement.modules.append(contentsOf: external_changer_modules)
         }
         catch
         {
@@ -363,13 +367,40 @@ class AppState: ObservableObject
         }
     }
     
+    private var external_robot_modules: [RobotModule]
+    {
+        return [RobotModule]()
+    }
+    
+    private var external_tool_modules: [ToolModule]
+    {
+        return [ToolModule]()
+    }
+    
+    private var external_part_modules: [PartModule]
+    {
+        return [PartModule]()
+    }
+    
+    private var external_changer_modules: [ChangerModule]
+    {
+        return [ChangerModule]()
+    }
+    
     public func clear_modules()
     {
         modules_folder_bookmark = nil
+        
         external_modules.removeAll()
+        Robot.modules.removeAll()
+        Tool.modules.removeAll()
+        Part.modules.removeAll()
+        ChangerModifierElement.modules.removeAll()
+        
         modules_folder_url = nil
     }
     
+    //MARK: UI Output
     public var modules_folder_name: String
     {
         return get_relative_path(from: modules_folder_url) ?? "No folder selected"
@@ -387,7 +418,6 @@ class AppState: ObservableObject
         return nil
     }
     
-    //MARK: UI Output
     private func names_to_list(_ names: [String]) -> String
     {
         return "· " + names.map { $0.components(separatedBy: ".")[0] }.joined(separator: "\n· ")
