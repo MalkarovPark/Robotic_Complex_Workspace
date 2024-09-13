@@ -249,7 +249,7 @@ class AppState: ObservableObject
     
     //MARK: - Modules handling functions
     //MARK: Internal
-    @Published public var internal_modules: [String: [String]] = [
+    @Published public var internal_modules_list: [String: [String]] = [
         "Robot": [String](),
         "Tool": [String](),
         "Part": [String](),
@@ -258,29 +258,29 @@ class AppState: ObservableObject
     
     public func import_internal_modules()
     {
-        Robot.modules = robot_modules
-        Tool.modules = tool_modules
-        Part.modules = part_modules
-        ChangerModifierElement.modules = changer_modules
+        Robot.modules = internal_modules.robot
+        Tool.modules = internal_modules.tool
+        Part.modules = internal_modules.part
+        ChangerModifierElement.modules = internal_modules.changer
         
-        for module in robot_modules
+        for module in internal_modules.robot
         {
-            internal_modules["Robot"]?.append(module.name)
+            internal_modules_list["Robot"]?.append(module.name)
         }
         
-        for module in tool_modules
+        for module in internal_modules.tool
         {
-            internal_modules["Tool"]?.append(module.name)
+            internal_modules_list["Tool"]?.append(module.name)
         }
         
-        for module in part_modules
+        for module in internal_modules.part
         {
-            internal_modules["Part"]?.append(module.name)
+            internal_modules_list["Part"]?.append(module.name)
         }
         
-        for module in changer_modules
+        for module in internal_modules.changer
         {
-            internal_modules["Changer"]?.append(module.name)
+            internal_modules_list["Changer"]?.append(module.name)
         }
     }
     
@@ -289,7 +289,7 @@ class AppState: ObservableObject
     
     public var modules_folder_url: URL? = nil
     
-    @Published public var external_modules: [String: [String]] = [
+    @Published public var external_modules_list: [String: [String]] = [
         "Robot": [String](),
         "Tool": [String](),
         "Part": [String](),
@@ -336,10 +336,10 @@ class AppState: ObservableObject
                 modules_names.append(plist_url.lastPathComponent) //Append file name
             }
             
-            external_modules["Robot"] = modules_names.filter{ $0.contains(".robot") }
-            external_modules["Tool"] = modules_names.filter{ $0.contains(".tool") }
-            external_modules["Part"] = modules_names.filter{ $0.contains(".part") }
-            external_modules["Changer"] = modules_names.filter{ $0.contains(".changer") }
+            external_modules_list["Robot"] = modules_names.filter{ $0.contains(".robot") }
+            external_modules_list["Tool"] = modules_names.filter{ $0.contains(".tool") }
+            external_modules_list["Part"] = modules_names.filter{ $0.contains(".part") }
+            external_modules_list["Changer"] = modules_names.filter{ $0.contains(".changer") }
             
             WorkspaceObject.modules_folder_bookmark = bookmark
             
@@ -391,7 +391,7 @@ class AppState: ObservableObject
     {
         modules_folder_bookmark = nil
         
-        external_modules.removeAll()
+        external_modules_list.removeAll()
         Robot.modules.removeAll()
         Tool.modules.removeAll()
         Part.modules.removeAll()
@@ -427,25 +427,25 @@ class AppState: ObservableObject
     
     public var internal_robot_modules_names: String
     {
-        guard let names = internal_modules["Robot"], !names.isEmpty else { return "No Modules" }
+        guard let names = internal_modules_list["Robot"], !names.isEmpty else { return "No Modules" }
         return names_to_list(names)
     }
     
     public var internal_tool_modules_names: String
     {
-        guard let names = internal_modules["Tool"], !names.isEmpty else { return "No Modules" }
+        guard let names = internal_modules_list["Tool"], !names.isEmpty else { return "No Modules" }
         return names_to_list(names)
     }
     
     public var internal_part_modules_names: String
     {
-        guard let names = internal_modules["Part"], !names.isEmpty else { return "No Modules" }
+        guard let names = internal_modules_list["Part"], !names.isEmpty else { return "No Modules" }
         return names_to_list(names)
     }
     
     public var internal_changer_modules_names: String
     {
-        guard let names = internal_modules["Changer"], !names.isEmpty else { return "No Modules" }
+        guard let names = internal_modules_list["Changer"], !names.isEmpty else { return "No Modules" }
         return names_to_list(names)
     }
     
@@ -453,246 +453,26 @@ class AppState: ObservableObject
     
     public var external_robot_modules_names: String
     {
-        guard let names = external_modules["Robot"], !names.isEmpty else { return "No Modules" }
+        guard let names = external_modules_list["Robot"], !names.isEmpty else { return "No Modules" }
         return names_to_list(names)
     }
     
     public var external_tool_modules_names: String
     {
-        guard let names = external_modules["Tool"], !names.isEmpty else { return "No Modules" }
+        guard let names = external_modules_list["Tool"], !names.isEmpty else { return "No Modules" }
         return names_to_list(names)
     }
     
     public var external_part_modules_names: String
     {
-        guard let names = external_modules["Part"], !names.isEmpty else { return "No Modules" }
+        guard let names = external_modules_list["Part"], !names.isEmpty else { return "No Modules" }
         return names_to_list(names)
     }
     
     public var external_changer_modules_names: String
     {
-        guard let names = external_modules["Changer"], !names.isEmpty else { return "No Modules" }
+        guard let names = external_modules_list["Changer"], !names.isEmpty else { return "No Modules" }
         return names_to_list(names)
-    }
-    
-    //MARK: - Get additive workspace objects data from external property list
-    //MARK: Data functions
-    func get_additive(bookmark_data: inout Data?, url: URL?)
-    {
-        guard url!.startAccessingSecurityScopedResource() else
-        {
-            return
-        }
-        
-        defer { url?.stopAccessingSecurityScopedResource() }
-        
-        do
-        {
-            bookmark_data = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
-        }
-        catch
-        {
-            //print(error.localizedDescription)
-        }
-    }
-    
-    @Published var selected_plist_names: (Robots: String, Tools: String, Parts: String) = (Robots: "", Tools: "", Parts: "") //Plist names for settings view
-    
-    public func save_selected_plist_names(type: WorkspaceObjectType) //Save selected plist names to user defaults
-    {
-        switch type
-        {
-        case .robot:
-            robots_plist_name = selected_plist_names.Robots
-        case .tool:
-            tools_plist_name = selected_plist_names.Tools
-        case .part:
-            parts_plist_name = selected_plist_names.Parts
-        }
-    }
-    
-    public var avaliable_plist_names: (Robots: [String], Tools: [String], Parts: [String]) //Plist names from bookmarked folder for settings menus
-    {
-        var plist_names = (Robots: [String](), Tools: [String](), Parts: [String]())
-        
-        //Get robot plists names
-        if !(robots_empty ?? true)
-        {
-            plist_names.Robots = get_plist_filenames(bookmark_data: robots_bookmark)
-        }
-        else
-        {
-            plist_names.Robots = [String]()
-        }
-        
-        //Get tools plists names
-        if !(tools_empty ?? true)
-        {
-            plist_names.Tools = get_plist_filenames(bookmark_data: tools_bookmark)
-        }
-        else
-        {
-            plist_names.Tools = [String]()
-        }
-        
-        //Get parts plists names
-        if !(parts_empty ?? true)
-        {
-            plist_names.Parts = get_plist_filenames(bookmark_data: parts_bookmark)
-        }
-        else
-        {
-            plist_names.Parts = [String]()
-        }
-        
-        func get_plist_filenames(bookmark_data: Data?) -> [String] //Return array of property list files names
-        {
-            var names = [String]()
-            
-            do
-            {
-                var is_stale = false
-                
-                for plist_url in directory_contents(url: try URL(resolvingBookmarkData: parts_bookmark ?? Data(), bookmarkDataIsStale: &is_stale))
-                {
-                    names.append(plist_url.lastPathComponent) //Append file name
-                }
-                names = names.filter{ $0.contains(".plist") } //Remove non-plist files names
-                names = names.compactMap { $0.components(separatedBy: ".").first } //Remove extension from names
-            }
-            catch
-            {
-                //print(error.localizedDescription)
-            }
-            
-            return names
-        }
-        
-        return plist_names
-    }
-    
-    public func get_defaults_plist_names(type: WorkspaceObjectType) //Pass plist names from user defaults to AppState variables
-    {
-        switch type
-        {
-        case .robot:
-            selected_plist_names.Robots = robots_plist_name ?? ""
-        case .tool:
-            selected_plist_names.Tools = tools_plist_name ?? ""
-        case .part:
-            selected_plist_names.Parts = parts_plist_name ?? ""
-        }
-    }
-    
-    public func get_additive_data(type: WorkspaceObjectType) //Get and add additive dictionaries from bookmarked URL
-    {
-        var new_objects = Array<String>()
-        
-        switch type
-        {
-        case .robot:
-            //MARK: Manufacturers data
-            if !(robots_empty ?? true)
-            {
-                do
-                {
-                    //URL access by bookmark
-                    var is_stale = false
-                    let url = try URL(resolvingBookmarkData: robots_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                    
-                    guard !is_stale else
-                    {
-                        return
-                    }
-                    
-                    let plist_url = URL(string: url.absoluteString + selected_plist_names.Robots + ".plist") //Make file URL with extension
-                    let additive_data = try Data(contentsOf: plist_url!) //Get additive data from plist
-                    
-                    additive_robots_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as? [String: [String: [String: [String: Any]]]] ?? ["String": ["String": ["String": ["String": "Any"]]]] //Convert plist data to dictionary
-                    
-                    //Append new elements names
-                    new_objects = Array(additive_robots_dictionary.keys).sorted(by: <)
-                    manufacturers.append(contentsOf: new_objects)
-                    
-                    //Append imported dictionary to main
-                    for i in 0..<new_objects.count
-                    {
-                        robots_dictionary.updateValue(additive_robots_dictionary[new_objects[i]]!, forKey: new_objects[i])
-                    }
-                }
-                catch
-                {
-                    //print(error.localizedDescription)
-                }
-            }
-            update_series_info()
-        case .tool:
-            //MARK: Tools data
-            if !(tools_empty ?? true)
-            {
-                do
-                {
-                    var is_stale = false
-                    let url = try URL(resolvingBookmarkData: tools_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                    
-                    guard !is_stale else
-                    {
-                        return
-                    }
-                    
-                    let plist_url = URL(string: url.absoluteString + selected_plist_names.Tools + ".plist")
-                    let additive_data = try Data(contentsOf: plist_url!)
-                    
-                    additive_tools_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
-                    new_objects = Array(additive_tools_dictionary.keys).sorted(by: <)
-                    tools.append(contentsOf: new_objects)
-                    
-                    for i in 0..<new_objects.count
-                    {
-                        tools_dictionary.updateValue(additive_tools_dictionary[new_objects[i]]!, forKey: new_objects[i])
-                    }
-                }
-                catch
-                {
-                    //print(error.localizedDescription)
-                }
-            }
-            //update_tool_info()
-        case .part:
-            //MARK: Parts data
-            if !(parts_empty ?? true)
-            {
-                do
-                {
-                    var is_stale = false
-                    let url = try URL(resolvingBookmarkData: parts_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                    
-                    guard !is_stale else
-                    {
-                        return
-                    }
-                    
-                    let plist_url = URL(string: url.absoluteString + selected_plist_names.Parts + ".plist")
-                    let additive_data = try Data(contentsOf: plist_url!)
-                    
-                    additive_parts_dictionary = try PropertyListSerialization.propertyList(from: additive_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
-                    new_objects = Array(additive_parts_dictionary.keys).sorted(by: <)
-                    parts.append(contentsOf: new_objects)
-                    
-                    for i in 0..<new_objects.count
-                    {
-                        parts_dictionary.updateValue(additive_parts_dictionary[new_objects[i]]!, forKey: new_objects[i])
-                    }
-                }
-                catch
-                {
-                    //print(error.localizedDescription)
-                }
-            }
-            //update_part_info()
-        }
-        
-        did_updated = true
     }
     
     public func update_additive_data(type: WorkspaceObjectType)
@@ -709,8 +489,6 @@ class AppState: ObservableObject
             clear_additive_data(type: type)
             parts_empty = false
         }
-        
-        get_additive_data(type: type)
     }
     
     public func clear_additive_data(type: WorkspaceObjectType)
@@ -821,105 +599,6 @@ class AppState: ObservableObject
             }
         }
         preview_update_scene = true
-    }
-    
-    //MARK: - Info for settings view
-    public var property_files_info: (Brands: String, Series: String, Models: String, Tools: String, Parts: String) //Count of models by object type
-    {
-        var brands = 0
-        var series = 0
-        var models = 0
-        
-        var tools = 0
-        var parts = 0
-        
-        if !(robots_empty ?? true)
-        {
-            brands = additive_robots_dictionary.keys.count
-            for key_name in additive_robots_dictionary.keys
-            {
-                series += additive_robots_dictionary[key_name]?.keys.count ?? 0
-                
-                for key_name2 in additive_robots_dictionary[key_name]!.keys
-                {
-                    models += additive_robots_dictionary[key_name]?[key_name2]?.keys.count ?? 0
-                }
-            }
-        }
-        
-        if !(tools_empty ?? true)
-        {
-            tools = additive_tools_dictionary.keys.count
-        }
-        
-        if !(parts_empty ?? true)
-        {
-            parts = additive_parts_dictionary.keys.count
-        }
-        
-        return (Brands: String(brands), Series: String(series), Models: String(models), Tools: String(tools), Parts: String(parts))
-    }
-    
-    public var selected_folder: (Robots: String, Tools: String, Parts: String) //Selected folder name for object data
-    {
-        var folder_names = (Robots: String(), Tools: String(), Parts: String())
-        var url: URL
-        
-        if !(robots_empty ?? true)
-        {
-            do
-            {
-                var is_stale = false
-                url = try URL(resolvingBookmarkData: robots_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                folder_names.Robots = url.lastPathComponent
-            }
-            catch
-            {
-                //print(error.localizedDescription)
-            }
-        }
-        else
-        {
-            folder_names.Robots = "None"
-        }
-        
-        if !(tools_empty ?? true)
-        {
-            do
-            {
-                var is_stale = false
-                url = try URL(resolvingBookmarkData: tools_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                folder_names.Tools = url.lastPathComponent
-            }
-            catch
-            {
-                //print(error.localizedDescription)
-            }
-        }
-        else
-        {
-            folder_names.Tools = "None"
-        }
-        
-        if !(parts_empty ?? true)
-        {
-            do
-            {
-                var is_stale = false
-                url = try URL(resolvingBookmarkData: parts_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                folder_names.Parts = url.lastPathComponent
-            }
-            catch
-            {
-                //print(error.localizedDescription)
-            }
-        }
-        else
-        {
-            folder_names.Parts = "None"
-        }
-        
-        return folder_names
     }
     
     //MARK: - Program elements functions
