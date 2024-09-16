@@ -231,7 +231,7 @@ struct ModulesSettingsView: View
                         {
                             VStack
                             {
-                                Text("\(app_state.external_modules_list["Robot"]?.count ?? 0)")
+                                Text("\(app_state.external_modules_list.robot.count)")
                                     .foregroundColor(.secondary)
                                 Text("Robot")
                                     .foregroundColor(.secondary)
@@ -241,7 +241,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text("\(app_state.external_modules_list["Tool"]?.count ?? 0)")
+                                Text("\(app_state.external_modules_list.tool.count)")
                                     .foregroundColor(.secondary)
                                 Text("Tool")
                                     .foregroundColor(.secondary)
@@ -251,7 +251,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text("\(app_state.external_modules_list["Part"]?.count ?? 0)")
+                                Text("\(app_state.external_modules_list.part.count)")
                                     .foregroundColor(.secondary)
                                 Text("Part")
                                     .foregroundColor(.secondary)
@@ -261,7 +261,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text("\(app_state.external_modules_list["Changer"]?.count ?? 0)")
+                                Text("\(app_state.external_modules_list.changer.count)")
                                     .foregroundColor(.secondary)
                                 Text("Changer")
                                     .foregroundColor(.secondary)
@@ -307,7 +307,7 @@ struct ModulesSettingsView: View
                         {
                             VStack
                             {
-                                Text("\(app_state.internal_modules_list["Robot"]?.count ?? 0)")
+                                Text("\(app_state.internal_modules_list.robot.count)")
                                     .foregroundColor(.secondary)
                                 Text("Robot")
                                     .foregroundColor(.secondary)
@@ -317,7 +317,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text("\(app_state.internal_modules_list["Tool"]?.count ?? 0)")
+                                Text("\(app_state.internal_modules_list.tool.count)")
                                     .foregroundColor(.secondary)
                                 Text("Tool")
                                     .foregroundColor(.secondary)
@@ -327,7 +327,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text("\(app_state.internal_modules_list["Part"]?.count ?? 0)")
+                                Text("\(app_state.internal_modules_list.part.count)")
                                     .foregroundColor(.secondary)
                                 Text("Part")
                                     .foregroundColor(.secondary)
@@ -337,7 +337,7 @@ struct ModulesSettingsView: View
                             
                             VStack
                             {
-                                Text("\(app_state.internal_modules_list["Changer"]?.count ?? 0)")
+                                Text("\(app_state.internal_modules_list.changer.count)")
                                     .foregroundColor(.secondary)
                                 Text("Changer")
                                     .foregroundColor(.secondary)
@@ -358,7 +358,7 @@ struct ModulesSettingsView: View
                 {
                     VStack
                     {
-                        Text(app_state.property_files_info.Brands)
+                        Text("\(app_state.external_modules_list.robot.count)")
                             .foregroundColor(.secondary)
                         Text("Robot")
                             .foregroundColor(.secondary)
@@ -368,7 +368,7 @@ struct ModulesSettingsView: View
                     
                     VStack
                     {
-                        Text(app_state.property_files_info.Series)
+                        Text("\(app_state.external_modules_list.tool.count)")
                             .foregroundColor(.secondary)
                         Text("Tool")
                             .foregroundColor(.secondary)
@@ -378,7 +378,7 @@ struct ModulesSettingsView: View
                     
                     VStack
                     {
-                        Text(app_state.property_files_info.Series)
+                        Text("\(app_state.external_modules_list.part.count)")
                             .foregroundColor(.secondary)
                         Text("Part")
                             .foregroundColor(.secondary)
@@ -388,7 +388,7 @@ struct ModulesSettingsView: View
                     
                     VStack
                     {
-                        Text(app_state.property_files_info.Models)
+                        Text("\(app_state.external_modules_list.changer.count)")
                             .foregroundColor(.secondary)
                         Text("Changer")
                             .foregroundColor(.secondary)
@@ -429,7 +429,7 @@ struct ModulesSettingsView: View
                 {
                     VStack
                     {
-                        Text("\(app_state.internal_modules["Robot"]?.count ?? 0)")
+                        Text("\(app_state.internal_modules_list.robot.count)")
                             .foregroundColor(.secondary)
                         Text("Robot")
                             .foregroundColor(.secondary)
@@ -439,7 +439,7 @@ struct ModulesSettingsView: View
                     
                     VStack
                     {
-                        Text("\(app_state.internal_modules["Tool"]?.count ?? 0)")
+                        Text("\(app_state.internal_modules_list.tool.count)")
                             .foregroundColor(.secondary)
                         Text("Tool")
                             .foregroundColor(.secondary)
@@ -449,7 +449,7 @@ struct ModulesSettingsView: View
                     
                     VStack
                     {
-                        Text("\(app_state.internal_modules["Part"]?.count ?? 0)")
+                        Text("\(app_state.internal_modules_list.part.count)")
                             .foregroundColor(.secondary)
                         Text("Part")
                             .foregroundColor(.secondary)
@@ -459,7 +459,7 @@ struct ModulesSettingsView: View
                     
                     VStack
                     {
-                        Text("\(app_state.internal_modules["Changer"]?.count ?? 0)")
+                        Text("\(app_state.internal_modules_list.changer.count)")
                             .foregroundColor(.secondary)
                         Text("Changer")
                             .foregroundColor(.secondary)

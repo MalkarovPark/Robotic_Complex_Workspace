@@ -249,38 +249,33 @@ class AppState: ObservableObject
     
     //MARK: - Modules handling functions
     //MARK: Internal
-    @Published public var internal_modules_list: [String: [String]] = [
-        "Robot": [String](),
-        "Tool": [String](),
-        "Part": [String](),
-        "Changer": [String]()
-    ]
+    @Published public var internal_modules_list: (robot: [String], tool: [String], part: [String], changer: [String]) = (robot: [], tool: [], part: [], changer: [])
     
     public func import_internal_modules()
     {
         Robot.modules = internal_modules.robot
         Tool.modules = internal_modules.tool
         Part.modules = internal_modules.part
-        ChangerModifierElement.modules = internal_modules.changer
+        Changer.modules = internal_modules.changer
         
         for module in internal_modules.robot
         {
-            internal_modules_list["Robot"]?.append(module.name)
+            internal_modules_list.robot.append(module.name)
         }
         
         for module in internal_modules.tool
         {
-            internal_modules_list["Tool"]?.append(module.name)
+            internal_modules_list.tool.append(module.name)
         }
         
         for module in internal_modules.part
         {
-            internal_modules_list["Part"]?.append(module.name)
+            internal_modules_list.part.append(module.name)
         }
         
         for module in internal_modules.changer
         {
-            internal_modules_list["Changer"]?.append(module.name)
+            internal_modules_list.changer.append(module.name)
         }
     }
     
@@ -289,12 +284,7 @@ class AppState: ObservableObject
     
     public var modules_folder_url: URL? = nil
     
-    @Published public var external_modules_list: [String: [String]] = [
-        "Robot": [String](),
-        "Tool": [String](),
-        "Part": [String](),
-        "Changer": [String]()
-    ]
+    @Published public var external_modules_list: (robot: [String], tool: [String], part: [String], changer: [String]) = (robot: [], tool: [], part: [], changer: [])
     
     public func update_external_modules_bookmark(url: URL?)
     {
@@ -336,10 +326,10 @@ class AppState: ObservableObject
                 modules_names.append(plist_url.lastPathComponent) //Append file name
             }
             
-            external_modules_list["Robot"] = modules_names.filter{ $0.contains(".robot") }
-            external_modules_list["Tool"] = modules_names.filter{ $0.contains(".tool") }
-            external_modules_list["Part"] = modules_names.filter{ $0.contains(".part") }
-            external_modules_list["Changer"] = modules_names.filter{ $0.contains(".changer") }
+            external_modules_list.robot = modules_names.filter{ $0.contains(".robot") }
+            external_modules_list.tool = modules_names.filter{ $0.contains(".tool") }
+            external_modules_list.part = modules_names.filter{ $0.contains(".part") }
+            external_modules_list.changer = modules_names.filter{ $0.contains(".changer") }
             
             WorkspaceObject.modules_folder_bookmark = bookmark
             
@@ -369,38 +359,66 @@ class AppState: ObservableObject
     
     private var external_robot_modules: [RobotModule]
     {
-        return [RobotModule]()
+        var modules: [RobotModule] = []
+        
+        for module_name in external_modules_list.robot
+        {
+            modules.append(external_robot_module(name: module_name))
+        }
+        
+        return modules
     }
     
     private var external_tool_modules: [ToolModule]
     {
-        return [ToolModule]()
+        var modules: [ToolModule] = []
+        
+        for module_name in external_modules_list.tool
+        {
+            modules.append(external_tool_module(name: module_name))
+        }
+        
+        return modules
     }
     
     private var external_part_modules: [PartModule]
     {
-        return [PartModule]()
+        var modules: [PartModule] = []
+        
+        for module_name in external_modules_list.part
+        {
+            modules.append(external_part_module(name: module_name))
+        }
+        
+        return modules
     }
     
     private var external_changer_modules: [ChangerModule]
     {
-        return [ChangerModule]()
+        var modules: [ChangerModule] = []
+        
+        for module_name in external_modules_list.changer
+        {
+            modules.append(external_changer_module(name: module_name))
+        }
+        
+        return modules
     }
     
     public func clear_modules()
     {
         modules_folder_bookmark = nil
+        external_modules_list = (robot: [], tool: [], part: [], changer: [])
         
-        external_modules_list.removeAll()
         Robot.modules.removeAll()
         Tool.modules.removeAll()
         Part.modules.removeAll()
-        ChangerModifierElement.modules.removeAll()
+        Changer.modules.removeAll()
         
         modules_folder_url = nil
     }
     
-    //MARK: UI Output
+    //MARK: - UI Output
     public var modules_folder_name: String
     {
         return get_relative_path(from: modules_folder_url) ?? "No folder selected"
@@ -427,52 +445,44 @@ class AppState: ObservableObject
     
     public var internal_robot_modules_names: String
     {
-        guard let names = internal_modules_list["Robot"], !names.isEmpty else { return "No Modules" }
-        return names_to_list(names)
+        return internal_modules_list.robot.count > 0 ? names_to_list(internal_modules_list.robot) : "No Modules"
     }
     
     public var internal_tool_modules_names: String
     {
-        guard let names = internal_modules_list["Tool"], !names.isEmpty else { return "No Modules" }
-        return names_to_list(names)
+        return internal_modules_list.tool.count > 0 ? names_to_list(internal_modules_list.tool) : "No Modules"
     }
     
     public var internal_part_modules_names: String
     {
-        guard let names = internal_modules_list["Part"], !names.isEmpty else { return "No Modules" }
-        return names_to_list(names)
+        return internal_modules_list.part.count > 0 ? names_to_list(internal_modules_list.part) : "No Modules"
     }
     
     public var internal_changer_modules_names: String
     {
-        guard let names = internal_modules_list["Changer"], !names.isEmpty else { return "No Modules" }
-        return names_to_list(names)
+        return internal_modules_list.changer.count > 0 ? names_to_list(internal_modules_list.changer) : "No Modules"
     }
     
     //External
     
     public var external_robot_modules_names: String
     {
-        guard let names = external_modules_list["Robot"], !names.isEmpty else { return "No Modules" }
-        return names_to_list(names)
+        external_modules_list.robot.count > 0 ? names_to_list(external_modules_list.robot) : "No Modules"
     }
     
     public var external_tool_modules_names: String
     {
-        guard let names = external_modules_list["Tool"], !names.isEmpty else { return "No Modules" }
-        return names_to_list(names)
+        external_modules_list.tool.count > 0 ? names_to_list(external_modules_list.tool) : "No Modules"
     }
     
     public var external_part_modules_names: String
     {
-        guard let names = external_modules_list["Part"], !names.isEmpty else { return "No Modules" }
-        return names_to_list(names)
+        external_modules_list.part.count > 0 ? names_to_list(external_modules_list.part) : "No Modules"
     }
     
     public var external_changer_modules_names: String
     {
-        guard let names = external_modules_list["Changer"], !names.isEmpty else { return "No Modules" }
-        return names_to_list(names)
+        external_modules_list.changer.count > 0 ? names_to_list(external_modules_list.changer) : "No Modules"
     }
     
     public func update_additive_data(type: WorkspaceObjectType)
@@ -605,7 +615,28 @@ class AppState: ObservableObject
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
 }
 
-//MARK - Control modifier
+//MARK: - External modules import functions
+public func external_robot_module(name: String) -> RobotModule
+{
+    return RobotModule()
+}
+
+public func external_tool_module(name: String) -> ToolModule
+{
+    return ToolModule()
+}
+
+public func external_part_module(name: String) -> PartModule
+{
+    return PartModule()
+}
+
+public func external_changer_module(name: String) -> ChangerModule
+{
+    return ChangerModule()
+}
+
+//MARK: - Control modifier
 struct MenuHandlingModifier: ViewModifier
 {
     @EnvironmentObject var app_state: AppState
@@ -651,3 +682,5 @@ func colors_by_seed(seed: Int) -> [Color]
 }
 
 let registers_colors = colors_by_seed(seed: 5433)
+
+typealias Changer = ChangerModifierElement
