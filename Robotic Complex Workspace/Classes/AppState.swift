@@ -142,7 +142,7 @@ class AppState: ObservableObject
         }
     }
     
-    @Published var part_name = "None" //Displayed model string for menu
+    @Published var preview_part_module_name = "None" //Displayed model string for menu
     {
         didSet
         {
@@ -182,16 +182,6 @@ class AppState: ObservableObject
     private var tools_data: Data //Data store from tools property list
     private var additive_tools_dictionary = [String: [String: Any]]() //Tools dictionary from plist file
     
-    //MARK: Parts dictionaries
-    public var parts_dictionary = [String: [String: Any]]()
-    public var part_dictionary = [String: Any]()
-    
-    //Names of parts models
-    public var parts = [String]()
-    
-    private var parts_data: Data //Data store from parts property list
-    private var additive_parts_dictionary = [String: [String: Any]]() //Parts dictionary from plist file
-    
     //MARK: - Application state init function
     init()
     {
@@ -200,7 +190,6 @@ class AppState: ObservableObject
         
         robots_data = Data()
         tools_data = Data()
-        parts_data = Data()
         
         var viewed_info: URL?
         
@@ -226,18 +215,6 @@ class AppState: ObservableObject
             
             tools = Array(tools_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of tools
             tool_name = tools.first ?? "None" //Set first array element as selected tool name
-        }
-        
-        //Get parts data from internal propery list file
-        viewed_info = Bundle.main.url(forResource: "PartsInfo", withExtension: "plist")
-        if viewed_info != nil
-        {
-            parts_data = try! Data(contentsOf: viewed_info!)
-            
-            parts_dictionary = try! PropertyListSerialization.propertyList(from: parts_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert parts data to dictionary
-            
-            parts = Array(parts_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of parts
-            part_name = parts.first ?? "None" //Set first array element as selected part name
         }
         
         //
@@ -272,6 +249,8 @@ class AppState: ObservableObject
         {
             internal_modules_list.part.append(module.name)
         }
+        
+        preview_part_module_name = internal_modules.part.first?.name ?? "None"
         
         for module in internal_modules.changer
         {
@@ -516,10 +495,7 @@ class AppState: ObservableObject
             tool_name = tools.first ?? "None"
             tools_empty = true
         case .part:
-            parts_dictionary = try! PropertyListSerialization.propertyList(from: parts_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
-            parts = Array(parts_dictionary.keys).sorted(by: <)
-            part_name = parts.first ?? "None"
-            parts_empty = true
+            break
         }
     }
     
@@ -582,32 +558,10 @@ class AppState: ObservableObject
     //MARK: Get parts
     public func update_part_info()
     {
-        part_dictionary = parts_dictionary[part_name]!
-        
         //Get part model by selected item for preview
-        if parts_empty ?? true
-        {
-            previewed_object = Part(name: "None", dictionary: part_dictionary)
-        }
-        else
-        {
-            do
-            {
-                var is_stale = false
-                let url = try URL(resolvingBookmarkData: parts_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                
-                guard !is_stale else
-                {
-                    return
-                }
-                
-                previewed_object = Part(name: "None", dictionary: part_dictionary)
-            }
-            catch
-            {
-                //print(error.localizedDescription)
-            }
-        }
+        previewed_object = Part(name: "None")
+        previewed_object?.import_module_by_name(preview_part_module_name)
+        
         preview_update_scene = true
     }
     

@@ -16,7 +16,8 @@ public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [P
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=ToolModule()@*//*@END_MENU_TOKEN@*/
     ],
     [
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=PartModule()@*//*@END_MENU_TOKEN@*/
+        Cup_Module,
+        Books_Module
     ],
     [
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=ChangerModule()@*//*@END_MENU_TOKEN@*/

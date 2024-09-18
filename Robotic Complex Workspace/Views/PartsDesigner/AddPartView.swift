@@ -53,12 +53,23 @@ struct AddPartView: View
                 #if os(iOS) || os(visionOS)
                 Spacer()
                 #endif
-                Picker(selection: $app_state.part_name, label: Text("Model")
+                Picker(selection: $app_state.preview_part_module_name, label: Text("Model")
                         .bold())
                 {
-                    ForEach(app_state.parts, id: \.self)
+                    Section(header: Text("Internal"))
                     {
-                        Text($0)
+                        ForEach(app_state.internal_modules_list.part, id: \.self)
+                        {
+                            Text($0)
+                        }
+                    }
+                    
+                    Section(header: Text("External"))
+                    {
+                        ForEach(app_state.external_modules_list.part, id: \.self)
+                        {
+                            Text($0)
+                        }
                     }
                 }
                 .textFieldStyle(.roundedBorder)
@@ -81,7 +92,7 @@ struct AddPartView: View
         #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
         #endif
-        .onChange(of: app_state.part_name)
+        .onChange(of: app_state.preview_part_module_name)
         { _, _ in
             app_state.update_part_info()
         }
