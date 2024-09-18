@@ -95,7 +95,7 @@ struct ContentView: View
     
     private func set_selection_functions()
     {
-        Workspace.change_by = change_by(name: registers:)
+        //Workspace.change_by = change_by(name: registers:)
         Workspace.changer_modules = changer_modules_names //["Module", "Module 2"]
         
         Robot.select_modules = select_robot_modules(name:model_controller:connector:)

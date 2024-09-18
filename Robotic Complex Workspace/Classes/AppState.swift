@@ -615,7 +615,7 @@ class AppState: ObservableObject
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
 }
 
-//MARK: - External modules import functions
+//MARK: - External modules build functions
 public func external_robot_module(name: String) -> RobotModule
 {
     return RobotModule()

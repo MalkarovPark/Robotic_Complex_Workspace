@@ -2,13 +2,11 @@
 //  List.swift
 //  Robotic Complex Workspace
 //
-//  Created by Artem on 12.09.2024.
+//  For internal modules mount.
 //
 
 import Foundation
 import IndustrialKit
-
-//INTERNAL
 
 public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [PartModule], changer: [ChangerModule]) = (
     [
@@ -24,5 +22,3 @@ public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [P
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=ChangerModule()@*//*@END_MENU_TOKEN@*/
     ]
 )
-
-//INTERNAL
