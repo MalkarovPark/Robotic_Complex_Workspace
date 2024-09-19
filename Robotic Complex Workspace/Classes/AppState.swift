@@ -146,12 +146,7 @@ class AppState: ObservableObject
     {
         didSet
         {
-            if did_updated
-            {
-                did_updated = false
-                update_part_info()
-                did_updated = true
-            }
+            update_part_info()
         }
     }
     

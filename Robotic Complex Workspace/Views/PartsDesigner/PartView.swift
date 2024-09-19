@@ -112,32 +112,6 @@ struct PartView: View
     }
 }
 
-//MARK: - Scene views
-struct PartPreviewSceneView: View
-{
-    @EnvironmentObject var app_state: AppState
-    
-    var body: some View
-    {
-        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn") ?? SCNScene(), on_render: update_preview_node(scene_view:), on_tap: { _, _ in })
-    }
-    
-    private func update_preview_node(scene_view: SCNView)
-    {
-        if app_state.preview_update_scene
-        {
-            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Node", recursively: true)
-            remove_node?.removeFromParentNode()
-            
-            app_state.update_part_info()
-            
-            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
-            app_state.previewed_object?.node?.name = "Node"
-            app_state.preview_update_scene = false
-        }
-    }
-}
-
 struct PartSceneView: View
 {
     @Binding var part: Part

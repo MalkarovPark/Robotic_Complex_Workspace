@@ -7,6 +7,7 @@
 
 import SwiftUI
 import IndustrialKit
+import SceneKit
 
 struct AddPartView: View
 {
@@ -60,7 +61,7 @@ struct AddPartView: View
                     {
                         ForEach(app_state.internal_modules_list.part, id: \.self)
                         {
-                            Text($0)
+                            Text($0).tag("\($0)")
                         }
                     }
                     
@@ -68,7 +69,7 @@ struct AddPartView: View
                     {
                         ForEach(app_state.external_modules_list.part, id: \.self)
                         {
-                            Text($0)
+                            Text($0).tag(".\($0)")
                         }
                     }
                 }
@@ -92,10 +93,6 @@ struct AddPartView: View
         #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
         #endif
-        .onChange(of: app_state.preview_part_module_name)
-        { _, _ in
-            app_state.update_part_info()
-        }
         .onAppear
         {
             app_state.update_part_info()
@@ -114,6 +111,29 @@ struct AddPartView: View
         document_handler.document_update_parts()
         
         add_part_view_presented.toggle()
+    }
+}
+
+struct PartPreviewSceneView: View
+{
+    @EnvironmentObject var app_state: AppState
+    
+    var body: some View
+    {
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn") ?? SCNScene(), on_render: update_preview_node(scene_view:), on_tap: { _, _ in })
+    }
+    
+    private func update_preview_node(scene_view: SCNView)
+    {
+        if app_state.preview_update_scene
+        {
+            let remove_node = scene_view.scene?.rootNode.childNode(withName: "Node", recursively: true)
+            remove_node?.removeFromParentNode()
+            
+            scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
+            app_state.previewed_object?.node?.name = "Node"
+            app_state.preview_update_scene = false
+        }
     }
 }
 
