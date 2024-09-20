@@ -17,6 +17,7 @@ struct ToolsView: View
     @State private var dragged_tool: Tool?
     
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
@@ -81,7 +82,17 @@ struct ToolsView: View
                     }
                     .sheet(isPresented: $add_tool_view_presented)
                     {
-                        AddToolView(add_tool_view_presented: $add_tool_view_presented)
+                        AddObjectView(is_presented: $add_tool_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_tool_module_name, internal_modules_list: $app_state.internal_modules_list.tool, external_modules_list: $app_state.external_modules_list.tool)
+                        {
+                            app_state.update_tool_info()
+                        }
+                        add_object:
+                        { new_name in
+                            app_state.previewed_object?.name = new_name
+
+                            base_workspace.add_tool(app_state.previewed_object! as! Tool)
+                            document_handler.document_update_tools()
+                        }
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif

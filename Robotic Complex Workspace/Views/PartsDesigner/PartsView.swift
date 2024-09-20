@@ -90,7 +90,18 @@ struct PartsView: View
                     }
                     .sheet(isPresented: $add_part_view_presented)
                     {
-                        AddPartView(add_part_view_presented: $add_part_view_presented)
+                        AddObjectView(is_presented: $add_part_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_part_module_name, internal_modules_list: $app_state.internal_modules_list.part, external_modules_list: $app_state.external_modules_list.part)
+                        {
+                            app_state.update_part_info()
+                        }
+                        add_object:
+                        { new_name in
+                            app_state.previewed_object?.name = new_name
+
+                            base_workspace.add_part(app_state.previewed_object! as! Part)
+                            document_handler.document_update_parts()
+                        }
+
                         #if os(visionOS)
                             .frame(width: 512, height: 512)
                         #endif

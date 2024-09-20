@@ -13,7 +13,7 @@ public let Books_Module = PartModule(
 
 public var BooksNode: SCNNode
 {
-    guard let new_scene = SCNScene(named: "Resources - Books.scnassets/books_row.scn") //Components.scnassets/Parts/books_row.scn
+    guard let new_scene = SCNScene(named: "Resources - Books.scnassets/books_row.scn")
     else
     {
         return SCNNode()

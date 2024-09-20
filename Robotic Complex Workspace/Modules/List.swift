@@ -13,7 +13,8 @@ public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [P
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=RobotModule()@*//*@END_MENU_TOKEN@*/
     ],
     [
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=ToolModule()@*//*@END_MENU_TOKEN@*/
+        Drill_Module,
+        Gripper_Module
     ],
     [
         Cup_Module,

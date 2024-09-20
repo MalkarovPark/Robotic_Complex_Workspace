@@ -129,20 +129,15 @@ class AppState: ObservableObject
         }
     }
     
-    @Published var tool_name = "None" //Displayed model string for menu
+    @Published var previewed_tool_module_name = "None" //Displayed model string for menu
     {
         didSet
         {
-            if did_updated
-            {
-                did_updated = false
-                update_tool_info()
-                did_updated = true
-            }
+            update_tool_info()
         }
     }
     
-    @Published var preview_part_module_name = "None" //Displayed model string for menu
+    @Published var previewed_part_module_name = "None" //Displayed model string for menu
     {
         didSet
         {
@@ -209,7 +204,7 @@ class AppState: ObservableObject
             tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert tools data to dictionary
             
             tools = Array(tools_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of tools
-            tool_name = tools.first ?? "None" //Set first array element as selected tool name
+            previewed_tool_module_name = tools.first ?? "None" //Set first array element as selected tool name
         }
         
         //
@@ -245,7 +240,7 @@ class AppState: ObservableObject
             internal_modules_list.part.append(module.name)
         }
         
-        preview_part_module_name = internal_modules.part.first?.name ?? "None"
+        previewed_part_module_name = internal_modules.part.first?.name ?? "None"
         
         for module in internal_modules.changer
         {
@@ -337,7 +332,7 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.robot
         {
-            modules.append(external_robot_module(name: module_name))
+            modules.append(RobotModule(external_name: module_name))
         }
         
         return modules
@@ -349,7 +344,7 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.tool
         {
-            modules.append(external_tool_module(name: module_name))
+            modules.append(ToolModule(external_name: module_name))
         }
         
         return modules
@@ -361,7 +356,7 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.part
         {
-            modules.append(external_part_module(name: module_name))
+            modules.append(PartModule(external_name: module_name))
         }
         
         return modules
@@ -373,7 +368,7 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.changer
         {
-            modules.append(external_changer_module(name: module_name))
+            modules.append(ChangerModule(external_name: module_name))
         }
         
         return modules
@@ -459,41 +454,6 @@ class AppState: ObservableObject
         external_modules_list.changer.count > 0 ? names_to_list(external_modules_list.changer) : "No Modules"
     }
     
-    public func update_additive_data(type: WorkspaceObjectType)
-    {
-        switch type
-        {
-        case .robot:
-            clear_additive_data(type: type)
-            robots_empty = false
-        case .tool:
-            clear_additive_data(type: type)
-            tools_empty = false
-        case .part:
-            clear_additive_data(type: type)
-            parts_empty = false
-        }
-    }
-    
-    public func clear_additive_data(type: WorkspaceObjectType)
-    {
-        switch type
-        {
-        case .robot:
-            robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]]
-            manufacturers = Array(robots_dictionary.keys).sorted(by: <)
-            manufacturer_name = manufacturers.first ?? "None"
-            robots_empty = true
-        case .tool:
-            tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]]
-            tools = Array(tools_dictionary.keys).sorted(by: <)
-            tool_name = tools.first ?? "None"
-            tools_empty = true
-        case .part:
-            break
-        }
-    }
-    
     //MARK: - Get info from dictionaries
     private func update_series_info() //Convert dictionary of robots to array
     {
@@ -521,32 +481,10 @@ class AppState: ObservableObject
     //MARK: Get tools
     public func update_tool_info()
     {
-        tool_dictionary = tools_dictionary[tool_name]!
-        
         //Get tool model by selected item for preview
-        if tools_empty ?? true
-        {
-            previewed_object = Tool(name: "None", dictionary: tool_dictionary)
-        }
-        else
-        {
-            do
-            {
-                var is_stale = false
-                let url = try URL(resolvingBookmarkData: tools_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-                
-                guard !is_stale else
-                {
-                    return
-                }
-                
-                previewed_object = Tool(name: "None", dictionary: tool_dictionary)
-            }
-            catch
-            {
-                //print(error.localizedDescription)
-            }
-        }
+        previewed_object = Tool(name: "None")
+        previewed_object?.import_module_by_name(previewed_tool_module_name)
+        
         preview_update_scene = true
     }
     
@@ -555,34 +493,13 @@ class AppState: ObservableObject
     {
         //Get part model by selected item for preview
         previewed_object = Part(name: "None")
-        previewed_object?.import_module_by_name(preview_part_module_name)
+        previewed_object?.import_module_by_name(previewed_part_module_name)
         
         preview_update_scene = true
     }
     
     //MARK: - Program elements functions
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
-}
-
-//MARK: - External modules build functions
-public func external_robot_module(name: String) -> RobotModule
-{
-    return RobotModule()
-}
-
-public func external_tool_module(name: String) -> ToolModule
-{
-    return ToolModule()
-}
-
-public func external_part_module(name: String) -> PartModule
-{
-    return PartModule()
-}
-
-public func external_changer_module(name: String) -> ChangerModule
-{
-    return ChangerModule()
 }
 
 //MARK: - Control modifier

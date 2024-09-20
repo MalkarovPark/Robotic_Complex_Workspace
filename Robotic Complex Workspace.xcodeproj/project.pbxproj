@@ -37,14 +37,13 @@
 		62398C802BF29E9A001A5B8A /* RobotsPassViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C7F2BF29E9A001A5B8A /* RobotsPassViews.swift */; };
 		62398C822BF29FDB001A5B8A /* RobotInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C812BF29FDB001A5B8A /* RobotInspectorView.swift */; };
 		62398C842BF2A0D9001A5B8A /* RobotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C832BF2A0D9001A5B8A /* RobotView.swift */; };
-		62398C862BF2A33A001A5B8A /* AddToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C852BF2A33A001A5B8A /* AddToolView.swift */; };
 		62398C882BF2A3B1001A5B8A /* ToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C872BF2A3B1001A5B8A /* ToolView.swift */; };
 		62398C8A2BF2A42C001A5B8A /* ToolInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C892BF2A42C001A5B8A /* ToolInspectorView.swift */; };
-		62398C8C2BF2A6A6001A5B8A /* AddPartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C8B2BF2A6A6001A5B8A /* AddPartView.swift */; };
 		62398C8E2BF2A70D001A5B8A /* PartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C8D2BF2A70D001A5B8A /* PartView.swift */; };
 		623D724C2ADC696F00927DEA /* RegistersDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D724B2ADC696F00927DEA /* RegistersDataView.swift */; };
 		6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */; };
 		626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 626EF85D2AD3493900F2A361 /* IndustrialKit */; };
+		627C25502C9DA7660087D777 /* AddObjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627C254F2C9DA7660087D777 /* AddObjectView.swift */; };
 		627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627D3E9A2AD34A7600D5988D /* AppState.swift */; };
 		6282EC752C9341EF006EBF3C /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6282EC742C9341EF006EBF3C /* List.swift */; };
 		62BFD7862B85699B00966525 /* ViewPendantButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BFD7852B85699B00966525 /* ViewPendantButton.swift */; };
@@ -87,13 +86,12 @@
 		62398C7F2BF29E9A001A5B8A /* RobotsPassViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsPassViews.swift; sourceTree = "<group>"; };
 		62398C812BF29FDB001A5B8A /* RobotInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotInspectorView.swift; sourceTree = "<group>"; };
 		62398C832BF2A0D9001A5B8A /* RobotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotView.swift; sourceTree = "<group>"; };
-		62398C852BF2A33A001A5B8A /* AddToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToolView.swift; sourceTree = "<group>"; };
 		62398C872BF2A3B1001A5B8A /* ToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolView.swift; sourceTree = "<group>"; };
 		62398C892BF2A42C001A5B8A /* ToolInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolInspectorView.swift; sourceTree = "<group>"; };
-		62398C8B2BF2A6A6001A5B8A /* AddPartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPartView.swift; sourceTree = "<group>"; };
 		62398C8D2BF2A70D001A5B8A /* PartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartView.swift; sourceTree = "<group>"; };
 		623D724B2ADC696F00927DEA /* RegistersDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistersDataView.swift; sourceTree = "<group>"; };
 		6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentUpdateHandler.swift; sourceTree = "<group>"; };
+		627C254F2C9DA7660087D777 /* AddObjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddObjectView.swift; sourceTree = "<group>"; };
 		627D3E9A2AD34A7600D5988D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		6282EC742C9341EF006EBF3C /* List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
 		62BFD7852B85699B00966525 /* ViewPendantButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPendantButton.swift; sourceTree = "<group>"; };
@@ -169,6 +167,7 @@
 				62398C772BF299CF001A5B8A /* RobotsDesigner */,
 				62398C782BF299E5001A5B8A /* ToolsDesigner */,
 				62398C792BF299F1001A5B8A /* PartsDesigner */,
+				627C254F2C9DA7660087D777 /* AddObjectView.swift */,
 				6236F94C2AD345C4008FA7C4 /* ConnectorView.swift */,
 				6236F9542AD345C4008FA7C4 /* ContentView.swift */,
 				6236F94F2AD345C4008FA7C4 /* SettingsView.swift */,
@@ -240,7 +239,6 @@
 			isa = PBXGroup;
 			children = (
 				6236F94D2AD345C4008FA7C4 /* ToolsView.swift */,
-				62398C852BF2A33A001A5B8A /* AddToolView.swift */,
 				62398C872BF2A3B1001A5B8A /* ToolView.swift */,
 				62398C892BF2A42C001A5B8A /* ToolInspectorView.swift */,
 			);
@@ -251,7 +249,6 @@
 			isa = PBXGroup;
 			children = (
 				6236F94E2AD345C4008FA7C4 /* PartsView.swift */,
-				62398C8B2BF2A6A6001A5B8A /* AddPartView.swift */,
 				62398C8D2BF2A70D001A5B8A /* PartView.swift */,
 			);
 			path = PartsDesigner;
@@ -412,7 +409,6 @@
 				62398C802BF29E9A001A5B8A /* RobotsPassViews.swift in Sources */,
 				622E73E32B12AD710035FDD5 /* LogicElementsViews.swift in Sources */,
 				62E165E52B20C422005E318A /* VisualWorkspaceView.swift in Sources */,
-				62398C8C2BF2A6A6001A5B8A /* AddPartView.swift in Sources */,
 				62398C8A2BF2A42C001A5B8A /* ToolInspectorView.swift in Sources */,
 				6236F9392AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift in Sources */,
 				6282EC752C9341EF006EBF3C /* List.swift in Sources */,
@@ -422,11 +418,11 @@
 				6236F9492AD34591008FA7C4 /* Functions.swift in Sources */,
 				62BFD7862B85699B00966525 /* ViewPendantButton.swift in Sources */,
 				627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */,
+				627C25502C9DA7660087D777 /* AddObjectView.swift in Sources */,
 				623D724C2ADC696F00927DEA /* RegistersDataView.swift in Sources */,
 				6236F95D2AD345C4008FA7C4 /* ControlProgramView.swift in Sources */,
 				62BFD7882B8C8B4000966525 /* SidebarController.swift in Sources */,
 				6236F9582AD345C4008FA7C4 /* PartsView.swift in Sources */,
-				62398C862BF2A33A001A5B8A /* AddToolView.swift in Sources */,
 				62398C7E2BF29DCC001A5B8A /* AddRobotView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

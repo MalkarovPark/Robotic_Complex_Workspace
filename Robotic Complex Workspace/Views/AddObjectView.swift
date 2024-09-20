@@ -1,29 +1,48 @@
 //
-//  AddPartView.swift
+//  AddObjectView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Artem on 13.05.2024.
+//  Created by Artem on 20.09.2024.
 //
 
 import SwiftUI
 import IndustrialKit
 import SceneKit
 
-struct AddPartView: View
+struct AddObjectView: View
 {
-    @Binding var add_part_view_presented: Bool
+    @Binding var is_presented: Bool
     
     @State private var new_part_name = ""
     
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    let previewed_object: WorkspaceObject?
+    
+    @Binding var previewed_object_name: String
+    @Binding var internal_modules_list: [String]
+    @Binding var external_modules_list: [String]
+    
+    private var update_object_info: () -> Void
+    private var add_object: (String) -> Void
+    
+    public init(is_presented: Binding<Bool>, previewed_object: WorkspaceObject?, previewed_object_name: Binding<String>, internal_modules_list: Binding<[String]>, external_modules_list: Binding<[String]>, update_object_info: @escaping () -> Void, add_object: @escaping (String) -> Void)
+    {
+        self._is_presented = is_presented
+        
+        self.previewed_object = previewed_object
+        
+        self._previewed_object_name = previewed_object_name
+        self._internal_modules_list = internal_modules_list
+        self._external_modules_list = external_modules_list
+        
+        self.update_object_info = update_object_info
+        self.add_object = add_object
+    }
     
     var body: some View
     {
         VStack(spacing: 0)
         {
-            PartPreviewSceneView()
+            ObjectPreviewSceneView()
                 .overlay(alignment: .top)
                 {
                     Text("New Part")
@@ -54,12 +73,12 @@ struct AddPartView: View
                 #if os(iOS) || os(visionOS)
                 Spacer()
                 #endif
-                Picker(selection: $app_state.preview_part_module_name, label: Text("Model")
+                Picker(selection: $previewed_object_name, label: Text("Model")
                         .bold())
                 {
                     Section(header: Text("Internal"))
                     {
-                        ForEach(app_state.internal_modules_list.part, id: \.self)
+                        ForEach(internal_modules_list, id: \.self)
                         {
                             Text($0).tag("\($0)")
                         }
@@ -67,7 +86,7 @@ struct AddPartView: View
                     
                     Section(header: Text("External"))
                     {
-                        ForEach(app_state.external_modules_list.part, id: \.self)
+                        ForEach(external_modules_list, id: \.self)
                         {
                             Text($0).tag(".\($0)")
                         }
@@ -78,12 +97,12 @@ struct AddPartView: View
                 .padding(.vertical, 8)
                 .padding(.leading)
                 
-                Button("Cancel", action: { add_part_view_presented.toggle() })
+                Button("Cancel", action: { is_presented.toggle() })
                     .keyboardShortcut(.cancelAction)
                     .buttonStyle(.bordered)
                     .padding([.top, .leading, .bottom])
                 
-                Button("Add", action: add_part_in_workspace)
+                Button("Add", action: add_object_in_workspace)
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
                     .padding()
@@ -95,32 +114,31 @@ struct AddPartView: View
         #endif
         .onAppear
         {
-            app_state.update_part_info()
+            update_object_info()
+            //app_state.update_part_info()
         }
     }
     
-    func add_part_in_workspace()
+    private func add_object_in_workspace()
     {
         if new_part_name == ""
         {
             new_part_name = "None"
         }
         
-        app_state.previewed_object?.name = new_part_name
-        base_workspace.add_part(app_state.previewed_object! as! Part)
-        document_handler.document_update_parts()
+        add_object(new_part_name)
         
-        add_part_view_presented.toggle()
+        is_presented.toggle()
     }
 }
 
-struct PartPreviewSceneView: View
+struct ObjectPreviewSceneView: View
 {
     @EnvironmentObject var app_state: AppState
     
     var body: some View
     {
-        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn") ?? SCNScene(), on_render: update_preview_node(scene_view:), on_tap: { _, _ in })
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn") ?? SCNScene(), on_render: update_preview_node(scene_view:))
     }
     
     private func update_preview_node(scene_view: SCNView)
@@ -137,10 +155,7 @@ struct PartPreviewSceneView: View
     }
 }
 
-//MARK: - Previews
 #Preview
 {
-    AddPartView(add_part_view_presented: .constant(true))
-        .environmentObject(AppState())
-        .environmentObject(Workspace())
+    AddObjectView(is_presented: .constant(true), previewed_object: nil, previewed_object_name: .constant("Name"), internal_modules_list: .constant([String]()), external_modules_list: .constant([String]()), update_object_info: {}, add_object: {_ in})
 }
