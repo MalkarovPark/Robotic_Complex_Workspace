@@ -124,7 +124,7 @@ struct PartSceneView: View
 
 #Preview
 {
-    PartView(part_view_presented: .constant(true), part_item: .constant(Part(name: "None", dictionary: ["String" : "Any"])), new_physics: .ph_none)
+    PartView(part_view_presented: .constant(true), part_item: .constant(Part(name: "None")), new_physics: .ph_none)
         .environmentObject(AppState())
         .environmentObject(Workspace())
 }

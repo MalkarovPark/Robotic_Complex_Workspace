@@ -35,6 +35,6 @@ public var Gripper_Codes: [OperationCodeInfo]
 {
     return [
         OperationCodeInfo(value: 0, name: "Grab", symbol: "arrow.right.and.line.vertical.and.arrow.left", info: "Grab jaws"),
-        OperationCodeInfo(value: 0, name: "Release", symbol: "arrow.left.and.line.vertical.and.arrow.right", info: "Release jaws")
+        OperationCodeInfo(value: 1, name: "Release", symbol: "arrow.left.and.line.vertical.and.arrow.right", info: "Release jaws")
     ]
 }

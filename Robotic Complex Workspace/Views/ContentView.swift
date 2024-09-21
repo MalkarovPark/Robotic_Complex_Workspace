@@ -99,7 +99,6 @@ struct ContentView: View
         Workspace.changer_modules = changer_modules_names //["Module", "Module 2"]
         
         Robot.select_modules = select_robot_modules(name:model_controller:connector:)
-        Tool.select_modules = select_tool_modules(name:model_controller:connector:)
     }
     
     private func get_file_data() //Store preset file data into workspace

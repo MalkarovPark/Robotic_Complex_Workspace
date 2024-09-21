@@ -177,7 +177,7 @@ struct ToolDropDelegate : DropDelegate
     @Binding var tools : [Tool]
     @Binding var dragged_tool : Tool?
     
-    @State var workspace_tools: [ToolStruct]
+    @State var workspace_tools: [Tool]
     
     let tool: Tool
     let document_handler: DocumentUpdateHandler

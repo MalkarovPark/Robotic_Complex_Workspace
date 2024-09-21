@@ -30,7 +30,8 @@ public var DrillNode: SCNNode
 public var Drill_Codes: [OperationCodeInfo]
 {
     return [
-        OperationCodeInfo(value: 0, name: "Clockwise", symbol: "arrow.clockwise.circle", info: "Clockwise rotation"),
-        OperationCodeInfo(value: 0, name: "Counter", symbol: "arrow.counterclockwise.circle", info: "Counter clockwise rotation")
+        OperationCodeInfo(value: 1, name: "Clockwise", symbol: "arrow.clockwise.circle", info: "Clockwise rotation"),
+        OperationCodeInfo(value: 2, name: "Counter", symbol: "arrow.counterclockwise.circle", info: "Counter clockwise rotation"),
+        OperationCodeInfo(value: 0, name: "Stop", symbol: "stop.circle", info: "Stop rotation")
     ]
 }
