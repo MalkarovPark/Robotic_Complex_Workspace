@@ -1,5 +1,5 @@
 //
-//  DrillConnector.swift
+//  GripperConnector.swift
 //  Robotic Complex Workspace
 //
 //  Created by Artem on 16.01.2023.
@@ -8,7 +8,7 @@
 import Foundation
 import IndustrialKit
 
-class DrillConnector: ToolConnector
+class Gripper_Connector: ToolConnector
 {
     override init()
     {
@@ -65,67 +65,64 @@ class DrillConnector: ToolConnector
     }
     
     //MARK: - Control functions
-    private var rotated = [false, false]
+    private var closed = false
+    private var moved = false
+    
+    //private var perform_task = Task {}
+    
+    /*override func perform(code: Int, completion: @escaping () -> Void)
+    {
+        new_line_check()
+        
+        DispatchQueue.global().async
+        {
+            self.performation_task(code: code)
+            completion()
+        }
+    }*/
     
     override func perform(code: Int)
     {
+        new_line_check()
         model_controller?.nodes_perform(code: code)
         
-        new_line_check()
         switch code
         {
-        case 0: //Strop rotation
-            //nodes.first?.removeAllActions()
-            output += "Stopped"
-            
-            rotated[0] = false
-            rotated[1] = false
-        case 1: //Clockwise rotation
-            if !rotated[0]
+        case 0: //Grip
+            if !closed && !moved
             {
-                //nodes.first?.removeAllActions()
-                DispatchQueue.main.asyncAfter(deadline: .now())
-                {
-                    //self.nodes.first?.runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
-                    self.output += "Rotated Clockwise"
-                    
-                    self.rotated[0] = true
-                    self.rotated[1] = false
-                }
+                output += "Gripping"
+                moved = true
+                
+                sleep(4)
+                
+                output += "\nGripped"
+                self.moved = false
+                self.closed = true
             }
-        case 2: //Counter clockwise rotation
-            if !rotated[1]
+            else
             {
-                //nodes.first?.removeAllActions()
-                DispatchQueue.main.asyncAfter(deadline: .now())
-                {
-                    //self.nodes.first?.runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
-                    self.output += "Rotated Counterclockwise"
-                    
-                    self.rotated[1] = true
-                    self.rotated[0] = false
-                }
+                output += "Already gripped"
+            }
+        case 1: //Release
+            if closed && !moved
+            {
+                output += "Releasing"
+                moved = true
+                
+                sleep(4)
+                
+                output += "\nReleased"
+                self.moved = false
+                self.closed = false
+            }
+            else
+            {
+                output += "Already released"
             }
         default:
             //remove_all_model_actions()
-            output += "Reset"
-            
-            rotated[0] = false
-            rotated[1] = false
-        }
-        
-        //output += "Rotated"
-    }
-    
-    override func pause_operations()
-    {
-        rotated[0] = false
-        rotated[1] = false
-        
-        if update_model
-        {
-            model_controller?.reset_nodes()
-            //remove_all_model_actions()
+            output += "???"
         }
     }
     

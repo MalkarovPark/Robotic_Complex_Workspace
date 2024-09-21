@@ -15,18 +15,12 @@ class AppState: ObservableObject
 {
     //Bookmarks for the workspace objects model data
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
-    @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
-    @AppStorage("PartsBookmark") private var parts_bookmark: Data?
     
     //Saved names of property list files for workspace objects
     @AppStorage("RobotsPlistName") private var robots_plist_name: String?
-    @AppStorage("ToolsPlistName") private var tools_plist_name: String?
-    @AppStorage("PartsPlistName") private var parts_plist_name: String?
     
     //If data folder selected
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
-    @AppStorage("ToolsEmpty") private var tools_empty: Bool?
-    @AppStorage("PartsEmpty") private var parts_empty: Bool?
     
     //Commands
     @Published var run_command = false

@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 import IndustrialKit
 
-class GripperController: ToolModelController
+class Gripper_Controller: ToolModelController
 {
     override func connect_nodes(_ node: SCNNode)
     {

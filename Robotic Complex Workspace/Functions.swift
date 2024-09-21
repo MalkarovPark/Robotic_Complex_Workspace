@@ -24,21 +24,6 @@ func select_robot_modules(name: String, model_controller: inout RobotModelContro
     }
 }
 
-func select_tool_modules(name: String, model_controller: inout ToolModelController, connector: inout ToolConnector)
-{
-    switch name
-    {
-    case "gripper":
-        model_controller = GripperController()
-        connector = GripperConnector()
-    case "drill":
-        model_controller = DrillController()
-        connector = DrillConnector()
-    default:
-        break
-    }
-}
-
 //MARK: - Changer modules
 let changer_modules_names = ["Module", "Module 2"]
 

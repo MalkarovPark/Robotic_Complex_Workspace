@@ -8,15 +8,15 @@ import SceneKit
 
 public let Gripper_Module = ToolModule(
     name: "Gripper",
-    model_controller: GripperController(),
-    connector: GripperConnector(),
+    model_controller: Gripper_Controller(),
+    connector: Gripper_Connector(),
     operation_codes: Gripper_Codes,
-    node: GripperNode
+    node: Gripper_Node
 )
 
-public var GripperNode: SCNNode
+public var Gripper_Node: SCNNode
 {
-    guard let new_scene = SCNScene(named: "Resources - Gripper.scnassets/gripper.scn")
+    guard let new_scene = SCNScene(named: "Gripper_Resources.scnassets/gripper.scn")
     else
     {
         return SCNNode()

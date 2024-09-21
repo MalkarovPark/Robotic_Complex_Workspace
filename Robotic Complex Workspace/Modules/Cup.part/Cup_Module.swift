@@ -8,12 +8,12 @@ import SceneKit
 
 public let Cup_Module = PartModule(
     name: "Cup",
-    node: CupNode
+    node: Cup_Node
 )
 
-public var CupNode: SCNNode
+public var Cup_Node: SCNNode
 {
-    guard let new_scene = SCNScene(named: "Resources - Cup.scnassets/cup.scn")
+    guard let new_scene = SCNScene(named: "Cup_Resources.scnassets/cup.scn")
     else
     {
         return SCNNode()

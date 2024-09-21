@@ -22,13 +22,9 @@ struct ContentView: View
     
     //Default components resouces bookmarks
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
-    @AppStorage("ToolsBookmark") private var tools_bookmark: Data?
-    @AppStorage("PartsBookmark") private var parts_bookmark: Data?
     
     //If resources not defined
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
-    @AppStorage("ToolsEmpty") private var tools_empty: Bool?
-    @AppStorage("PartsEmpty") private var parts_empty: Bool?
     
     //Default count of new registers
     @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
@@ -89,8 +85,6 @@ struct ContentView: View
         Workspace.default_registers_count = workspace_registers_count
         
         Robot.scene_folder = "Components.scnassets/Robots"
-        Tool.scene_folder = "Components.scnassets/Tools"
-        Part.scene_folder = "Components.scnassets/Parts"
     }
     
     private func set_selection_functions()
@@ -105,8 +99,6 @@ struct ContentView: View
     {
         //Pass bookmarks data into workspace for the models access
         Workspace.robots_bookmark = robots_empty ?? true ? nil : robots_bookmark
-        Workspace.tools_bookmark = tools_empty ?? true ? nil : tools_bookmark
-        Workspace.parts_bookmark = parts_empty ?? true ? nil : parts_bookmark
         
         base_workspace.file_view(preset: document.preset) //Get file data from document
     }

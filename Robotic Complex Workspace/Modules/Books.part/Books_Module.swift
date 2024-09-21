@@ -8,12 +8,12 @@ import SceneKit
 
 public let Books_Module = PartModule(
     name: "Books",
-    node: BooksNode
+    node: Books_Node
 )
 
-public var BooksNode: SCNNode
+public var Books_Node: SCNNode
 {
-    guard let new_scene = SCNScene(named: "Resources - Books.scnassets/books_row.scn")
+    guard let new_scene = SCNScene(named: "Books_Resources.scnassets/books_row.scn")
     else
     {
         return SCNNode()

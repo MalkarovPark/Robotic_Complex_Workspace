@@ -4,15 +4,15 @@ import SceneKit
 
 public let Drill_Module = ToolModule(
     name: "Drill",
-    model_controller: DrillController(),
-    connector: DrillConnector(),
+    model_controller: Drill_Controller(),
+    connector: Drill_Connector(),
     operation_codes: Drill_Codes,
-    node: DrillNode
+    node: Drill_Node
 )
 
-public var DrillNode: SCNNode
+public var Drill_Node: SCNNode
 {
-    guard let new_scene = SCNScene(named: "Resources - Drill.scnassets/drill.scn")
+    guard let new_scene = SCNScene(named: "Drill_Resources.scnassets/drill.scn")
     else
     {
         return SCNNode()

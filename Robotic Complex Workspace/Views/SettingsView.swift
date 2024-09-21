@@ -45,15 +45,6 @@ struct SettingsView: View
                 Label("Modules", systemImage: "puzzlepiece.extension")
             }
             
-            /*PropertiesSettingsView()
-            #if os(iOS) || os(visionOS)
-                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Properties"))
-            #endif
-                .tabItem
-            {
-                Label("Properties", systemImage: "doc.text")
-            }*/
-            
             CellSettingsView()
             #if os(iOS) || os(visionOS)
                 .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Cell"))

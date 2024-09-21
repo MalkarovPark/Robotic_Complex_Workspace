@@ -28,9 +28,7 @@
 		6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9602AD345FC008FA7C4 /* DynamicStack.swift */; };
 		6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9612AD345FC008FA7C4 /* ContextMenus.swift */; };
 		6236F9652AD345FC008FA7C4 /* DoubleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9622AD345FC008FA7C4 /* DoubleModifier.swift */; };
-		6236F9842AD34763008FA7C4 /* ToolsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9812AD34763008FA7C4 /* ToolsInfo.plist */; };
 		6236F9852AD34763008FA7C4 /* RobotsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9822AD34763008FA7C4 /* RobotsInfo.plist */; };
-		6236F9862AD34763008FA7C4 /* PartsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9832AD34763008FA7C4 /* PartsInfo.plist */; };
 		6236F98A2AD347AA008FA7C4 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9892AD347AA008FA7C4 /* Components.scnassets */; };
 		62398C7C2BF29C39001A5B8A /* RobotsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C7B2BF29C39001A5B8A /* RobotsTableView.swift */; };
 		62398C7E2BF29DCC001A5B8A /* AddRobotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C7D2BF29DCC001A5B8A /* AddRobotView.swift */; };
@@ -77,9 +75,7 @@
 		6236F9602AD345FC008FA7C4 /* DynamicStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicStack.swift; sourceTree = "<group>"; };
 		6236F9612AD345FC008FA7C4 /* ContextMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextMenus.swift; sourceTree = "<group>"; };
 		6236F9622AD345FC008FA7C4 /* DoubleModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleModifier.swift; sourceTree = "<group>"; };
-		6236F9812AD34763008FA7C4 /* ToolsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ToolsInfo.plist; sourceTree = "<group>"; };
 		6236F9822AD34763008FA7C4 /* RobotsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RobotsInfo.plist; sourceTree = "<group>"; };
-		6236F9832AD34763008FA7C4 /* PartsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PartsInfo.plist; sourceTree = "<group>"; };
 		6236F9892AD347AA008FA7C4 /* Components.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Components.scnassets; sourceTree = "<group>"; };
 		62398C7B2BF29C39001A5B8A /* RobotsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsTableView.swift; sourceTree = "<group>"; };
 		62398C7D2BF29DCC001A5B8A /* AddRobotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRobotView.swift; sourceTree = "<group>"; };
@@ -215,9 +211,7 @@
 		6236F9802AD3473F008FA7C4 /* Lists */ = {
 			isa = PBXGroup;
 			children = (
-				6236F9832AD34763008FA7C4 /* PartsInfo.plist */,
 				6236F9822AD34763008FA7C4 /* RobotsInfo.plist */,
-				6236F9812AD34763008FA7C4 /* ToolsInfo.plist */,
 			);
 			path = Lists;
 			sourceTree = "<group>";
@@ -372,11 +366,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6236F9842AD34763008FA7C4 /* ToolsInfo.plist in Resources */,
 				6236F9422AD3439C008FA7C4 /* Preview Assets.xcassets in Resources */,
 				6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */,
 				6236F9852AD34763008FA7C4 /* RobotsInfo.plist in Resources */,
-				6236F9862AD34763008FA7C4 /* PartsInfo.plist in Resources */,
 				6236F98A2AD347AA008FA7C4 /* Components.scnassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
