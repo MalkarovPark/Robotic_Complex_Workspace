@@ -14,11 +14,11 @@ func select_robot_modules(name: String, model_controller: inout RobotModelContro
     switch name
     {
     case "Portal":
-        model_controller = PortalController()
-        connector = PortalConnector()
+        model_controller = Portal_Controller()
+        connector = Portal_Connector()
     case "6DOF":
-        model_controller = _6DOFController()
-        connector = _6DOFConnector()
+        model_controller = _6DOF_Controller()
+        connector = _6DOF_Connector()
     default:
         break
     }

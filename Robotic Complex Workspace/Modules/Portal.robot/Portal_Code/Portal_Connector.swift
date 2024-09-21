@@ -1,5 +1,5 @@
 //
-//  6DOFConnector.swift
+//  PortalConnector.swift
 //  Robotic Complex Workspace
 //
 //  Created by Artem on 16.01.2023.
@@ -8,7 +8,7 @@
 import Foundation
 import IndustrialKit
 
-class _6DOFConnector: RobotConnector
+class Portal_Connector: RobotConnector
 {
     override init()
     {

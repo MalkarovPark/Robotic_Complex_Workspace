@@ -229,6 +229,8 @@ class AppState: ObservableObject
             internal_modules_list.tool.append(module.name)
         }
         
+        previewed_tool_module_name = internal_modules.tool.first?.name ?? "None"
+        
         for module in internal_modules.part
         {
             internal_modules_list.part.append(module.name)

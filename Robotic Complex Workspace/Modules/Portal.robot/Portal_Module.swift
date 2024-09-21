@@ -6,7 +6,7 @@ import Foundation
 import IndustrialKit
 import SceneKit
 
-public let Gripper_Module = ToolModule(
+public let Portal_Module = ToolModule(
     name: "Gripper",
     model_controller: Gripper_Controller(),
     connector: Gripper_Connector(),
@@ -14,7 +14,7 @@ public let Gripper_Module = ToolModule(
     node: Gripper_Node
 )
 
-public var Gripper_Node: SCNNode
+public var Portal_Node: SCNNode
 {
     guard let new_scene = SCNScene(named: "Gripper_Resources.scnassets/gripper.scn")
     else
@@ -29,12 +29,4 @@ public var Gripper_Node: SCNNode
     }
     
     return node
-}
-
-public var Gripper_Codes: [OperationCodeInfo]
-{
-    return [
-        OperationCodeInfo(value: 0, name: "Grab", symbol: "arrow.right.and.line.vertical.and.arrow.left", info: "Grab jaws"),
-        OperationCodeInfo(value: 1, name: "Release", symbol: "arrow.left.and.line.vertical.and.arrow.right", info: "Release jaws")
-    ]
 }

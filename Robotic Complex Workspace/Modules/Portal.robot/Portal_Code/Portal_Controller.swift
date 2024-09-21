@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 import IndustrialKit
 
-class PortalController: RobotModelController
+class Portal_Controller: RobotModelController
 {
     //MARK: - Portal nodes connect
     override func connect_nodes(_ node: SCNNode)

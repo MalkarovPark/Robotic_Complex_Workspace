@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 import IndustrialKit
 
-class _6DOFController: RobotModelController
+class _6DOF_Controller: RobotModelController
 {
     //MARK: - 6DOF nodes connect
     override func connect_nodes(_ node: SCNNode)

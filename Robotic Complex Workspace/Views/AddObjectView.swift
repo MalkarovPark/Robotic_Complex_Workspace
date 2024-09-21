@@ -13,7 +13,7 @@ struct AddObjectView: View
 {
     @Binding var is_presented: Bool
     
-    @State private var new_part_name = ""
+    @State private var new_object_name = ""
     
     let previewed_object: WorkspaceObject?
     
@@ -60,7 +60,7 @@ struct AddObjectView: View
             {
                 Text("Name")
                     .bold()
-                TextField("None", text: $new_part_name)
+                TextField("None", text: $new_object_name)
                 #if os(iOS) || os(visionOS)
                     .textFieldStyle(.roundedBorder)
                 #endif
@@ -121,12 +121,12 @@ struct AddObjectView: View
     
     private func add_object_in_workspace()
     {
-        if new_part_name == ""
+        if new_object_name == ""
         {
-            new_part_name = "None"
+            new_object_name = "None"
         }
         
-        add_object(new_part_name)
+        add_object(new_object_name)
         
         is_presented.toggle()
     }
