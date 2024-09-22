@@ -90,7 +90,7 @@ struct PartsView: View
                     }
                     .sheet(isPresented: $add_part_view_presented)
                     {
-                        AddObjectView(is_presented: $add_part_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_part_module_name, internal_modules_list: $app_state.internal_modules_list.part, external_modules_list: $app_state.external_modules_list.part)
+                        AddObjectView(is_presented: $add_part_view_presented, title: "Part", previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_part_module_name, internal_modules_list: $app_state.internal_modules_list.part, external_modules_list: $app_state.external_modules_list.part)
                         {
                             app_state.update_part_info()
                         }

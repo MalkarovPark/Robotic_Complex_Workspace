@@ -82,44 +82,11 @@ class AppState: ObservableObject
     @Published var force_resize_view = true
     #endif
     
-    @Published var manufacturer_name = "None" //Manufacturer's display string for menu
+    @Published var previewed_robot_module_name = "None" //Displayed model string for menu
     {
         didSet
         {
-            if did_updated
-            {
-                did_updated = false
-                update_series_info()
-                did_updated = true
-            }
-        }
-    }
-    
-    public var hold_card_image = UIImage() //Test hold variable
-    
-    @Published var series_name = "None" //Series display string for menu
-    {
-        didSet
-        {
-            if did_updated
-            {
-                did_updated = false
-                update_models_info()
-                did_updated = true
-            }
-        }
-    }
-    
-    @Published var model_name = "None" //Displayed model string for menu
-    {
-        didSet
-        {
-            if did_updated
-            {
-                did_updated = false
-                update_robot_info()
-                did_updated = true
-            }
+            update_robot_info()
         }
     }
     
@@ -141,69 +108,9 @@ class AppState: ObservableObject
     
     private var did_updated = false //Objects data from property lists update state
     
-    //MARK: Robots models dictionaries
-    private var robots_dictionary = [String: [String: [String: [String: Any]]]]()
-    private var series_dictionary = [String: [String: [String: Any]]]()
-    private var models_dictionary = [String: [String: Any]]()
-    public var robot_dictionary = [String: Any]()
-    
-    private var additive_robots_dictionary = [String: [String: [String: [String: Any]]]]()
-    
-    //Names of robots manufacturers, series and models
-    public var manufacturers = [String]()
-    public var series = [String]()
-    public var models = [String]()
-    
-    private var robots_data: Data //Data store from robots property list
-    
-    //MARK: Tools dictionaries
-    public var tools_dictionary = [String: [String: Any]]()
-    public var tool_dictionary = [String: Any]()
-    
-    //Names of tools models
-    public var tools = [String]()
-    
-    private var tools_data: Data //Data store from tools property list
-    private var additive_tools_dictionary = [String: [String: Any]]() //Tools dictionary from plist file
-    
     //MARK: - Application state init function
     init()
     {
-        //
-        //
-        
-        robots_data = Data()
-        tools_data = Data()
-        
-        var viewed_info: URL?
-        
-        //Get robots data from internal propery list file
-        viewed_info = Bundle.main.url(forResource: "RobotsInfo", withExtension: "plist")
-        if viewed_info != nil
-        {
-            robots_data = try! Data(contentsOf: viewed_info!)
-            
-            robots_dictionary = try! PropertyListSerialization.propertyList(from: robots_data, options: .mutableContainers, format: nil) as! [String: [String: [String: [String: Any]]]] //Convert robots data to dictionary
-            
-            manufacturers = Array(robots_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of robots
-            manufacturer_name = manufacturers.first ?? "None" //Set first array element as selected manufacturer name
-        }
-        
-        //Get tools data from internal propery list file
-        viewed_info = Bundle.main.url(forResource: "ToolsInfo", withExtension: "plist")
-        if viewed_info != nil
-        {
-            tools_data = try! Data(contentsOf: viewed_info!)
-            
-            tools_dictionary = try! PropertyListSerialization.propertyList(from: tools_data, options: .mutableContainers, format: nil) as! [String: [String: Any]] //Convert tools data to dictionary
-            
-            tools = Array(tools_dictionary.keys).sorted(by: <) //Get names array ordered by first element from dictionary of tools
-            previewed_tool_module_name = tools.first ?? "None" //Set first array element as selected tool name
-        }
-        
-        //
-        //
-        
         import_internal_modules()
         import_external_modules(bookmark: modules_folder_bookmark)
     }
@@ -223,6 +130,8 @@ class AppState: ObservableObject
         {
             internal_modules_list.robot.append(module.name)
         }
+        
+        previewed_robot_module_name = internal_modules.robot.first?.name ?? "None"
         
         for module in internal_modules.tool
         {
@@ -451,36 +360,18 @@ class AppState: ObservableObject
     }
     
     //MARK: - Get info from dictionaries
-    private func update_series_info() //Convert dictionary of robots to array
+    public func update_robot_info() //Convert dictionary of models to array
     {
-        series_dictionary = robots_dictionary[manufacturer_name]!
-        series = Array(series_dictionary.keys).sorted(by: <)
-        series_name = series.first ?? "None"
-        
-        update_models_info()
-    }
-    
-    private func update_models_info() //Convert dictionary of series to array
-    {
-        models_dictionary = series_dictionary[series_name]!
-        models = Array(models_dictionary.keys).sorted(by: <)
-        model_name = models.first ?? "None"
-        
-        update_robot_info()
-    }
-    
-    private func update_robot_info() //Convert dictionary of models to array
-    {
-        robot_dictionary = models_dictionary[model_name]!
+        //Get tool model by selected item for preview
+        previewed_object = Robot(name: "None", module_name: previewed_robot_module_name)
+        preview_update_scene = true
     }
     
     //MARK: Get tools
     public func update_tool_info()
     {
         //Get tool model by selected item for preview
-        previewed_object = Tool(name: "None")
-        previewed_object?.import_module_by_name(previewed_tool_module_name)
-        
+        previewed_object = Tool(name: "None", module_name: previewed_tool_module_name)
         preview_update_scene = true
     }
     
@@ -488,9 +379,7 @@ class AppState: ObservableObject
     public func update_part_info()
     {
         //Get part model by selected item for preview
-        previewed_object = Part(name: "None")
-        previewed_object?.import_module_by_name(previewed_part_module_name)
-        
+        previewed_object = Part(name: "None", module_name: previewed_part_module_name)
         preview_update_scene = true
     }
     

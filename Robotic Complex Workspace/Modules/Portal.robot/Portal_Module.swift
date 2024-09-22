@@ -6,23 +6,22 @@ import Foundation
 import IndustrialKit
 import SceneKit
 
-public let Portal_Module = ToolModule(
-    name: "Gripper",
-    model_controller: Gripper_Controller(),
-    connector: Gripper_Connector(),
-    operation_codes: Gripper_Codes,
-    node: Gripper_Node
+public let Portal_Module = RobotModule(
+    name: "Portal",
+    model_controller: Portal_Controller(),
+    connector: Portal_Connector(),
+    node: Portal_Node
 )
 
 public var Portal_Node: SCNNode
 {
-    guard let new_scene = SCNScene(named: "Gripper_Resources.scnassets/gripper.scn")
+    guard let new_scene = SCNScene(named: "Portal_Resources.scnassets/Portal.scn")
     else
     {
         return SCNNode()
     }
     
-    guard let node = new_scene.rootNode.childNode(withName: "tool", recursively: false)
+    guard let node = new_scene.rootNode.childNode(withName: "robot", recursively: false)
     else
     {
         return SCNNode()

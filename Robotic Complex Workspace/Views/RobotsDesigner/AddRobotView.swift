@@ -30,44 +30,7 @@ struct AddRobotView: View
             //MARK: Robot model selection
             VStack
             {
-                HStack
-                {
-                    Text("Name")
-                        .bold()
-                    TextField("None", text: $new_robot_name)
-                }
-                
-                Picker(selection: $app_state.manufacturer_name, label: Text("Brand")
-                        .bold())
-                {
-                    ForEach(app_state.manufacturers, id: \.self)
-                    {
-                        Text($0)
-                    }
-                }
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                Picker(selection: $app_state.series_name, label: Text("Series")
-                        .bold())
-                {
-                    ForEach(app_state.series, id: \.self)
-                    {
-                        Text($0)
-                    }
-                }
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.top, 4)
-                
-                Picker(selection: $app_state.model_name, label: Text("Model")
-                        .bold())
-                {
-                    ForEach(app_state.models, id: \.self)
-                    {
-                        Text($0)
-                    }
-                }
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.top, 4)
+               
             }
             .padding(.vertical, 8)
             .padding(.horizontal)
@@ -169,7 +132,7 @@ struct AddRobotView: View
             new_robot_name = "None"
         }
         
-        base_workspace.add_robot(Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_dictionary))
+        //base_workspace.add_robot(Robot(name: new_robot_name, manufacturer: app_state.manufacturer_name, dictionary: app_state.robot_dictionary))
         document_handler.document_update_robots()
         
         add_robot_view_presented.toggle()

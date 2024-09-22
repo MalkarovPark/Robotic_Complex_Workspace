@@ -82,8 +82,19 @@ struct RobotsTableView: View
                     }
                     .sheet(isPresented: $add_robot_view_presented)
                     {
-                        AddRobotView(add_robot_view_presented: $add_robot_view_presented)
-                        #if os(iOS) || os(visionOS)
+                        AddObjectView(is_presented: $add_robot_view_presented, title: "Robot", previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_robot_module_name, internal_modules_list: $app_state.internal_modules_list.robot, external_modules_list: $app_state.external_modules_list.robot)
+                        {
+                            app_state.update_robot_info()
+                        }
+                        add_object:
+                        { new_name in
+                            app_state.previewed_object?.name = new_name
+
+                            base_workspace.add_robot(app_state.previewed_object! as! Robot)
+                            //document_handler.document_update_robots()
+                        }
+                        
+                        #if os(iOS)
                             .presentationDetents([.height(512), .large])
                         #endif
                         #if os(visionOS)

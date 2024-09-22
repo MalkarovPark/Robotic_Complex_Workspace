@@ -10,7 +10,8 @@ import IndustrialKit
 
 public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [PartModule], changer: [ChangerModule]) = (
     [
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=RobotModule()@*//*@END_MENU_TOKEN@*/
+        _6DOF_Module,
+        Portal_Module
     ],
     [
         Drill_Module,

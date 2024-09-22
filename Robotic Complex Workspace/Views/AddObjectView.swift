@@ -13,6 +13,8 @@ struct AddObjectView: View
 {
     @Binding var is_presented: Bool
     
+    let title: String
+    
     @State private var new_object_name = ""
     
     let previewed_object: WorkspaceObject?
@@ -24,9 +26,11 @@ struct AddObjectView: View
     private var update_object_info: () -> Void
     private var add_object: (String) -> Void
     
-    public init(is_presented: Binding<Bool>, previewed_object: WorkspaceObject?, previewed_object_name: Binding<String>, internal_modules_list: Binding<[String]>, external_modules_list: Binding<[String]>, update_object_info: @escaping () -> Void, add_object: @escaping (String) -> Void)
+    public init(is_presented: Binding<Bool>, title: String = "Object", previewed_object: WorkspaceObject?, previewed_object_name: Binding<String>, internal_modules_list: Binding<[String]>, external_modules_list: Binding<[String]>, update_object_info: @escaping () -> Void, add_object: @escaping (String) -> Void)
     {
         self._is_presented = is_presented
+        
+        self.title = title
         
         self.previewed_object = previewed_object
         
@@ -45,7 +49,7 @@ struct AddObjectView: View
             ObjectPreviewSceneView()
                 .overlay(alignment: .top)
                 {
-                    Text("New Part")
+                    Text("New \(title)")
                         .font(.title2)
                         .padding(8)
                         .background(.bar)

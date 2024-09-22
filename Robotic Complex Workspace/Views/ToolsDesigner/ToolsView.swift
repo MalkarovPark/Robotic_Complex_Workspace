@@ -82,7 +82,7 @@ struct ToolsView: View
                     }
                     .sheet(isPresented: $add_tool_view_presented)
                     {
-                        AddObjectView(is_presented: $add_tool_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_tool_module_name, internal_modules_list: $app_state.internal_modules_list.tool, external_modules_list: $app_state.external_modules_list.tool)
+                        AddObjectView(is_presented: $add_tool_view_presented, title: "Tool", previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_tool_module_name, internal_modules_list: $app_state.internal_modules_list.tool, external_modules_list: $app_state.external_modules_list.tool)
                         {
                             app_state.update_tool_info()
                         }
