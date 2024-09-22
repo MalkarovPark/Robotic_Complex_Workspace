@@ -72,37 +72,16 @@ struct ContentView: View
             .environmentObject(document_handler)
             .onAppear
             {
-                set_internal_scenes_address()
-                set_selection_functions()
-                get_file_data()
                 update_preferences()
+                base_workspace.file_view(preset: document.preset)
             }
     }
     
-    private func set_internal_scenes_address()
+    private func update_preferences()
     {
         Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
         Workspace.default_registers_count = workspace_registers_count
         
-        Robot.scene_folder = "Components.scnassets/Robots"
-    }
-    
-    private func set_selection_functions()
-    {
-        //Workspace.change_by = change_by(name: registers:)
-        Workspace.changer_modules = changer_modules_names //["Module", "Module 2"]
-    }
-    
-    private func get_file_data() //Store preset file data into workspace
-    {
-        //Pass bookmarks data into workspace for the models access
-        Workspace.robots_bookmark = robots_empty ?? true ? nil : robots_bookmark
-        
-        base_workspace.file_view(preset: document.preset) //Get file data from document
-    }
-    
-    private func update_preferences() //Pass default parameters from preferences
-    {
         Robot.default_origin_location[0] = Float(location_x)
         Robot.default_origin_location[1] = Float(location_y)
         Robot.default_origin_location[2] = Float(location_z)

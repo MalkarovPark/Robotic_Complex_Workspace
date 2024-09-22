@@ -1,5 +1,5 @@
 //
-//  Gripper tool module
+//  6DOF robot module
 //
 
 import Foundation

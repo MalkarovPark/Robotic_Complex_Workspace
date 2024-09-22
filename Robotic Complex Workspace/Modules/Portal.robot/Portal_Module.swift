@@ -1,5 +1,5 @@
 //
-//  Gripper tool module
+//  Portal robot module
 //
 
 import Foundation

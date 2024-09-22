@@ -2,7 +2,7 @@
 //  List.swift
 //  Robotic Complex Workspace
 //
-//  For internal modules mount.
+//  For internal modules mount
 //
 
 import Foundation
@@ -22,6 +22,6 @@ public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [P
         Books_Module
     ],
     [
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=ChangerModule()@*//*@END_MENU_TOKEN@*/
+        Random_Module
     ]
 )

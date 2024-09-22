@@ -142,6 +142,8 @@ class AppState: ObservableObject
         {
             internal_modules_list.changer.append(module.name)
         }
+        
+        Changer.internal_modules_list = internal_modules_list.changer
     }
     
     //MARK: External
@@ -191,17 +193,19 @@ class AppState: ObservableObject
                 modules_names.append(plist_url.lastPathComponent) //Append file name
             }
             
-            external_modules_list.robot = modules_names.filter{ $0.contains(".robot") }
-            external_modules_list.tool = modules_names.filter{ $0.contains(".tool") }
-            external_modules_list.part = modules_names.filter{ $0.contains(".part") }
-            external_modules_list.changer = modules_names.filter{ $0.contains(".changer") }
+            external_modules_list.robot = modules_names.filter { $0.contains(".robot") }.map { $0.components(separatedBy: ".").dropLast().joined(separator: ".") }
+            external_modules_list.tool = modules_names.filter { $0.contains(".tool") }.map { $0.components(separatedBy: ".").dropLast().joined(separator: ".") }
+            external_modules_list.part = modules_names.filter { $0.contains(".part") }.map { $0.components(separatedBy: ".").dropLast().joined(separator: ".") }
+            external_modules_list.changer = modules_names.filter { $0.contains(".changer") }.map { $0.components(separatedBy: ".").dropLast().joined(separator: ".") }
+            
+            Changer.external_modules_list = external_modules_list.changer
             
             WorkspaceObject.modules_folder_bookmark = bookmark
             
             Robot.modules.append(contentsOf: external_robot_modules)
             Tool.modules.append(contentsOf: external_tool_modules)
             Part.modules.append(contentsOf: external_part_modules)
-            ChangerModifierElement.modules.append(contentsOf: external_changer_modules)
+            Changer.modules.append(contentsOf: external_changer_modules)
         }
         catch
         {

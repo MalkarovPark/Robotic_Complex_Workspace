@@ -213,7 +213,7 @@ struct ChangerElementView: View
     {
         self._element = element
         
-        _module_name = State(initialValue: (_element.wrappedValue as! ChangerModifierElement).module_name)
+        _module_name = State(initialValue: (_element.wrappedValue as! Changer).module_name)
         
         self.on_update = on_update
     }
@@ -228,11 +228,22 @@ struct ChangerElementView: View
         {
             Picker("Module:", selection: $module_name) //Changer module picker
             {
-                if Workspace.changer_modules.count > 0
+                if Changer.internal_modules_list.count > 0
                 {
-                    ForEach(Workspace.changer_modules, id: \.self)
-                    { name in
-                        Text(name)
+                    Section(header: Text("Internal"))
+                    {
+                        ForEach(Changer.internal_modules_list, id: \.self)
+                        {
+                            Text($0).tag("\($0)")
+                        }
+                    }
+                    
+                    Section(header: Text("External"))
+                    {
+                        ForEach(Changer.external_modules_list, id: \.self)
+                        {
+                            Text($0).tag(".\($0)")
+                        }
                     }
                 }
                 else
@@ -242,12 +253,12 @@ struct ChangerElementView: View
             }
             .onAppear
             {
-                if Workspace.changer_modules.count > 0 && module_name == ""
+                if Changer.internal_modules_list.count > 0 && module_name == ""
                 {
-                    module_name = Workspace.changer_modules[0]
+                    module_name = Changer.internal_modules_list[0]
                 }
             }
-            .disabled(Workspace.changer_modules.count == 0)
+            .disabled(Changer.internal_modules_list.count == 0)
         }
         .onChange(of: module_name)
         { _, new_value in

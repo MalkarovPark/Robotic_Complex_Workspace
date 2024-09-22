@@ -94,6 +94,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		62003A642CA0922E00B008CB /* Random.changer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Random.changer; sourceTree = "<group>"; };
 		62D6C49E2C997F33002CF2D9 /* 6DOF.robot */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = 6DOF.robot; sourceTree = "<group>"; };
 		62D6C4A12C997F33002CF2D9 /* Drill.tool */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Drill.tool; sourceTree = "<group>"; };
 		62D6C4A42C997F33002CF2D9 /* Gripper.tool */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Gripper.tool; sourceTree = "<group>"; };
@@ -199,6 +200,7 @@
 				62D6C4A12C997F33002CF2D9 /* Drill.tool */,
 				62D6C4A42C997F33002CF2D9 /* Gripper.tool */,
 				62D6C4A72C997F33002CF2D9 /* Portal.robot */,
+				62003A642CA0922E00B008CB /* Random.changer */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -296,6 +298,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				62003A642CA0922E00B008CB /* Random.changer */,
 				62D6C49E2C997F33002CF2D9 /* 6DOF.robot */,
 				62D6C4A12C997F33002CF2D9 /* Drill.tool */,
 				62D6C4A42C997F33002CF2D9 /* Gripper.tool */,
