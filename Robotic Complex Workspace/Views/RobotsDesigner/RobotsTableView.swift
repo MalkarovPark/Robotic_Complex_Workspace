@@ -91,7 +91,7 @@ struct RobotsTableView: View
                             app_state.previewed_object?.name = new_name
 
                             base_workspace.add_robot(app_state.previewed_object! as! Robot)
-                            //document_handler.document_update_robots()
+                            document_handler.document_update_robots()
                         }
                         
                         #if os(iOS)
@@ -288,7 +288,7 @@ struct RobotDropDelegate : DropDelegate
     @Binding var robots : [Robot]
     @Binding var dragged_robot : Robot?
     
-    @State var workspace_robots: [RobotStruct]
+    @State var workspace_robots: [Robot]
     
     let robot: Robot
     let document_handler: DocumentUpdateHandler
