@@ -9,7 +9,6 @@ import SwiftUI
 import SceneKit
 import IndustrialKit
 
-#if !os(visionOS)
 struct ToolInspectorView: View
 {
     @Binding var new_operation_code: OperationCodeInfo
@@ -447,4 +446,3 @@ struct OperationItemView: View
     OperationItemView(codes: .constant([OperationCode]()), code_item: OperationCode(1))
         .environmentObject(Workspace())
 }
-#endif

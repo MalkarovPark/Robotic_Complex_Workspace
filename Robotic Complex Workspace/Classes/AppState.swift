@@ -13,15 +13,6 @@ import IndustrialKit
 //MARK: - Class for work with various application data
 class AppState: ObservableObject
 {
-    //Bookmarks for the workspace objects model data
-    @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
-    
-    //Saved names of property list files for workspace objects
-    @AppStorage("RobotsPlistName") private var robots_plist_name: String?
-    
-    //If data folder selected
-    @AppStorage("RobotsEmpty") private var robots_empty: Bool?
-    
     //Commands
     @Published var run_command = false
     @Published var stop_command = false
@@ -360,6 +351,7 @@ class AppState: ObservableObject
     }
     
     //MARK: - Get info from dictionaries
+    //MARK: Get robots
     public func update_robot_info() //Convert dictionary of models to array
     {
         //Get tool model by selected item for preview

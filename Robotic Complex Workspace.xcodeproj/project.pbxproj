@@ -28,14 +28,13 @@
 		6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9602AD345FC008FA7C4 /* DynamicStack.swift */; };
 		6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9612AD345FC008FA7C4 /* ContextMenus.swift */; };
 		6236F9652AD345FC008FA7C4 /* DoubleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9622AD345FC008FA7C4 /* DoubleModifier.swift */; };
-		6236F9852AD34763008FA7C4 /* RobotsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9822AD34763008FA7C4 /* RobotsInfo.plist */; };
 		6236F98A2AD347AA008FA7C4 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9892AD347AA008FA7C4 /* Components.scnassets */; };
 		62398C7C2BF29C39001A5B8A /* RobotsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C7B2BF29C39001A5B8A /* RobotsTableView.swift */; };
 		62398C802BF29E9A001A5B8A /* RobotsPassViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C7F2BF29E9A001A5B8A /* RobotsPassViews.swift */; };
-		62398C822BF29FDB001A5B8A /* RobotInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C812BF29FDB001A5B8A /* RobotInspectorView.swift */; };
+		62398C822BF29FDB001A5B8A /* RobotInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C812BF29FDB001A5B8A /* RobotInspectorView.swift */; platformFilters = (ios, macos, ); };
 		62398C842BF2A0D9001A5B8A /* RobotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C832BF2A0D9001A5B8A /* RobotView.swift */; };
 		62398C882BF2A3B1001A5B8A /* ToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C872BF2A3B1001A5B8A /* ToolView.swift */; };
-		62398C8A2BF2A42C001A5B8A /* ToolInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C892BF2A42C001A5B8A /* ToolInspectorView.swift */; };
+		62398C8A2BF2A42C001A5B8A /* ToolInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C892BF2A42C001A5B8A /* ToolInspectorView.swift */; platformFilters = (ios, macos, ); };
 		62398C8E2BF2A70D001A5B8A /* PartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C8D2BF2A70D001A5B8A /* PartView.swift */; };
 		623D724C2ADC696F00927DEA /* RegistersDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D724B2ADC696F00927DEA /* RegistersDataView.swift */; };
 		6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */; };
@@ -74,7 +73,6 @@
 		6236F9602AD345FC008FA7C4 /* DynamicStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicStack.swift; sourceTree = "<group>"; };
 		6236F9612AD345FC008FA7C4 /* ContextMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextMenus.swift; sourceTree = "<group>"; };
 		6236F9622AD345FC008FA7C4 /* DoubleModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleModifier.swift; sourceTree = "<group>"; };
-		6236F9822AD34763008FA7C4 /* RobotsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RobotsInfo.plist; sourceTree = "<group>"; };
 		6236F9892AD347AA008FA7C4 /* Components.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Components.scnassets; sourceTree = "<group>"; };
 		62398C7B2BF29C39001A5B8A /* RobotsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsTableView.swift; sourceTree = "<group>"; };
 		62398C7F2BF29E9A001A5B8A /* RobotsPassViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsPassViews.swift; sourceTree = "<group>"; };
@@ -133,7 +131,6 @@
 				6236F95F2AD345DB008FA7C4 /* ViewModifiers */,
 				6236F9662AD3461D008FA7C4 /* Classes */,
 				6236F9672AD34628008FA7C4 /* Modules */,
-				6236F9802AD3473F008FA7C4 /* Lists */,
 				6236F9482AD34591008FA7C4 /* Functions.swift */,
 				6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */,
 				6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */,
@@ -204,14 +201,6 @@
 				62D6C4A72C997F33002CF2D9 /* Portal.robot */,
 			);
 			path = Modules;
-			sourceTree = "<group>";
-		};
-		6236F9802AD3473F008FA7C4 /* Lists */ = {
-			isa = PBXGroup;
-			children = (
-				6236F9822AD34763008FA7C4 /* RobotsInfo.plist */,
-			);
-			path = Lists;
 			sourceTree = "<group>";
 		};
 		62398C772BF299CF001A5B8A /* RobotsDesigner */ = {
@@ -365,7 +354,6 @@
 			files = (
 				6236F9422AD3439C008FA7C4 /* Preview Assets.xcassets in Resources */,
 				6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */,
-				6236F9852AD34763008FA7C4 /* RobotsInfo.plist in Resources */,
 				6236F98A2AD347AA008FA7C4 /* Components.scnassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

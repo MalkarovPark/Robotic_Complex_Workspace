@@ -9,7 +9,6 @@ import SwiftUI
 import SceneKit
 import IndustrialKit
 
-#if !os(visionOS)
 struct RobotInspectorView: View
 {
     @State private var add_program_view_presented = false
@@ -520,4 +519,3 @@ struct PositionPointView: View
         .environmentObject(Workspace())
         .environmentObject(AppState())
 }
-#endif
