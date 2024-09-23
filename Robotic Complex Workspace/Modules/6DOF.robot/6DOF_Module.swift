@@ -1,7 +1,3 @@
-//
-//  6DOF robot module
-//
-
 import Foundation
 import IndustrialKit
 import SceneKit

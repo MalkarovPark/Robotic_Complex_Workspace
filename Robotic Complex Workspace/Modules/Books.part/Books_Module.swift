@@ -1,7 +1,3 @@
-//
-//  Books part module
-//
-
 import Foundation
 import IndustrialKit
 import SceneKit

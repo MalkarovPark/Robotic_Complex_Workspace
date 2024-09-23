@@ -7,21 +7,3 @@
 
 import Foundation
 import IndustrialKit
-
-//MARK: - Changer modules
-let changer_modules_names = ["Module", "Module 2"]
-
-func change_by(name: String, registers: inout [Float])
-{
-    switch name
-    {
-    case "Module":
-        registers[4] = 55
-        registers[8] = 56
-    case "Module 2":
-        registers[12] = 60
-        registers[13] = 77
-    default:
-        break
-    }
-}

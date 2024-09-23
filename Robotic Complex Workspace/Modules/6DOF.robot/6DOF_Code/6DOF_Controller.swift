@@ -1,10 +1,3 @@
-//
-//  6DOFController.swift
-//  Robotic Complex Workspace
-//
-//  Created by Artem on 16.11.2022.
-//
-
 import Foundation
 import SceneKit
 import IndustrialKit

@@ -1,10 +1,3 @@
-//
-//  PortalConnector.swift
-//  Robotic Complex Workspace
-//
-//  Created by Artem on 16.01.2023.
-//
-
 import Foundation
 import IndustrialKit
 

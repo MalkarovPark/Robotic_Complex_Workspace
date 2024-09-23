@@ -1,10 +1,3 @@
-//
-//  DrillController.swift
-//  Robotic Complex Workspace
-//
-//  Created by Artem on 15.11.2022.
-//
-
 import Foundation
 import SceneKit
 import IndustrialKit

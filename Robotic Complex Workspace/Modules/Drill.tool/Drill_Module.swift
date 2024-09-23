@@ -1,7 +1,3 @@
-//
-//  Drill tool module
-//
-
 import Foundation
 import IndustrialKit
 import SceneKit
