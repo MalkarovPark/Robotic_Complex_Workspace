@@ -258,6 +258,7 @@ class _6DOF_Controller: RobotModelController
     {
         domain_index = 0
         chart_ik_values = [Float](repeating: 0, count: 6)
+        charts_data = nil
         charts = [WorkspaceObjectChart]()
     }
     

@@ -188,9 +188,9 @@ class AppState: ObservableObject
             
             var modules_names: [String] = []
             
-            for plist_url in directory_contents(url: try URL(resolvingBookmarkData: bookmark ?? Data(), bookmarkDataIsStale: &is_stale))
+            for file_url in directory_contents(url: try URL(resolvingBookmarkData: bookmark ?? Data(), bookmarkDataIsStale: &is_stale))
             {
-                modules_names.append(plist_url.lastPathComponent) //Append file name
+                modules_names.append(file_url.lastPathComponent) //Append file name
             }
             
             external_modules_list.robot = modules_names.filter { $0.contains(".robot") }.map { $0.components(separatedBy: ".").dropLast().joined(separator: ".") }
@@ -232,7 +232,11 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.robot
         {
-            modules.append(RobotModule(external_name: module_name))
+            var module = RobotModule(external_name: module_name)
+            module.name.insert(".", at: module.name.startIndex)
+            
+            modules.append(module)
+            //modules.append(RobotModule(external_name: module_name))
         }
         
         return modules
@@ -244,7 +248,11 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.tool
         {
-            modules.append(ToolModule(external_name: module_name))
+            var module = ToolModule(external_name: module_name)
+            module.name.insert(".", at: module.name.startIndex)
+            
+            modules.append(module)
+            //modules.append(ToolModule(external_name: module_name))
         }
         
         return modules
@@ -256,7 +264,11 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.part
         {
-            modules.append(PartModule(external_name: module_name))
+            var module = PartModule(external_name: module_name)
+            module.name.insert(".", at: module.name.startIndex)
+            
+            modules.append(module)
+            //modules.append(PartModule(external_name: module_name))
         }
         
         return modules
@@ -268,7 +280,11 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.changer
         {
-            modules.append(ChangerModule(external_name: module_name))
+            var module = ChangerModule(external_name: module_name)
+            module.name.insert(".", at: module.name.startIndex)
+            
+            modules.append(module)
+            //modules.append(ChangerModule(external_name: module_name))
         }
         
         return modules

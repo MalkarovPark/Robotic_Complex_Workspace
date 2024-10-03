@@ -126,7 +126,7 @@ struct GeneralSettingsView: View
                     {
                         HStack
                         {
-                            Text("Default registers count")
+                            Text("Default data registers count")
                                 .frame(alignment: .leading)
                             
                             Spacer()
@@ -177,11 +177,11 @@ struct GeneralSettingsView: View
             {
                 HStack(spacing: 0)
                 {
-                    Text("Default registers count")
+                    Text("Default data registers count")
                     
                     Spacer()
                     
-                    TextField("Default registers count", value: $workspace_registers_count, format: .number)
+                    TextField("Default data registers count", value: $workspace_registers_count, format: .number)
                         .textFieldStyle(.roundedBorder)
                         .labelsHidden()
                         .frame(width: 64)
