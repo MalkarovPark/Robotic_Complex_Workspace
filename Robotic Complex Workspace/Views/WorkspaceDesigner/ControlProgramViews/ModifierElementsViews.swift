@@ -234,7 +234,7 @@ struct ChangerElementView: View
                     {
                         ForEach(Changer.internal_modules_list, id: \.self)
                         {
-                            Text($0).tag("\($0)")
+                            Text($0).tag($0)
                         }
                     }
                     
@@ -242,7 +242,7 @@ struct ChangerElementView: View
                     {
                         ForEach(Changer.external_modules_list, id: \.self)
                         {
-                            Text($0).tag(".\($0)")
+                            Text($0).tag($0)
                         }
                     }
                 }

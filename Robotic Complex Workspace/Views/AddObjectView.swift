@@ -84,7 +84,7 @@ struct AddObjectView: View
                     {
                         ForEach(internal_modules_list, id: \.self)
                         {
-                            Text($0).tag("\($0)")
+                            Text($0).tag($0)
                         }
                     }
                     

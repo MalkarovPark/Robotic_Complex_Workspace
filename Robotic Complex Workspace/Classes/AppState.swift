@@ -112,10 +112,10 @@ class AppState: ObservableObject
     
     public func import_internal_modules()
     {
-        Robot.modules = internal_modules.robot
-        Tool.modules = internal_modules.tool
-        Part.modules = internal_modules.part
-        Changer.modules = internal_modules.changer
+        Robot.internal_modules = internal_modules.robot
+        Tool.internal_modules = internal_modules.tool
+        Part.internal_modules = internal_modules.part
+        Changer.internal_modules = internal_modules.changer
         
         for module in internal_modules.robot
         {
@@ -202,10 +202,10 @@ class AppState: ObservableObject
             
             WorkspaceObject.modules_folder_bookmark = bookmark
             
-            Robot.modules.append(contentsOf: external_robot_modules)
-            Tool.modules.append(contentsOf: external_tool_modules)
-            Part.modules.append(contentsOf: external_part_modules)
-            Changer.modules.append(contentsOf: external_changer_modules)
+            Robot.external_modules = external_robot_modules
+            Tool.external_modules = external_tool_modules
+            Part.external_modules = external_part_modules
+            Changer.external_modules = external_changer_modules
         }
         catch
         {
@@ -232,11 +232,7 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.robot
         {
-            var module = RobotModule(external_name: module_name)
-            module.name.insert(".", at: module.name.startIndex)
-            
-            modules.append(module)
-            //modules.append(RobotModule(external_name: module_name))
+            modules.append(RobotModule(external_name: module_name))
         }
         
         return modules
@@ -248,11 +244,7 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.tool
         {
-            var module = ToolModule(external_name: module_name)
-            module.name.insert(".", at: module.name.startIndex)
-            
-            modules.append(module)
-            //modules.append(ToolModule(external_name: module_name))
+            modules.append(ToolModule(external_name: module_name))
         }
         
         return modules
@@ -264,11 +256,7 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.part
         {
-            var module = PartModule(external_name: module_name)
-            module.name.insert(".", at: module.name.startIndex)
-            
-            modules.append(module)
-            //modules.append(PartModule(external_name: module_name))
+            modules.append(PartModule(external_name: module_name))
         }
         
         return modules
@@ -280,11 +268,7 @@ class AppState: ObservableObject
         
         for module_name in external_modules_list.changer
         {
-            var module = ChangerModule(external_name: module_name)
-            module.name.insert(".", at: module.name.startIndex)
-            
-            modules.append(module)
-            //modules.append(ChangerModule(external_name: module_name))
+            modules.append(ChangerModule(external_name: module_name))
         }
         
         return modules
@@ -295,10 +279,15 @@ class AppState: ObservableObject
         modules_folder_bookmark = nil
         external_modules_list = (robot: [], tool: [], part: [], changer: [])
         
-        Robot.modules.removeAll()
-        Tool.modules.removeAll()
-        Part.modules.removeAll()
-        Changer.modules.removeAll()
+        Robot.internal_modules.removeAll()
+        Tool.internal_modules.removeAll()
+        Part.internal_modules.removeAll()
+        Changer.internal_modules.removeAll()
+        
+        Robot.external_modules.removeAll()
+        Tool.external_modules.removeAll()
+        Part.external_modules.removeAll()
+        Changer.external_modules.removeAll()
         
         modules_folder_url = nil
     }
@@ -374,16 +363,18 @@ class AppState: ObservableObject
     //MARK: Get robots
     public func update_robot_info() //Convert dictionary of models to array
     {
-        //Get tool model by selected item for preview
-        previewed_object = Robot(name: "None", module_name: previewed_robot_module_name)
+        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true
+        
+        previewed_object = Robot(name: "None", module_name: is_internal ? previewed_robot_module_name : String(previewed_robot_module_name.dropFirst()), is_internal: is_internal)
         preview_update_scene = true
     }
     
     //MARK: Get tools
     public func update_tool_info()
     {
-        //Get tool model by selected item for preview
-        previewed_object = Tool(name: "None", module_name: previewed_tool_module_name)
+        let is_internal = previewed_tool_module_name.hasPrefix(".") ? false : true
+        
+        previewed_object = Tool(name: "None", module_name: is_internal ? previewed_tool_module_name : String(previewed_tool_module_name.dropFirst()), is_internal: is_internal)
         preview_update_scene = true
     }
     
@@ -391,7 +382,10 @@ class AppState: ObservableObject
     public func update_part_info()
     {
         //Get part model by selected item for preview
-        previewed_object = Part(name: "None", module_name: previewed_part_module_name)
+        
+        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true
+        
+        previewed_object = Part(name: "None", module_name: is_internal ? previewed_part_module_name : String(previewed_part_module_name.dropFirst()), is_internal: is_internal)        
         preview_update_scene = true
     }
     
