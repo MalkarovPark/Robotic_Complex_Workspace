@@ -363,7 +363,7 @@ class AppState: ObservableObject
     //MARK: Get robots
     public func update_robot_info() //Convert dictionary of models to array
     {
-        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true
+        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true //Check external module by name with dot
         
         previewed_object = Robot(name: "None", module_name: is_internal ? previewed_robot_module_name : String(previewed_robot_module_name.dropFirst()), is_internal: is_internal)
         preview_update_scene = true
@@ -372,7 +372,7 @@ class AppState: ObservableObject
     //MARK: Get tools
     public func update_tool_info()
     {
-        let is_internal = previewed_tool_module_name.hasPrefix(".") ? false : true
+        let is_internal = previewed_tool_module_name.hasPrefix(".") ? false : true //Check external module by name with dot
         
         previewed_object = Tool(name: "None", module_name: is_internal ? previewed_tool_module_name : String(previewed_tool_module_name.dropFirst()), is_internal: is_internal)
         preview_update_scene = true
@@ -383,7 +383,7 @@ class AppState: ObservableObject
     {
         //Get part model by selected item for preview
         
-        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true
+        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true //Check external module by name with dot
         
         previewed_object = Part(name: "None", module_name: is_internal ? previewed_part_module_name : String(previewed_part_module_name.dropFirst()), is_internal: is_internal)        
         preview_update_scene = true

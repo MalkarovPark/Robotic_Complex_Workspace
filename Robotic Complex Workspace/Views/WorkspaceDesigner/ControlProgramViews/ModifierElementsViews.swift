@@ -242,7 +242,7 @@ struct ChangerElementView: View
                     {
                         ForEach(Changer.external_modules_list, id: \.self)
                         {
-                            Text($0).tag($0)
+                            Text($0).tag(".\($0)")
                         }
                     }
                 }
@@ -258,7 +258,7 @@ struct ChangerElementView: View
                     module_name = Changer.internal_modules_list[0]
                 }
             }
-            .disabled(Changer.internal_modules_list.count == 0)
+            .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
         }
         .onChange(of: module_name)
         { _, new_value in
