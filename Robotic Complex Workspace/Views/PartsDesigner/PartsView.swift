@@ -60,13 +60,15 @@ struct PartsView: View
             }
             else
             {
-                Text("Press to add new part ↑")
-                    .font(.largeTitle)
-                    .foregroundColor(quaternary_label_color)
-                    .padding(16)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                ContentUnavailableView
+                {
+                    Label("No parts in preset", systemImage: "shippingbox")
+                }
+                description:
+                {
+                    Text("Press «+» to add new part")
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         #if os(macOS) || os(iOS)

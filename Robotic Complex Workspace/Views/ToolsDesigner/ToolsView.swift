@@ -52,13 +52,15 @@ struct ToolsView: View
             }
             else
             {
-                Text("Press to add new tool ↑")
-                    .font(.largeTitle)
-                    .foregroundColor(quaternary_label_color)
-                    .padding(16)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                ContentUnavailableView
+                {
+                    Label("No tools in preset", systemImage: "hammer")
+                }
+                description:
+                {
+                    Text("Press «+» to add new tool")
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         #if os(macOS) || os(iOS)

@@ -74,7 +74,9 @@ struct WorkspaceView: View
                 {
                     registers_view_presented = false
                 }
-            #if os(visionOS)
+            #if os(macOS)
+                .frame(width: 420, height: 480)
+            #elseif os(visionOS)
                 .frame(width: 600, height: 600)
             #endif
         }

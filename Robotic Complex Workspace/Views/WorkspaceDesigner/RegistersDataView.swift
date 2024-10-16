@@ -22,7 +22,7 @@ struct RegistersDataView: View
     {
         VStack(spacing: 0)
         {
-            RegistersView(registers: $base_workspace.registers, colors: registers_colors, bottom_spacing: 48)
+            RegistersView(registers: $base_workspace.registers, colors: registers_colors, bottom_spacing: 40)
                 .modifier(DoubleModifier(update_toggle: $update_toggle))
                 .overlay(alignment: .bottom)
                 {
@@ -31,42 +31,35 @@ struct RegistersDataView: View
                         Button(role: .destructive, action: clear_registers)
                         {
                             Image(systemName: "eraser")
+                                .padding()
                         }
-                        #if !os(iOS)
-                        .buttonStyle(.bordered)
-                        #else
-                        .modifier(Squarer(side: 48))
-                        .modifier(ButtonBorderer())
+                        .buttonStyle(.borderless)
+                        #if os(iOS)
+                        .foregroundColor(.black)
                         #endif
-                        #if os(visionOS)
-                        .buttonBorderShape(.circle)
-                        #endif
-                        .padding(.trailing)
+                        
+                        Divider()
                         
                         Button(action: save_registers)
                         {
                             Image(systemName: "arrow.down.doc")
+                                .padding()
                         }
-                        #if !os(iOS)
-                        .buttonStyle(.bordered)
-                        #else
-                        .modifier(Squarer(side: 48))
-                        .modifier(ButtonBorderer())
+                        .buttonStyle(.borderless)
+                        #if os(iOS)
+                        .foregroundColor(.black)
                         #endif
-                        #if os(visionOS)
-                        .buttonBorderShape(.circle)
-                        #endif
-                        .padding(.trailing)
+                        
+                        Divider()
                         
                         Button(action: { is_registers_count_presented = true })
                         {
                             Image(systemName: "square.grid.2x2")
+                                .padding()
                         }
-                        #if !os(iOS)
-                        .buttonStyle(.bordered)
-                        #else
-                        .modifier(Squarer(side: 48))
-                        .modifier(ButtonBorderer())
+                        .buttonStyle(.borderless)
+                        #if os(iOS)
+                        .foregroundColor(.black)
                         #endif
                         .popover(isPresented: $is_registers_count_presented)
                         {
@@ -78,22 +71,16 @@ struct RegistersDataView: View
                             .presentationDetents([.height(96)])
                             #endif
                         }
-                        #if os(visionOS)
-                        .buttonBorderShape(.circle)
-                        #endif
                     }
-                    .padding()
                     .background(.bar)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    //.shadow(radius: 4)
+                    .shadow(radius: 4)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding()
                 }
         }
         .controlSize(.large)
         .modifier(SheetCaption(is_presented: $is_presented, label: "Registers"))
-        #if os(macOS)
-        .frame(minWidth: 420, maxWidth: 512, minHeight: 400, maxHeight: 480)
-        #endif
     }
     
     private func clear_registers()

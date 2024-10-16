@@ -52,13 +52,15 @@ struct RobotsTableView: View
             }
             else
             {
-                Text("Press to add new robot ↑")
-                    .font(.largeTitle)
-                    .foregroundColor(quaternary_label_color)
-                    .padding(16)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.6)))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                ContentUnavailableView
+                {
+                    Label("No robots in preset", systemImage: "r.square")
+                }
+                description:
+                {
+                    Text("Press «+» to add new robot")
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .onDisappear
