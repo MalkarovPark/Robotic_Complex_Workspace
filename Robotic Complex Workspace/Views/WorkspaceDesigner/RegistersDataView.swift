@@ -146,6 +146,10 @@ struct RegistersCountView: View
             
             TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)
                 .textFieldStyle(.roundedBorder)
+                .onSubmit {
+                    update_count()
+                    additive_func()
+                }
             #if os(macOS)
                 .frame(width: 64)
             #else
@@ -158,11 +162,11 @@ struct RegistersCountView: View
                 .padding(.trailing, 8)
             #endif
         }
-        .onChange(of: registers_count)
-        { _, new_value in
+        /*.onChange(of: registers_count)
+        { _, _ in
             update_count()
             additive_func()
-        }
+        }*/
         .padding(8)
         .controlSize(.regular)
     }
