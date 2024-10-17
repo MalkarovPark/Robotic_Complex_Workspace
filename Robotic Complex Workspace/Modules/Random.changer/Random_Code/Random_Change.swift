@@ -1,6 +1,6 @@
 import Foundation
 
-func Random_Changer(registers: inout [Float])
+func Random_Change(registers: inout [Float])
 {
     /*for i in 0..<registers.count
     {
