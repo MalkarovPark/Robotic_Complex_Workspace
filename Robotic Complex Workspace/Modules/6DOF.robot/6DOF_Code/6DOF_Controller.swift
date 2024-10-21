@@ -5,7 +5,7 @@ import IndustrialKit
 class _6DOF_Controller: RobotModelController
 {
     //MARK: - 6DOF nodes connect
-    override func connect_nodes(_ node: SCNNode)
+    override func connect_nodes(of node: SCNNode)
     {
         let without_lengths = lengths.count == 0
         if without_lengths

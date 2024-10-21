@@ -4,7 +4,7 @@ import IndustrialKit
 
 class Gripper_Controller: ToolModelController
 {
-    override func connect_nodes(_ node: SCNNode)
+    override func connect_nodes(of node: SCNNode)
     {
         guard let jaw_node = node.childNode(withName: "jaw", recursively: true)
         else

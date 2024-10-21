@@ -5,7 +5,7 @@ import IndustrialKit
 class Portal_Controller: RobotModelController
 {
     //MARK: - Portal nodes connect
-    override func connect_nodes(_ node: SCNNode)
+    override func connect_nodes(of node: SCNNode)
     {
         let without_lengths = lengths.count == 0
         

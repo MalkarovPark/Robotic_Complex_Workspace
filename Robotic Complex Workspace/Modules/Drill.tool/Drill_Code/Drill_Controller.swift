@@ -4,7 +4,7 @@ import IndustrialKit
 
 class Drill_Controller: ToolModelController
 {
-    override func connect_nodes(_ node: SCNNode)
+    override func connect_nodes(of node: SCNNode)
     {
         guard let drill_node = node.childNode(withName: "drill", recursively: true)
         else
