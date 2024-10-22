@@ -4,7 +4,7 @@ import IndustrialKit
 
 class Drill_Controller: ToolModelController
 {
-    override func connect_nodes(of node: SCNNode)
+    /*override func connect_nodes(of node: SCNNode)
     {
         guard let drill_node = node.childNode(withName: "drill", recursively: true)
         else
@@ -13,7 +13,7 @@ class Drill_Controller: ToolModelController
         }
         
         nodes.append(drill_node)
-    }
+    }*/
     
     private var rotated = [false, false]
     

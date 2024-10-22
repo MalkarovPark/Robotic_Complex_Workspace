@@ -7,7 +7,8 @@ public let Drill_Module = ToolModule(
     model_controller: Drill_Controller(),
     connector: Drill_Connector(),
     operation_codes: Drill_Codes,
-    node: Drill_Node
+    node: Drill_Node,
+    nodes_names: ["drill"]
 )
 
 public var Drill_Node: SCNNode
