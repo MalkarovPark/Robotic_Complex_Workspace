@@ -7,7 +7,8 @@ public let Gripper_Module = ToolModule(
     model_controller: Gripper_Controller(),
     connector: Gripper_Connector(),
     operation_codes: Gripper_Codes,
-    node: Gripper_Node
+    node: Gripper_Node,
+    nodes_names: ["jaw", "jaw2"]
 )
 
 public var Gripper_Node: SCNNode

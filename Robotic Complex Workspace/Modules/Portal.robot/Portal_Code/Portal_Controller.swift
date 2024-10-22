@@ -257,17 +257,40 @@ class Portal_Controller: RobotModelController
         domain_index = 0
         chart_ik_values = [Float](repeating: 0, count: 3)
         charts = [WorkspaceObjectChart]()
+        
+        charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
+        charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+        
+        /*if let initial_charts_data = updated_charts_data()
+        {
+            charts = initial_charts_data
+        }*/
+        
+        charts_data = charts
     }
     
     override func updated_states_data() -> [StateItem]?
     {
-        var state = [StateItem]()
-        state.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-        state[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
+        var states = [StateItem]()
+        states.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
+        states[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
                              StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
         
-        state.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
         
-        return state
+        return states
+    }
+    
+    override func reset_states_data()
+    {
+        var states = [StateItem]()
+        
+        states.append(StateItem(name: "Temperature", value: "0º", image: "thermometer"))
+        states[0].children = [StateItem(name: "Еngine", value: "0º", image: "thermometer.transmission"),
+                             StateItem(name: "Fridge", value: "0º", image: "thermometer.snowflake.circle")]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+        
+        states_data = states
     }
 }
