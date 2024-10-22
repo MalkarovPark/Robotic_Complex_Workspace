@@ -144,10 +144,10 @@ class Drill_Controller: ToolModelController
         return (acceleration_values, velocity_values)
     }
     
-    override func reset_charts_data()
+    override func initial_charts_data() -> [WorkspaceObjectChart]
     {
         domain_index = 0
-        charts = [WorkspaceObjectChart]()
+        return [WorkspaceObjectChart]()
     }
     
     override func updated_states_data() -> [StateItem]?

@@ -4,23 +4,6 @@ import IndustrialKit
 
 class Gripper_Controller: ToolModelController
 {
-    /*override func connect_nodes(of node: SCNNode)
-    {
-        guard let jaw_node = node.childNode(withName: "jaw", recursively: true)
-        else
-        {
-            return
-        }
-        
-        guard let jaw2_node = node.childNode(withName: "jaw2", recursively: true)
-        else
-        {
-            return
-        }
-        
-        nodes += [jaw_node, jaw2_node]
-    }*/
-    
     private var closed = false
     private var moved = false
     
@@ -100,7 +83,8 @@ class Gripper_Controller: ToolModelController
     
     override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
-        guard nodes.count == 2 else
+        guard nodes.count == 2
+        else
         {
             return nil
         }
@@ -120,11 +104,12 @@ class Gripper_Controller: ToolModelController
         return charts
     }
     
-    override func reset_charts_data()
+    override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         domain_index = 0
         charts = [WorkspaceObjectChart]()
-        charts_data = nil
+        
+        return charts
     }
     
     override func updated_states_data() -> [StateItem]?

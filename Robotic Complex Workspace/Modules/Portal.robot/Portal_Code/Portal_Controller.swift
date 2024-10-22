@@ -252,7 +252,7 @@ class Portal_Controller: RobotModelController
         return charts
     }
     
-    override func reset_charts_data()
+    override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         domain_index = 0
         chart_ik_values = [Float](repeating: 0, count: 3)
@@ -266,7 +266,7 @@ class Portal_Controller: RobotModelController
             charts = initial_charts_data
         }*/
         
-        charts_data = charts
+        return charts
     }
     
     override func updated_states_data() -> [StateItem]?
@@ -281,7 +281,7 @@ class Portal_Controller: RobotModelController
         return states
     }
     
-    override func reset_states_data()
+    override func initial_states_data() -> [StateItem]?
     {
         var states = [StateItem]()
         
@@ -291,6 +291,6 @@ class Portal_Controller: RobotModelController
         
         states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
         
-        states_data = states
+        return states
     }
 }

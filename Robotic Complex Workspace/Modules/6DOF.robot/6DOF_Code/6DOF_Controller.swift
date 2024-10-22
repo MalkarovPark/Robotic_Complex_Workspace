@@ -254,7 +254,7 @@ class _6DOF_Controller: RobotModelController
         return charts
     }
     
-    override func reset_charts_data()
+    override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         chart_ik_values = [Float](repeating: 0, count: 6)
         domain_index = 0
@@ -269,7 +269,7 @@ class _6DOF_Controller: RobotModelController
             charts = initial_charts_data
         }*/
         
-        charts_data = charts
+        return charts
     }
     
     override func updated_states_data() -> [StateItem]?
@@ -284,7 +284,7 @@ class _6DOF_Controller: RobotModelController
         return states
     }
     
-    override func reset_states_data()
+    override func initial_states_data() -> [StateItem]?
     {
         var states = [StateItem]()
         
@@ -294,6 +294,6 @@ class _6DOF_Controller: RobotModelController
         
         states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
         
-        states_data = states
+        return states
     }
 }
