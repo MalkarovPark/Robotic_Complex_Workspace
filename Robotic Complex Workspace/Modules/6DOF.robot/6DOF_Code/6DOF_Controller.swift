@@ -16,24 +16,24 @@ class _6DOF_Controller: RobotModelController
         for i in 0...6
         {
             //Connect to part nodes from robot scene
-            nodes.append(node.childNode(withName: "d\(i)", recursively: true)!)
+            nodes["d\(i)"] = node.childNode(withName: "d\(i)", recursively: true) ?? nodes["d\(i)"]
             
             //Get lengths from robot scene if they is not set in plist
             if without_lengths
             {
                 if i > 0
                 {
-                    lengths[i - 1] = Float(nodes[i].position.y)
+                    lengths[i - 1] = Float(nodes[safe: "d\(i)"].position.y)
                 }
             }
         }
         
         if without_lengths
         {
-            lengths.append(Float(nodes[0].position.y)) //Append base height [6]
+            lengths.append(Float(nodes[safe: "d0"].position.y)) //Append base height [6]
         }
         
-        nodes.append(node.childNode(withName: "base", recursively: true)!) //Base pillar node [7]
+        nodes["base"] = node.childNode(withName: "base", recursively: true) ?? nodes["base"] //Base pillar node [7]
     }
     
     //MARK: - Inverse kinematic parts calculation for roataion angles of 6DOF
@@ -119,19 +119,19 @@ class _6DOF_Controller: RobotModelController
     override func update_nodes(values: [Float])
     {
         #if os(macOS)
-        nodes[0].eulerAngles.y = CGFloat(values[0])
-        nodes[1].eulerAngles.z = CGFloat(values[1])
-        nodes[2].eulerAngles.z = CGFloat(values[2])
-        nodes[3].eulerAngles.y = CGFloat(values[3])
-        nodes[4].eulerAngles.z = CGFloat(values[4])
-        nodes[5].eulerAngles.y = CGFloat(values[5])
+        nodes[safe: "d0"].eulerAngles.y = CGFloat(values[0])
+        nodes[safe: "d1"].eulerAngles.z = CGFloat(values[1])
+        nodes[safe: "d2"].eulerAngles.z = CGFloat(values[2])
+        nodes[safe: "d3"].eulerAngles.y = CGFloat(values[3])
+        nodes[safe: "d4"].eulerAngles.z = CGFloat(values[4])
+        nodes[safe: "d5"].eulerAngles.y = CGFloat(values[5])
         #else
-        nodes[0].eulerAngles.y = Float(values[0])
-        nodes[1].eulerAngles.z = Float(values[1])
-        nodes[2].eulerAngles.z = Float(values[2])
-        nodes[3].eulerAngles.y = Float(values[3])
-        nodes[4].eulerAngles.z = Float(values[4])
-        nodes[5].eulerAngles.y = Float(values[5])
+        nodes[safe: "d0"].eulerAngles.y = Float(values[0])
+        nodes[safe: "d1"].eulerAngles.z = Float(values[1])
+        nodes[safe: "d2"].eulerAngles.z = Float(values[2])
+        nodes[safe: "d3"].eulerAngles.y = Float(values[3])
+        nodes[safe: "d4"].eulerAngles.z = Float(values[4])
+        nodes[safe: "d5"].eulerAngles.y = Float(values[5])
         #endif
         
         if get_statistics
@@ -148,7 +148,7 @@ class _6DOF_Controller: RobotModelController
         var saved_material = SCNMaterial()
         
         //Change height of base
-        modified_node = nodes[7]
+        modified_node = nodes[safe: "base"]
         saved_material = (modified_node.geometry?.firstMaterial)!
         
         modified_node.geometry = SCNCylinder(radius: 80, height: CGFloat(lengths[6]))
@@ -161,13 +161,13 @@ class _6DOF_Controller: RobotModelController
         modified_node.geometry?.firstMaterial = saved_material
         
         //Change other lengths
-        saved_material = (nodes[0].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial) ?? SCNMaterial() //Save material from part box
+        saved_material = (nodes[safe: "d0"].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial) ?? SCNMaterial() //Save material from part box
         
         for i in 0..<nodes.count - 2
         {
             //Get length 0 if first robot part selected and get previous length for all next parts
             #if os(macOS)
-            nodes[i].position.y = CGFloat(i > 0 ? lengths[i - 1] : lengths[lengths.count - 1])
+            nodes[safe: "d\(i)"].position.y = CGFloat(i > 0 ? lengths[i - 1] : lengths[lengths.count - 1])
             #else
             nodes[i].position.y = Float(i > 0 ? lengths[i - 1] : lengths[lengths.count - 1])
             #endif
@@ -175,7 +175,7 @@ class _6DOF_Controller: RobotModelController
             if i < 5
             {
                 //Change box model size and move that node vertical for parts 0-4
-                modified_node = nodes[i].childNode(withName: "box", recursively: false) ?? SCNNode()
+                modified_node = nodes[safe: "d\(i)"].childNode(withName: "box", recursively: false) ?? SCNNode()
                 if i < 3
                 {
                     modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[i]), length: 60, chamferRadius: 10) //Set geometry for 0-2 parts with width 6 and chamfer
@@ -203,9 +203,9 @@ class _6DOF_Controller: RobotModelController
             {
                 //Set tool target (d6) position for 5th part
                 #if os(macOS)
-                nodes[6].position.y = CGFloat(lengths[i])
+                nodes[safe: "d6"].position.y = CGFloat(lengths[i])
                 #else
-                nodes[6].position.y = Float(lengths[i])
+                nodes[safe: "d6"].position.y = Float(lengths[i])
                 #endif
             }
         }
@@ -295,5 +295,13 @@ class _6DOF_Controller: RobotModelController
         states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
         
         return states
+    }
+}
+
+extension Dictionary where Key == String, Value == SCNNode
+{
+    subscript(safe key: String) -> SCNNode
+    {
+        return self[key] ?? SCNNode()
     }
 }

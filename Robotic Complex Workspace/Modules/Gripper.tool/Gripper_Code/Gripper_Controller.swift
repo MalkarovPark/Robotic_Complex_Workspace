@@ -17,8 +17,8 @@ class Gripper_Controller: ToolModelController
                 if !closed && !moved
                 {
                     moved = true
-                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
-                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
+                    nodes[safe: "jaw"].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
+                    nodes[safe: "jaw2"].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
                     {
                         self.moved = false
                         self.closed = true
@@ -36,8 +36,8 @@ class Gripper_Controller: ToolModelController
                 if closed && !moved
                 {
                     moved = true
-                    nodes[0].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
-                    nodes[1].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
+                    nodes[safe: "jaw"].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
+                    nodes[safe: "jaw2"].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
                     {
                         self.moved = false
                         self.closed = false
@@ -72,8 +72,8 @@ class Gripper_Controller: ToolModelController
         
         if nodes.count == 2
         {
-            nodes[0].position.z = 46
-            nodes[1].position.z = -46
+            nodes[safe: "jaw"].position.z = 46
+            nodes[safe: "jaw2"].position.z = -46
         }
     }
     
@@ -94,8 +94,8 @@ class Gripper_Controller: ToolModelController
             charts.append(WorkspaceObjectChart(name: "Jaws Positions", style: .line))
         }
         
-        charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(nodes[0].position.z)))
-        charts[0].data.append(ChartDataItem(name: "Right (mm)", domain: ["": domain_index], codomain: Float(nodes[1].position.z)))
+        charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(nodes[safe: "jaw"].position.z)))
+        charts[0].data.append(ChartDataItem(name: "Right (mm)", domain: ["": domain_index], codomain: Float(nodes[safe: "jaw2"].position.z)))
         
         usleep(100000)
         
