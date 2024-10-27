@@ -175,6 +175,7 @@ struct PartCardView: View
                     {
                         part_view_presented = false
                     }
+                    .fitted()
                 #if os(visionOS)
                     .frame(width: 512, height: 512)
                 #endif

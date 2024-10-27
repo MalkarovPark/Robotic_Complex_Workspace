@@ -113,6 +113,7 @@ struct AddObjectView: View
             }
         }
         .controlSize(.regular)
+        .fitted()
         #if os(macOS)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
         #endif

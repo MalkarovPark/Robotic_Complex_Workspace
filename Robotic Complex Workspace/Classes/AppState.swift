@@ -279,11 +279,6 @@ class AppState: ObservableObject
         modules_folder_bookmark = nil
         external_modules_list = (robot: [], tool: [], part: [], changer: [])
         
-        Robot.internal_modules.removeAll()
-        Tool.internal_modules.removeAll()
-        Part.internal_modules.removeAll()
-        Changer.internal_modules.removeAll()
-        
         Robot.external_modules.removeAll()
         Tool.external_modules.removeAll()
         Part.external_modules.removeAll()

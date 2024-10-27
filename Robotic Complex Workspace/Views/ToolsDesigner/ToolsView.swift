@@ -135,6 +135,7 @@ struct ToolCardView: View
             .sheet(isPresented: $tool_view_presented)
             {
                 ToolView(tool_view_presented: $tool_view_presented, tool_item: $tool_item)
+                    .fitted()
                 #if os(macOS)
                     .frame(width: 600)
                 #endif

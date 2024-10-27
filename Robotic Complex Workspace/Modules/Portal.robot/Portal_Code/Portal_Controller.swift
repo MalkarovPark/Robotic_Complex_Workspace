@@ -95,13 +95,13 @@ class Portal_Controller: RobotModelController
     override func update_nodes(values: [Float])
     {
         #if os(macOS)
-        nodes[safe: "d0"].position.x = CGFloat(values[1])
-        nodes[safe: "d2"].position.y = CGFloat(values[2])
-        nodes[safe: "d1"].position.z = CGFloat(values[0])
+        nodes[safe: "d0", default: SCNNode()].position.x = CGFloat(values[1])
+        nodes[safe: "d2", default: SCNNode()].position.y = CGFloat(values[2])
+        nodes[safe: "d1", default: SCNNode()].position.z = CGFloat(values[0])
         #else
-        nodes[safe: "d0"].position.x = values[1]
-        nodes[safe: "d2"].position.y = values[2]
-        nodes[safe: "d1"].position.z = values[0]
+        nodes[safe: "d0", default: SCNNode()].position.x = values[1]
+        nodes[safe: "d2", default: SCNNode()].position.y = values[2]
+        nodes[safe: "d1", default: SCNNode()].position.z = values[0]
         #endif
     }
     
@@ -113,7 +113,7 @@ class Portal_Controller: RobotModelController
         var saved_material = SCNMaterial()
         
         //Base
-        modified_node = nodes[safe: "base"]
+        modified_node = nodes[safe: "base", default: SCNNode()]
         saved_material = (modified_node.geometry?.firstMaterial)!
         
         modified_node.geometry = SCNCylinder(radius: 80, height: CGFloat(lengths[8]))
@@ -126,7 +126,7 @@ class Portal_Controller: RobotModelController
         modified_node.geometry?.firstMaterial = saved_material
         
         //Frames
-        var node = nodes[safe: "frame"]
+        var node = nodes[safe: "frame", default: SCNNode()]
         
         modified_node = node.childNode(withName: "part_v", recursively: true)!
         
@@ -141,7 +141,7 @@ class Portal_Controller: RobotModelController
         modified_node.position.y = vf_length / 2
         #endif
         
-        node = nodes[safe: "frame"]
+        node = nodes[safe: "frame", default: SCNNode()]
         #if os(macOS)
         node.position.y = CGFloat(lengths[8])
         node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lengths[0]) //Set vertical position for frame portal

@@ -243,6 +243,7 @@ struct RobotCardView: View
         .sheet(isPresented: $pass_programs_presented)
         {
             PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
+                .fitted()
             #if os(macOS)
                 .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
             #endif
