@@ -92,7 +92,6 @@ struct ToolView: View
                             .frame(height: 16)
                     }
                     .buttonStyle(.bordered)
-                    .keyboardShortcut(.cancelAction)
                     .padding([.vertical, .leading])
                     
                     Button(action: { statistics_view_presented.toggle() })
@@ -101,7 +100,6 @@ struct ToolView: View
                             .frame(height: 16)
                     }
                     .buttonStyle(.bordered)
-                    .keyboardShortcut(.cancelAction)
                     .padding()
                 }
                 .disabled(tool_item.codes.count == 0)

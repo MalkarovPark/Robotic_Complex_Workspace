@@ -4,17 +4,6 @@ import IndustrialKit
 
 class Drill_Controller: ToolModelController
 {
-    /*override func connect_nodes(of node: SCNNode)
-    {
-        guard let drill_node = node.childNode(withName: "drill", recursively: true)
-        else
-        {
-            return //Return if node not found
-        }
-        
-        nodes.append(drill_node)
-    }*/
-    
     private var rotated = [false, false]
     
     override func nodes_perform(code: Int)
@@ -61,6 +50,7 @@ class Drill_Controller: ToolModelController
     
     override func reset_nodes()
     {
+        remove_all_model_actions()
         rotated[0] = false
         rotated[1] = false
     }
