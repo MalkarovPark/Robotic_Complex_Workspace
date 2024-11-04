@@ -34,6 +34,7 @@ class _6DOF_Controller: RobotModelController
         }
         
         nodes["base"] = node.childNode(withName: "base", recursively: true) ?? nodes["base"]
+        nodes["column"] = node.childNode(withName: "column", recursively: true) ?? nodes["column"]
     }
     
     //MARK: - Inverse kinematic parts calculation for roataion angles of 6DOF
@@ -157,6 +158,15 @@ class _6DOF_Controller: RobotModelController
         
         //Change height of base
         modified_node = nodes[safe: "base", default: SCNNode()]
+        
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lengths[6])
+        #else
+        modified_node.position.y = lengths[6]
+        #endif
+        
+        //Change height of column
+        modified_node = nodes[safe: "column", default: SCNNode()]
         saved_material = (modified_node.geometry?.firstMaterial)!
         
         modified_node.geometry = SCNCylinder(radius: 80, height: CGFloat(lengths[6]))
@@ -168,55 +178,83 @@ class _6DOF_Controller: RobotModelController
         
         modified_node.geometry?.firstMaterial = saved_material
         
-        //Change other lengths
-        saved_material = (nodes[safe: "d0", default: SCNNode()].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial) ?? SCNMaterial() //Save material from part box
-        
-        for i in 0..<nodes.count - 2
-        {
-            //Get length 0 if first robot part selected and get previous length for all next parts
-            #if os(macOS)
-            nodes[safe: "d\(i)", default: SCNNode()].position.y = CGFloat(i > 0 ? lengths[i - 1] : lengths[lengths.count - 1])
-            #else
-            nodes[i].position.y = Float(i > 0 ? lengths[i - 1] : lengths[lengths.count - 1])
-            #endif
-            
-            if i < 5
-            {
-                //Change box model size and move that node vertical for parts 0-4
-                modified_node = nodes[safe: "d\(i)", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
-                if i < 3
-                {
-                    modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[i]), length: 60, chamferRadius: 10) //Set geometry for 0-2 parts with width 6 and chamfer
-                }
-                else
-                {
-                    if i < 4
-                    {
-                        modified_node.geometry = SCNBox(width: 50, height: CGFloat(lengths[i]), length: 50, chamferRadius: 10) //Set geometry for 3th part with width 5 and chamfer
-                    }
-                    else
-                    {
-                        modified_node.geometry = SCNBox(width: 40, height: CGFloat(lengths[i]), length: 40, chamferRadius: 0) //Set geometry for 4th part with width 4 and without chamfer
-                    }
-                }
-                modified_node.geometry?.firstMaterial = saved_material //Apply saved material
-                
-                #if os(macOS)
-                modified_node.position.y = CGFloat(lengths[i] / 2)
-                #else
-                modified_node.position.y = Float(lengths[i] / 2)
-                #endif
-            }
-            else
-            {
-                //Set tool target (d6) position for 5th part
-                #if os(macOS)
-                nodes[safe: "d6", default: SCNNode()].position.y = CGFloat(lengths[i])
-                #else
-                nodes[safe: "d6", default: SCNNode()].position.y = Float(lengths[i])
-                #endif
-            }
-        }
+        saved_material = (nodes[safe: "d0", default: SCNNode()].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial) ?? SCNMaterial()
+
+        //Part 0
+        modified_node = nodes[safe: "d0", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
+        modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[0]), length: 60, chamferRadius: 10)
+        modified_node.geometry?.firstMaterial = saved_material
+
+        //Part 1
+        #if os(macOS)
+        nodes[safe: "d1", default: SCNNode()].position.y = CGFloat(lengths[0])
+        #else
+        nodes[safe: "d1", default: SCNNode()].position.y = Float(lengths[0])
+        #endif
+
+        modified_node = nodes[safe: "d1", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
+        modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[1]), length: 60, chamferRadius: 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lengths[1] / 2)
+        #else
+        modified_node.position.y = Float(lengths[1] / 2)
+        #endif
+
+        //Part 2
+        #if os(macOS)
+        nodes[safe: "d2", default: SCNNode()].position.y = CGFloat(lengths[1])
+        #else
+        nodes[safe: "d2", default: SCNNode()].position.y = Float(lengths[1])
+        #endif
+
+        modified_node = nodes[safe: "d2", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
+        modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[2]), length: 60, chamferRadius: 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lengths[2] / 2)
+        #else
+        modified_node.position.y = Float(lengths[2] / 2)
+        #endif
+
+        //Part 3
+        #if os(macOS)
+        nodes[safe: "d3", default: SCNNode()].position.y = CGFloat(lengths[2])
+        #else
+        nodes[safe: "d3", default: SCNNode()].position.y = Float(lengths[2])
+        #endif
+
+        modified_node = nodes[safe: "d3", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
+        modified_node.geometry = SCNBox(width: 50, height: CGFloat(lengths[3]), length: 50, chamferRadius: 10)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lengths[3] / 2)
+        #else
+        modified_node.position.y = Float(lengths[3] / 2)
+        #endif
+
+        //Part 4
+        #if os(macOS)
+        nodes[safe: "d4", default: SCNNode()].position.y = CGFloat(lengths[3])
+        #else
+        nodes[safe: "d4", default: SCNNode()].position.y = Float(lengths[3])
+        #endif
+
+        modified_node = nodes[safe: "d4", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
+        modified_node.geometry = SCNBox(width: 40, height: CGFloat(lengths[4]), length: 40, chamferRadius: 0)
+        modified_node.geometry?.firstMaterial = saved_material
+        #if os(macOS)
+        modified_node.position.y = CGFloat(lengths[4] / 2)
+        #else
+        modified_node.position.y = Float(lengths[4] / 2)
+        #endif
+
+        //Part 5
+        #if os(macOS)
+        nodes[safe: "d6", default: SCNNode()].position.y = CGFloat(lengths[5])
+        #else
+        nodes[safe: "d6", default: SCNNode()].position.y = Float(lengths[5])
+        #endif
     }
     
     //MARK: - Statistics
