@@ -7,11 +7,7 @@ class _6DOF_Controller: RobotModelController
     //MARK: - 6DOF nodes connect
     override func connect_nodes(of node: SCNNode)
     {
-        let without_lengths = lengths.count == 0
-        if without_lengths
-        {
-            lengths = [Float](repeating: 0, count: 6)
-        }
+        lengths = [Float](repeating: 0, count: 6)
         
         for i in 0...6
         {
@@ -19,19 +15,13 @@ class _6DOF_Controller: RobotModelController
             nodes["d\(i)"] = node.childNode(withName: "d\(i)", recursively: true) ?? nodes["d\(i)"]
             
             //Get lengths from robot scene if they is not set in plist
-            if without_lengths
+            if i > 0
             {
-                if i > 0
-                {
-                    lengths[i - 1] = Float(nodes[safe: "d\(i)", default: SCNNode()].position.y)
-                }
+                lengths[i - 1] = Float(nodes[safe: "d\(i)", default: SCNNode()].position.y)
             }
         }
         
-        if without_lengths
-        {
-            lengths.append(Float(nodes[safe: "d0", default: SCNNode()].position.y))
-        }
+        lengths.append(Float(nodes[safe: "d0", default: SCNNode()].position.y))
         
         nodes["base"] = node.childNode(withName: "base", recursively: true) ?? nodes["base"]
         nodes["column"] = node.childNode(withName: "column", recursively: true) ?? nodes["column"]

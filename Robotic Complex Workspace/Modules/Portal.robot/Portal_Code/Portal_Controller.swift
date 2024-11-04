@@ -7,24 +7,18 @@ class Portal_Controller: RobotModelController
     //MARK: - Portal nodes connect
     override func connect_nodes(of node: SCNNode)
     {
-        let without_lengths = lengths.count == 0
-        
         //Get lengths from robot scene if they is not set in plist
-        if without_lengths
-        {
-            lengths = [Float]()
-            
-            lengths.append(Float(node.childNode(withName: "frame2", recursively: true)!.position.y)) //Portal frame height [0]
-            
-            lengths.append(Float(node.childNode(withName: "limit1_min", recursively: true)!.position.z)) //Position X shift [1]
-            lengths.append(Float(node.childNode(withName: "limit0_min", recursively: true)!.position.x + node.childNode(withName: "limit2_min", recursively: true)!.position.x)) //Position Y shift [2]
-            lengths.append(Float(-node.childNode(withName: "limit2_min", recursively: true)!.position.y)) //Position Z shift [3]
-            lengths.append(Float(node.childNode(withName: "target", recursively: true)!.position.y)) //Tool length for adding to Z shift [4]
-            
-            lengths.append(Float(node.childNode(withName: "limit0_max", recursively: true)!.position.x)) //Limit for X [5]
-            lengths.append(Float(node.childNode(withName: "limit1_max", recursively: true)!.position.z)) //Limit for Y [6]
-            lengths.append(Float(-node.childNode(withName: "limit2_max", recursively: true)!.position.y)) //Limit for Z [7]
-        }
+        lengths = [Float]()
+        
+        lengths.append(Float(node.childNode(withName: "frame2", recursively: true)!.position.y)) //Portal frame height [0]
+        lengths.append(Float(node.childNode(withName: "limit1_min", recursively: true)!.position.z)) //Position X shift [1]
+        lengths.append(Float(node.childNode(withName: "limit0_min", recursively: true)!.position.x + node.childNode(withName: "limit2_min", recursively: true)!.position.x)) //Position Y shift [2]
+        lengths.append(Float(-node.childNode(withName: "limit2_min", recursively: true)!.position.y)) //Position Z shift [3]
+        lengths.append(Float(node.childNode(withName: "target", recursively: true)!.position.y)) //Tool length for adding to Z shift [4]
+        
+        lengths.append(Float(node.childNode(withName: "limit0_max", recursively: true)!.position.x)) //Limit for X [5]
+        lengths.append(Float(node.childNode(withName: "limit1_max", recursively: true)!.position.z)) //Limit for Y [6]
+        lengths.append(Float(-node.childNode(withName: "limit2_max", recursively: true)!.position.y)) //Limit for Z [7]
         
         //Connect to part nodes from robot scene
         nodes["frame"] = node.childNode(withName: "frame", recursively: true) ?? nodes["frame"] //Base position
@@ -33,10 +27,7 @@ class Portal_Controller: RobotModelController
             nodes["d\(i)"] = node.childNode(withName: "d\(i)", recursively: true) ?? nodes["d\(i)"]
         }
         
-        if without_lengths
-        {
-            lengths.append(Float(node.childNode(withName: "frame", recursively: true)!.position.y)) //Append base height [8]
-        }
+        lengths.append(Float(node.childNode(withName: "frame", recursively: true)!.position.y)) //Append base height [8]
         
         nodes["base"] = node.childNode(withName: "base", recursively: true) ?? nodes["base"] //Base pillar node [4]
         nodes["column"] = node.childNode(withName: "column", recursively: true) ?? nodes["column"]
@@ -162,6 +153,12 @@ class Portal_Controller: RobotModelController
         var frame_element_length: CGFloat
         
         node = nodes[safe: "frame", default: SCNNode()]
+        
+        #if os(macOS)
+        node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lengths[0]) //Set vertical position for frame portal
+        #else
+        node.childNode(withName: "frame2", recursively: true)!.position.y = lengths[0] //Set vertical position for frame portal
+        #endif
         
         //X shift
         #if os(macOS)
