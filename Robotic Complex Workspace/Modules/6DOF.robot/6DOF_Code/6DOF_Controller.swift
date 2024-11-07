@@ -4,39 +4,23 @@ import IndustrialKit
 
 class _6DOF_Controller: RobotModelController
 {
-    //MARK: - 6DOF nodes connect
-    override func connect_nodes(of node: SCNNode)
-    {
-        lengths = [Float](repeating: 0, count: 6)
-        
-        for i in 0...6
-        {
-            //Connect to part nodes from robot scene
-            nodes["d\(i)"] = node.childNode(withName: "d\(i)", recursively: true) ?? nodes["d\(i)"]
-            
-            //Get lengths from robot scene if they is not set in plist
-            if i > 0
-            {
-                lengths[i - 1] = Float(nodes[safe: "d\(i)", default: SCNNode()].position.y)
-            }
-        }
-        
-        lengths.append(Float(nodes[safe: "d0", default: SCNNode()].position.y))
-        
-        nodes["base"] = node.childNode(withName: "base", recursively: true) ?? nodes["base"]
-        nodes["column"] = node.childNode(withName: "column", recursively: true) ?? nodes["column"]
-    }
-    
     //MARK: - Inverse kinematic parts calculation for roataion angles of 6DOF
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        if lengths.count == description_lengths_count
-        {
-            apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
-        }
+        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
     }
     
-    public func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
+    let lengths: [Float] = [
+        160.0,
+        160.0,
+        80.0,
+        160.0,
+        40.0,
+        30.0,
+        160.0
+    ]
+    
+    private func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
     {
         var angles = [Float]()
         var C3 = Float()
@@ -115,7 +99,7 @@ class _6DOF_Controller: RobotModelController
         return angles
     }
     
-    public func apply_nodes_positions(values: [Float])
+    private func apply_nodes_positions(values: [Float])
     {
         #if os(macOS)
         nodes[safe: "d0", default: SCNNode()].eulerAngles.y = CGFloat(values[0])
@@ -137,114 +121,6 @@ class _6DOF_Controller: RobotModelController
         {
             chart_ik_values = values //Store new parts angles array for chart
         }
-    }
-    
-    override var description_lengths_count: Int { 7 }
-    
-    override func update_nodes_lengths()
-    {
-        var modified_node = SCNNode()
-        var saved_material = SCNMaterial()
-        
-        //Change height of base
-        modified_node = nodes[safe: "base", default: SCNNode()]
-        
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[6])
-        #else
-        modified_node.position.y = lengths[6]
-        #endif
-        
-        //Change height of column
-        modified_node = nodes[safe: "column", default: SCNNode()]
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        
-        modified_node.geometry = SCNCylinder(radius: 80, height: CGFloat(lengths[6]))
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[6] / 2)
-        #else
-        modified_node.position.y = lengths[6] / 2
-        #endif
-        
-        modified_node.geometry?.firstMaterial = saved_material
-        
-        saved_material = (nodes[safe: "d0", default: SCNNode()].childNode(withName: "box", recursively: false)!.geometry?.firstMaterial) ?? SCNMaterial()
-
-        //Part 0
-        modified_node = nodes[safe: "d0", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
-        modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[0]), length: 60, chamferRadius: 10)
-        modified_node.geometry?.firstMaterial = saved_material
-
-        //Part 1
-        #if os(macOS)
-        nodes[safe: "d1", default: SCNNode()].position.y = CGFloat(lengths[0])
-        #else
-        nodes[safe: "d1", default: SCNNode()].position.y = Float(lengths[0])
-        #endif
-
-        modified_node = nodes[safe: "d1", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
-        modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[1]), length: 60, chamferRadius: 10)
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[1] / 2)
-        #else
-        modified_node.position.y = Float(lengths[1] / 2)
-        #endif
-
-        //Part 2
-        #if os(macOS)
-        nodes[safe: "d2", default: SCNNode()].position.y = CGFloat(lengths[1])
-        #else
-        nodes[safe: "d2", default: SCNNode()].position.y = Float(lengths[1])
-        #endif
-
-        modified_node = nodes[safe: "d2", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
-        modified_node.geometry = SCNBox(width: 60, height: CGFloat(lengths[2]), length: 60, chamferRadius: 10)
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[2] / 2)
-        #else
-        modified_node.position.y = Float(lengths[2] / 2)
-        #endif
-
-        //Part 3
-        #if os(macOS)
-        nodes[safe: "d3", default: SCNNode()].position.y = CGFloat(lengths[2])
-        #else
-        nodes[safe: "d3", default: SCNNode()].position.y = Float(lengths[2])
-        #endif
-
-        modified_node = nodes[safe: "d3", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
-        modified_node.geometry = SCNBox(width: 50, height: CGFloat(lengths[3]), length: 50, chamferRadius: 10)
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[3] / 2)
-        #else
-        modified_node.position.y = Float(lengths[3] / 2)
-        #endif
-
-        //Part 4
-        #if os(macOS)
-        nodes[safe: "d4", default: SCNNode()].position.y = CGFloat(lengths[3])
-        #else
-        nodes[safe: "d4", default: SCNNode()].position.y = Float(lengths[3])
-        #endif
-
-        modified_node = nodes[safe: "d4", default: SCNNode()].childNode(withName: "box", recursively: false) ?? SCNNode()
-        modified_node.geometry = SCNBox(width: 40, height: CGFloat(lengths[4]), length: 40, chamferRadius: 0)
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[4] / 2)
-        #else
-        modified_node.position.y = Float(lengths[4] / 2)
-        #endif
-
-        //Part 5
-        #if os(macOS)
-        nodes[safe: "d6", default: SCNNode()].position.y = CGFloat(lengths[5])
-        #else
-        nodes[safe: "d6", default: SCNNode()].position.y = Float(lengths[5])
-        #endif
     }
     
     //MARK: - Statistics
@@ -299,11 +175,6 @@ class _6DOF_Controller: RobotModelController
         charts.append(WorkspaceObjectChart(name: "Parts Rotation", style: .line))
         charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
         charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
-        
-        /*if let initial_charts_data = updated_charts_data()
-        {
-            charts = initial_charts_data
-        }*/
         
         return charts
     }

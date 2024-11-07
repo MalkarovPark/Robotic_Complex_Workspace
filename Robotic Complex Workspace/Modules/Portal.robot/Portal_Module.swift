@@ -6,7 +6,8 @@ public let Portal_Module = RobotModule(
     name: "Portal",
     model_controller: Portal_Controller(),
     connector: Portal_Connector(),
-    node: Portal_Node
+    node: Portal_Node,
+    nodes_names: ["base", "column", "frame", "d0", "d1", "d2"]
 )
 
 public var Portal_Node: SCNNode

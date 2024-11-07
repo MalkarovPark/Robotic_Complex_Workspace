@@ -6,7 +6,8 @@ public let _6DOF_Module = RobotModule(
     name: "6DOF",
     model_controller: _6DOF_Controller(),
     connector: _6DOF_Connector(),
-    node: _6DOF_Node
+    node: _6DOF_Node,
+    nodes_names: ["base", "column", "d0", "d1", "d2", "d3", "d4", "d5", "d6"]
 )
 
 public var _6DOF_Node: SCNNode

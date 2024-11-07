@@ -4,45 +4,25 @@ import IndustrialKit
 
 class Portal_Controller: RobotModelController
 {
-    //MARK: - Portal nodes connect
-    override func connect_nodes(of node: SCNNode)
-    {
-        //Get lengths from robot scene if they is not set in plist
-        lengths = [Float]()
-        
-        lengths.append(Float(node.childNode(withName: "frame2", recursively: true)!.position.y)) //Portal frame height [0]
-        lengths.append(Float(node.childNode(withName: "limit1_min", recursively: true)!.position.z)) //Position X shift [1]
-        lengths.append(Float(node.childNode(withName: "limit0_min", recursively: true)!.position.x + node.childNode(withName: "limit2_min", recursively: true)!.position.x)) //Position Y shift [2]
-        lengths.append(Float(-node.childNode(withName: "limit2_min", recursively: true)!.position.y)) //Position Z shift [3]
-        lengths.append(Float(node.childNode(withName: "target", recursively: true)!.position.y)) //Tool length for adding to Z shift [4]
-        
-        lengths.append(Float(node.childNode(withName: "limit0_max", recursively: true)!.position.x)) //Limit for X [5]
-        lengths.append(Float(node.childNode(withName: "limit1_max", recursively: true)!.position.z)) //Limit for Y [6]
-        lengths.append(Float(-node.childNode(withName: "limit2_max", recursively: true)!.position.y)) //Limit for Z [7]
-        
-        //Connect to part nodes from robot scene
-        nodes["frame"] = node.childNode(withName: "frame", recursively: true) ?? nodes["frame"] //Base position
-        for i in 0...2
-        {
-            nodes["d\(i)"] = node.childNode(withName: "d\(i)", recursively: true) ?? nodes["d\(i)"]
-        }
-        
-        lengths.append(Float(node.childNode(withName: "frame", recursively: true)!.position.y)) //Append base height [8]
-        
-        nodes["base"] = node.childNode(withName: "base", recursively: true) ?? nodes["base"] //Base pillar node [4]
-        nodes["column"] = node.childNode(withName: "column", recursively: true) ?? nodes["column"]
-    }
-    
     //MARK: - Inverse kinematic parts calculation for roataion angles of portal
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        if lengths.count == description_lengths_count
-        {
-            apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
-        }
+        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
     }
     
-    public func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
+    let lengths: [Float] = [
+        440.0,
+        80.0,
+        160.0,
+        40.0,
+        30.0,
+        320.0,
+        320.0,
+        320.0,
+        160.0
+    ]
+    
+    private func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
     {
         var px, py, pz: Float
         
@@ -105,125 +85,6 @@ class Portal_Controller: RobotModelController
         #endif
     }
     
-    override var description_lengths_count: Int { 9 }
-    
-    override func update_nodes_lengths()
-    {
-        var modified_node = SCNNode()
-        var saved_material = SCNMaterial()
-        
-        //Change height of base
-        modified_node = nodes[safe: "base", default: SCNNode()]
-        
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[8])
-        #else
-        modified_node.position.y = lengths[8]
-        #endif
-        
-        //Change height of column
-        modified_node = nodes[safe: "column", default: SCNNode()]
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        
-        modified_node.geometry = SCNCylinder(radius: 80, height: CGFloat(lengths[8]))
-        #if os(macOS)
-        modified_node.position.y = CGFloat(lengths[8] / 2)
-        #else
-        modified_node.position.y = lengths[8] / 2
-        #endif
-        
-        modified_node.geometry?.firstMaterial = saved_material
-        
-        //Frames
-        var node = nodes[safe: "frame", default: SCNNode()]
-        
-        modified_node = node.childNode(withName: "part_v", recursively: true)!
-        
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        
-        let vf_length = lengths[0] - 40
-        modified_node.geometry = SCNBox(width: 80, height: CGFloat(vf_length), length: 80, chamferRadius: 10)
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = CGFloat(vf_length / 2)
-        #else
-        modified_node.position.y = vf_length / 2
-        #endif
-        
-        var frame_element_length: CGFloat
-        
-        node = nodes[safe: "frame", default: SCNNode()]
-        
-        #if os(macOS)
-        node.childNode(withName: "frame2", recursively: true)!.position.y = CGFloat(lengths[0]) //Set vertical position for frame portal
-        #else
-        node.childNode(withName: "frame2", recursively: true)!.position.y = lengths[0] //Set vertical position for frame portal
-        #endif
-        
-        //X shift
-        #if os(macOS)
-        node.childNode(withName: "limit1_min", recursively: true)!.position.z = CGFloat(lengths[1])
-        node.childNode(withName: "limit1_max", recursively: true)!.position.z = CGFloat(lengths[5])
-        frame_element_length = CGFloat(lengths[5] + lengths[1]) //Calculate frame X length
-        #else
-        node.childNode(withName: "limit1_min", recursively: true)!.position.z = lengths[1]
-        node.childNode(withName: "limit1_max", recursively: true)!.position.z = lengths[5]
-        frame_element_length = CGFloat(lengths[5] + lengths[1]) //Calculate frame X length
-        #endif
-        
-        modified_node = node.childNode(withName: "part_x", recursively: true)!
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNBox(width: 60, height: 60, length: frame_element_length, chamferRadius: 10) //Update frame X geometry
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.z = (frame_element_length + 80) / 2 //Frame X reposition
-        #else
-        modified_node.position.z = Float(frame_element_length + 80) / 2
-        #endif
-        
-        //Y shift
-        #if os(macOS)
-        node.childNode(withName: "limit0_min", recursively: true)!.position.x = CGFloat(lengths[2]) / 2
-        node.childNode(withName: "limit0_max", recursively: true)!.position.x = CGFloat(lengths[6])
-        frame_element_length = CGFloat(lengths[6] + lengths[2] - 80) //Calculate frame Y length
-        #else
-        node.childNode(withName: "limit0_min", recursively: true)!.position.x = lengths[2] / 2
-        node.childNode(withName: "limit0_max", recursively: true)!.position.x = lengths[6]
-        frame_element_length = CGFloat(lengths[6] + lengths[2] - 80) //Calculate frame Y length
-        #endif
-        
-        modified_node = node.childNode(withName: "part_y", recursively: true)!
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNBox(width: 60, height: 60, length: frame_element_length, chamferRadius: 10) //Update frame Y geometry
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.x = (frame_element_length + 80) / 2 //Frame Y reposition
-        #else
-        modified_node.position.x = Float(frame_element_length + 80) / 2
-        #endif
-        
-        //Z shift
-        #if os(macOS)
-        node.childNode(withName: "limit2_min", recursively: true)!.position.y = CGFloat(-lengths[3])
-        node.childNode(withName: "limit2_max", recursively: true)!.position.y = CGFloat(lengths[7])
-        frame_element_length = CGFloat(lengths[7] + 80)
-        #else
-        node.childNode(withName: "limit2_min", recursively: true)!.position.y = -lengths[3]
-        node.childNode(withName: "limit2_max", recursively: true)!.position.y = lengths[7]
-        frame_element_length = CGFloat(lengths[7] + 80)
-        #endif
-        
-        modified_node = node.childNode(withName: "part_z", recursively: true)!
-        saved_material = (modified_node.geometry?.firstMaterial)!
-        modified_node.geometry = SCNBox(width: 60, height: frame_element_length, length: 60, chamferRadius: 10) //Update frame Z geometry
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = (frame_element_length) / 2 //Frame Z reposition
-        #else
-        modified_node.position.y = Float(frame_element_length) / 2
-        #endif
-    }
-    
     //MARK: - Statistics
     private var charts = [WorkspaceObjectChart]()
     private var chart_ik_values = [Float](repeating: 0, count: 3)
@@ -268,11 +129,6 @@ class Portal_Controller: RobotModelController
         
         charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
         charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
-        
-        /*if let initial_charts_data = updated_charts_data()
-        {
-            charts = initial_charts_data
-        }*/
         
         return charts
     }
