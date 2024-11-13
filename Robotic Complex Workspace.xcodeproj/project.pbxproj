@@ -16,7 +16,6 @@
 		6236F9422AD3439C008FA7C4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */; };
 		6236F9492AD34591008FA7C4 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9482AD34591008FA7C4 /* Functions.swift */; };
 		6236F9552AD345C4008FA7C4 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94B2AD345C4008FA7C4 /* Sidebar.swift */; };
-		6236F9562AD345C4008FA7C4 /* ConnectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94C2AD345C4008FA7C4 /* ConnectorView.swift */; };
 		6236F9572AD345C4008FA7C4 /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94D2AD345C4008FA7C4 /* ToolsView.swift */; };
 		6236F9582AD345C4008FA7C4 /* PartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94E2AD345C4008FA7C4 /* PartsView.swift */; };
 		6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94F2AD345C4008FA7C4 /* SettingsView.swift */; };
@@ -61,7 +60,6 @@
 		6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6236F9482AD34591008FA7C4 /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		6236F94B2AD345C4008FA7C4 /* Sidebar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
-		6236F94C2AD345C4008FA7C4 /* ConnectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectorView.swift; sourceTree = "<group>"; };
 		6236F94D2AD345C4008FA7C4 /* ToolsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
 		6236F94E2AD345C4008FA7C4 /* PartsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PartsView.swift; sourceTree = "<group>"; };
 		6236F94F2AD345C4008FA7C4 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				62398C782BF299E5001A5B8A /* ToolsDesigner */,
 				62398C792BF299F1001A5B8A /* PartsDesigner */,
 				627C254F2C9DA7660087D777 /* AddObjectView.swift */,
-				6236F94C2AD345C4008FA7C4 /* ConnectorView.swift */,
 				6236F9542AD345C4008FA7C4 /* ContentView.swift */,
 				6236F94F2AD345C4008FA7C4 /* SettingsView.swift */,
 				6236F94B2AD345C4008FA7C4 /* Sidebar.swift */,
@@ -369,7 +366,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */,
-				6236F9562AD345C4008FA7C4 /* ConnectorView.swift in Sources */,
 				6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */,
 				62398C8E2BF2A70D001A5B8A /* PartView.swift in Sources */,
 				62398C822BF29FDB001A5B8A /* RobotInspectorView.swift in Sources */,

@@ -466,7 +466,7 @@ struct ModulesSettingsView: View
         #endif
         .fileImporter(isPresented: $folder_picker_is_presented,
                               allowedContentTypes: [.folder],
-                              allowsMultipleSelection: true)
+                              allowsMultipleSelection: false)
         { result in
             switch result
             {
