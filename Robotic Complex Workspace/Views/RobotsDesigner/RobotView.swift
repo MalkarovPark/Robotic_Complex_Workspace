@@ -588,7 +588,7 @@ struct CellSceneView: UIViewRepresentable
         
         if base_workspace.selected_robot.performed
         {
-            base_workspace.selected_robot.update_model()
+            base_workspace.selected_robot.update()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
             {

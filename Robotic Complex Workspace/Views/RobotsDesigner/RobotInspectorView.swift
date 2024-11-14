@@ -538,6 +538,7 @@ struct PositionPointView: View
     RobotInspectorView()
         .environmentObject(Workspace())
         .environmentObject(AppState())
+        .frame(width: 256)
 }
 
 #Preview

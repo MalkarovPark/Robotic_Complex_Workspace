@@ -329,18 +329,9 @@ struct WorkspaceSceneView: UIViewRepresentable
         switch base_workspace.selected_object_type
         {
         case .robot:
-            base_workspace.selected_robot.update_model()
-            
-            /*if base_workspace.selected_robot.moving_completed
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-                {
-                    base_workspace.selected_robot.moving_completed = false
-                    base_workspace.update_view()
-                }
-            }*/
+            base_workspace.selected_robot.update()
         case .tool:
-            base_workspace.selected_tool.update_statistics_data()
+            base_workspace.selected_tool.update()
         case .part:
             break
         case .none:
