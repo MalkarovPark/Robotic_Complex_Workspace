@@ -4,7 +4,20 @@ import IndustrialKit
 
 class Portal_Controller: RobotModelController
 {
-    //MARK: - Inverse kinematic parts calculation for roataion angles of portal
+    //MARK: - Nodes names
+    override var nodes_names: [String]
+    {
+        [
+            "base",
+            "column",
+            "frame",
+            "d0",
+            "d1",
+            "d2"
+        ]
+    }
+    
+    //MARK: - Control functions
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
         apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))

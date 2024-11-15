@@ -4,6 +4,16 @@ import IndustrialKit
 
 class Gripper_Controller: ToolModelController
 {
+    //MARK: - Nodes names
+    override var nodes_names: [String]
+    {
+        [
+            "jaw",
+            "jaw2"
+        ]
+    }
+    
+    //MARK: - Control functions
     private var closed = false
     private var moved = false
     

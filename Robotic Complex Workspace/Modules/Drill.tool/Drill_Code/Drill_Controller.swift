@@ -4,6 +4,15 @@ import IndustrialKit
 
 class Drill_Controller: ToolModelController
 {
+    //MARK: - Nodes names
+    override var nodes_names: [String]
+    {
+        [
+            "drill"
+        ]
+    }
+    
+    //MARK: - Control functions
     private var rotated = [false, false]
     
     override func nodes_perform(code: Int)

@@ -3,6 +3,17 @@ import IndustrialKit
 
 class Gripper_Connector: ToolConnector
 {
+    //MARK: - Connection paramters
+    override var parameters: [ConnectionParameter]
+    {
+        [
+            .init(name: "String", value: "Text"),
+            .init(name: "Int", value: 8),
+            .init(name: "Float", value: Float(6)),
+            .init(name: "Bool", value: true)
+        ]
+    }
+    
     //MARK: - Connection functions
     override func connection_process() async -> Bool
     {
