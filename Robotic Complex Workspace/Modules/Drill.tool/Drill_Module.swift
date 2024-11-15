@@ -4,11 +4,26 @@ import SceneKit
 
 public let Drill_Module = ToolModule(
     name: "Drill",
+    
+    operation_codes: [
+        .init(value: 1, name: "Clockwise", symbol: "arrow.clockwise.circle", info: "Clockwise rotation"),
+        .init(value: 2, name: "Counter", symbol: "arrow.counterclockwise.circle", info: "Counter clockwise rotation"),
+        .init(value: 0, name: "Stop", symbol: "stop.circle", info: "Stop rotation")
+    ],
+    
     model_controller: Drill_Controller(),
-    connector: Drill_Connector(),
-    operation_codes: Drill_Codes,
     node: Drill_Node,
-    nodes_names: ["drill"]
+    nodes_names: [
+        "drill"
+    ],
+    
+    connector: Drill_Connector(),
+    connection_parameters: [
+        .init(name: "String", value: "Text"),
+        .init(name: "Int", value: 8),
+        .init(name: "Float", value: Float(6)),
+        .init(name: "Bool", value: true)
+    ]
 )
 
 public var Drill_Node: SCNNode
@@ -26,13 +41,4 @@ public var Drill_Node: SCNNode
     }
     
     return node
-}
-
-public var Drill_Codes: [OperationCodeInfo]
-{
-    return [
-        OperationCodeInfo(value: 1, name: "Clockwise", symbol: "arrow.clockwise.circle", info: "Clockwise rotation"),
-        OperationCodeInfo(value: 2, name: "Counter", symbol: "arrow.counterclockwise.circle", info: "Counter clockwise rotation"),
-        OperationCodeInfo(value: 0, name: "Stop", symbol: "stop.circle", info: "Stop rotation")
-    ]
 }

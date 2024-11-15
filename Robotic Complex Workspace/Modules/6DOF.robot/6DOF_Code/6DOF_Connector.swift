@@ -3,17 +3,6 @@ import IndustrialKit
 
 class _6DOF_Connector: RobotConnector
 {
-    override init()
-    {
-        super.init()
-        parameters = [
-            ConnectionParameter(name: "String", value: "Text"),
-            ConnectionParameter(name: "Int", value: 8),
-            ConnectionParameter(name: "Float", value: Float(6)),
-            ConnectionParameter(name: "Bool", value: true)
-        ]
-    }
-    
     //MARK: - Connection functions
     override func connection_process() async -> Bool
     {
