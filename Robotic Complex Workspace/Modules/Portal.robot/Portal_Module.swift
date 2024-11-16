@@ -7,7 +7,7 @@ public let Portal_Module = RobotModule(
     
     node: Portal_Node,
     
-    model_controller: Portal_Controller(),    
+    model_controller: Portal_Controller(),
     connector: Portal_Connector()
 )
 

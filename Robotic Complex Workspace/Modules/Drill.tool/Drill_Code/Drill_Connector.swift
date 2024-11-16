@@ -3,7 +3,7 @@ import IndustrialKit
 
 class Drill_Connector: ToolConnector
 {
-    //MARK: - Connection paramters
+    //MARK: - Connecting
     override var parameters: [ConnectionParameter]
     {
         [
@@ -14,7 +14,6 @@ class Drill_Connector: ToolConnector
         ]
     }
     
-    //MARK: - Connection functions
     override func connection_process() async -> Bool
     {
         new_line_check()
@@ -57,7 +56,7 @@ class Drill_Connector: ToolConnector
         }
     }
     
-    //MARK: - Control functions
+    //MARK: - Performing
     private var rotated = [false, false]
     
     override func perform(code: Int)
@@ -120,13 +119,24 @@ class Drill_Connector: ToolConnector
         }
     }
     
-    //MARK: - State functions
+    //MARK: - Statistics
+    override func initial_charts_data() -> [WorkspaceObjectChart]
+    {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
+    }
+    
+    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
+    }
+    
+    override func initial_states_data() -> [StateItem]
+    {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
+    }
+    
     override func updated_states_data() -> [StateItem]?
     {
-        var state = [StateItem]()
-        state.append(StateItem(name: "Rotation frequency", value: "40 Hz", image: "arrow.triangle.2.circlepath"))
-        state.append(StateItem(name: "Address", value: "Local", image: "mappin"))
-        
-        return state
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
     }
 }
