@@ -3,7 +3,7 @@ import IndustrialKit
 
 class Drill_Connector: ToolConnector
 {
-    //MARK: - Connecting
+    //MARK: - Connection
     override var parameters: [ConnectionParameter]
     {
         [

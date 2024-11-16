@@ -3,7 +3,7 @@ import IndustrialKit
 
 class Portal_Connector: RobotConnector
 {
-    //MARK: - Connecting
+    //MARK: - Connection
     override var parameters: [ConnectionParameter]
     {
         [
