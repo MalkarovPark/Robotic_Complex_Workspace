@@ -49,9 +49,9 @@ struct ContentView: View
     @StateObject private var document_handler = DocumentUpdateHandler()
     
     //MARK: Main view
-    @ViewBuilder var body: some View
+    var body: some View
     {
-        Sidebar(document: $document)
+        WorkspaceNavigationView(document: $document)
         #if !os(visionOS)
             .environmentObject(base_workspace)
         #else

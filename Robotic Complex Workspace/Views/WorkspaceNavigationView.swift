@@ -45,20 +45,7 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 }
 
 //MARK: - Sidebar view and content
-struct Sidebar: View
-{
-    @Binding var document: Robotic_Complex_WorkspaceDocument //Current openet document
-    
-    var body: some View
-    {
-        SidebarContent(document: $document).frame(minWidth: 200, idealWidth: 250)
-        #if os(iOS) || os(visionOS)
-            .navigationBarHidden(true)
-        #endif
-    }
-}
-
-struct SidebarContent: View
+struct WorkspaceNavigationView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
@@ -132,7 +119,9 @@ struct SidebarContent: View
                 #endif
             }
             #endif
-        } detail: {
+        }
+        detail:
+        {
             ZStack
             {
                 //MARK: Content
@@ -187,7 +176,7 @@ struct SidebarContent: View
 //MARK: - Previews
 #Preview
 {
-    Sidebar(document: .constant(Robotic_Complex_WorkspaceDocument()))
+    WorkspaceNavigationView(document: .constant(Robotic_Complex_WorkspaceDocument()))
         .environmentObject(Workspace())
         .environmentObject(AppState())
 }

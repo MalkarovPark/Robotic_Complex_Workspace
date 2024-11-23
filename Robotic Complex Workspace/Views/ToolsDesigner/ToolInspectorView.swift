@@ -208,7 +208,7 @@ struct ToolInspectorView: View
                     {
                         add_program_view_presented.toggle()
                     }
-                    .popover(isPresented: $add_program_view_presented, arrowEdge: .bottom)
+                    .popover(isPresented: $add_program_view_presented, arrowEdge: .top)
                     {
                         AddNewView(is_presented: $add_program_view_presented)
                         { new_name in

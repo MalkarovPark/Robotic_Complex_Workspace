@@ -15,7 +15,7 @@
 		6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F93C2AD3439C008FA7C4 /* Assets.xcassets */; };
 		6236F9422AD3439C008FA7C4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */; };
 		6236F9492AD34591008FA7C4 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9482AD34591008FA7C4 /* Functions.swift */; };
-		6236F9552AD345C4008FA7C4 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94B2AD345C4008FA7C4 /* Sidebar.swift */; };
+		6236F9552AD345C4008FA7C4 /* WorkspaceNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94B2AD345C4008FA7C4 /* WorkspaceNavigationView.swift */; };
 		6236F9572AD345C4008FA7C4 /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94D2AD345C4008FA7C4 /* ToolsView.swift */; };
 		6236F9582AD345C4008FA7C4 /* PartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94E2AD345C4008FA7C4 /* PartsView.swift */; };
 		6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94F2AD345C4008FA7C4 /* SettingsView.swift */; };
@@ -59,7 +59,7 @@
 		6236F93F2AD3439C008FA7C4 /* Robotic_Complex_Workspace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Robotic_Complex_Workspace.entitlements; sourceTree = "<group>"; };
 		6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6236F9482AD34591008FA7C4 /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
-		6236F94B2AD345C4008FA7C4 /* Sidebar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
+		6236F94B2AD345C4008FA7C4 /* WorkspaceNavigationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkspaceNavigationView.swift; sourceTree = "<group>"; };
 		6236F94D2AD345C4008FA7C4 /* ToolsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
 		6236F94E2AD345C4008FA7C4 /* PartsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PartsView.swift; sourceTree = "<group>"; };
 		6236F94F2AD345C4008FA7C4 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 				627C254F2C9DA7660087D777 /* AddObjectView.swift */,
 				6236F9542AD345C4008FA7C4 /* ContentView.swift */,
 				6236F94F2AD345C4008FA7C4 /* SettingsView.swift */,
-				6236F94B2AD345C4008FA7C4 /* Sidebar.swift */,
+				6236F94B2AD345C4008FA7C4 /* WorkspaceNavigationView.swift */,
 				6236F9502AD345C4008FA7C4 /* StatisticsView.swift */,
 			);
 			path = Views;
@@ -378,7 +378,7 @@
 				62398C7C2BF29C39001A5B8A /* RobotsTableView.swift in Sources */,
 				6236F95A2AD345C4008FA7C4 /* StatisticsView.swift in Sources */,
 				6236F95C2AD345C4008FA7C4 /* RobotsView.swift in Sources */,
-				6236F9552AD345C4008FA7C4 /* Sidebar.swift in Sources */,
+				6236F9552AD345C4008FA7C4 /* WorkspaceNavigationView.swift in Sources */,
 				6236F9572AD345C4008FA7C4 /* ToolsView.swift in Sources */,
 				62398C882BF2A3B1001A5B8A /* ToolView.swift in Sources */,
 				6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */,

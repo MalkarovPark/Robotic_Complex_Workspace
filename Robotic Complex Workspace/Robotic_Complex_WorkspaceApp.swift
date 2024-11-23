@@ -14,8 +14,6 @@ struct Robotic_Complex_WorkspaceApp: App
 {
     @StateObject var app_state = AppState() //Init application state
     
-    @State var first_loaded = true //First flag for fade in workspace scene if app first loaded
-    
     #if os(visionOS)
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
@@ -38,17 +36,6 @@ struct Robotic_Complex_WorkspaceApp: App
             #endif
                 .onAppear
                 {
-                    /*if first_loaded
-                    {
-                        for type in WorkspaceObjectType.allCases
-                        {
-                            app_state.get_defaults_plist_names(type: type) //Get plist names from user defaults
-                            app_state.get_additive_data(type: type) //Get models data from property lists
-                        }
-                        
-                        first_loaded = false
-                    }*/
-                    
                     #if os(visionOS)
                     pendant_controller.set_windows_functions
                     {
@@ -105,6 +92,7 @@ struct Robotic_Complex_WorkspaceApp: App
                 .keyboardShortcut(".", modifiers: .command)
             }
         }
+        
         #if os(macOS)
         Settings
         {
