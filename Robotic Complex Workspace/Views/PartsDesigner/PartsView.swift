@@ -176,7 +176,11 @@ struct PartCardView: View
                         part_view_presented = false
                     }
                     .fitted()
-                #if os(visionOS)
+                #if os(macOS)
+                    .frame(width: 600)
+                #elseif os(iOS)
+                    .frame(idealWidth: 800, idealHeight: 600)
+                #elseif os(visionOS)
                     .frame(width: 512, height: 512)
                 #endif
             }

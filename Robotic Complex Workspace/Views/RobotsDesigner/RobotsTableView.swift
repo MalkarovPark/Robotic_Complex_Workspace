@@ -95,17 +95,7 @@ struct RobotsTableView: View
                             base_workspace.add_robot(app_state.previewed_object! as! Robot)
                             document_handler.document_update_robots()
                         }
-                        
-                        #if os(iOS)
-                            .presentationDetents([.height(512), .large])
-                        #endif
-                        #if os(visionOS)
-                            .frame(width: 512, height: 512)
-                        #endif
                     }
-                    #if os(visionOS)
-                    .frame(width: 512, height: 512)
-                    #endif
                 }
             }
         }

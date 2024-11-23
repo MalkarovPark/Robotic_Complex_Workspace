@@ -116,7 +116,7 @@ struct ToolInspectorView: View
                         #if os(macOS)
                         .buttonStyle(BorderlessButtonStyle())
                         #endif
-                        .popover(isPresented: $add_operation_view_presented)
+                        .popover(isPresented: $add_operation_view_presented, arrowEdge: .bottom)
                         {
                             #if os(macOS)
                             HStack
@@ -208,12 +208,14 @@ struct ToolInspectorView: View
                     {
                         add_program_view_presented.toggle()
                     }
-                    .popover(isPresented: $add_program_view_presented)
+                    .popover(isPresented: $add_program_view_presented, arrowEdge: .bottom)
                     {
-                        AddOperationProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_tool.selected_program_index)
-                        #if os(iOS)
-                            .presentationDetents([.height(96)])
-                        #endif
+                        AddNewView(is_presented: $add_program_view_presented)
+                        { new_name in
+                            base_workspace.selected_tool.add_program(OperationsProgram(name: new_name))
+                            base_workspace.selected_tool.selected_program_index = base_workspace.selected_tool.programs_names.count - 1
+                            base_workspace.update_view()
+                        }
                     }
                     .onChange(of: base_workspace.selected_tool.programs_count)
                     { _, _ in
@@ -306,50 +308,6 @@ struct OperationParameterView: View
             #endif
         }
         .padding(8)
-    }
-}
-
-//MARK: Add program view
-struct AddOperationProgramView: View
-{
-    @Binding var add_program_view_presented: Bool
-    @Binding var selected_program_index: Int
-    
-    @State var new_program_name = ""
-    
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
-    
-    var body: some View
-    {
-        VStack
-        {
-            HStack(spacing: 12)
-            {
-                TextField("Name", text: $new_program_name)
-                    .frame(minWidth: 128, maxWidth: 256)
-                #if os(iOS)
-                    .frame(idealWidth: 256)
-                    .textFieldStyle(.roundedBorder)
-                #endif
-                
-                Button("Add")
-                {
-                    if new_program_name == ""
-                    {
-                        new_program_name = "None"
-                    }
-                    
-                    base_workspace.selected_tool.add_program(OperationsProgram(name: new_program_name))
-                    selected_program_index = base_workspace.selected_tool.programs_names.count - 1
-                    
-                    add_program_view_presented.toggle()
-                }
-                .fixedSize()
-                .keyboardShortcut(.defaultAction)
-            }
-            .padding(12)
-        }
     }
 }
 

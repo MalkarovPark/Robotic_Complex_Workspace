@@ -138,8 +138,9 @@ struct ToolCardView: View
                     .fitted()
                 #if os(macOS)
                     .frame(width: 600)
-                #endif
-                #if os(visionOS)
+                #elseif os(iOS)
+                    .frame(idealWidth: 800, idealHeight: 600)
+                #elseif os(visionOS)
                     .frame(width: 512, height: 512)
                 #endif
             }

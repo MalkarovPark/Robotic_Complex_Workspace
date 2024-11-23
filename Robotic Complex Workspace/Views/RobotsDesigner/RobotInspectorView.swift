@@ -135,12 +135,17 @@ struct RobotInspectorView: View
                 {
                     add_program_view_presented.toggle()
                 }
-                .popover(isPresented: $add_program_view_presented)
+                .popover(isPresented: $add_program_view_presented, arrowEdge: .bottom)
                 {
-                    AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $base_workspace.selected_robot.selected_program_index)
-                    #if os(iOS)
-                        .presentationDetents([.height(96)])
-                    #endif
+                    AddNewView(is_presented: $add_program_view_presented)
+                    { new_name in
+                        base_workspace.selected_robot.add_program(PositionsProgram(name: new_name))
+                        base_workspace.selected_robot.selected_program_index = base_workspace.selected_robot.programs_names.count - 1
+                        
+                        document_handler.document_update_robots()
+                        app_state.get_scene_image = true
+                        add_program_view_presented.toggle()
+                    }
                 }
             }
             .padding([.horizontal, .bottom])
@@ -231,53 +236,6 @@ struct PositionDropDelegate: DropDelegate
             {
                 self.points.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
             }
-        }
-    }
-}
-
-//MARK: Add program view
-struct AddProgramView: View
-{
-    @Binding var add_program_view_presented: Bool
-    @Binding var selected_program_index: Int
-    
-    @State var new_program_name = ""
-    
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
-    
-    var body: some View
-    {
-        VStack
-        {
-            HStack(spacing: 12)
-            {
-                TextField("Name", text: $new_program_name)
-                    .frame(minWidth: 128, maxWidth: 256)
-                #if os(iOS)
-                    .frame(idealWidth: 256)
-                    .textFieldStyle(.roundedBorder)
-                #endif
-                
-                Button("Add")
-                {
-                    if new_program_name == ""
-                    {
-                        new_program_name = "None"
-                    }
-                    
-                    base_workspace.selected_robot.add_program(PositionsProgram(name: new_program_name))
-                    selected_program_index = base_workspace.selected_robot.programs_names.count - 1
-                    
-                    document_handler.document_update_robots()
-                    app_state.get_scene_image = true
-                    add_program_view_presented.toggle()
-                }
-                .fixedSize()
-                .keyboardShortcut(.defaultAction)
-            }
-            .padding(12)
         }
     }
 }
