@@ -42,25 +42,23 @@ struct ToolInspectorView: View
                         {
                             if base_workspace.selected_tool.selected_program.codes_count > 0
                             {
-                                ForEach(base_workspace.selected_tool.selected_program.codes.indices, id: \.self)
-                                { index in
-                                    OperationItemView(
-                                        codes: $base_workspace.selected_tool.selected_program.codes,
-                                        code_item: base_workspace.selected_tool.selected_program.codes[index]
-                                    )
+                                ForEach(Array(base_workspace.selected_tool.selected_program.codes.enumerated()), id: \.element.id)
+                                { index, code in
+                                    OperationItemView(codes: $base_workspace.selected_tool.selected_program.codes, code_item: code)
+                                        .onDrag
+                                    {
+                                        return NSItemProvider()
+                                    }
                                     .contextMenu
                                     {
                                         Button(role: .destructive)
                                         {
                                             remove_codes(IndexSet(integer: index))
                                         }
-                                        label:
+                                    label:
                                         {
                                             Label("Delete", systemImage: "trash")
                                         }
-                                    }
-                                    .onDrag {
-                                        return NSItemProvider()
                                     }
                                 }
                                 .onMove(perform: code_item_move)
