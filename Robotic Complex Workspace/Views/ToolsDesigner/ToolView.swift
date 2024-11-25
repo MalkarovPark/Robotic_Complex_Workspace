@@ -293,7 +293,7 @@ struct ToolView: View
         .sheet(isPresented: $connector_view_presented)
         {
             ConnectorView(demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: tool_item.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_tools() })
-                .modifier(SheetCaption(is_presented: $connector_view_presented, label: "Link Tool"))
+                .modifier(SheetCaption(is_presented: $connector_view_presented, label: "Link"))
             #if os(macOS)
                 .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
             #elseif os(visionOS)
