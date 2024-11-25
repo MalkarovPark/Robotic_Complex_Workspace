@@ -89,7 +89,7 @@ struct WorkspaceNavigationView: View
                     }
                 }
             }
-            .navigationTitle("View")
+            //.navigationTitle("View")
             #if !os(macOS)
             .toolbar
             {

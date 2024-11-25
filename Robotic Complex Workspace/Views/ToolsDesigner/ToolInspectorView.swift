@@ -116,7 +116,7 @@ struct ToolInspectorView: View
                         #if os(macOS)
                         .buttonStyle(BorderlessButtonStyle())
                         #endif
-                        .popover(isPresented: $add_operation_view_presented, arrowEdge: .bottom)
+                        .popover(isPresented: $add_operation_view_presented, arrowEdge: default_popover_edge)
                         {
                             #if os(macOS)
                             HStack
@@ -208,7 +208,7 @@ struct ToolInspectorView: View
                     {
                         add_program_view_presented.toggle()
                     }
-                    .popover(isPresented: $add_program_view_presented, arrowEdge: .top)
+                    .popover(isPresented: $add_program_view_presented, arrowEdge: default_popover_edge)
                     {
                         AddNewView(is_presented: $add_program_view_presented)
                         { new_name in

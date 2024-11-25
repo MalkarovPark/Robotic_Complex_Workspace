@@ -253,7 +253,7 @@ struct RobotSceneView: View
                     #if os(iOS)
                     .foregroundColor(.black)
                     #endif
-                    .popover(isPresented: $origin_rotate_view_presented)
+                    .popover(isPresented: $origin_rotate_view_presented, arrowEdge: default_popover_edge)
                     {
                         OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
                             .onChange(of: base_workspace.selected_robot.origin_rotation)
@@ -280,12 +280,11 @@ struct RobotSceneView: View
                     #if os(iOS)
                     .foregroundColor(.black)
                     #endif
-                    .popover(isPresented: $origin_move_view_presented)
+                    .popover(isPresented: $origin_move_view_presented, arrowEdge: default_popover_edge)
                     {
                         OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
                             .onChange(of: base_workspace.selected_robot.origin_location)
                         { _, _ in
-                            //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
                             app_state.get_scene_image = true
@@ -306,7 +305,7 @@ struct RobotSceneView: View
                     #if os(iOS)
                     .foregroundColor(.black)
                     #endif
-                    .popover(isPresented: $space_scale_view_presented)
+                    .popover(isPresented: $space_scale_view_presented, arrowEdge: default_popover_edge)
                     {
                         SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
                             .onChange(of: base_workspace.selected_robot.space_scale)
@@ -342,7 +341,7 @@ struct RobotSceneView: View
                     }
                     .buttonStyle(.borderless)
                     .buttonBorderShape(.circle)
-                    .popover(isPresented: $origin_rotate_view_presented)
+                    .popover(isPresented: $origin_rotate_view_presented, arrowEdge: default_popover_edge)
                     {
                         OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
                             .onChange(of: base_workspace.selected_robot.origin_rotation)
@@ -366,7 +365,7 @@ struct RobotSceneView: View
                     }
                     .buttonStyle(.borderless)
                     .buttonBorderShape(.circle)
-                    .popover(isPresented: $origin_move_view_presented)
+                    .popover(isPresented: $origin_move_view_presented, arrowEdge: default_popover_edge)
                     {
                         OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
                             .onChange(of: base_workspace.selected_robot.origin_location)
@@ -389,7 +388,7 @@ struct RobotSceneView: View
                             .padding()
                     }
                     .buttonBorderShape(.circle)
-                    .popover(isPresented: $space_scale_view_presented)
+                    .popover(isPresented: $space_scale_view_presented, arrowEdge: default_popover_edge)
                     {
                         SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
                             .onChange(of: base_workspace.selected_robot.space_scale)

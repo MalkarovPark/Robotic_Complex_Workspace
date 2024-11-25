@@ -117,3 +117,10 @@ let toolbar_item_placement_trailing: ToolbarItemPlacement = .navigation
 let toolbar_item_placement_leading: ToolbarItemPlacement = .cancellationAction
 let quaternary_label_color: Color = Color(UIColor.quaternaryLabel)
 #endif
+
+//MARK: - Arrow edge positions
+#if os(macOS)
+let default_popover_edge: Edge = .top
+#else
+let default_popover_edge: Edge = .bottom
+#endif

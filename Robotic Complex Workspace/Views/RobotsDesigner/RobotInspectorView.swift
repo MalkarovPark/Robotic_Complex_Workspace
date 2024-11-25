@@ -135,7 +135,7 @@ struct RobotInspectorView: View
                 {
                     add_program_view_presented.toggle()
                 }
-                .popover(isPresented: $add_program_view_presented, arrowEdge: .top)
+                .popover(isPresented: $add_program_view_presented, arrowEdge: default_popover_edge)
                 {
                     AddNewView(is_presented: $add_program_view_presented)
                     { new_name in

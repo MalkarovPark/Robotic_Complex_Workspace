@@ -220,7 +220,7 @@ struct RobotCardView: View
                 view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
             }
         }
-        .popover(isPresented: $pass_preferences_presented, arrowEdge: .bottom)
+        .popover(isPresented: $pass_preferences_presented, arrowEdge: default_popover_edge)
         {
             PassPreferencesView(is_presented: $pass_preferences_presented)
                 #if os(macOS)
