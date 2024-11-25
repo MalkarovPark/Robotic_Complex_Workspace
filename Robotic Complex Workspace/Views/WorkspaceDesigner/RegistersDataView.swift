@@ -61,7 +61,7 @@ struct RegistersDataView: View
                         #if os(iOS)
                         .foregroundColor(.black)
                         #endif
-                        .popover(isPresented: $is_registers_count_presented)
+                        .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
                         {
                             RegistersCountView(is_presented: $is_registers_count_presented, registers_count: base_workspace.registers.count)
                             {

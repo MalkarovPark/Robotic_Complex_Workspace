@@ -5,7 +5,6 @@
 //  Created by Artem on 21.02.2024.
 //
 
-#if os(visionOS)
 import Foundation
 import SwiftUI
 import IndustrialKit
@@ -38,4 +37,3 @@ struct ViewPendantButton: ViewModifier
             }
     }
 }
-#endif

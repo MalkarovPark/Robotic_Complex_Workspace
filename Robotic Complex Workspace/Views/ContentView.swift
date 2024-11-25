@@ -69,6 +69,36 @@ struct ContentView: View
             }
         #endif
             .modifier(DocumentUpdateModifier(document: $document, base_workspace: base_workspace))
+        #if !os(macOS)
+            .modifier(DocumentBorderer())
+            .toolbar
+            {
+                //Settings button for iOS/iPadOS sidebar toolbar
+                ToolbarItem
+                {
+                    HStack(alignment: .center)
+                    {
+                        Button (action: { app_state.settings_view_presented = true })
+                        {
+                            Label("Settings", systemImage: "gear")
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $app_state.settings_view_presented)
+            {
+                //Show settings view for iOS/iPadOS
+                SettingsView(setting_view_presented: $app_state.settings_view_presented)
+                    .environmentObject(app_state)
+                    .onDisappear
+                {
+                    app_state.settings_view_presented = false
+                }
+                #if os(visionOS)
+                .frame(width: 512, height: 512)
+                #endif
+            }
+        #endif
             .environmentObject(document_handler)
             .onAppear
             {

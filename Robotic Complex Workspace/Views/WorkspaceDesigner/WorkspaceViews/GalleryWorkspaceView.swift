@@ -65,7 +65,7 @@ struct GalleryWorkspaceView: View
                 #if os(iOS)
                 .foregroundColor(.black)
                 #endif
-                .popover(isPresented: $add_in_view_presented)
+                .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
                 {
                     #if os(macOS)
                     AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
@@ -95,7 +95,7 @@ struct GalleryWorkspaceView: View
             }
             .buttonStyle(.borderless)
             .buttonBorderShape(.circle)
-            .popover(isPresented: $add_in_view_presented)
+            .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
             {
                 AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
                     .frame(maxWidth: 1024)
@@ -312,7 +312,7 @@ struct ObjectCard: View
                 info_view_presented = true
             }
         }
-        .popover(isPresented: $info_view_presented)
+        .popover(isPresented: $info_view_presented, arrowEdge: default_popover_edge)
         {
             #if os(macOS)
             GalleryInfoView(info_view_presented: $info_view_presented)
