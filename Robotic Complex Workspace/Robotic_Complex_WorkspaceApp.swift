@@ -93,6 +93,32 @@ struct Robotic_Complex_WorkspaceApp: App
             }
         }
         
+        #if !os(macOS)
+        if #available(iOS 18.0, visionOS 2.0, *)
+        {
+            DocumentGroupLaunchScene("Robotic Complex Workspace")
+            {
+                NewDocumentButton("New Preset")
+            }
+            background:
+            {
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color(hex: "#39A8A1"), Color(hex: "#74C8C5")]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .ignoresSafeArea()
+            }
+            overlayAccessoryView:
+            { _ in
+                //AccessoryView()
+            }
+        }
+        #endif
+        
         #if os(macOS)
         Settings
         {

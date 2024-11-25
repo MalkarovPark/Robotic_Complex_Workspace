@@ -55,6 +55,8 @@ struct WorkspaceNavigationView: View
     @State var settings_view_presented = false
     
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
+    
+    @Environment(\.dismiss) private var dismiss
     #endif
     
     //@State var sidebar_selection: navigation_item? = .WorkspaceView //Selected sidebar item
@@ -89,6 +91,40 @@ struct WorkspaceNavigationView: View
                     }
                 }
             }
+            #if !os(macOS)
+            .navigationTitle("Preset")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar
+            {
+                ToolbarItem
+                {
+                    HStack(alignment: .center)
+                    {
+                        Button (action: { dismiss() })
+                        {
+                            Label("Dismiss", systemImage: "folder")
+                        }
+                        
+                        Button (action: { app_state.settings_view_presented = true })
+                        {
+                            Label("Settings", systemImage: "gear")
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $app_state.settings_view_presented)
+            {
+                SettingsView(setting_view_presented: $app_state.settings_view_presented)
+                    .environmentObject(app_state)
+                    .onDisappear
+                {
+                    app_state.settings_view_presented = false
+                }
+                #if os(visionOS)
+                .frame(width: 512, height: 512)
+                #endif
+            }
+            #endif
         }
         detail:
         {

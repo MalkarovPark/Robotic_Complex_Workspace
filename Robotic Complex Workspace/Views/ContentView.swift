@@ -69,7 +69,7 @@ struct ContentView: View
             }
         #endif
             .modifier(DocumentUpdateModifier(document: $document, base_workspace: base_workspace))
-        #if !os(macOS)
+        /*#if !os(macOS)
             .modifier(DocumentBorderer())
             .toolbar
             {
@@ -98,7 +98,7 @@ struct ContentView: View
                 .frame(width: 512, height: 512)
                 #endif
             }
-        #endif
+        #endif*/
             .environmentObject(document_handler)
             .onAppear
             {

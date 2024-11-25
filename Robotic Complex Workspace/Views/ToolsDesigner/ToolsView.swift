@@ -64,7 +64,7 @@ struct ToolsView: View
             }
         }
         #if os(macOS) || os(iOS)
-        .background(Color.white)
+        .background(.white)
         #endif
         #if os(macOS)
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
