@@ -141,8 +141,6 @@ struct StatisticsView: View
                 .labelsHidden()
                 #if !os(iOS)
                 .buttonStyle(.bordered)
-                #else
-                .modifier(PickerBorderer())
                 #endif
                 .padding()
             }

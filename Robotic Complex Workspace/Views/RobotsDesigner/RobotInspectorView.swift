@@ -36,13 +36,27 @@ struct RobotInspectorView: View
                     {
                         if base_workspace.selected_robot.selected_program.points_count > 0
                         {
-                            ForEach(base_workspace.selected_robot.selected_program.points, id: \.self)
-                            { point in
-                                PositionItemView(points: $base_workspace.selected_robot.selected_program.points, point_item: point, on_delete: remove_points)
-                                    .onDrag
+                            ForEach(base_workspace.selected_robot.selected_program.points.indices, id: \.self) { index in
+                                PositionItemView(
+                                    points: $base_workspace.selected_robot.selected_program.points,
+                                    point_item: base_workspace.selected_robot.selected_program.points[index],
+                                    on_delete: remove_points
+                                )
+                                .onDrag
+                                {
+                                    return NSItemProvider()
+                                }
+                                .contextMenu
+                                {
+                                    Button(role: .destructive)
                                     {
-                                        return NSItemProvider()
+                                        remove_points(at: IndexSet(integer: index))
                                     }
+                                    label:
+                                    {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                             }
                             .onMove(perform: point_item_move)
                             .onDelete(perform: remove_points)

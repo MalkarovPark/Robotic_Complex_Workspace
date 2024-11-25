@@ -440,8 +440,17 @@ struct ObserverElementView: View
                             ForEach(from_indices.indices, id: \.self)
                             { index in
                                 OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                                    .contextMenu
+                                    {
+                                        Button(role: .destructive)
+                                        {
+                                            delete_items(at: IndexSet(integer: index))
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
                             }
-                            .onDelete(perform: delete_item)
+                            .onDelete(perform: delete_items)
                         }
                         #if os(macOS)
                         .frame(width: 256, height: 256)
@@ -520,8 +529,17 @@ struct ObserverElementView: View
                             ForEach(from_indices.indices, id: \.self)
                             { index in
                                 OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                                    .contextMenu
+                                    {
+                                        Button(role: .destructive)
+                                        {
+                                            delete_items(at: IndexSet(integer: index))
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
                             }
-                            .onDelete(perform: delete_item)
+                            .onDelete(perform: delete_items)
                         }
                         #if os(macOS)
                         .frame(width: 256, height: 256)
@@ -609,7 +627,7 @@ struct ObserverElementView: View
         to_indices.append(0)
     }
     
-    func delete_item(at offsets: IndexSet)
+    func delete_items(at offsets: IndexSet)
     {
         from_indices.remove(atOffsets: offsets)
         to_indices.remove(atOffsets: offsets)
