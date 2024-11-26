@@ -31,17 +31,29 @@ struct WorkspaceView: View
     
     var body: some View
     {
-        HStack(spacing: 0)
+        ZStack
         {
             if workspace_visual_modeling
             {
                 VisualWorkspaceView()
                     .onDisappear(perform: stop_perform)
                     .onAppear(perform: update_constrainted_positions)
+                #if !os(visionOS)
+                    .overlay(alignment: .bottomTrailing)
+                    {
+                        ViewPendantButton(operation: { inspector_presented.toggle() })
+                    }
+                #endif
             }
             else
             {
                 GalleryWorkspaceView()
+                #if !os(visionOS)
+                    .overlay(alignment: .bottomTrailing)
+                    {
+                        ViewPendantButton(operation: { inspector_presented.toggle() })
+                    }
+                #endif
             }
         }
         #if !os(visionOS)
@@ -51,7 +63,7 @@ struct WorkspaceView: View
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
         }
         #endif
-        #if os(iOS) || os(visionOS)
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
         .modifier(SafeAreaToggler(enabled: (horizontal_size_class == .compact) || !workspace_visual_modeling))
         #else
@@ -116,25 +128,6 @@ struct WorkspaceView: View
                     {
                         Label("Perform", systemImage: "playpause")
                     }
-                }
-            }
-            
-            ToolbarItem(id: "Sidebar")
-            {
-                Button(action: { inspector_presented.toggle() })
-                {
-                    #if os(macOS)
-                    Label("Pendant", systemImage: "sidebar.right")
-                    #else
-                    if !(horizontal_size_class == .compact)
-                    {
-                        Label("Pendant", systemImage: "sidebar.right")
-                    }
-                    else
-                    {
-                        Label("Pendant", systemImage: "rectangle.portrait.bottomthird.inset.filled")
-                    }
-                    #endif
                 }
             }
             #else

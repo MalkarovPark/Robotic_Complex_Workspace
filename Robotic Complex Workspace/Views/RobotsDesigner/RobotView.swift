@@ -38,6 +38,12 @@ struct RobotView: View
         {
             RobotSceneView()
                 .onDisappear(perform: close_view)
+            #if !os(visionOS)
+                .overlay(alignment: .bottomTrailing)
+                {
+                    ViewPendantButton(operation: { inspector_presented.toggle() })
+                }
+            #endif
             #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -134,27 +140,6 @@ struct RobotView: View
                     }
                 }
             }
-            
-            #if !os(visionOS)
-            ToolbarItem(id: "pendant", placement: compact_placement())
-            {
-                Button(action: { inspector_presented.toggle() })
-                {
-                    #if os(macOS)
-                    Label("Pendant", systemImage: "sidebar.right")
-                    #else
-                    if !(horizontal_size_class == .compact)
-                    {
-                        Label("Pendant", systemImage: "sidebar.right")
-                    }
-                    else
-                    {
-                        Label("Pendant", systemImage: "rectangle.portrait.bottomthird.inset.filled")
-                    }
-                    #endif
-                }
-            }
-            #endif
         }
         .toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.selected_robot.performed, toggle_perform: base_workspace.selected_robot.start_pause_moving, stop_perform: base_workspace.selected_robot.reset_moving))

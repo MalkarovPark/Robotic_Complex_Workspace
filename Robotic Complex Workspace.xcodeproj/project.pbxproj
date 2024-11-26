@@ -42,7 +42,7 @@
 		627C25502C9DA7660087D777 /* AddObjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627C254F2C9DA7660087D777 /* AddObjectView.swift */; };
 		627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627D3E9A2AD34A7600D5988D /* AppState.swift */; };
 		6282EC752C9341EF006EBF3C /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6282EC742C9341EF006EBF3C /* List.swift */; };
-		62BFD7862B85699B00966525 /* ViewPendantButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BFD7852B85699B00966525 /* ViewPendantButton.swift */; platformFilters = (xros, ); };
+		62BFD7862B85699B00966525 /* ViewPendantButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BFD7852B85699B00966525 /* ViewPendantButton.swift */; };
 		62BFD7882B8C8B4000966525 /* SidebarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BFD7872B8C8B4000966525 /* SidebarController.swift */; };
 		62E165E52B20C422005E318A /* VisualWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E165E42B20C422005E318A /* VisualWorkspaceView.swift */; };
 		62E165E72B20C692005E318A /* GalleryWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E165E62B20C692005E318A /* GalleryWorkspaceView.swift */; };

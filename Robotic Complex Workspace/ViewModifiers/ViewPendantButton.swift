@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import IndustrialKit
 
+#if os(visionOS)
 struct ViewPendantButton: ViewModifier
 {
     @EnvironmentObject var pendant_controller: PendantController
@@ -37,3 +38,32 @@ struct ViewPendantButton: ViewModifier
             }
     }
 }
+#else
+//MARK: - Workspace scene views
+struct ViewPendantButton: View
+{
+    let operation: () -> ()
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            Button(action: operation)
+            {
+                Image(systemName: "slider.horizontal.2.square")
+                    .imageScale(.large)
+                    .padding()
+            }
+            .buttonStyle(.borderless)
+            #if os(iOS)
+            .foregroundColor(.black)
+            #endif
+        }
+        .background(.thinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .shadow(radius: 8)
+        .fixedSize(horizontal: true, vertical: false)
+        .padding()
+    }
+}
+#endif
