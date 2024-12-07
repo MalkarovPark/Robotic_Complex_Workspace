@@ -96,7 +96,14 @@ struct GeneralSettingsView: View
                             {
                                 ForEach(RepresentationType.allCases, id: \.self)
                                 { representation in
+                                    #if !os(visionOS)
+                                    if representation != .spatial
+                                    {
+                                        Text(representation.rawValue).tag(representation)
+                                    }
+                                    #else
                                     Text(representation.rawValue).tag(representation)
+                                    #endif
                                 }
                             }
                             .labelsHidden()

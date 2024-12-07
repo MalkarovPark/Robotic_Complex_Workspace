@@ -139,6 +139,10 @@ struct VisualWorkspaceView: View
             .glassBackgroundEffect()
         }
         #endif
+        .onDisappear
+        {
+            base_workspace.deselect_object()
+        }
     }
     
     private var add_in_view_disabled: Bool
