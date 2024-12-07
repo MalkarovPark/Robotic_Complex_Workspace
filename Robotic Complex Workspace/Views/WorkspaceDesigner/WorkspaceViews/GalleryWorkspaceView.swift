@@ -26,26 +26,27 @@ struct GalleryWorkspaceView: View
         {
             ScrollView(.vertical)
             {
-                GroupBox
+                VStack(spacing: 8)
                 {
-                    PlacedRobotsGallery()
+                    GroupBox
+                    {
+                        PlacedRobotsGallery()
+                    }
+                    
+                    GroupBox
+                    {
+                        PlacedToolsGallery()
+                    }
+                    
+                    GroupBox
+                    {
+                        PlacedPartsGallery()
+                    }
+                    
+                    Spacer(minLength: 64)
                 }
-                .padding(.top, 8)
-                
-                GroupBox
-                {
-                    PlacedToolsGallery()
-                }
-                
-                GroupBox
-                {
-                    PlacedPartsGallery()
-                }
-                .padding(.bottom, 8)
-                
-                Spacer(minLength: 64)
+                .padding(8)
             }
-            .padding(.horizontal, 8)
         }
         #if !os(visionOS)
         .overlay(alignment: .bottomLeading)
@@ -112,9 +113,7 @@ struct PlacedRobotsGallery: View
 {
     @EnvironmentObject var base_workspace: Workspace
     
-    private let numbers = (0...7).map { $0 }
-    
-    private let columns: [GridItem] = [.init(.adaptive(minimum: object_card_maximum, maximum: object_card_maximum), spacing: 0)]
+    private let columns: [GridItem] = [.init(.adaptive(minimum: object_card_scale, maximum: .infinity), spacing: object_card_spacing)]
     
     var body: some View
     {
@@ -126,7 +125,7 @@ struct PlacedRobotsGallery: View
                 {
                     ForEach(base_workspace.placed_robots_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, color: registers_colors[6], image: base_workspace.robot_by_name(name).card_info.image, node: nil)
+                        ObjectCard(name: name, color: .green, node: base_workspace.robot_by_name(name).node)
                             {
                                 base_workspace.select_robot(name: name)
                             }
@@ -134,7 +133,7 @@ struct PlacedRobotsGallery: View
                     }
                 }
                 #if os(macOS)
-                .padding(.vertical, 16)
+                .padding(.vertical, object_card_spacing / 1.5)
                 #else
                 .padding(.vertical)
                 #endif
@@ -145,6 +144,7 @@ struct PlacedRobotsGallery: View
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, object_card_spacing / 1.5)
     }
 }
 
@@ -152,7 +152,7 @@ struct PlacedToolsGallery: View
 {
     @EnvironmentObject var base_workspace: Workspace
     
-    private let columns: [GridItem] = [.init(.adaptive(minimum: object_card_maximum, maximum: object_card_maximum), spacing: 0)]
+    private let columns: [GridItem] = [.init(.adaptive(minimum: object_card_scale, maximum: .infinity), spacing: object_card_spacing)]
     
     var body: some View
     {
@@ -164,7 +164,7 @@ struct PlacedToolsGallery: View
                 {
                     ForEach(base_workspace.placed_tools_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, color: registers_colors[8], image: nil, node: base_workspace.tool_by_name(name).node)
+                        ObjectCard(name: name, color: .teal, node: base_workspace.tool_by_name(name).node)
                             {
                                 base_workspace.select_tool(name: name)
                             }
@@ -172,7 +172,7 @@ struct PlacedToolsGallery: View
                     }
                 }
                 #if os(macOS)
-                .padding(.vertical, 16)
+                .padding(.vertical, object_card_spacing / 1.5)
                 #else
                 .padding(.vertical)
                 #endif
@@ -183,6 +183,7 @@ struct PlacedToolsGallery: View
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, object_card_spacing / 1.5)
     }
 }
 
@@ -190,9 +191,7 @@ struct PlacedPartsGallery: View
 {
     @EnvironmentObject var base_workspace: Workspace
     
-    private let numbers = (0...7).map { $0 }
-    
-    private let columns: [GridItem] = [.init(.adaptive(minimum: object_card_maximum, maximum: object_card_maximum), spacing: 0)]
+    private let columns: [GridItem] = [.init(.adaptive(minimum: object_card_scale, maximum: .infinity), spacing: object_card_spacing)]
     
     var body: some View
     {
@@ -204,7 +203,7 @@ struct PlacedPartsGallery: View
                 {
                     ForEach(base_workspace.placed_parts_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, color: registers_colors[11], image: nil, node: base_workspace.part_by_name(name).node)
+                        ObjectCard(name: name, color: .indigo, node: base_workspace.part_by_name(name).node)
                             {
                                 base_workspace.select_part(name: name)
                             }
@@ -212,7 +211,7 @@ struct PlacedPartsGallery: View
                     }
                 }
                 #if os(macOS)
-                .padding(.vertical, 16)
+                .padding(.vertical, object_card_spacing / 1.5)
                 #else
                 .padding(.vertical)
                 #endif
@@ -223,6 +222,7 @@ struct PlacedPartsGallery: View
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, object_card_spacing / 1.5)
     }
 }
 
@@ -244,13 +244,34 @@ struct ObjectCard: View
     
     @EnvironmentObject var app_state: AppState
     
+    public init(name: String, color: Color, node: SCNNode?, on_select: @escaping () -> Void)
+    {
+        self.name = name
+        self.color = color
+        self.image = nil
+        
+        let card_node = node?.deep_clone()
+        card_node?.physicsBody = .static()
+        
+        self.node = card_node //node
+        self.on_select = on_select
+    }
+    
+    public init(name: String, color: Color, image: UIImage?, on_select: @escaping () -> Void)
+    {
+        self.name = name
+        self.color = color
+        self.image = image
+        self.node = nil
+        self.on_select = on_select
+    }
+    
     var body: some View
     {
         ZStack
         {
             Rectangle()
                 .foregroundStyle(color)
-                .opacity(0.8)
         }
         .overlay(alignment: .topLeading)
         {
@@ -286,7 +307,7 @@ struct ObjectCard: View
                         .padding(8)
                 }
             }
-            .frame(width: 40, height: 40)
+            .frame(width: 60, height: 60)
             .background(Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
             #if !os(visionOS)
@@ -294,9 +315,8 @@ struct ObjectCard: View
             #else
             .frame(depth: 8)
             #endif
-            .padding(8)
         }
-        .frame(width: object_card_scale, height: object_card_scale / 1.618)
+        .frame(minWidth: object_card_scale, minHeight: object_card_scale / 1.618)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         #if !os(visionOS)
         .shadow(radius: 8)
@@ -546,8 +566,6 @@ let object_card_scale: CGFloat = 192
 let object_card_spacing: CGFloat = 32
 #endif
 
-let object_card_maximum = object_card_scale + object_card_spacing
-
 #Preview
 {
     GalleryWorkspaceView()
@@ -557,6 +575,6 @@ let object_card_maximum = object_card_scale + object_card_spacing
 
 #Preview
 {
-    ObjectCard(name: "Object", color: .green, image: nil, node: nil, on_select: {})
+    ObjectCard(name: "Object", color: .green, node: SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)), on_select: {})
         .environmentObject(AppState())
 }

@@ -504,7 +504,7 @@ struct CellSettingsView: View
             Form
             {
                 #if os(macOS)
-                GroupBox(label: Text("Default Values")
+                GroupBox(label: Text("Default Parameters")
                             .font(.headline))
                 {
                     VStack(alignment: .leading)
