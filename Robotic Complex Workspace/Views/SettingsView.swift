@@ -64,7 +64,7 @@ struct SettingsView: View
 //MARK: - Settings view with tab bar
 struct GeneralSettingsView: View
 {
-    @AppStorage("WorkspaceVisualModeling") private var workspace_visual_modeling: Bool = true
+    @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
     
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
     
@@ -88,13 +88,19 @@ struct GeneralSettingsView: View
                     {
                         HStack
                         {
-                            Text("Use visual modeling for workspace")
+                            Text("Representation")
                             
                             Spacer()
                             
-                            Toggle("Visual", isOn: $workspace_visual_modeling)
-                                .toggleStyle(.switch)
-                                .labelsHidden()
+                            Picker(selection: $representation_type, label: Text("Representation"))
+                            {
+                                ForEach(RepresentationType.allCases, id: \.self)
+                                { representation in
+                                    Text(representation.rawValue).tag(representation)
+                                }
+                            }
+                            .labelsHidden()
+                            .frame(width: 80)
                         }
                         .padding(4)
                     }
@@ -147,16 +153,21 @@ struct GeneralSettingsView: View
             #else
             Section("View")
             {
-                Toggle("Use visual modeling for workspace", isOn: $workspace_visual_modeling)
-                    .toggleStyle(.switch)
-                    .tint(.accentColor)
+                Picker(selection: $representation_type, label: Text("Representation"))
+                {
+                    ForEach(RepresentationType.allCases, id: \.self)
+                    { representation in
+                        Text(representation.rawValue).tag(representation)
+                    }
+                }
+                .tint(.accentColor)
                 
                 Toggle("Store robots previews", isOn: $workspace_images_store)
                     .toggleStyle(.switch)
                     .tint(.accentColor)
             }
             #if os(visionOS)
-            .onChange(of: workspace_visual_modeling)
+            .onChange(of: representation_type)
             { _, new_value in
                 if new_value
                 {

@@ -150,3 +150,11 @@ let default_popover_edge: Edge = .top
 #else
 let default_popover_edge: Edge = .bottom
 #endif
+
+//MARK: - Representation enum
+public enum RepresentationType: String, Equatable, CaseIterable
+{
+    case visual = "Visual"
+    case gallery = "Gallery"
+    case spatial = "Spatial"
+}

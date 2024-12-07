@@ -12,7 +12,7 @@ import IndustrialKit
 
 struct WorkspaceView: View
 {
-    @AppStorage("WorkspaceVisualModeling") private var workspace_visual_modeling: Bool = true
+    @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
     
     @State private var worked = false
     @State private var registers_view_presented = false
@@ -33,8 +33,9 @@ struct WorkspaceView: View
     {
         ZStack
         {
-            if workspace_visual_modeling
+            switch representation_type
             {
+            case .visual:
                 VisualWorkspaceView()
                     .onDisappear(perform: stop_perform)
                     .onAppear(perform: update_constrainted_positions)
@@ -44,9 +45,7 @@ struct WorkspaceView: View
                         ViewPendantButton(operation: { inspector_presented.toggle() })
                     }
                 #endif
-            }
-            else
-            {
+            case .gallery:
                 GalleryWorkspaceView()
                 #if !os(visionOS)
                     .overlay(alignment: .bottomTrailing)
@@ -54,6 +53,8 @@ struct WorkspaceView: View
                         ViewPendantButton(operation: { inspector_presented.toggle() })
                     }
                 #endif
+            case .spatial:
+                EmptyView()
             }
         }
         #if !os(visionOS)
@@ -65,7 +66,7 @@ struct WorkspaceView: View
         #endif
         #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
-        .modifier(SafeAreaToggler(enabled: (horizontal_size_class == .compact) || !workspace_visual_modeling))
+        .modifier(SafeAreaToggler(enabled: (horizontal_size_class == .compact) || representation_type != .visual))
         #else
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
