@@ -99,7 +99,6 @@ struct PartView: View
     {
         if ready_for_save
         {
-            app_state.get_scene_image = true
             part_item.physics_type = new_physics
             part_item.color = new_color
             

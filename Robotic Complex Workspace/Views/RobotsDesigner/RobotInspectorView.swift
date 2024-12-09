@@ -11,6 +11,8 @@ import IndustrialKit
 
 struct RobotInspectorView: View
 {
+    @Binding var robot: Robot
+    
     @State private var add_program_view_presented = false
     @State var ppv_presented_location = [false, false, false]
     @State var ppv_presented_rotation = [false, false, false]
@@ -32,13 +34,13 @@ struct RobotInspectorView: View
             {
                 List
                 {
-                    if base_workspace.selected_robot.programs_count > 0
+                    if robot.programs_count > 0
                     {
-                        if base_workspace.selected_robot.selected_program.points_count > 0
+                        if robot.selected_program.points_count > 0
                         {
-                            ForEach(Array(base_workspace.selected_robot.selected_program.points.enumerated()), id: \.element)
+                            ForEach(Array(robot.selected_program.points.enumerated()), id: \.element)
                             { index, point in
-                                PositionItemView(points: $base_workspace.selected_robot.selected_program.points, point_item: point, on_delete: remove_points)
+                                PositionItemView(robot: $robot, points: $robot.selected_program.points, point_item: point, on_delete: remove_points)
                                     .onDrag
                                 {
                                     return NSItemProvider()
@@ -60,7 +62,7 @@ struct RobotInspectorView: View
                             .onChange(of: base_workspace.robots)
                             { _, _ in
                                 document_handler.document_update_robots()
-                                app_state.get_scene_image = true
+                                //app_state.get_scene_image = true
                             }
                         }
                     }
@@ -68,14 +70,14 @@ struct RobotInspectorView: View
                 .modifier(ListBorderer())
                 .padding([.horizontal, .top])
                 
-                if base_workspace.selected_robot.programs_count == 0
+                if robot.programs_count == 0
                 {
                     Text("No program selected")
                         .foregroundColor(.secondary)
                 }
                 else
                 {
-                    if base_workspace.selected_robot.selected_program.points_count == 0
+                    if robot.selected_program.points_count == 0
                     {
                         Text("Empty Program")
                             .foregroundColor(.secondary)
@@ -84,7 +86,7 @@ struct RobotInspectorView: View
             }
             .overlay(alignment: .bottomTrailing)
             {
-                if base_workspace.selected_robot.programs_count > 0
+                if robot.programs_count > 0
                 {
                     Spacer()
                     Button(action: add_point_to_program)
@@ -92,7 +94,7 @@ struct RobotInspectorView: View
                         Image(systemName: "plus")
                             .padding(8)
                     }
-                    .disabled(base_workspace.selected_robot.programs_count == 0)
+                    .disabled(robot.programs_count == 0)
                     #if os(macOS) || os(iOS)
                     .foregroundColor(.white)
                     #endif
@@ -110,17 +112,17 @@ struct RobotInspectorView: View
             }
             
             //Spacer()
-            PositionControl(location: $base_workspace.selected_robot.pointer_location, rotation: $base_workspace.selected_robot.pointer_rotation, scale: $base_workspace.selected_robot.space_scale)
+            PositionControl(location: $robot.pointer_location, rotation: $robot.pointer_rotation, scale: $robot.space_scale)
             
             HStack(spacing: 0) //(spacing: 12)
             {
-                Picker("Program", selection: $base_workspace.selected_robot.selected_program_index)
+                Picker("Program", selection: $robot.selected_program_index)
                 {
-                    if base_workspace.selected_robot.programs_names.count > 0
+                    if robot.programs_names.count > 0
                     {
-                        ForEach(0 ..< base_workspace.selected_robot.programs_names.count, id: \.self)
+                        ForEach(0 ..< robot.programs_names.count, id: \.self)
                         {
-                            Text(base_workspace.selected_robot.programs_names[$0])
+                            Text(robot.programs_names[$0])
                         }
                     }
                     else
@@ -129,7 +131,7 @@ struct RobotInspectorView: View
                     }
                 }
                 .pickerStyle(.menu)
-                .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                .disabled(robot.programs_names.count == 0)
                 .frame(maxWidth: .infinity)
                 #if os(iOS)
                 .modifier(PickerNamer(name: "Program"))
@@ -139,7 +141,7 @@ struct RobotInspectorView: View
                 {
                     delete_positions_program()
                 }
-                .disabled(base_workspace.selected_robot.programs_names.count == 0)
+                .disabled(robot.programs_names.count == 0)
                 .padding(.horizontal)
                 
                 Button("+")
@@ -150,11 +152,11 @@ struct RobotInspectorView: View
                 {
                     AddNewView(is_presented: $add_program_view_presented)
                     { new_name in
-                        base_workspace.selected_robot.add_program(PositionsProgram(name: new_name))
-                        base_workspace.selected_robot.selected_program_index = base_workspace.selected_robot.programs_names.count - 1
+                        robot.add_program(PositionsProgram(name: new_name))
+                        robot.selected_program_index = robot.programs_names.count - 1
                         
                         document_handler.document_update_robots()
-                        app_state.get_scene_image = true
+                        //app_state.get_scene_image = true
                         add_program_view_presented.toggle()
                     }
                 }
@@ -165,8 +167,8 @@ struct RobotInspectorView: View
     
     private func point_item_move(from source: IndexSet, to destination: Int)
     {
-        base_workspace.selected_robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
-        base_workspace.selected_robot.selected_program.visual_build()
+        robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
+        robot.selected_program.visual_build()
         
         update_data()
     }
@@ -175,27 +177,27 @@ struct RobotInspectorView: View
     {
         withAnimation
         {
-            base_workspace.selected_robot.selected_program.points.remove(atOffsets: offsets)
+            robot.selected_program.points.remove(atOffsets: offsets)
         }
         
         update_data()
         
-        base_workspace.selected_robot.selected_program.selected_point_index = -1
+        robot.selected_program.selected_point_index = -1
     }
     
     private func delete_positions_program()
     {
-        if base_workspace.selected_robot.programs_names.count > 0
+        if robot.programs_names.count > 0
         {
-            let current_spi = base_workspace.selected_robot.selected_program_index
-            base_workspace.selected_robot.delete_program(index: current_spi)
-            if base_workspace.selected_robot.programs_names.count > 1 && current_spi > 0
+            let current_spi = robot.selected_program_index
+            robot.delete_program(index: current_spi)
+            if robot.programs_names.count > 1 && current_spi > 0
             {
-                base_workspace.selected_robot.selected_program_index = current_spi - 1
+                robot.selected_program_index = current_spi - 1
             }
             else
             {
-                base_workspace.selected_robot.selected_program_index = 0
+                robot.selected_program_index = 0
             }
             
             update_data()
@@ -204,7 +206,7 @@ struct RobotInspectorView: View
     
     private func add_point_to_program()
     {
-        base_workspace.selected_robot.selected_program.add_point(PositionPoint(x: base_workspace.selected_robot.pointer_location[0], y: base_workspace.selected_robot.pointer_location[1], z: base_workspace.selected_robot.pointer_location[2], r: base_workspace.selected_robot.pointer_rotation[0], p: base_workspace.selected_robot.pointer_rotation[1], w: base_workspace.selected_robot.pointer_rotation[2]))
+        robot.selected_program.add_point(PositionPoint(x: robot.pointer_location[0], y: robot.pointer_location[1], z: robot.pointer_location[2], r: robot.pointer_rotation[0], p: robot.pointer_rotation[1], w: robot.pointer_rotation[2]))
         
         update_data()
     }
@@ -214,7 +216,7 @@ struct RobotInspectorView: View
         withAnimation
         {
             document_handler.document_update_robots()
-            app_state.get_scene_image = true
+            //app_state.get_scene_image = true
             base_workspace.update_view()
         }
     }
@@ -254,6 +256,7 @@ struct PositionDropDelegate: DropDelegate
 //MARK: - Position item view for list
 struct PositionItemView: View
 {
+    @Binding var robot: Robot
     @Binding var points: [PositionPoint]
     
     @State var point_item: PositionPoint
@@ -272,7 +275,7 @@ struct PositionItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(base_workspace.selected_robot.inspector_point_color(point: point_item)) //.gray)
+                .foregroundColor(robot.inspector_point_color(point: point_item)) //.gray)
             
             //Spacer()
             
@@ -321,10 +324,10 @@ struct PositionItemView: View
                      arrowEdge: .leading)
             {
                 #if os(macOS)
-                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
+                PositionPointView(robot: $robot, points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
-                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
+                PositionPointView(robot: $robot, points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
                     .presentationDetents([.height(576)])
                 #endif
             }
@@ -341,6 +344,8 @@ struct PositionItemView: View
 //MARK: - Position item edit view
 struct PositionPointView: View
 {
+    @Binding var robot: Robot
+    
     @Binding var points: [PositionPoint]
     @Binding var point_item: PositionPoint
     @Binding var position_item_view_presented: Bool
@@ -456,7 +461,7 @@ struct PositionPointView: View
         }
         .onAppear()
         {
-            base_workspace.selected_robot.selected_program.selected_point_index = base_workspace.selected_robot.selected_program.points.firstIndex(of: point_item) ?? -1
+            robot.selected_program.selected_point_index = robot.selected_program.points.firstIndex(of: point_item) ?? -1
             
             item_view_pos_type = point_item.move_type
             item_view_pos_speed = point_item.move_speed
@@ -467,7 +472,7 @@ struct PositionPointView: View
         }
         .onDisappear()
         {
-            base_workspace.selected_robot.selected_program.selected_point_index = -1
+            robot.selected_program.selected_point_index = -1
         }
     }
     
@@ -478,7 +483,7 @@ struct PositionPointView: View
         point_item.y = item_view_pos_location[1]
         point_item.z = item_view_pos_location[2]
         
-        base_workspace.selected_robot.point_shift(&point_item)
+        robot.point_shift(&point_item)
         
         update_workspace_data()
     }
@@ -495,16 +500,16 @@ struct PositionPointView: View
     func update_workspace_data()
     {
         base_workspace.update_view()
-        base_workspace.selected_robot.selected_program.visual_build()
+        robot.selected_program.visual_build()
         document_handler.document_update_robots()
-        app_state.get_scene_image = true
+        //app_state.get_scene_image = true
     }
 }
 
 //MARK: - Previews
 #Preview
 {
-    RobotInspectorView()
+    RobotInspectorView(robot: .constant(Robot()))
         .environmentObject(Workspace())
         .environmentObject(AppState())
         .frame(width: 256)
@@ -512,13 +517,13 @@ struct PositionPointView: View
 
 #Preview
 {
-    PositionItemView(points: .constant([PositionPoint()]), point_item: PositionPoint()) { IndexSet in }
+    PositionItemView(robot: .constant(Robot()), points: .constant([PositionPoint()]), point_item: PositionPoint()) { IndexSet in }
         .environmentObject(Workspace())
 }
 
 #Preview
 {
-    PositionPointView(points: .constant([PositionPoint()]), point_item: .constant(PositionPoint()), position_item_view_presented: .constant(true), item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], on_delete: { _ in })
+    PositionPointView(robot: .constant(Robot()), points: .constant([PositionPoint()]), point_item: .constant(PositionPoint()), position_item_view_presented: .constant(true), item_view_pos_location: [0, 0, 0], item_view_pos_rotation: [0, 0, 0], on_delete: { _ in })
         .environmentObject(Workspace())
         .environmentObject(AppState())
 }

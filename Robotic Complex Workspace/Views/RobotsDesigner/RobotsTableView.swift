@@ -24,7 +24,7 @@ struct RobotsTableView: View
     
     var body: some View
     {
-        VStack
+        NavigationStack
         {
             if base_workspace.robots.count > 0
             {
@@ -35,7 +35,7 @@ struct RobotsTableView: View
                     {
                         ForEach(base_workspace.robots)
                         { robot_item in
-                            RobotCardView(robot_view_presented: $robot_view_presented, add_robot_view_presented: $add_robot_view_presented, robot_item: robot_item)
+                            RobotCardView(robot_item: robot_item)
                                 .onDrag({
                                     self.dragged_robot = robot_item
                                     return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
@@ -171,9 +171,6 @@ struct RobotsTableView: View
 
 struct RobotCardView: View
 {
-    @Binding var robot_view_presented: Bool
-    @Binding var add_robot_view_presented: Bool
-    
     @State var robot_item: Robot
     @State private var pass_preferences_presented = false
     @State private var pass_programs_presented = false
@@ -197,6 +194,15 @@ struct RobotCardView: View
             /*#else
                 .frame(depth: 24)*/
             #endif
+            
+            if !pass_programs_presented && !pass_programs_presented
+            {
+                NavigationLink(destination: RobotView(robot: robot_item))
+                {
+                    Rectangle()
+                        .fill(.clear)
+                }
+                .buttonStyle(.borderless)
                 .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
                     base_workspace.duplicate_robot(name: robot_item.name)
                 }, delete_object: delete_robot, update_file: update_file, set_default_position: {
@@ -212,12 +218,6 @@ struct RobotCardView: View
                     app_state.robot_from = robot_item
                     pass_programs_presented = true
                 }))
-        }
-        .onTapGesture
-        {
-            if !app_state.preferences_pass_mode && !app_state.programs_pass_mode
-            {
-                view_robot(robot_index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
             }
         }
         .popover(isPresented: $pass_preferences_presented, arrowEdge: default_popover_edge)
@@ -241,13 +241,20 @@ struct RobotCardView: View
                 .frame(width: 512, height: 512)
             #endif
         }
+        .overlay(alignment: .bottomTrailing)
+        {
+            Image(systemName: "ellipsis")
+                .foregroundStyle(.tertiary)
+                .frame(width: 32, height: 32)
+                .padding(8)
+                .background(.clear)
+        }
     }
     
     //MARK: Robots manage functions
     private func view_robot(robot_index: Int)
     {
-        base_workspace.select_robot(index: robot_index)
-        robot_view_presented = true
+        base_workspace.select_robot(index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
         
         #if os(visionOS)
         pendant_controller.view_robot()
@@ -321,5 +328,5 @@ struct RobotDropDelegate : DropDelegate
 
 #Preview
 {
-    RobotCardView(robot_view_presented: .constant(false), add_robot_view_presented: .constant(false), robot_item: Robot())
+    RobotCardView(robot_item: Robot())
 }

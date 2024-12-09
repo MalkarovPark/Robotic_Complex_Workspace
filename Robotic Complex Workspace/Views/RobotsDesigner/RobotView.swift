@@ -11,7 +11,9 @@ import IndustrialKit
 
 struct RobotView: View
 {
-    @Binding var robot_view_presented: Bool
+    let robot: Robot
+    
+    @State private var selection_finished = false
     
     @State private var connector_view_presented = false
     @State private var statistics_view_presented = false
@@ -32,64 +34,60 @@ struct RobotView: View
     @EnvironmentObject var sidebar_controller: SidebarController
     #endif
     
+    public init(robot: Robot)
+    {
+        self.robot = robot
+    }
+    
     var body: some View
     {
         HStack(spacing: 0)
         {
-            RobotSceneView()
-                .onDisappear(perform: close_view)
-            #if !os(visionOS)
-                .overlay(alignment: .bottomTrailing)
-                {
-                    ViewPendantButton(operation: { inspector_presented.toggle() })
-                }
-            #endif
-            #if os(iOS) || os(visionOS)
-                .navigationBarTitleDisplayMode(.inline)
-            #endif
-            #if os(iOS)
-                .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
-            #elseif os(visionOS)
-                .ignoresSafeArea(.container, edges: .bottom)
-            #endif
+            if selection_finished
+            {
+                RobotSceneView()
+                    .onDisappear(perform: close_view)
+                #if !os(visionOS)
+                    .overlay(alignment: .bottomTrailing)
+                    {
+                        ViewPendantButton(operation: { inspector_presented.toggle() })
+                    }
+                #endif
+                #if os(iOS) || os(visionOS)
+                    .navigationBarTitleDisplayMode(.inline)
+                #endif
+                #if os(iOS)
+                    .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
+                #elseif os(visionOS)
+                    .ignoresSafeArea(.container, edges: .bottom)
+                #endif
+            }
         }
         #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
         {
-            RobotInspectorView()
+            RobotInspectorView(robot: $base_workspace.selected_robot)
                 .disabled(base_workspace.selected_robot.performed)
         }
         #endif
         .onAppear()
         {
+            base_workspace.select_robot(index: base_workspace.robots.firstIndex(of: robot) ?? 0)
+            
+            selection_finished = true
+            
+            #if os(visionOS)
+            pendant_controller.view_robot()
+            #endif
+            
             base_workspace.selected_robot.clear_finish_handler()
             if base_workspace.selected_robot.programs_count > 0
             {
                 base_workspace.selected_robot.select_program(index: 0)
             }
-            
-            #if os(macOS)
-            app_state.force_resize_view = false
-            #endif
         }
         .toolbar(id: "robot")
         {
-            //MARK: Toolbar items
-            ToolbarItem(id: "Back", placement: toolbar_item_placement_leading)
-            {
-                Button(action: close_robot)
-                {
-                    #if os(macOS)
-                    Label("Back", systemImage: "chevron.left")
-                    #else
-                    Label("Back", systemImage: "xmark")
-                    #endif
-                }
-                #if os(visionOS)
-                .buttonBorderShape(.circle)
-                #endif
-            }
-            
             ToolbarItem(id: "Connector", placement: compact_placement())
             {
                 Button(action: { connector_view_presented.toggle() })
@@ -149,7 +147,6 @@ struct RobotView: View
     {
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
-        robot_view_presented = false
         #if os(visionOS)
         if sidebar_controller.sidebar_selection != .WorkspaceView
         {
@@ -159,9 +156,6 @@ struct RobotView: View
         {
             pendant_controller.view_workspace()
         }
-        #endif
-        #if os(macOS)
-        app_state.force_resize_view = true
         #endif
         base_workspace.deselect_robot()
     }
@@ -175,11 +169,6 @@ struct RobotView: View
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         base_workspace.deselect_robot()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-        {
-            app_state.force_resize_view = true
-            robot_view_presented = false
-        }
         #else
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
@@ -779,7 +768,7 @@ let label_width = 26.0
 //MARK: - Previews
 #Preview
 {
-    RobotView(robot_view_presented: .constant(true))
+    RobotView(robot: Robot())
         .environmentObject(Workspace())
         .environmentObject(AppState())
 }

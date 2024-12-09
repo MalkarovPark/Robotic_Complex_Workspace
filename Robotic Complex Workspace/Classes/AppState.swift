@@ -69,10 +69,6 @@ class AppState: ObservableObject
     @Published var view_update_state = false //Flag for update parts view grid
     @Published var add_selection = 0 //Selected item of object type for AddInWorkspace view
     
-    #if os(macOS)
-    @Published var force_resize_view = true
-    #endif
-    
     @Published var previewed_robot_module_name = "None" //Displayed model string for menu
     {
         didSet

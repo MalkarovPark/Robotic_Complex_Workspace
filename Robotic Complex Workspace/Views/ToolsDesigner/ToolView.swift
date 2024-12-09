@@ -338,7 +338,6 @@ struct ToolView: View
         {
             withAnimation
             {
-                app_state.get_scene_image = true
                 document_handler.document_update_tools()
                 is_document_updated = true
             }
