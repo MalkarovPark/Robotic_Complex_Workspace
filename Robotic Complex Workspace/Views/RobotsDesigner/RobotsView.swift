@@ -138,6 +138,9 @@ struct RobotsView: View
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.1)))
             }
         }
+    #if os(macOS) || os(iOS)
+        .background(Color.white)
+    #endif
     }
     
     private func dismiss_pass()
