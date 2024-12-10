@@ -250,141 +250,31 @@ struct AddInWorkspaceView: View
             }
             .onChange(of: app_state.add_selection)
             { _, _ in
-                base_workspace.object_pointer_node?.isHidden = true
+                base_workspace.object_pointer_node?.remove_all_child_nodes()
             }
             .pickerStyle(.segmented)
             .labelsHidden()
             .padding([.horizontal, .top])
             
             //MARK: Object popup menu
-            HStack
-            {
-                switch app_state.add_selection
-                {
-                case 0:
-                    ObjectPickerView(selected_object_name: $selected_robot_name, avaliable_objects_names: .constant(base_workspace.avaliable_robots_names), workspace_object_type: .constant(.robot))
-                case 1:
-                    ObjectPickerView(selected_object_name: $selected_tool_name, avaliable_objects_names: .constant(base_workspace.avaliable_tools_names), workspace_object_type: .constant(.tool))
-                    
-                    if base_workspace.avaliable_tools_names.count > 0
-                    {
-                        Toggle(isOn: $tool_attached)
-                        {
-                            Image(systemName: "pin.fill")
-                        }
-                        .toggleStyle(.button)
-                    }
-                case 2:
-                    ObjectPickerView(selected_object_name: $selected_part_name, avaliable_objects_names: .constant(base_workspace.avaliable_parts_names), workspace_object_type: .constant(.part))
-                default:
-                    Text("None")
-                }
-            }
-            .padding()
-            
-            Divider()
-            
-            //MARK: Object position set
             switch app_state.add_selection
             {
             case 0:
-                DynamicStack(content: {
-                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
-                }, is_compact: $is_compact, spacing: 16)
-                .padding([.horizontal, .top])
-                .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
-                { _, _ in
-                    base_workspace.update_object_position()
-                }
-                .disabled(base_workspace.avaliable_robots_names.count == 0)
+                AddRobotInWorkspaceView(selected_robot_name: $selected_robot_name, add_in_view_presented: $add_in_view_presented, is_compact: $is_compact)
             case 1:
-                ZStack
-                {
-                    if !tool_attached
-                    {
-                        DynamicStack(content: {
-                            PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                        }, is_compact: $is_compact, spacing: 16)
-                        .padding([.horizontal, .top])
-                        .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
-                        { _, _ in
-                            base_workspace.update_object_position()
-                        }
-                    }
-                    else
-                    {
-                        if base_workspace.attachable_robots_names.count > 0
-                        {
-                            Picker("Attached to", selection: $attach_robot_name) //Select object name for place in workspace
-                            {
-                                ForEach(base_workspace.attachable_robots_names, id: \.self)
-                                { name in
-                                    Text(name)
-                                }
-                            }
-                            .onAppear
-                            {
-                                attach_robot_name = base_workspace.attachable_robots_names.first ?? "None"
-                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
-                            }
-                            .onDisappear
-                            {
-                                base_workspace.remove_attachment()
-                                tool_attached = false
-                            }
-                            .onChange(of: attach_robot_name)
-                            { _, _ in
-                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
-                            }
-                            .pickerStyle(.menu)
-                            .frame(maxWidth: .infinity)
-                            .padding([.horizontal, .top])
-                            #if os(iOS) || os(visionOS)
-                            .buttonStyle(.bordered)
-                            #endif
-                        }
-                        else
-                        {
-                            Text("No robots for attach")
-                                .padding([.horizontal, .top])
-                        }
-                    }
-                }
-                .disabled(base_workspace.avaliable_tools_names.count == 0)
+                AddToolInWorkspaceView(selected_tool_name: $selected_tool_name, tool_attached: $tool_attached, attach_robot_name: $attach_robot_name, add_in_view_presented: $add_in_view_presented, is_compact: $is_compact)
             case 2:
-                DynamicStack(content: {
-                    PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
-                }, is_compact: $is_compact, spacing: 16)
-                .padding([.horizontal, .top])
-                .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
-                { _, _ in
-                    base_workspace.update_object_position()
-                }
-                .disabled(base_workspace.avaliable_parts_names.count == 0)
+                AddPartInWorkspaceView(selected_part_name: $selected_part_name, add_in_view_presented: $add_in_view_presented, is_compact: $is_compact)
             default:
-                Text("None")
+                EmptyView()
             }
             
-            #if os(iOS) || os(visionOS)
+            #if os(iOS)
             if is_compact
             {
                 Spacer()
             }
             #endif
-            
-            //MARK: Object place button
-            HStack
-            {
-                Button(action: place_object)
-                {
-                    Text("Place")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
-                .padding()
-                .disabled((base_workspace.selected_object_unavaliable ?? true) || (app_state.add_selection == 1 && tool_attached && base_workspace.attachable_robots_names.count == 0))
-            }
         }
         .onAppear
         {
@@ -497,6 +387,314 @@ struct ObjectPickerView: View
                 base_workspace.dismiss_object()
             }
         }
+    }
+}
+
+struct AddRobotInWorkspaceView: View
+{
+    @Binding var selected_robot_name: String
+    
+    @Binding var add_in_view_presented: Bool
+    @Binding var is_compact: Bool
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    @EnvironmentObject var sidebar_controller: SidebarController
+    
+    var body: some View
+    {
+        if base_workspace.avaliable_robots_names.count > 0
+        {
+            HStack
+            {
+                ObjectPickerView(selected_object_name: $selected_robot_name, avaliable_objects_names: .constant(base_workspace.avaliable_robots_names), workspace_object_type: .constant(.robot))
+            }
+            .padding()
+            
+            Divider()
+            
+            DynamicStack(content: {
+                PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+            }, is_compact: $is_compact, spacing: 16)
+            .padding([.horizontal, .top])
+            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+            { _, _ in
+                base_workspace.update_object_position()
+            }
+            
+            HStack
+            {
+                Button(action: place_object)
+                {
+                    Text("Place")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .padding()
+            }
+        }
+        else
+        {
+            GroupBox
+            {
+                VStack(spacing: 0)
+                {
+                    Text("No avalaible robots")
+                        .padding(.bottom)
+                    
+                    Button(action: new_object)
+                    {
+                        Label("Create New", systemImage: "plus")
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .frame(height: 160)
+            .padding()
+        }
+    }
+    
+    private func place_object()
+    {
+        base_workspace.place_viewed_object()
+        
+        document_handler.document_update_robots()
+        base_workspace.elements_check()
+        
+        add_in_view_presented.toggle()
+    }
+    
+    private func new_object()
+    {
+        sidebar_controller.from_workspace_view = true
+        sidebar_controller.sidebar_selection = .RobotsView
+    }
+}
+
+struct AddToolInWorkspaceView: View
+{
+    @Binding var selected_tool_name: String
+    @Binding var tool_attached: Bool
+    @Binding var attach_robot_name: String
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    @EnvironmentObject var sidebar_controller: SidebarController
+    
+    @Binding var add_in_view_presented: Bool
+    @Binding var is_compact: Bool
+    
+    var body: some View
+    {
+        if base_workspace.avaliable_tools_names.count > 0
+        {
+            HStack
+            {
+                ObjectPickerView(selected_object_name: $selected_tool_name, avaliable_objects_names: .constant(base_workspace.avaliable_tools_names), workspace_object_type: .constant(.tool))
+                
+                if base_workspace.avaliable_tools_names.count > 0
+                {
+                    Toggle(isOn: $tool_attached)
+                    {
+                        Image(systemName: "pin.fill")
+                    }
+                    .toggleStyle(.button)
+                }
+            }
+            .padding()
+            
+            Divider()
+            
+            ZStack
+            {
+                if !tool_attached
+                {
+                    DynamicStack(content: {
+                        PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                    }, is_compact: $is_compact, spacing: 16)
+                    .padding([.horizontal, .top])
+                    .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                    { _, _ in
+                        base_workspace.update_object_position()
+                    }
+                }
+                else
+                {
+                    if base_workspace.attachable_robots_names.count > 0
+                    {
+                        Picker("Attached to", selection: $attach_robot_name) //Select object name for place in workspace
+                        {
+                            ForEach(base_workspace.attachable_robots_names, id: \.self)
+                            { name in
+                                Text(name)
+                            }
+                        }
+                        .onAppear
+                        {
+                            attach_robot_name = base_workspace.attachable_robots_names.first ?? "None"
+                            base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                        }
+                        .onDisappear
+                        {
+                            base_workspace.remove_attachment()
+                            tool_attached = false
+                        }
+                        .onChange(of: attach_robot_name)
+                        { _, _ in
+                            base_workspace.attach_tool_to(robot_name: attach_robot_name)
+                        }
+                        .pickerStyle(.menu)
+                        .frame(maxWidth: .infinity)
+                        .padding([.horizontal, .top])
+                        #if os(iOS) || os(visionOS)
+                        .buttonStyle(.bordered)
+                        #endif
+                    }
+                    else
+                    {
+                        Text("No tools for attach")
+                            .padding([.horizontal, .top])
+                    }
+                }
+            }
+            .disabled(base_workspace.avaliable_tools_names.count == 0)
+            
+            HStack
+            {
+                Button(action: place_object)
+                {
+                    Text("Place")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .padding()
+            }
+        }
+        else
+        {
+            GroupBox
+            {
+                VStack(spacing: 0)
+                {
+                    Text("No avalaible tools")
+                        .padding(.bottom)
+                    
+                    Button(action: new_object)
+                    {
+                        Label("Create New", systemImage: "plus")
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .frame(height: 160)
+            .padding()
+        }
+    }
+    
+    private func place_object()
+    {
+        if tool_attached
+        {
+            base_workspace.selected_tool.attached_to = attach_robot_name
+            base_workspace.selected_tool.is_attached = true
+        }
+        
+        base_workspace.place_viewed_object()
+        
+        document_handler.document_update_tools()
+        base_workspace.elements_check()
+        
+        add_in_view_presented.toggle()
+    }
+    
+    private func new_object()
+    {
+        sidebar_controller.from_workspace_view = true
+        sidebar_controller.sidebar_selection = .ToolsView
+    }
+}
+
+struct AddPartInWorkspaceView: View
+{
+    @Binding var selected_part_name: String
+    
+    @Binding var add_in_view_presented: Bool
+    @Binding var is_compact: Bool
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    @EnvironmentObject var sidebar_controller: SidebarController
+    
+    var body: some View
+    {
+        if base_workspace.avaliable_parts_names.count > 0
+        {
+            HStack
+            {
+                ObjectPickerView(selected_object_name: $selected_part_name, avaliable_objects_names: .constant(base_workspace.avaliable_parts_names), workspace_object_type: .constant(.part))
+            }
+            .padding()
+            
+            Divider()
+            
+            DynamicStack(content: {
+                PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
+            }, is_compact: $is_compact, spacing: 16)
+            .padding([.horizontal, .top])
+            .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
+            { _, _ in
+                base_workspace.update_object_position()
+            }
+            .disabled(base_workspace.avaliable_parts_names.count == 0)
+            
+            HStack
+            {
+                Button(action: place_object)
+                {
+                    Text("Place")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .padding()
+            }
+        }
+        else
+        {
+            GroupBox
+            {
+                VStack(spacing: 0)
+                {
+                    Text("No avalaible parts")
+                        .padding(.bottom)
+                    
+                    Button(action: new_object)
+                    {
+                        Label("Create New", systemImage: "plus")
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .frame(height: 160)
+            .padding()
+        }
+    }
+    
+    private func place_object()
+    {
+        base_workspace.place_viewed_object()
+        
+        document_handler.document_update_parts()
+        
+        add_in_view_presented.toggle()
+    }
+    
+    private func new_object()
+    {
+        sidebar_controller.from_workspace_view = true
+        sidebar_controller.sidebar_selection = .PartsView
     }
 }
 

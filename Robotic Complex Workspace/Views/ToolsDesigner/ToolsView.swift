@@ -19,6 +19,7 @@ struct ToolsView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var document_handler: DocumentUpdateHandler
+    @EnvironmentObject var sidebar_controller: SidebarController
     
     var columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
     
@@ -71,6 +72,14 @@ struct ToolsView: View
         #else
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        .onAppear
+        {
+            if sidebar_controller.from_workspace_view
+            {
+                sidebar_controller.from_workspace_view = false
+                add_tool_view_presented = true
+            }
+        }
         .toolbar
         {
             //MARK: Toolbar

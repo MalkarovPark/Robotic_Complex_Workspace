@@ -175,6 +175,7 @@ struct WorkspaceNavigationView: View
                     }
                 }
             }
+            .environmentObject(sidebar_controller)
         }
     }
 }
