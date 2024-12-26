@@ -27,8 +27,8 @@ class Gripper_Controller: ToolModelController
                 if !closed && !moved
                 {
                     moved = true
-                    nodes[safe: "jaw", default: SCNNode()].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
-                    nodes[safe: "jaw2", default: SCNNode()].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
+                    nodes[safe_name: "jaw"].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
+                    nodes[safe_name: "jaw2"].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
                     {
                         self.moved = false
                         self.closed = true
@@ -46,8 +46,8 @@ class Gripper_Controller: ToolModelController
                 if closed && !moved
                 {
                     moved = true
-                    nodes[safe: "jaw", default: SCNNode()].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
-                    nodes[safe: "jaw2", default: SCNNode()].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
+                    nodes[safe_name: "jaw"].runAction(.move(by: SCNVector3(x: 0, y: 0, z: 26), duration: 1))
+                    nodes[safe_name: "jaw2"].runAction(.move(by: SCNVector3(x: 0, y: 0, z: -26), duration: 1))
                     {
                         self.moved = false
                         self.closed = false

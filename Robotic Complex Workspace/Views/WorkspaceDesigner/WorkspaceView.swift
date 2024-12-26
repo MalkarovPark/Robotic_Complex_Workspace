@@ -250,7 +250,7 @@ struct AddInWorkspaceView: View
             }
             .onChange(of: app_state.add_selection)
             { _, _ in
-                base_workspace.object_pointer_node?.remove_all_child_nodes()
+                //base_workspace.object_pointer_node?.remove_all_child_nodes()
             }
             .pickerStyle(.segmented)
             .labelsHidden()
@@ -450,6 +450,12 @@ struct AddRobotInWorkspaceView: View
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .onAppear
+            {
+                base_workspace.object_pointer_node?.isHidden = true
+                base_workspace.edited_object_node?.removeFromParentNode()
+                base_workspace.edited_object_node = SCNNode()
+            }
             .frame(height: 160)
             .padding()
         }
@@ -553,7 +559,7 @@ struct AddToolInWorkspaceView: View
                     }
                     else
                     {
-                        Text("No tools for attach")
+                        Text("No robots for attach")
                             .padding([.horizontal, .top])
                     }
                 }
@@ -587,6 +593,12 @@ struct AddToolInWorkspaceView: View
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .onAppear
+            {
+                base_workspace.object_pointer_node?.isHidden = true
+                base_workspace.edited_object_node?.removeFromParentNode()
+                base_workspace.edited_object_node = SCNNode()
             }
             .frame(height: 160)
             .padding()
@@ -676,6 +688,12 @@ struct AddPartInWorkspaceView: View
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .onAppear
+            {
+                base_workspace.object_pointer_node?.isHidden = true
+                base_workspace.edited_object_node?.removeFromParentNode()
+                base_workspace.edited_object_node = SCNNode()
             }
             .frame(height: 160)
             .padding()
