@@ -7,6 +7,7 @@
 
 import SwiftUI
 import IndustrialKit
+import SceneKit
 
 enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 {
@@ -49,6 +50,7 @@ struct WorkspaceNavigationView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS) || os(visionOS)
@@ -176,6 +178,14 @@ struct WorkspaceNavigationView: View
                 }
             }
             .environmentObject(sidebar_controller)
+        }
+        .background //High priority queue
+        {
+            ObjectSceneView(node: SCNNode())
+            { _ in
+                base_workspace.update()
+            }
+            //.hidden()
         }
     }
 }

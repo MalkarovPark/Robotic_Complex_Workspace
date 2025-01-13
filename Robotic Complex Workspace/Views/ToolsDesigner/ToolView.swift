@@ -448,8 +448,6 @@ struct ToolSceneView: View
                     tool.code_changed = false
                 }
             }
-            
-            tool.update_statistics_data()
         }
     }
 }

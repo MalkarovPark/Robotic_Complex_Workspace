@@ -330,18 +330,6 @@ struct WorkspaceSceneView: UIViewRepresentable
     
     func scene_check() //Render functions
     {
-        switch base_workspace.selected_object_type
-        {
-        case .robot:
-            base_workspace.selected_robot.update()
-        case .tool:
-            base_workspace.selected_tool.update()
-        case .part:
-            break
-        case .none:
-            break
-        }
-        
         if base_workspace.element_changed
         {
             DispatchQueue.main.asyncAfter(deadline: .now())
