@@ -197,6 +197,8 @@ struct RobotView: View
 //MARK: - Cell scene views
 struct RobotSceneView: View
 {
+    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
+    
     @State private var origin_move_view_presented = false
     @State private var origin_rotate_view_presented = false
     @State private var space_scale_view_presented = false
@@ -211,7 +213,14 @@ struct RobotSceneView: View
     
     var body: some View
     {
-        CellSceneView()
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/Workcell.scn")!, transparent: false)
+        { scene_view in
+            on_redrer(scene_view: scene_view)
+        }
+        on_init:
+        { scene_view in
+            base_workspace.selected_robot.workcell_connect(scene: scene_view.scene ?? SCNScene(), name: "unit", connect_camera: true)
+        }
         #if !os(visionOS)
             .overlay(alignment: .bottomLeading)
             {
@@ -385,169 +394,17 @@ struct RobotSceneView: View
             }
         #endif
     }
-}
-
-struct CellSceneView: UIViewRepresentable
-{
-    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
     
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
-    
-    let scene_view = SCNView(frame: .zero)
-    let viewed_scene = SCNScene(named: "Components.scnassets/Workcell.scn")!
-    
-    #if os(macOS)
-    private let base_camera_position_node = SCNNode()
-    #endif
-    
-    func scn_scene(context: Context) -> SCNView
+    private func on_redrer(scene_view: SCNView)
     {
-        scene_view.scene = viewed_scene
-        scene_view.delegate = context.coordinator
-        
-        #if os(macOS)
-        base_camera_position_node.position = scene_view.pointOfView?.position ?? SCNVector3(0, 0, 2)
-        base_camera_position_node.rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
-        #endif
-        
-        #if os(visionOS)
-        scene_view.scene?.background.contents = UIColor.clear
-        #endif
-        
-        return scene_view
-    }
-    
-    #if os(macOS)
-    func makeNSView(context: Context) -> SCNView
-    {
-        //Connect workcell box and pointer
-        base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
-        
-        //Add gesture recognizer
-        //let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
-        
-        //Add reset double tap recognizer for macOS
-        let double_tap_gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_reset_double_tap(_:)))
-        double_tap_gesture.numberOfClicksRequired = 2
-        scene_view.addGestureRecognizer(double_tap_gesture)
-        
-        //scene_view.addGestureRecognizer(tap_gesture_recognizer)
-        
-        scene_view.allowsCameraControl = true
-        scene_view.rendersContinuously = true
-        scene_view.autoenablesDefaultLighting = true
-        
-        return scn_scene(context: context)
-    }
-    #else
-    func makeUIView(context: Context) -> SCNView
-    {
-        //Connect workcell box and pointer
-        base_workspace.selected_robot.workcell_connect(scene: viewed_scene, name: "unit", connect_camera: true)
-        
-        //Add gesture recognizer
-        //let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:)))
-        //scene_view.addGestureRecognizer(tap_gesture_recognizer)
-        #if os(visionOS)
-        scene_view.backgroundColor = UIColor.clear
-        #endif
-        
-        scene_view.allowsCameraControl = true
-        scene_view.rendersContinuously = true
-        scene_view.autoenablesDefaultLighting = true
-        
-        return scn_scene(context: context)
-    }
-    #endif
-    
-    #if os(macOS)
-    func updateNSView(_ ui_view: SCNView, context: Context)
-    {
-        //Update commands
+        //Update scene image commands
         if app_state.get_scene_image && workspace_images_store
         {
             app_state.get_scene_image = false
-            base_workspace.selected_robot.image = ui_view.snapshot()
-        }
-    }
-    #else
-    func updateUIView(_ ui_view: SCNView, context: Context)
-    {
-        //Update commands
-        if app_state.get_scene_image && workspace_images_store
-        {
-            app_state.get_scene_image = false
-            base_workspace.selected_robot.image = ui_view.snapshot()
-        }
-    }
-    #endif
-    
-    func makeCoordinator() -> Coordinator
-    {
-        Coordinator(self, scene_view)
-    }
-    
-    final class Coordinator: NSObject, SCNSceneRendererDelegate
-    {
-        var control: CellSceneView
-        
-        init(_ control: CellSceneView, _ scn_view: SCNView)
-        {
-            self.control = control
-            
-            self.scn_view = scn_view
-            super.init()
+            base_workspace.selected_robot.image = scene_view.snapshot()
         }
         
-        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
-        {
-            control.scene_check()
-        }
-        
-        private let scn_view: SCNView
-        
-        #if os(macOS)
-        private var on_reset_view = false
-        #endif
-        
-        /*@objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
-        {
-            let tap_location = gesture_recognize.location(in: scn_view)
-            let hit_results = scn_view.hitTest(tap_location, options: [:])
-            var result = SCNHitTestResult()
-            
-            if hit_results.count > 0
-            {
-                result = hit_results[0]
-                
-                print(result.localCoordinates)
-                print("🍮 tapped – \(result.node.name!)")
-            }
-        }*/
-        
-        #if os(macOS)
-        @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
-        {
-            reset_camera_view_position(locataion: SCNVector3(0, 0, 2), rotation: SCNVector4Zero, view: scn_view)
-            
-            func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
-            {
-                if !on_reset_view
-                {
-                    on_reset_view = true
-                    
-                    let reset_action = SCNAction.group([SCNAction.move(to: control.base_camera_position_node.position, duration: 0.5), SCNAction.rotate(toAxisAngle: control.base_camera_position_node.rotation, duration: 0.5)])
-                    scn_view.defaultCameraController.pointOfView?.runAction(
-                        reset_action, completionHandler: { self.on_reset_view = false })
-                }
-            }
-        }
-        #endif
-    }
-    
-    func scene_check() //Render functions
-    {
+        //Update robot
         //base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
         
         if base_workspace.selected_robot.moving_completed
