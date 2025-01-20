@@ -165,16 +165,9 @@ struct RobotView: View
         #if os(visionOS)
         pendant_controller.view_dismiss()
         #endif
-        #if os(macOS)
         base_workspace.selected_robot.reset_moving()
         app_state.get_scene_image = true
         base_workspace.deselect_robot()
-        #else
-        base_workspace.selected_robot.reset_moving()
-        app_state.get_scene_image = true
-        robot_view_presented = false
-        base_workspace.deselect_robot()
-        #endif
     }
     
     private func compact_placement() -> ToolbarItemPlacement

@@ -128,7 +128,7 @@ struct ToolCardView: View
     
     var body: some View
     {
-        LargeCardView(color: tool_item.card_info.color, node: tool_item.node!, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+        LargeCardView(color: tool_item.card_info.color, node: tool_item.node ?? SCNNode(), title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
         #if !os(visionOS)
             .shadow(radius: 8)
         #endif

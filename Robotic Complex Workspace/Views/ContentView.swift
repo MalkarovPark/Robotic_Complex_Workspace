@@ -52,6 +52,9 @@ struct ContentView: View
     var body: some View
     {
         WorkspaceNavigationView(document: $document)
+        #if os(iOS) || os(visionOS)
+            .navigationBarHidden(true)
+        #endif
         #if !os(visionOS)
             .environmentObject(base_workspace)
         #else

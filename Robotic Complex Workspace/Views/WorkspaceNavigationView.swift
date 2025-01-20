@@ -53,7 +53,7 @@ struct WorkspaceNavigationView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(iOS) || os(visionOS)
+    #if !os(macOS)
     @State var settings_view_presented = false
     
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
@@ -102,7 +102,7 @@ struct WorkspaceNavigationView: View
                 {
                     HStack(alignment: .center)
                     {
-                        Button (action: { dismiss() })
+                        Button(action: { dismiss() })
                         {
                             Label("Dismiss", systemImage: "folder")
                         }
@@ -179,13 +179,9 @@ struct WorkspaceNavigationView: View
             }
             .environmentObject(sidebar_controller)
         }
-        .background //High priority queue
+        .onAppear
         {
-            ObjectSceneView(node: SCNNode())
-            { _ in
-                base_workspace.update()
-            }
-            //.hidden()
+            base_workspace.perform_update()
         }
     }
 }
