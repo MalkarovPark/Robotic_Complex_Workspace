@@ -11,22 +11,16 @@ import IndustrialKit
 
 struct ToolInspectorView: View
 {
-    @Binding var new_operation_code: OperationCodeInfo
+    @Binding var tool: Tool
+    
+    @State private var new_operation_code = OperationCodeInfo()
     
     @State private var add_program_view_presented = false
     @State private var add_operation_view_presented = false
     
-    @State private var ready_for_save = false
-    @State private var is_document_updated = false
-    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
-    
-    let remove_codes: (IndexSet) -> ()
-    let code_item_move: (IndexSet, Int) -> ()
-    let add_operation_to_program: () -> ()
-    let delete_operations_program: () -> ()
-    let update_data: () -> ()
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     var body: some View
     {
@@ -53,7 +47,7 @@ struct ToolInspectorView: View
                                     {
                                         Button(role: .destructive)
                                         {
-                                            remove_codes(IndexSet(integer: index))
+                                            remove_codes(at: IndexSet(integer: index))
                                         }
                                     label:
                                         {
@@ -240,6 +234,60 @@ struct ToolInspectorView: View
                 Text("This tool has no control")
             }
         }
+        .onAppear
+        {
+            if tool.codes.count > 0
+            {
+                new_operation_code = tool.codes.first ?? OperationCodeInfo()
+            }
+        }
+    }
+    
+    private func update_data()
+    {
+        document_handler.document_update_tools()
+    }
+    
+    private func code_item_move(from source: IndexSet, to destination: Int)
+    {
+        tool.selected_program.codes.move(fromOffsets: source, toOffset: destination)
+        update_data()
+    }
+    
+    private func remove_codes(at offsets: IndexSet) //Remove tool operation function
+    {
+        withAnimation
+        {
+            tool.selected_program.codes.remove(atOffsets: offsets)
+        }
+        
+        update_data()
+    }
+    
+    private func delete_operations_program()
+    {
+        if tool.programs_names.count > 0
+        {
+            let current_spi = tool.selected_program_index
+            tool.delete_program(index: current_spi)
+            if tool.programs_names.count > 1 && current_spi > 0
+            {
+                tool.selected_program_index = current_spi - 1
+            }
+            else
+            {
+                tool.selected_program_index = 0
+            }
+            
+            update_data()
+        }
+    }
+    
+    private func add_operation_to_program()
+    {
+        tool.selected_program.add_code(OperationCode(new_operation_code.value))
+        
+        update_data()
     }
 }
 
@@ -395,19 +443,10 @@ struct OperationItemView: View
 //MARK: - Previews
 #Preview
 {
-    ToolInspectorView(new_operation_code: .constant(OperationCodeInfo()))
-    { _ in
-        
-    } code_item_move: { _, _ in
-        
-    } add_operation_to_program: {
-        
-    } delete_operations_program: {
-        
-    } update_data: {
-        
-    }
-    .environmentObject(Workspace())
+    ToolInspectorView(tool: .constant(Tool()))
+        .environmentObject(Workspace())
+        .environmentObject(AppState())
+        .frame(width: 256)
 }
 
 #Preview

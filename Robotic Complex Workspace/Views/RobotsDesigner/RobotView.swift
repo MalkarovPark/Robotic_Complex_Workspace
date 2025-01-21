@@ -66,8 +66,11 @@ struct RobotView: View
         #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
         {
-            RobotInspectorView(robot: $base_workspace.selected_robot)
-                .disabled(base_workspace.selected_robot.performed)
+            if selection_finished
+            {
+                RobotInspectorView(robot: $base_workspace.selected_robot)
+                    .disabled(base_workspace.selected_robot.performed)
+            }
         }
         #endif
         .onAppear()
@@ -208,7 +211,7 @@ struct RobotSceneView: View
     {
         ObjectSceneView(scene: SCNScene(named: "Components.scnassets/Workcell.scn")!, transparent: false)
         { scene_view in
-            on_redrer(scene_view: scene_view)
+            on_rendrer(scene_view: scene_view)
         }
         on_init:
         { scene_view in
@@ -388,7 +391,7 @@ struct RobotSceneView: View
         #endif
     }
     
-    private func on_redrer(scene_view: SCNView)
+    private func on_rendrer(scene_view: SCNView)
     {
         //Update scene image commands
         if app_state.get_scene_image && workspace_images_store
@@ -398,8 +401,6 @@ struct RobotSceneView: View
         }
         
         //Update robot
-        //base_workspace.selected_robot.points_node?.addChildNode(base_workspace.selected_robot.selected_program.positions_group)
-        
         if base_workspace.selected_robot.moving_completed
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)

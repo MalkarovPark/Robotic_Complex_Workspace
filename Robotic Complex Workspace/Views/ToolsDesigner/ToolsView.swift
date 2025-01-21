@@ -25,26 +25,26 @@ struct ToolsView: View
     
     var body: some View
     {
-        VStack
+        NavigationStack
         {
             if base_workspace.tools.count > 0
             {
-                //MARK: Scroll view for robots
-                ScrollView(.vertical, showsIndicators: true)
+                //MARK: Scroll view for tools
+                ScrollView(.vertical)
                 {
                     LazyVGrid(columns: columns, spacing: 24)
                     {
                         ForEach(base_workspace.tools)
                         { tool_item in
                             ToolCardView(tool_item: tool_item)
-                            .onDrag({
-                                self.dragged_tool = tool_item
-                                return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
-                            }, preview: {
-                                LargeCardView(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
-                            })
-                            .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, workspace_tools: base_workspace.file_data().tools, tool: tool_item, document_handler: document_handler))
-                            .transition(AnyTransition.scale)
+                                .onDrag({
+                                    self.dragged_tool = tool_item
+                                    return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
+                                }, preview: {
+                                    LargeCardView(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
+                                })
+                                .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, workspace_tools: base_workspace.file_data().tools, tool: tool_item, document_handler: document_handler))
+                                .transition(AnyTransition.scale)
                         }
                     }
                     .padding(20)
@@ -128,32 +128,34 @@ struct ToolCardView: View
     
     var body: some View
     {
-        LargeCardView(color: tool_item.card_info.color, node: tool_item.node ?? SCNNode(), title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
-        #if !os(visionOS)
-            .shadow(radius: 8)
-        #endif
+        ZStack
+        {
+            LargeCardView(color: tool_item.card_info.color, node: tool_item.node ?? SCNNode(), title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+            #if !os(visionOS)
+                .shadow(radius: 8)
+            /*#else
+                .frame(depth: 24)*/
+            #endif
+            
+            NavigationLink(destination: ToolView(tool: $tool_item).onAppear(perform: remove_tool_constraints))
+            {
+                Rectangle()
+                    .fill(.clear)
+            }
+            .buttonStyle(.borderless)
             .modifier(CardMenu(object: tool_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_tool(name: tool_item.name)
             }, delete_object: delete_tool, update_file: update_file))
             .modifier(DoubleModifier(update_toggle: $update_toggle))
-            .onTapGesture
-            {
-                base_workspace.select_tool(name: tool_item.name)
-                tool_view_presented = true
-            }
-            .sheet(isPresented: $tool_view_presented)
-            {
-                ToolView(tool_view_presented: $tool_view_presented, tool_item: $tool_item)
-                    .fitted()
-                #if os(macOS)
-                    .frame(width: 600)
-                #elseif os(iOS)
-                    .frame(idealWidth: 800, idealHeight: 600)
-                #elseif os(visionOS)
-                    .frame(width: 512, height: 512)
-                #endif
-            }
-            .onAppear(perform: remove_tool_constraints)
+        }
+        .overlay(alignment: .bottomTrailing)
+        {
+            Image(systemName: "line.3.horizontal")
+                .foregroundStyle(.tertiary)
+                .frame(width: 32, height: 32)
+                .padding(8)
+                .background(.clear)
+        }
     }
     
     private func remove_tool_constraints()
