@@ -17,7 +17,7 @@ struct ViewPendantButton: ViewModifier
     public func body(content: Content) -> some View
     {
         content
-            .ornament(attachmentAnchor: .scene(.trailing))
+            .overlay(alignment: .bottomTrailing)
             {
                 Button(action: pendant_controller.toggle_pendant)
                 {
@@ -25,7 +25,6 @@ struct ViewPendantButton: ViewModifier
                     {
                         Image(systemName: "slider.horizontal.2.square")
                             .resizable()
-                            .imageScale(.large)
                             .padding()
                     }
                     .frame(width: 64, height: 64)

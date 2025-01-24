@@ -212,7 +212,11 @@ struct CardMenu: ViewModifier
                             .foregroundStyle(is_selected ? .primary : .tertiary)
                     }
                     .frame(width: 64, height: 64)
+                    #if !os(visionOS)
                     .background(.regularMaterial)
+                    #else
+                    .glassBackgroundEffect()
+                    #endif
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     .onTapGesture(perform: update_selection)

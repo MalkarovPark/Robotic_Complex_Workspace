@@ -58,6 +58,7 @@ struct ContentView: View
         #if !os(visionOS)
             .environmentObject(base_workspace)
         #else
+            .modifier(ViewPendantButton())
             .onChange(of: pendant_controller.elements_document_data_update)
             { _, _ in
                 document.preset.elements = base_workspace.file_data().elements

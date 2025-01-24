@@ -132,27 +132,44 @@ struct WorkspaceView: View
                 }
             }
             #else
-            ToolbarItemGroup
+            ToolbarItem(id: "Registers")
             {
                 Button(action: { registers_view_presented = true })
                 {
                     Label("Registers", systemImage: "number")
                 }
-                .buttonBorderShape(.circle)
-                .padding(.trailing)
-                
-                Button(action: change_cycle)
+            }
+            
+            ToolbarItem(id: "Controls", placement: compact_placement())
+            {
+                ControlGroup
                 {
-                    if base_workspace.cycled
+                    Button(action: change_cycle)
                     {
-                        Label("Cycle", systemImage: "repeat")
+                        if base_workspace.cycled
+                        {
+                            Label("Cycle", systemImage: "repeat")
+                        }
+                        else
+                        {
+                            Label("Cycle", systemImage: "repeat.1")
+                        }
                     }
-                    else
+                    .buttonBorderShape(.circle)
+                    .padding(.trailing)
+                    
+                    #if !os(visionOS)
+                    Button(action: stop_perform)
                     {
-                        Label("Cycle", systemImage: "repeat.1")
+                        Label("Stop", systemImage: "stop")
                     }
+                    
+                    Button(action: toggle_perform)
+                    {
+                        Label("Perform", systemImage: "playpause")
+                    }
+                    #endif
                 }
-                .buttonBorderShape(.circle)
             }
             #endif
         }
@@ -445,7 +462,7 @@ struct AddRobotInWorkspaceView: View
                     
                     Button(action: new_object)
                     {
-                        Label("Create New", systemImage: "plus")
+                        Label("New", systemImage: "plus")
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -589,7 +606,7 @@ struct AddToolInWorkspaceView: View
                     
                     Button(action: new_object)
                     {
-                        Label("Create New", systemImage: "plus")
+                        Label("New", systemImage: "plus")
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -684,7 +701,7 @@ struct AddPartInWorkspaceView: View
                     
                     Button(action: new_object)
                     {
-                        Label("Create New", systemImage: "plus")
+                        Label("New", systemImage: "plus")
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

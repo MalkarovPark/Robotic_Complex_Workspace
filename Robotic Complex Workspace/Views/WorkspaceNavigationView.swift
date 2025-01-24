@@ -106,11 +106,18 @@ struct WorkspaceNavigationView: View
                         {
                             Label("Dismiss", systemImage: "folder")
                         }
+                        #if os(visionOS)
+                        .buttonBorderShape(.circle)
+                        .padding(.trailing)
+                        #endif
                         
                         Button (action: { app_state.settings_view_presented = true })
                         {
                             Label("Settings", systemImage: "gear")
                         }
+                        #if os(visionOS)
+                        .buttonBorderShape(.circle)
+                        #endif
                     }
                 }
             }
@@ -137,26 +144,15 @@ struct WorkspaceNavigationView: View
                 {
                 case .WorkspaceView:
                     WorkspaceView()
-                    #if os(visionOS)
-                        .modifier(ViewPendantButton())
-                    #else
+                    #if !os(visionOS)
                         .environmentObject(sidebar_controller)
                     #endif
                 case .RobotsView:
                     RobotsView()
-                    #if os(visionOS)
-                        .modifier(ViewPendantButton())
-                    #endif
                 case .ToolsView:
                     ToolsView()
-                    #if os(visionOS)
-                        .modifier(ViewPendantButton())
-                    #endif
                 case .PartsView:
                     PartsView()
-                    #if os(visionOS)
-                        .modifier(ViewPendantButton())
-                    #endif
                 default:
                     Rectangle()
                     #if os(macOS)

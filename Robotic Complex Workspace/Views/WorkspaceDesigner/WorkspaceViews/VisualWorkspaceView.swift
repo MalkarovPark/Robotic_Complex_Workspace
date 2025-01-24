@@ -99,50 +99,51 @@ struct VisualWorkspaceView: View
                 .padding()
             }
         #else
-        .ornament(attachmentAnchor: .scene(.bottom))
-        {
-            HStack(spacing: 0)
+            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 16, style: .continuous))
+            .ornament(attachmentAnchor: .scene(.bottom))
             {
-                Button(action: { add_in_view_presented.toggle() })
+                HStack(spacing: 0)
                 {
-                    Image(systemName: "plus")
-                        .imageScale(.large)
-                        .padding()
+                    Button(action: { add_in_view_presented.toggle() })
+                    {
+                        Image(systemName: "plus")
+                            .imageScale(.large)
+                            .padding()
+                    }
+                    .buttonStyle(.borderless)
+                    .buttonBorderShape(.circle)
+                    .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
+                    {
+                        AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
+                            .frame(maxWidth: 1024)
+                    }
+                    .disabled(add_in_view_disabled || base_workspace.performed)
+                    .padding(.trailing)
+                    
+                    Button(action: { info_view_presented.toggle() })
+                    {
+                        Image(systemName: "pencil")
+                            .imageScale(.large)
+                            .padding()
+                    }
+                    .buttonStyle(.borderless)
+                    .buttonBorderShape(.circle)
+                    .popover(isPresented: $info_view_presented, arrowEdge: default_popover_edge)
+                    {
+                        VisualInfoView(info_view_presented: $info_view_presented)
+                            .frame(maxWidth: 1024)
+                    }
+                    .disabled(!add_in_view_disabled)
                 }
-                .buttonStyle(.borderless)
-                .buttonBorderShape(.circle)
-                .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
-                {
-                    AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
-                        .frame(maxWidth: 1024)
-                }
-                .disabled(add_in_view_disabled || base_workspace.performed)
-                .padding(.trailing)
-                
-                Button(action: { info_view_presented.toggle() })
-                {
-                    Image(systemName: "pencil")
-                        .imageScale(.large)
-                        .padding()
-                }
-                .buttonStyle(.borderless)
-                .buttonBorderShape(.circle)
-                .popover(isPresented: $info_view_presented, arrowEdge: default_popover_edge)
-                {
-                    VisualInfoView(info_view_presented: $info_view_presented)
-                        .frame(maxWidth: 1024)
-                }
-                .disabled(!add_in_view_disabled)
+                .padding()
+                .labelStyle(.iconOnly)
+                .glassBackgroundEffect()
             }
-            .padding()
-            .labelStyle(.iconOnly)
-            .glassBackgroundEffect()
-        }
         #endif
-        .onDisappear
-        {
-            base_workspace.deselect_object()
-        }
+            .onDisappear
+            {
+                base_workspace.deselect_object()
+            }
     }
     
     private var add_in_view_disabled: Bool
@@ -248,7 +249,6 @@ struct WorkspaceSceneView: UIViewRepresentable
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
         //Update commands
-        
     }
     #else
     func updateUIView(_ ui_view: SCNView, context: Context)

@@ -114,7 +114,10 @@ struct RobotsView: View
             {
                 HStack(spacing: 0)
                 {
+                    #if !os(visionOS)
                     Spacer()
+                    #endif
+                    
                     HStack(spacing: 0)
                     {
                         Button(action: dismiss_pass)
@@ -133,6 +136,10 @@ struct RobotsView: View
                         .keyboardShortcut(.defaultAction)
                     }
                     .padding()
+                    
+                    #if os(visionOS)
+                    Spacer()
+                    #endif
                 }
                 .background(.thinMaterial)
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.1)))
@@ -198,69 +205,69 @@ struct RobotCardView: View
     
     var body: some View
     {
-        ZStack
-        {
-            LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
-            #if !os(visionOS)
-                .shadow(radius: 8)
-            /*#else
-                .frame(depth: 24)*/
-            #endif
-            
-            if !pass_programs_presented && !pass_programs_presented
+        LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+        #if !os(visionOS)
+            .shadow(radius: 8)
+        /*#else
+            .frame(depth: 24)*/
+        #endif
+            .overlay
             {
-                NavigationLink(destination: RobotView(robot: robot_item))
+                if !pass_programs_presented && !pass_programs_presented
                 {
-                    Rectangle()
-                        .fill(.clear)
+                    NavigationLink(destination: RobotView(robot: robot_item))
+                    {
+                        Rectangle()
+                            .fill(.clear)
+                    }
+                    .buttonStyle(.borderless)
+                    .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
+                        base_workspace.duplicate_robot(name: robot_item.name)
+                    }, delete_object: delete_robot, update_file: update_file, set_default_position: {
+                        robot_item.set_default_pointer_position()
+                        document_handler.document_update_robots()
+                    }, clear_default_position: {
+                        robot_item.clear_default_pointer_position()
+                        document_handler.document_update_robots()
+                    }, reset_robot_to: robot_item.reset_pointer_to_default, pass_preferences: {
+                        app_state.robot_from = robot_item
+                        pass_preferences_presented = true
+                    }, pass_programs: {
+                        app_state.robot_from = robot_item
+                        pass_programs_presented = true
+                    }))
                 }
-                .buttonStyle(.borderless)
-                .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, clear_preview: robot_item.clear_preview, duplicate_object: {
-                    base_workspace.duplicate_robot(name: robot_item.name)
-                }, delete_object: delete_robot, update_file: update_file, set_default_position: {
-                    robot_item.set_default_pointer_position()
-                    document_handler.document_update_robots()
-                }, clear_default_position: {
-                    robot_item.clear_default_pointer_position()
-                    document_handler.document_update_robots()
-                }, reset_robot_to: robot_item.reset_pointer_to_default, pass_preferences: {
-                    app_state.robot_from = robot_item
-                    pass_preferences_presented = true
-                }, pass_programs: {
-                    app_state.robot_from = robot_item
-                    pass_programs_presented = true
-                }))
             }
-        }
-        .popover(isPresented: $pass_preferences_presented, arrowEdge: default_popover_edge)
-        {
-            PassPreferencesView(is_presented: $pass_preferences_presented)
+            .popover(isPresented: $pass_preferences_presented, arrowEdge: .top)
+            {
+                PassPreferencesView(is_presented: $pass_preferences_presented)
+                    #if os(macOS)
+                    .frame(width: 192, height: 196)
+                    #else
+                    .frame(minWidth: 288, minHeight: 320)
+                    .presentationDetents([.medium])
+                    #endif
+            }
+            .sheet(isPresented: $pass_programs_presented)
+            {
+                PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
                 #if os(macOS)
-                .frame(width: 192, height: 196)
-                #else
-                .frame(minWidth: 288, minHeight: 320)
-                .presentationDetents([.medium])
+                    .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
+                    .fitted()
                 #endif
-        }
-        .sheet(isPresented: $pass_programs_presented)
-        {
-            PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
-                .fitted()
-            #if os(macOS)
-                .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
-            #endif
-            #if os(visionOS)
-                .frame(width: 512, height: 512)
-            #endif
-        }
-        .overlay(alignment: .bottomTrailing)
-        {
-            Image(systemName: "line.3.horizontal")
-                .foregroundStyle(.tertiary)
-                .frame(width: 32, height: 32)
-                .padding(8)
-                .background(.clear)
-        }
+                #if os(visionOS)
+                    .frame(width: 512, height: 512)
+                    .fitted()
+                #endif
+            }
+            .overlay(alignment: .bottomTrailing)
+            {
+                Image(systemName: "line.3.horizontal")
+                    .foregroundStyle(.tertiary)
+                    .frame(width: 32, height: 32)
+                    .padding(8)
+                    .background(.clear)
+            }
     }
     
     //MARK: Robots manage functions

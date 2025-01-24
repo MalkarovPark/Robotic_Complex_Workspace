@@ -125,6 +125,7 @@ struct RobotView: View
                 }
             }
             
+            #if !os(visionOS)
             ToolbarItem(id: "Controls", placement: compact_placement())
             {
                 ControlGroup
@@ -141,6 +142,7 @@ struct RobotView: View
                     }
                 }
             }
+            #endif
         }
         .toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.selected_robot.performed, toggle_perform: base_workspace.selected_robot.start_pause_moving, stop_perform: base_workspace.selected_robot.reset_moving))
@@ -209,7 +211,7 @@ struct RobotSceneView: View
     
     var body: some View
     {
-        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/Workcell.scn")!, transparent: false)
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/Workcell.scn")!, transparent: is_scene_transparent)
         { scene_view in
             on_rendrer(scene_view: scene_view)
         }
@@ -308,6 +310,7 @@ struct RobotSceneView: View
                 .padding()
             }
         #else
+            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 16, style: .continuous))
             .ornament(attachmentAnchor: .scene(.bottom))
             {
                 HStack(spacing: 0)

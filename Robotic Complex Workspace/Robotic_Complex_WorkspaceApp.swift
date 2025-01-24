@@ -158,3 +158,10 @@ public enum RepresentationType: String, Equatable, CaseIterable
     case gallery = "Gallery"
     case spatial = "Spatial"
 }
+
+//MARK: – Scene transparency parameter
+#if !os(visionOS)
+let is_scene_transparent = false
+#else
+let is_scene_transparent = true
+#endif

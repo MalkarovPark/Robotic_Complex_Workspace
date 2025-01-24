@@ -128,34 +128,33 @@ struct ToolCardView: View
     
     var body: some View
     {
-        ZStack
-        {
-            LargeCardView(color: tool_item.card_info.color, node: tool_item.node ?? SCNNode(), title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
-            #if !os(visionOS)
-                .shadow(radius: 8)
-            /*#else
-                .frame(depth: 24)*/
-            #endif
-            
-            NavigationLink(destination: ToolView(tool: $tool_item).onAppear(perform: remove_tool_constraints))
+        LargeCardView(color: tool_item.card_info.color, node: tool_item.node ?? SCNNode(), title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+        #if !os(visionOS)
+            .shadow(radius: 8)
+        /*#else
+            .frame(depth: 24)*/
+        #endif
+            .overlay
             {
-                Rectangle()
-                    .fill(.clear)
+                NavigationLink(destination: ToolView(tool: $tool_item).onAppear(perform: remove_tool_constraints))
+                {
+                    Rectangle()
+                        .fill(.clear)
+                }
+                .buttonStyle(.borderless)
+                .modifier(CardMenu(object: tool_item, to_rename: $to_rename, duplicate_object: {
+                    base_workspace.duplicate_tool(name: tool_item.name)
+                }, delete_object: delete_tool, update_file: update_file))
+                .modifier(DoubleModifier(update_toggle: $update_toggle))
             }
-            .buttonStyle(.borderless)
-            .modifier(CardMenu(object: tool_item, to_rename: $to_rename, duplicate_object: {
-                base_workspace.duplicate_tool(name: tool_item.name)
-            }, delete_object: delete_tool, update_file: update_file))
-            .modifier(DoubleModifier(update_toggle: $update_toggle))
-        }
-        .overlay(alignment: .bottomTrailing)
-        {
-            Image(systemName: "line.3.horizontal")
-                .foregroundStyle(.tertiary)
-                .frame(width: 32, height: 32)
-                .padding(8)
-                .background(.clear)
-        }
+            .overlay(alignment: .bottomTrailing)
+            {
+                Image(systemName: "line.3.horizontal")
+                    .foregroundStyle(.tertiary)
+                    .frame(width: 32, height: 32)
+                    .padding(8)
+                    .background(.clear)
+            }
     }
     
     private func remove_tool_constraints()

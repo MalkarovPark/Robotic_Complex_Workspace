@@ -122,6 +122,7 @@ struct ToolView: View
                 }
             }
             
+            #if !os(visionOS)
             ToolbarItem(id: "Controls", placement: compact_placement())
             {
                 ControlGroup
@@ -138,6 +139,7 @@ struct ToolView: View
                     }
                 }
             }
+            #endif
         }
         .toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.selected_tool.performed, toggle_perform: base_workspace.selected_tool.start_pause_performing, stop_perform: base_workspace.selected_tool.reset_performing))
@@ -210,7 +212,7 @@ struct ToolSceneView: View
     
     var body: some View
     {
-        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, node: tool.node ?? SCNNode(), transparent: false)
+        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, node: tool.node ?? SCNNode(), transparent: is_scene_transparent)
         { scene_view in
             update_view_node(scene_view: scene_view)
         }
@@ -218,6 +220,9 @@ struct ToolSceneView: View
         { scene_view in
             on_init(scene_view: scene_view)
         }
+        #if os(visionOS)
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 16, style: .continuous))
+        #endif
     }
     
     private func on_init(scene_view: SCNView)

@@ -174,7 +174,7 @@ struct GeneralSettingsView: View
                     .tint(.accentColor)
             }
             #if os(visionOS)
-            .onChange(of: representation_type)
+            /*.onChange(of: representation_type)
             { _, new_value in
                 if new_value
                 {
@@ -188,7 +188,7 @@ struct GeneralSettingsView: View
                         }
                     }
                 }
-            }
+            }*/
             #endif
             
             Section("Workspace")
@@ -420,14 +420,18 @@ struct ModulesSettingsView: View
                         Image(systemName: "folder")
                             .frame(height: 24)
                     }
+                    #if !os(visionOS)
                     .modifier(ButtonBorderer())
+                    #endif
                     
                     Button(action: { app_state.clear_modules() })
                     {
                         Image(systemName: "arrow.counterclockwise")
                             .frame(height: 24)
                     }
+                    #if !os(visionOS)
                     .modifier(ButtonBorderer())
+                    #endif
                 }
             }
             
@@ -506,8 +510,8 @@ struct ModulesSettingsView: View
 struct CellSettingsView: View
 {
     //Default robot origin location properties from user defaults
-    @AppStorage("DefaultLocation_X") private var location_x: Double = 0
-    @AppStorage("DefaultLocation_Y") private var location_y: Double = 20
+    @AppStorage("DefaultLocation_X") private var location_x: Double = 200
+    @AppStorage("DefaultLocation_Y") private var location_y: Double = 0
     @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
     
     //Default robot origion rotation properties from user defaults
