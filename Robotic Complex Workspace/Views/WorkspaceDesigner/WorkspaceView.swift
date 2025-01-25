@@ -20,6 +20,7 @@ struct WorkspaceView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
@@ -87,10 +88,13 @@ struct WorkspaceView: View
         .sheet(isPresented: $registers_view_presented)
         {
             RegistersDataView(is_presented: $registers_view_presented)
-                .onDisappear()
-                {
-                    registers_view_presented = false
-                }
+            {
+                document_handler.document_update_registers()
+            }
+            .onDisappear()
+            {
+                registers_view_presented = false
+            }
             #if os(macOS)
                 .frame(width: 420, height: 480)
             #elseif os(visionOS)
