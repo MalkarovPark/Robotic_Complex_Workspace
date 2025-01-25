@@ -63,6 +63,10 @@ struct ContentView: View
             { _, _ in
                 document.preset.elements = base_workspace.file_data().elements
             }
+            .onChange(of: pendant_controller.registers_document_data_update)
+            { _, _ in
+                document.preset.registers = base_workspace.file_data().registers
+            }
             .onChange(of: pendant_controller.robots_document_data_update)
             { _, _ in
                 document.preset.robots = base_workspace.file_data().robots

@@ -45,8 +45,11 @@ struct GalleryWorkspaceView: View
                     
                     Spacer(minLength: 64)
                 }
-                .padding(8)
             }
+            #if os(visionOS)
+            .clipShape(UnevenRoundedRectangle(topTrailingRadius: 40, style: .continuous))
+            #endif
+            .padding(8)
         }
         #if !os(visionOS)
         .overlay(alignment: .bottomLeading)

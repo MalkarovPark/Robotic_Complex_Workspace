@@ -1,6 +1,6 @@
 //
 //  Robotic_Complex_WorkspaceDocument.swift
-//  Shared
+//  Robotic Complex Workspace
 //
 //  Created by Artem on 15.10.2021.
 //

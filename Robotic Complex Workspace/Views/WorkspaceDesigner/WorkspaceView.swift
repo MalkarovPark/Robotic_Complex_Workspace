@@ -64,13 +64,17 @@ struct WorkspaceView: View
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
         }
         #endif
-        #if !os(macOS)
-        .navigationBarTitleDisplayMode(.inline)
-        .modifier(SafeAreaToggler(enabled: (horizontal_size_class == .compact) || representation_type != .visual))
-        #else
+        #if os(macOS)
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
         #endif
+        #if !os(macOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+        #if os(iOS)
+        .modifier(SafeAreaToggler(enabled: (horizontal_size_class == .compact) || representation_type != .visual))
+        #endif
         #if os(visionOS)
+        .ignoresSafeArea(.container, edges: [.top, .bottom])
         .onAppear
         {
             pendant_controller.view_workspace()
@@ -93,6 +97,7 @@ struct WorkspaceView: View
                 .frame(width: 600, height: 600)
             #endif
         }
+        #if !os(visionOS)
         .toolbar(id: "workspace")
         {
             #if !os(visionOS)
@@ -173,6 +178,7 @@ struct WorkspaceView: View
             }
             #endif
         }
+        #endif
         .toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
     }

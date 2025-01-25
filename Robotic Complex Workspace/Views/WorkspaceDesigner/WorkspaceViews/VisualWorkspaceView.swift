@@ -99,7 +99,7 @@ struct VisualWorkspaceView: View
                 .padding()
             }
         #else
-            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 16, style: .continuous))
+            //.clipShape(UnevenRoundedRectangle(topLeadingRadius: 16, style: .continuous))
             .ornament(attachmentAnchor: .scene(.bottom))
             {
                 HStack(spacing: 0)
