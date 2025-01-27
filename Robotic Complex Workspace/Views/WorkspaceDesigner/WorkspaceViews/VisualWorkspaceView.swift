@@ -44,6 +44,7 @@ struct VisualWorkspaceView: View
                     {
                         Image(systemName: "plus")
                             .imageScale(.large)
+                            .frame(width: 16, height: 16)
                             .padding()
                         #if os(iOS)
                             .foregroundColor((add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
@@ -71,6 +72,7 @@ struct VisualWorkspaceView: View
                     {
                         Image(systemName: "pencil")
                             .imageScale(.large)
+                            .frame(width: 16, height: 16)
                             .padding()
                         #if os(iOS)
                             .foregroundColor(!add_in_view_disabled ? Color.secondary : Color.black)
@@ -143,6 +145,11 @@ struct VisualWorkspaceView: View
             .onDisappear
             {
                 base_workspace.deselect_object()
+            }
+            .onAppear
+            {
+                base_workspace.deselect_object()
+                base_workspace.update_view()
             }
     }
     

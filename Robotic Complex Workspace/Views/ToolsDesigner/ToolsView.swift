@@ -41,7 +41,7 @@ struct ToolsView: View
                                     self.dragged_tool = tool_item
                                     return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    LargeCardView(color: tool_item.card_info.color, image: tool_item.card_info.image, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
+                                    LargeCardView(color: tool_item.card_info.color, node: tool_item.node, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
                                 })
                                 .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, workspace_tools: base_workspace.file_data().tools, tool: tool_item, document_handler: document_handler))
                                 .transition(AnyTransition.scale)
@@ -128,7 +128,7 @@ struct ToolCardView: View
     
     var body: some View
     {
-        LargeCardView(color: tool_item.card_info.color, node: tool_item.node ?? SCNNode(), title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+        LargeCardView(color: tool_item.card_info.color, node: removed_constraints(node: tool_item.node ?? SCNNode()), title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
         #if !os(visionOS)
             .shadow(radius: 8)
         /*#else
@@ -167,6 +167,13 @@ struct ToolCardView: View
             
             update_toggle.toggle()
         }
+    }
+    
+    private func removed_constraints(node: SCNNode) -> SCNNode
+    {
+        node.remove_all_constraints()
+        
+        return node
     }
     
     private func delete_tool()

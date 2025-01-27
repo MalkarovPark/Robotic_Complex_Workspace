@@ -465,6 +465,7 @@ struct PositionPointView: View
             
             item_view_pos_type = point_item.move_type
             item_view_pos_speed = point_item.move_speed
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
                 appeared = true

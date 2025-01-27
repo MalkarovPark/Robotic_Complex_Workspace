@@ -171,6 +171,7 @@ struct ToolView: View
             pendant_controller.view_workspace()
         }
         #endif
+        base_workspace.selected_tool.reset_performing()
         base_workspace.deselect_tool()
     }
     

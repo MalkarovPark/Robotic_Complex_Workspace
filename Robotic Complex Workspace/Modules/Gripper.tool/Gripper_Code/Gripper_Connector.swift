@@ -21,16 +21,15 @@ class Gripper_Connector: ToolConnector
         
         new_line_check()
         
-        output += "\n \(parameters.count) parameters used:\n"
-        for parameter in parameters
+        output += "\n \(current_parameters.count) parameters used:\n"
+        for parameter in current_parameters
         {
             output += " • \(parameter.value)\n"
+            sleep(1)
         }
         output += "\n"
         
-        sleep(4)
-        
-        if parameters[3].value as! Bool
+        if current_parameters[3].value as! Bool
         {
             output += "Connected"
             return true

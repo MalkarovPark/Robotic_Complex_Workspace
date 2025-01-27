@@ -60,6 +60,7 @@ struct GalleryWorkspaceView: View
                 {
                     Image(systemName: "plus")
                         .imageScale(.large)
+                        .frame(width: 16, height: 16)
                         .padding()
                     #if os(iOS)
                         .foregroundColor(base_workspace.performed ? Color.secondary : Color.black)

@@ -53,6 +53,7 @@ struct ViewPendantButton: View
             {
                 Image(systemName: "slider.horizontal.2.square")
                     .imageScale(.large)
+                    .frame(width: 16, height: 16)
                     .padding()
             }
             .buttonStyle(.borderless)

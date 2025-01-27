@@ -162,16 +162,7 @@ struct RobotView: View
             pendant_controller.view_workspace()
         }
         #endif
-        base_workspace.deselect_robot()
-    }
-    
-    private func close_robot()
-    {
-        #if os(visionOS)
-        pendant_controller.view_dismiss()
-        #endif
         base_workspace.selected_robot.reset_moving()
-        app_state.get_scene_image = true
         base_workspace.deselect_robot()
     }
     
@@ -228,6 +219,7 @@ struct RobotSceneView: View
                     {
                         Image(systemName: "rotate.3d")
                             .imageScale(.large)
+                            .frame(width: 16, height: 16)
                             .padding()
                     }
                     .buttonStyle(.borderless)
@@ -255,8 +247,10 @@ struct RobotSceneView: View
                     {
                         Image(systemName: "move.3d")
                             .imageScale(.large)
+                            .frame(width: 16, height: 16)
                             .padding()
                     }
+                    .buttonBorderShape(.circle)
                     .buttonStyle(.borderless)
                     #if os(iOS)
                     .foregroundColor(.black)
@@ -281,8 +275,11 @@ struct RobotSceneView: View
                     {
                         Image(systemName: "scale.3d")
                             .imageScale(.large)
+                            .frame(width: 16, height: 16)
                             .padding()
                     }
+                    .buttonBorderShape(.circle)
+                    .buttonStyle(.borderless)
                     #if os(iOS)
                     .foregroundColor(.black)
                     #endif
@@ -301,7 +298,6 @@ struct RobotSceneView: View
                     {
                         space_scale_view_presented.toggle()
                     }
-                    .buttonStyle(.borderless)
                 }
                 .background(.thinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
