@@ -159,14 +159,14 @@ struct ToolCardView: View
     
     private func remove_tool_constraints()
     {
-        if tool_item.node?.constraints?.count ?? 0 > 0 //tool_item.is_attached
+        /*if tool_item.node?.constraints?.count ?? 0 > 0 //tool_item.is_attached
         {
             tool_item.node?.remove_all_constraints()
             tool_item.node?.position = SCNVector3Zero
             tool_item.node?.rotation = SCNVector4Zero
             
             update_toggle.toggle()
-        }
+        }*/
     }
     
     private func removed_constraints(node: SCNNode) -> SCNNode

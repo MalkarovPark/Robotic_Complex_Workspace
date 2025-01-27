@@ -62,7 +62,6 @@ struct RobotInspectorView: View
                             .onChange(of: base_workspace.robots)
                             { _, _ in
                                 document_handler.document_update_robots()
-                                //app_state.get_scene_image = true
                             }
                         }
                     }
@@ -156,7 +155,6 @@ struct RobotInspectorView: View
                         robot.selected_program_index = robot.programs_names.count - 1
                         
                         document_handler.document_update_robots()
-                        //app_state.get_scene_image = true
                         add_program_view_presented.toggle()
                     }
                 }
@@ -216,7 +214,6 @@ struct RobotInspectorView: View
         withAnimation
         {
             document_handler.document_update_robots()
-            //app_state.get_scene_image = true
             base_workspace.update_view()
         }
     }
@@ -503,7 +500,6 @@ struct PositionPointView: View
         base_workspace.update_view()
         robot.selected_program.visual_build()
         document_handler.document_update_robots()
-        //app_state.get_scene_image = true
     }
 }
 

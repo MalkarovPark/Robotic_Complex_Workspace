@@ -21,7 +21,6 @@ struct CardMenu: ViewModifier
     @State var name = String()
     @State private var delete_alert_presented = false
     
-    let clear_preview: () -> ()
     let duplicate_object: () -> ()
     let delete_object: () -> ()
     let update_file: () -> ()
@@ -34,13 +33,22 @@ struct CardMenu: ViewModifier
     let pass_programs: () -> ()
     
     //Full
-    public init(object: WorkspaceObject, to_rename: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, clear_preview: @escaping () -> Void, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void, set_default_position: @escaping () -> Void, clear_default_position: @escaping () -> Void, reset_robot_to: @escaping () -> Void, pass_preferences: @escaping () -> Void, pass_programs: @escaping () -> Void)
+    public init(object: WorkspaceObject,
+                to_rename: Binding<Bool>, name: String = String(),
+                delete_alert_presented: Bool = false,
+                duplicate_object: @escaping () -> Void,
+                delete_object: @escaping () -> Void,
+                update_file: @escaping () -> Void,
+                set_default_position: @escaping () -> Void,
+                clear_default_position: @escaping () -> Void,
+                reset_robot_to: @escaping () -> Void,
+                pass_preferences: @escaping () -> Void,
+                pass_programs: @escaping () -> Void)
     {
         self.object = object
         self._to_rename = to_rename
         self.name = name
         self.delete_alert_presented = delete_alert_presented
-        self.clear_preview = clear_preview
         self.duplicate_object = duplicate_object
         self.delete_object = delete_object
         self.update_file = update_file
@@ -58,7 +66,6 @@ struct CardMenu: ViewModifier
         self._to_rename = to_rename
         self.name = name
         self.delete_alert_presented = delete_alert_presented
-        self.clear_preview = {}
         self.duplicate_object = duplicate_object
         self.delete_object = delete_object
         self.update_file = update_file
@@ -105,17 +112,6 @@ struct CardMenu: ViewModifier
                 Toggle(isOn: $object.is_placed)
                 {
                     Label("Placed", systemImage: "target")
-                }
-                
-                if object is Robot
-                {
-                    Button(action: {
-                        clear_preview()
-                        update_file()
-                    })
-                    {
-                        Label("Clear Preview", systemImage: "rectangle.slash")
-                    }
                 }
                 
                 #if os(macOS)

@@ -66,8 +66,6 @@ struct GeneralSettingsView: View
 {
     @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
     
-    @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
-    
     @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
     
     #if os(visionOS)
@@ -113,7 +111,7 @@ struct GeneralSettingsView: View
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
                     
-                    Divider()
+                    /*Divider()
                     
                     VStack(spacing: 4)
                     {
@@ -123,13 +121,13 @@ struct GeneralSettingsView: View
                             
                             Spacer()
                             
-                            Toggle("Visual", isOn: $workspace_images_store)
+                            Toggle("Visual", isOn: .constant(true))
                                 .toggleStyle(.switch)
                                 .labelsHidden()
                         }
                         .padding(4)
                     }
-                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .frame(minWidth: 0, maxWidth: .infinity)*/
                 }
                 .padding(.bottom)
                 
@@ -168,10 +166,6 @@ struct GeneralSettingsView: View
                     }
                 }
                 .tint(.accentColor)
-                
-                Toggle("Store robots previews", isOn: $workspace_images_store)
-                    .toggleStyle(.switch)
-                    .tint(.accentColor)
             }
             #if os(visionOS)
             /*.onChange(of: representation_type)

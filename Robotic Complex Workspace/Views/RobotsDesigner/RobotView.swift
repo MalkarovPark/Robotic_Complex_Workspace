@@ -151,7 +151,6 @@ struct RobotView: View
     private func close_view()
     {
         base_workspace.selected_robot.reset_moving()
-        app_state.get_scene_image = true
         #if os(visionOS)
         if sidebar_controller.sidebar_selection != .WorkspaceView
         {
@@ -234,7 +233,6 @@ struct RobotSceneView: View
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
-                            app_state.get_scene_image = true
                         }
                     }
                     .onDisappear
@@ -262,7 +260,6 @@ struct RobotSceneView: View
                         { _, _ in
                             base_workspace.update_view()
                             document_handler.document_update_robots()
-                            app_state.get_scene_image = true
                         }
                     }
                     .onDisappear
@@ -291,7 +288,6 @@ struct RobotSceneView: View
                             base_workspace.selected_robot.update_space_scale()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
-                            app_state.get_scene_image = true
                         }
                     }
                     .onDisappear
@@ -327,7 +323,6 @@ struct RobotSceneView: View
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
-                            app_state.get_scene_image = true
                         }
                     }
                     .onDisappear
@@ -351,7 +346,6 @@ struct RobotSceneView: View
                             //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
-                            app_state.get_scene_image = true
                         }
                     }
                     .onDisappear
@@ -374,7 +368,6 @@ struct RobotSceneView: View
                             base_workspace.selected_robot.update_space_scale()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
-                            app_state.get_scene_image = true
                         }
                     }
                     .onDisappear
@@ -392,13 +385,6 @@ struct RobotSceneView: View
     
     private func on_rendrer(scene_view: SCNView)
     {
-        //Update scene image commands
-        if app_state.get_scene_image && workspace_images_store
-        {
-            app_state.get_scene_image = false
-            base_workspace.selected_robot.image = scene_view.snapshot()
-        }
-        
         //Update robot
         if base_workspace.selected_robot.moving_completed
         {
