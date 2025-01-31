@@ -41,7 +41,7 @@
 			<key>UTTypeIcons</key>
 			<dict>
 				<key>UTTypeIconBadgeName</key>
-				<string>preset_image</string>
+				<string>preset_icon</string>
 				<key>UTTypeIconText</key>
 				<string>preset</string>
 			</dict>
