@@ -1,8 +1,5 @@
 //
-//  List.swift
-//  Robotic Complex Workspace
-//
-//  For internal modules mount
+//  Internal Modules List
 //
 
 import Foundation
@@ -18,8 +15,8 @@ public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [P
         Gripper_Module
     ],
     [
-        Cup_Module,
-        Books_Module
+        Books_Module,
+        Cup_Module
     ],
     [
         Random_Module

@@ -7,7 +7,7 @@ public let _6DOF_Module = RobotModule(
     
     node: _6DOF_Node,
     
-    model_controller: _6DOF_Controller(),    
+    model_controller: _6DOF_Controller(),
     connector: _6DOF_Connector()
 )
 

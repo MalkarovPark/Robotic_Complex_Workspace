@@ -16,7 +16,7 @@ class _6DOF_Controller: RobotModelController
             "d3",
             "d4",
             "d5",
-            "target"
+            "d6"
         ]
     }
     
@@ -31,8 +31,8 @@ class _6DOF_Controller: RobotModelController
         160.0,
         80.0,
         160.0,
-        40.0,
-        30.0,
+        50.0,
+        20.0,
         160.0
     ]
     

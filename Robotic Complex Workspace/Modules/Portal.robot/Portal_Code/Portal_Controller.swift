@@ -28,7 +28,7 @@ class Portal_Controller: RobotModelController
         80.0,
         160.0,
         40.0,
-        30.0,
+        20.0,
         320.0,
         320.0,
         320.0,
