@@ -68,7 +68,7 @@ Objects are created in the relevant items available through the sidebar. All cre
 When creating a robot, in addition to the *name*, the *manufacturer*, *series* and *model* are specified. The *model* parameter determines how the visual model is controlled and direct connector.
 
 <p align="center">
-  <img width="900" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/6338ced4-8298-4adb-b9bf-e14cb421ee2c">
+   <img width="1087" src="https://github.com/user-attachments/assets/d6362a93-a51e-4550-83f6-17e7be218141" />
 </p>
 
 ### Tools <a name="tools">
@@ -76,7 +76,7 @@ When creating a robot, in addition to the *name*, the *manufacturer*, *series* a
 When creating, the *name* of the tool and its *model* are specified. Likewise robot, the *model* defines a model controller and direct connector.
 
 <p align="center">
-  <img width="743" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/7bb0bebc-15b7-40a9-8312-c9eeeac17522">
+   <img width="1087" src="https://github.com/user-attachments/assets/91206811-3478-4803-831d-ddce69c8c2ed" />
 </p>
 
 ### Parts <a name="parts">
@@ -84,7 +84,7 @@ When creating, the *name* of the tool and its *model* are specified. Likewise ro
 When creating a part, its *name* and *model* are specified.
 
 <p align="center">
-  <img width="583" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/c730d3a5-4c3a-45d6-b351-9d4c27ba35c2">
+   <img width="1087" src="https://github.com/user-attachments/assets/eb95f4a9-678c-49ef-88cc-4b3c3a125e9d" />
 </p>
 
 # Visual Modeling & Physical Simulation<a name="visual-modeling">
@@ -127,7 +127,7 @@ Create your controllers and connectors, new visual models. If you create your ow
 External model files and parametric files describing them (similar in structure to internal ones) can be connected in the application settings.
 
 <p align="center">
-  <img width="408" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/946200c5-85b6-4ebc-8eb1-b41cb2c71bc7">
+   <img width="472" src="https://github.com/user-attachments/assets/1992dcee-8327-4783-8326-b4bf7ce988a0" />
 </p>
 
 # Getting Help <a name="getting-help"></a>
