@@ -1,8 +1,8 @@
-![RCWorkspace](https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/0597a5a0-a6ae-40c5-9fcf-54a17d0dbb37)
+![rcw_caption](https://github.com/user-attachments/assets/a55caf4d-b62a-43b5-b217-d67235e5bba2)
 
 # Robotic Complex Workspace
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Swift](https://img.shields.io/badge/swift-5.9-brightgreen.svg) ![Xcode 15.0+](https://img.shields.io/badge/Xcode-15.0%2B-blue.svg) ![macOS 14.0+](https://img.shields.io/badge/macOS-14.0%2B-blue.svg) ![iOS 17.0+](https://img.shields.io/badge/iOS-17.0%2B-blue.svg) ![visionOS 1.0+](https://img.shields.io/badge/visionOS-1.0%2B-blue.svg)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Swift](https://img.shields.io/badge/swift-6.0-brightgreen.svg) ![Xcode 15.0+](https://img.shields.io/badge/Xcode-15.0%2B-blue.svg) ![macOS 14.0+](https://img.shields.io/badge/macOS-14.0%2B-blue.svg) ![iOS 17.0+](https://img.shields.io/badge/iOS-17.0%2B-blue.svg) ![visionOS 1.0+](https://img.shields.io/badge/visionOS-1.0%2B-blue.svg)
 <a href="https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html">
 <img src="https://img.shields.io/badge/^__^-IMA-AB88FF"></a>
 <a href="https://github.com/MalkarovPark/IndustrialKit">
