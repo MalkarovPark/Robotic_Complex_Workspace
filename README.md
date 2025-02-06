@@ -99,10 +99,10 @@ Can be endabled/disabled in settings if needed.
 
 # Connecting Objects <a name="connecting-objects">
 
-Connection to real equipment through connectors. For each device, the connector setting is available by pressing the ![link@8x](https://user-images.githubusercontent.com/62340924/230892411-66714a6a-f2e3-4415-a5f1-2d1e22d255ed.png) button.
+Connection to real equipment through connectors. For each device, the connector setting is available by pressing the "<img width="12" src="https://github.com/user-attachments/assets/dbd7c728-5476-4846-b8e0-7471b189b150" />" button.
 
 <p align="center">
-  <img width="423" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/d0809203-ee20-4990-8233-c21f5621fc54">
+   <img width="1087" src="https://github.com/user-attachments/assets/fe11df94-625c-4d4c-b2aa-4ff1c45c97bf" />
 </p>
 
 The connected device can control its visual model, allowing it to be tracked in real time. The user can combine real and virtual devices in one document.
@@ -113,22 +113,22 @@ The application is available to receive statistical data from selected devices a
 The statistics data are available in the form of various types of charts and disclosure groups of parameters.
 
 <p align="center">
-  <img width="583px" src="https://github.com/MalkarovPark/Robotic_Complex_Workspace/assets/62340924/6f0eb97b-c18a-47e7-aa19-79148008fc85" />
+   <img width="1087" src="https://github.com/user-attachments/assets/751a9ca6-6722-4356-9c42-0b81f4203803" />
 </p>
 
-To open the statistics view, press the ![chart bar@8x](https://user-images.githubusercontent.com/62340924/230895161-665df98e-6fc5-426e-9a86-60b51d25b84e.png) button next to the object of interest.
+To open the statistics view, press the "<img width="12" src="https://github.com/user-attachments/assets/a9554ac8-45a8-4778-aaef-f0f167aa03d3" />" button next to the object of interest.
 
 # Extensibility <a name="extensibility">
 
-You can add support for new models of industrial equipment or parts.
+You can add support for new models of industrial equipment and new functions for IMA using industrial modules. These modules can be either built into the RCWorkspace application or delivered as external packages.
 
-Create your controllers and connectors, new visual models. If you create your own fork – don't forget to add the models to the appropriate property list files – RobotsInfo, ToolsInfo, PartsInfo. To select the appropriate controller and connector classes, you need to update the passed *select_robot_modules* and *select_tool_modules functions* in the ContentView.
-
-External model files and parametric files describing them (similar in structure to internal ones) can be connected in the application settings.
+The set of available modules is defined in the settings – here you can see the quantity for each type and their names when you hover over the number. To connect external modules, tap the "<img width="12" src="https://github.com/user-attachments/assets/d6da3890-90ff-44c6-86f3-2a641b062231" />" button and select the folder containing the external modules.
 
 <p align="center">
    <img width="472" src="https://github.com/user-attachments/assets/1992dcee-8327-4783-8326-b4bf7ce988a0" />
 </p>
+
+The development and synthesis of new modules, including the ability to integrate their project into the RCWorkspace application, is available through the [Industrial Builder](https://github.com/MalkarovPark/Industrial_Builder/) environment.
 
 # Getting Help <a name="getting-help"></a>
 GitHub is our primary forum for RCWorkspace. Feel free to open up issues about questions, problems, or ideas.
