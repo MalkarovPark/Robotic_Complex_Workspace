@@ -13,7 +13,7 @@ class _6DOF_Connector: RobotConnector
         [
             .init(name: "String", value: "Text"),
             .init(name: "Int", value: 8),
-            .init(name: "Float", value: 0.5),
+            .init(name: "Float", value: Float(0.5)),
             .init(name: "Bool", value: true)
         ]
     }
