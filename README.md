@@ -20,8 +20,8 @@ Robotic Complex Workspace is an open source application for designing and contro
     * [Tools](#tools)
     * [Parts](#parts)
 * [Visual Modeling](#visual-modeling)
-* [Connecting Objects](#connecting-objects)
 * [Handling Statistics](#handling-statistics)
+* [Connecting Objects](#connecting-objects)
 * [Extensibility](#extensibility)
 * [Getting Help](#getting-help)
 * [License](#license)
@@ -97,16 +97,6 @@ Physical simulation allows you to evaluate the performance of technological oper
 
 Can be endabled/disabled in settings if needed.
 
-# Connecting Objects <a name="connecting-objects">
-
-Connection to real equipment through connectors. For each device, the connector setting is available by pressing the "<img width="12" src="https://github.com/user-attachments/assets/dbd7c728-5476-4846-b8e0-7471b189b150" />" button.
-
-<p align="center">
-   <img width="1087" src="https://github.com/user-attachments/assets/fe11df94-625c-4d4c-b2aa-4ff1c45c97bf" />
-</p>
-
-The connected device can control its visual model, allowing it to be tracked in real time. The user can combine real and virtual devices in one document.
-
 # Handling Statistics <a name="handling-statistics">
 
 The application is available to receive statistical data from selected devices and save them in a document.
@@ -117,6 +107,16 @@ The statistics data are available in the form of various types of charts and dis
 </p>
 
 To open the statistics view, press the "<img width="12" src="https://github.com/user-attachments/assets/a9554ac8-45a8-4778-aaef-f0f167aa03d3" />" button next to the object of interest.
+
+# Connecting Objects <a name="connecting-objects">
+
+Connection to real equipment through connectors. For each device, the connector setting is available by pressing the "<img width="12" src="https://github.com/user-attachments/assets/dbd7c728-5476-4846-b8e0-7471b189b150" />" button.
+
+<p align="center">
+   <img width="1087" src="https://github.com/user-attachments/assets/fe11df94-625c-4d4c-b2aa-4ff1c45c97bf" />
+</p>
+
+The connected device can control its visual model, allowing it to be tracked in real time. The user can combine real and virtual devices in one document.
 
 # Extensibility <a name="extensibility">
 
