@@ -318,7 +318,7 @@ struct PositionItemView: View
             }
             .frame(height: 24)
             .popover(isPresented: $position_item_view_presented,
-                     arrowEdge: .leading)
+                     arrowEdge: .trailing)
             {
                 #if os(macOS)
                 PositionPointView(robot: $robot, points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)

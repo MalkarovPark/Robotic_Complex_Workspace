@@ -53,7 +53,11 @@ struct ViewPendantButton: View
             {
                 Image(systemName: "slider.horizontal.2.square")
                     .imageScale(.large)
+                #if os(macOS)
                     .frame(width: 16, height: 16)
+                #else
+                    .frame(width: 24, height: 24)
+                #endif
                     .padding()
             }
             .buttonStyle(.borderless)

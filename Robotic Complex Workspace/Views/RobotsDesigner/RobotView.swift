@@ -218,7 +218,11 @@ struct RobotSceneView: View
                     {
                         Image(systemName: "rotate.3d")
                             .imageScale(.large)
+                        #if os(macOS)
                             .frame(width: 16, height: 16)
+                        #else
+                            .frame(width: 24, height: 24)
+                        #endif
                             .padding()
                     }
                     .buttonStyle(.borderless)
@@ -245,7 +249,11 @@ struct RobotSceneView: View
                     {
                         Image(systemName: "move.3d")
                             .imageScale(.large)
+                        #if os(macOS)
                             .frame(width: 16, height: 16)
+                        #else
+                            .frame(width: 24, height: 24)
+                        #endif
                             .padding()
                     }
                     .buttonBorderShape(.circle)
@@ -272,7 +280,11 @@ struct RobotSceneView: View
                     {
                         Image(systemName: "scale.3d")
                             .imageScale(.large)
+                        #if os(macOS)
                             .frame(width: 16, height: 16)
+                        #else
+                            .frame(width: 24, height: 24)
+                        #endif
                             .padding()
                     }
                     .buttonBorderShape(.circle)

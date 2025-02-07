@@ -11,8 +11,8 @@ import IndustrialKit
 struct ContentView: View
 {
     //Default robot origin location properties from user defaults
-    @AppStorage("DefaultLocation_X") private var location_x: Double = 0
-    @AppStorage("DefaultLocation_Y") private var location_y: Double = 20
+    @AppStorage("DefaultLocation_X") private var location_x: Double = 200
+    @AppStorage("DefaultLocation_Y") private var location_y: Double = 0
     @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
     
     //Default robot origion rotation properties from user defaults

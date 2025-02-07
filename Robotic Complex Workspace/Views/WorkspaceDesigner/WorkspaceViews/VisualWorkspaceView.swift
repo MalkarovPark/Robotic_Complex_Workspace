@@ -44,7 +44,11 @@ struct VisualWorkspaceView: View
                     {
                         Image(systemName: "plus")
                             .imageScale(.large)
+                        #if os(macOS)
                             .frame(width: 16, height: 16)
+                        #else
+                            .frame(width: 24, height: 24)
+                        #endif
                             .padding()
                         #if os(iOS)
                             .foregroundColor((add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
@@ -72,7 +76,11 @@ struct VisualWorkspaceView: View
                     {
                         Image(systemName: "pencil")
                             .imageScale(.large)
+                        #if os(macOS)
                             .frame(width: 16, height: 16)
+                        #else
+                            .frame(width: 24, height: 24)
+                        #endif
                             .padding()
                         #if os(iOS)
                             .foregroundColor(!add_in_view_disabled ? Color.secondary : Color.black)
