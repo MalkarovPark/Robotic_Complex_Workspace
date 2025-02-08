@@ -29,7 +29,7 @@ struct ToolsView: View
         {
             if base_workspace.tools.count > 0
             {
-                //MARK: Scroll view for tools
+                // MARK: Scroll view for tools
                 ScrollView(.vertical)
                 {
                     LazyVGrid(columns: columns, spacing: 24)
@@ -68,7 +68,7 @@ struct ToolsView: View
         .background(.white)
         #endif
         #if os(macOS)
-        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
+        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) // Window sizes for macOS
         #else
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -82,7 +82,7 @@ struct ToolsView: View
         }
         .toolbar
         {
-            //MARK: Toolbar
+            // MARK: Toolbar
             ToolbarItem(placement: .automatic)
             {
                 HStack(alignment: .center)
@@ -193,7 +193,7 @@ struct ToolDropDelegate : DropDelegate
     
     func performDrop(info: DropInfo) -> Bool
     {
-        document_handler.document_update_tools() //Update file after elements reordering
+        document_handler.document_update_tools() // Update file after elements reordering
         return true
     }
     

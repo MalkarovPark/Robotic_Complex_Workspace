@@ -24,7 +24,7 @@ struct ControlProgramView: View
     {
         VStack
         {
-            //MARK: Scroll view for program elements
+            // MARK: Scroll view for program elements
             ScrollView
             {
                 LazyVGrid(columns: program_columns)
@@ -51,10 +51,10 @@ struct ControlProgramView: View
         }
         .overlay(alignment: .bottomTrailing)
         {
-            //MARK: New program element button
+            // MARK: New program element button
             ZStack(alignment: .trailing)
             {
-                Button(action: add_new_program_element) //Add element button
+                Button(action: add_new_program_element) // Add element button
                 {
                     HStack
                     {
@@ -76,7 +76,7 @@ struct ControlProgramView: View
                 #endif
                 .padding()
                 
-                Button(action: { add_element_view_presented.toggle() }) //Configure new element button
+                Button(action: { add_element_view_presented.toggle() }) // Configure new element button
                 {
                     Circle()
                         .foregroundStyle(app_state.new_program_element.color)
@@ -108,14 +108,14 @@ struct ControlProgramView: View
         base_workspace.update_view()
         let new_program_element = app_state.new_program_element
         
-        //Add new program element and save to file
+        // Add new program element and save to file
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         base_workspace.elements_check()
         
         document_handler.document_update_elements()
     }
     
-    func remove_elements(at offsets: IndexSet) //Remove program element function
+    func remove_elements(at offsets: IndexSet) // Remove program element function
     {
         withAnimation
         {
@@ -139,7 +139,7 @@ struct WorkspaceDropDelegate : DropDelegate
     
     func performDrop(info: DropInfo) -> Bool
     {
-        document_handler.document_update_elements() //Update file after elements reordering
+        document_handler.document_update_elements() // Update file after elements reordering
         return true
     }
     
@@ -220,7 +220,7 @@ struct ProgramElementItemView: View
         }
     }
     
-    //MARK: Program elements manage functions
+    // MARK: Program elements manage functions
     private func update_program_element()
     {
         base_workspace.elements_check()
@@ -298,7 +298,7 @@ struct AddElementView: View
         {
             VStack
             {
-                //MARK: Type picker
+                // MARK: Type picker
                 Picker("Type", selection: $element_type)
                 {
                     ForEach(ProgramElementType.allCases, id: \.self)
@@ -314,7 +314,7 @@ struct AddElementView: View
                 .labelsHidden()
                 .padding(.bottom, 8)
                 
-                //MARK: Subtype pickers cases
+                // MARK: Subtype pickers cases
                 HStack(spacing: 16)
                 {
                     #if os(iOS) || os(visionOS)

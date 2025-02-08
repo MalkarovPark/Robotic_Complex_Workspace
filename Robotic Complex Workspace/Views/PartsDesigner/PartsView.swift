@@ -36,7 +36,7 @@ struct PartsView: View
             {
                 if is_physics_reset
                 {
-                    //MARK: Scroll view for parts
+                    // MARK: Scroll view for parts
                     ScrollView(.vertical, showsIndicators: true)
                     {
                         LazyVGrid(columns: columns, spacing: 24)
@@ -76,7 +76,7 @@ struct PartsView: View
         .background(Color.white)
         #endif
         #if os(macOS)
-        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
+        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) // Window sizes for macOS
         #else
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -90,7 +90,7 @@ struct PartsView: View
         }
         .toolbar
         {
-            //MARK: Toolbar
+            // MARK: Toolbar
             ToolbarItem(placement: .automatic)
             {
                 HStack(alignment: .center)
@@ -129,7 +129,7 @@ struct PartsView: View
         }
     }
     
-    //MARK: Parts manage functions
+    // MARK: Parts manage functions
     private func remove_parts(at offsets: IndexSet)
     {
         withAnimation

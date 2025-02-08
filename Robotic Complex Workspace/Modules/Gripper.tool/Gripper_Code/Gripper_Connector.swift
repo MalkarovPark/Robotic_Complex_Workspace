@@ -7,7 +7,7 @@ import IndustrialKit
 
 class Gripper_Connector: ToolConnector
 {
-    //MARK: - Connection
+    // MARK: - Connection
     override var parameters: [ConnectionParameter]
     {
         [
@@ -60,13 +60,13 @@ class Gripper_Connector: ToolConnector
         }
     }
     
-    //MARK: - Performing
+    // MARK: - Performing
     override func perform(code: Int)
     {
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=code@*//*@END_MENU_TOKEN@*/
     }
     
-    //MARK: - Statistics
+    // MARK: - Statistics
     override func initial_charts_data() -> [WorkspaceObjectChart]
     {
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/

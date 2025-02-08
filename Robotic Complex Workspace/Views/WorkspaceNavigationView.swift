@@ -11,10 +11,10 @@ import SceneKit
 
 enum navigation_item: Int, Hashable, CaseIterable, Identifiable
 {
-    case WorkspaceView, RobotsView, ToolsView, PartsView //Sidebar items
+    case WorkspaceView, RobotsView, ToolsView, PartsView // Sidebar items
     
     var id: Int { rawValue }
-    var localizedName: LocalizedStringKey //Names of sidebar items
+    var localizedName: LocalizedStringKey // Names of sidebar items
     {
         switch self
         {
@@ -29,7 +29,7 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
         }
     }
     
-    var image_name: String //Names of sidebar items symbols
+    var image_name: String // Names of sidebar items symbols
     {
         switch self
         {
@@ -56,7 +56,7 @@ struct WorkspaceNavigationView: View
     #if !os(macOS)
     @State var settings_view_presented = false
     
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     
     @Environment(\.dismiss) private var dismiss
     #endif
@@ -71,7 +71,7 @@ struct WorkspaceNavigationView: View
     {
         NavigationSplitView
         {
-            //MARK: Sidebar
+            // MARK: Sidebar
             List(navigation_item.allCases, selection: $sidebar_controller.sidebar_selection)
             { selection in
                 NavigationLink(value: selection)
@@ -138,7 +138,7 @@ struct WorkspaceNavigationView: View
         {
             ZStack
             {
-                //MARK: Content
+                // MARK: Content
                 switch sidebar_controller.sidebar_selection
                 {
                 case .WorkspaceView:

@@ -8,7 +8,7 @@ import IndustrialKit
 
 class Gripper_Controller: ToolModelController
 {
-    //MARK: - Parameters
+    // MARK: - Parameters
     override var nodes_names: [String]
     {
         [
@@ -17,17 +17,17 @@ class Gripper_Controller: ToolModelController
         ]
     }
     
-    //MARK: - Performing
+    // MARK: - Performing
     private var closed = false
     private var moved = false
     
     override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
-        if nodes.count == 2 //Gripper model has two nodes of jaws
+        if nodes.count == 2 // Gripper model has two nodes of jaws
         {
             switch code
             {
-            case 0: //Grip
+            case 0: // Grip
                 if !closed && !moved
                 {
                     moved = true
@@ -46,7 +46,7 @@ class Gripper_Controller: ToolModelController
                 {
                     completion()
                 }
-            case 1: //Release
+            case 1: // Release
                 if closed && !moved
                 {
                     moved = true
@@ -90,7 +90,7 @@ class Gripper_Controller: ToolModelController
         }
     }
     
-    //MARK: - Statistics
+    // MARK: - Statistics
     private var charts = [WorkspaceObjectChart]()
     private var domain_index: Float = 0
     

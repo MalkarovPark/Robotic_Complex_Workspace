@@ -23,7 +23,7 @@ struct WorkspaceView: View
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     #if os(iOS) || os(visionOS)
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     #endif
     
     #if os(visionOS)
@@ -66,7 +66,7 @@ struct WorkspaceView: View
         }
         #endif
         #if os(macOS)
-        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) //Window sizes for macOS
+        .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) // Window sizes for macOS
         #endif
         #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -261,7 +261,7 @@ struct AddInWorkspaceView: View
     
     @State var is_compact = false
     
-    @State var first_select = true //This flag that specifies that the robot was not selected and disables the dismiss() function
+    @State var first_select = true // This flag that specifies that the robot was not selected and disables the dismiss() function
     private let add_items: [String] = ["Add Robot", "Add Tool", "Add Part"]
     
     var body: some View
@@ -279,7 +279,7 @@ struct AddInWorkspaceView: View
             .labelsHidden()
             .padding([.horizontal, .top])
             
-            //MARK: Object popup menu
+            // MARK: Object popup menu
             switch app_state.add_selection
             {
             case 0:
@@ -310,7 +310,7 @@ struct AddInWorkspaceView: View
         }
         .onDisappear
         {
-            //base_workspace.dismiss_object()
+            // base_workspace.dismiss_object()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {
                 base_workspace.dismiss_object()
@@ -379,7 +379,7 @@ struct ObjectPickerView: View
                 .font(.subheadline)
             #endif
             
-            Picker("Name", selection: $selected_object_name) //Select object name for place in workspace
+            Picker("Name", selection: $selected_object_name) // Select object name for place in workspace
             {
                 ForEach(avaliable_objects_names, id: \.self)
                 { name in
@@ -552,7 +552,7 @@ struct AddToolInWorkspaceView: View
                 {
                     if base_workspace.attachable_robots_names.count > 0
                     {
-                        Picker("Attached to", selection: $attach_robot_name) //Select object name for place in workspace
+                        Picker("Attached to", selection: $attach_robot_name) // Select object name for place in workspace
                         {
                             ForEach(base_workspace.attachable_robots_names, id: \.self)
                             { name in

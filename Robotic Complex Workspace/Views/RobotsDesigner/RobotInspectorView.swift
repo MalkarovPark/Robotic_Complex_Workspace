@@ -170,7 +170,7 @@ struct RobotInspectorView: View
         update_data()
     }
     
-    private func remove_points(at offsets: IndexSet) //Remove robot point function
+    private func remove_points(at offsets: IndexSet) // Remove robot point function
     {
         withAnimation
         {
@@ -261,7 +261,7 @@ struct PositionItemView: View
     @EnvironmentObject var base_workspace: Workspace
     
     #if os(iOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
     let on_delete: (IndexSet) -> ()
@@ -459,7 +459,7 @@ struct PositionPointView: View
         }
     }
     
-    //MARK: Point manage functions
+    // MARK: Point manage functions
     func update_point_location()
     {
         point_item.x = item_view_pos_location[0]

@@ -8,7 +8,7 @@ import IndustrialKit
 
 class Drill_Controller: ToolModelController
 {
-    //MARK: - Parameters
+    // MARK: - Parameters
     override var nodes_names: [String]
     {
         [
@@ -16,22 +16,22 @@ class Drill_Controller: ToolModelController
         ]
     }
     
-    //MARK: - Performing
+    // MARK: - Performing
     private var rotated = [false, false]
     
     override func nodes_perform(code: Int)
     {
         info_output = [256, 256, 64, 64]
         
-        if nodes.count == 1 //Drill has one rotated node
+        if nodes.count == 1 // Drill has one rotated node
         {
             switch code
             {
-            case 0: //Strop rotation
+            case 0: // Strop rotation
                 nodes[safe_name: "drill"].removeAllActions()
                 rotated[0] = false
                 rotated[1] = false
-            case 1: //Clockwise rotation
+            case 1: // Clockwise rotation
                 if !rotated[0]
                 {
                     nodes[safe_name: "drill"].removeAllActions()
@@ -42,7 +42,7 @@ class Drill_Controller: ToolModelController
                         self.rotated[1] = false
                     }
                 }
-            case 2: //Counter clockwise rotation
+            case 2: // Counter clockwise rotation
                 if !rotated[1]
                 {
                     nodes[safe_name: "drill"].removeAllActions()
@@ -68,7 +68,7 @@ class Drill_Controller: ToolModelController
         rotated[1] = false
     }
     
-    //MARK: - Statistics
+    // MARK: - Statistics
     private var charts = [WorkspaceObjectChart]()
     private var domain_index: Float = 0
     

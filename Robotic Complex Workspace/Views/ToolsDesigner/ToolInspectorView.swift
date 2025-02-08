@@ -85,7 +85,7 @@ struct ToolInspectorView: View
                 {
                     ZStack(alignment: .trailing)
                     {
-                        Button(action: add_operation_to_program) //Add element button
+                        Button(action: add_operation_to_program) // Add element button
                         {
                             HStack
                             {
@@ -107,7 +107,7 @@ struct ToolInspectorView: View
                         #endif
                         .padding()
                         
-                        Button(action: { add_operation_view_presented = true }) //Configure new element button
+                        Button(action: { add_operation_view_presented = true }) // Configure new element button
                         {
                             Circle()
                                 .foregroundColor(.accentColor)
@@ -254,7 +254,7 @@ struct ToolInspectorView: View
         update_data()
     }
     
-    private func remove_codes(at offsets: IndexSet) //Remove tool operation function
+    private func remove_codes(at offsets: IndexSet) // Remove tool operation function
     {
         withAnimation
         {
@@ -383,7 +383,7 @@ struct OperationItemView: View
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     #if os(iOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
     var body: some View

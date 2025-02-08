@@ -27,7 +27,7 @@ struct Robotic_Complex_WorkspaceDocument: FileDocument
         self.preset = WorkspacePreset()
     }
     
-    //MARK: Read data from preset file
+    // MARK: Read data from preset file
     init(configuration: ReadConfiguration) throws
     {
         guard let data = configuration.file.regularFileContents
@@ -39,7 +39,7 @@ struct Robotic_Complex_WorkspaceDocument: FileDocument
         preset = try JSONDecoder().decode(WorkspacePreset.self, from: data)
     }
     
-    //MARK: Write data from preset file
+    // MARK: Write data from preset file
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper
     {
         let data = try JSONEncoder().encode(preset)

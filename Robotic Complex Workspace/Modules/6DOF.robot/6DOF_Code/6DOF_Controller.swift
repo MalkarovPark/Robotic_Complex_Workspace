@@ -4,7 +4,7 @@ import IndustrialKit
 
 class _6DOF_Controller: RobotModelController
 {
-    //MARK: - Parameters
+    // MARK: - Parameters
     override var nodes_names: [String]
     {
         [
@@ -20,7 +20,7 @@ class _6DOF_Controller: RobotModelController
         ]
     }
     
-    //MARK: - Performing
+    // MARK: - Performing
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
         apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
@@ -75,10 +75,10 @@ class _6DOF_Controller: RobotModelController
             
             C3 = (pow(p5x, 2) + pow(p5y, 2) + pow(p5z - lengths[0], 2) - pow(lengths[1], 2) - pow(lengths[2] + lengths[3], 2)) / (2 * lengths[1] * (lengths[2] + lengths[3]))
             
-            //Joint 1
+            // Joint 1
             theta[0] = Float(atan2(p5y, p5x))
             
-            //Joints 3, 2
+            // Joints 3, 2
             theta[2] = Float(atan2(pow(abs(1 - pow(C3, 2)), 0.5), C3))
             
             M = lengths[1] + (lengths[2] + lengths[3]) * C3
@@ -87,7 +87,7 @@ class _6DOF_Controller: RobotModelController
             B = p5z - lengths[0]
             theta[1] = Float(atan2(M * A - N * B, N * A + M * B))
             
-            //Jionts 4, 5, 6
+            // Jionts 4, 5, 6
             C1 = cos(Float(theta[0]))
             C23 = cos(Float(theta[1]) + Float(theta[2]))
             S1 = sin(Float(theta[0]))
@@ -135,11 +135,11 @@ class _6DOF_Controller: RobotModelController
         
         if get_statistics
         {
-            chart_ik_values = values //Store new parts angles array for chart
+            chart_ik_values = values // Store new parts angles array for chart
         }
     }
     
-    //MARK: - Statistics
+    // MARK: - Statistics
     private var charts = [WorkspaceObjectChart]()
     private var chart_ik_values = [Float](repeating: 0, count: 6)
     private var domain_index: Float = 0
@@ -153,13 +153,13 @@ class _6DOF_Controller: RobotModelController
             charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
         }
         
-        //Update parts angles rotation chart
+        // Update parts angles rotation chart
         for i in 0...chart_ik_values.count - 1
         {
             charts[0].data.append(ChartDataItem(name: "J\(i + 1)", domain: ["": domain_index], codomain: chart_ik_values[i]))
         }
         
-        //Update tool location chart
+        // Update tool location chart
         let tool_node = pointer_node
         
         var axis_names = ["X", "Y", "Z"]
@@ -169,7 +169,7 @@ class _6DOF_Controller: RobotModelController
             charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0)))
         }
         
-        //Update tool rotation chart
+        // Update tool rotation chart
         axis_names = ["R", "P", "W"]
         components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
         for i in 0...axis_names.count - 1

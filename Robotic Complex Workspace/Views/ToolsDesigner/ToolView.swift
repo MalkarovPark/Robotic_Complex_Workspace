@@ -27,7 +27,7 @@ struct ToolView: View
     @State private var new_operation_code = OperationCodeInfo()
     
     #if os(iOS)
-    //MARK: Horizontal window size handler
+    // MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     #endif
     

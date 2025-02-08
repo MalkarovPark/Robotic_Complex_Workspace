@@ -29,7 +29,7 @@ struct RobotsView: View
         {
             if base_workspace.robots.count > 0
             {
-                //MARK: Scroll view for robots
+                // MARK: Scroll view for robots
                 ScrollView(.vertical)
                 {
                     LazyVGrid(columns: columns, spacing: 24)
@@ -81,7 +81,7 @@ struct RobotsView: View
         #endif
         .toolbar
         {
-            //MARK: Toolbar
+            // MARK: Toolbar
             ToolbarItem(placement: .automatic)
             {
                 HStack(alignment: .center)
@@ -269,7 +269,7 @@ struct RobotCardView: View
             }
     }
     
-    //MARK: Robots manage functions
+    // MARK: Robots manage functions
     private func view_robot(robot_index: Int)
     {
         base_workspace.select_robot(index: base_workspace.robots.firstIndex(of: robot_item) ?? 0)
@@ -313,7 +313,7 @@ struct RobotDropDelegate : DropDelegate
     
     func performDrop(info: DropInfo) -> Bool
     {
-        document_handler.document_update_robots() //Update file after elements reordering
+        document_handler.document_update_robots() // Update file after elements reordering
         return true
     }
     

@@ -19,7 +19,7 @@ struct SettingsView: View
     
     private enum Tabs: Hashable
     {
-        case general, properties, cell //Settings view tab bar items
+        case general, properties, cell // Settings view tab bar items
     }
     
     var body: some View
@@ -225,7 +225,7 @@ struct ModulesSettingsView: View
             #if os(macOS)
             VStack(alignment: .leading, spacing: 0)
             {
-                //MARK: External modules handling
+                // MARK: External modules handling
                 GroupBox(label: Text("External").font(.headline))
                 {
                     VStack(spacing: 4)
@@ -301,7 +301,7 @@ struct ModulesSettingsView: View
                 }
                 .padding(.bottom)
                 
-                //MARK: Internal modules handling
+                // MARK: Internal modules handling
                 GroupBox(label: Text("Internal").font(.headline))
                 {
                     VStack(spacing: 4)
@@ -354,7 +354,7 @@ struct ModulesSettingsView: View
                 }
             }
             #else
-            //MARK: External modules handling
+            // MARK: External modules handling
             Section(header: Text("External"))
             {
                 HStack
@@ -429,7 +429,7 @@ struct ModulesSettingsView: View
                 }
             }
             
-            //MARK: Internal modules handling
+            // MARK: Internal modules handling
             Section(header: Text("Internal"))
             {
                 HStack
@@ -503,12 +503,12 @@ struct ModulesSettingsView: View
 //MARK: - Advanced settings view
 struct CellSettingsView: View
 {
-    //Default robot origin location properties from user defaults
+    // Default robot origin location properties from user defaults
     @AppStorage("DefaultLocation_X") private var location_x: Double = 200
     @AppStorage("DefaultLocation_Y") private var location_y: Double = 0
     @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
     
-    //Default robot origion rotation properties from user defaults
+    // Default robot origion rotation properties from user defaults
     @AppStorage("DefaultScale_X") private var scale_x: Double = 200
     @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
     @AppStorage("DefaultScale_Z") private var scale_z: Double = 200

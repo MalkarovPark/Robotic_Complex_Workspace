@@ -16,7 +16,7 @@ struct StatisticsView: View
     @Binding var charts_data: [WorkspaceObjectChart]?
     @Binding var states_data: [StateItem]?
     
-    //Picker data for chart view
+    // Picker data for chart view
     @State private var stats_selection = 0
     private let stats_items: [String] = ["Charts", "State"]
     

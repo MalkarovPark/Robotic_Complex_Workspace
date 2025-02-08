@@ -7,7 +7,7 @@ import IndustrialKit
 
 class _6DOF_Connector: RobotConnector
 {
-    //MARK: - Connection
+    // MARK: - Connection
     override var parameters: [ConnectionParameter]
     {
         [
@@ -60,13 +60,13 @@ class _6DOF_Connector: RobotConnector
         }
     }
     
-    //MARK: - Performing
+    // MARK: - Performing
     override func move_to(point: PositionPoint)
     {
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=code@*//*@END_MENU_TOKEN@*/
     }
     
-    //MARK: - Statistics
+    // MARK: - Statistics
     override func initial_charts_data() -> [WorkspaceObjectChart]
     {
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/

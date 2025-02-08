@@ -12,13 +12,13 @@ import IndustrialKit
 @main
 struct Robotic_Complex_WorkspaceApp: App
 {
-    @StateObject var app_state = AppState() //Init application state
+    @StateObject var app_state = AppState() // Init application state
     
     #if os(visionOS)
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
     
-    @StateObject var base_workspace = Workspace() //Workspace object for opened file
+    @StateObject var base_workspace = Workspace() // Workspace object for opened file
     @StateObject var pendant_controller = PendantController()
     @StateObject var sidebar_controller = SidebarController()
     #endif
@@ -27,7 +27,7 @@ struct Robotic_Complex_WorkspaceApp: App
     {
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
         {
-            file in ContentView(document: file.$document) //Pass document instance to main app view in closure
+            file in ContentView(document: file.$document) // Pass document instance to main app view in closure
                 .environmentObject(app_state)
             #if os(visionOS)
                 .environmentObject(base_workspace)
@@ -51,7 +51,6 @@ struct Robotic_Complex_WorkspaceApp: App
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                     {
                         sidebar_controller.flip_workspace_selection()
-                        //sidebar_controller.sidebar_selection = .WorkspaceView
                     }
                     #endif
                 }
@@ -64,10 +63,10 @@ struct Robotic_Complex_WorkspaceApp: App
         }
         .commands
         {
-            SidebarCommands() //Sidebar control items for view menu item
+            SidebarCommands() // Sidebar control items for view menu item
             
             #if os(iOS) || os(visionOS)
-            CommandGroup(after: CommandGroupPlacement.appSettings) //Application settings commands
+            CommandGroup(after: CommandGroupPlacement.appSettings) // Application settings commands
             {
                 Button("Settings...")
                 {
@@ -114,7 +113,7 @@ struct Robotic_Complex_WorkspaceApp: App
             }
             overlayAccessoryView:
             { _ in
-                //AccessoryView()
+                // AccessoryView()
             }
         }
         #endif

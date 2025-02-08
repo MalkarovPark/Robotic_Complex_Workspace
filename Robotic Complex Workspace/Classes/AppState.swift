@@ -13,15 +13,15 @@ import IndustrialKit
 //MARK: - Class for work with various application data
 class AppState: ObservableObject
 {
-    //Commands
+    // Commands
     @Published var run_command = false
     @Published var stop_command = false
     
     #if os(iOS) || os(visionOS)
-    @Published var settings_view_presented = false //Flag for showing setting view for iOS and iPadOS
+    @Published var settings_view_presented = false // Flag for showing setting view for iOS and iPadOS
     #endif
     
-    //Pass data
+    // Pass data
     @Published var preferences_pass_mode = false
     @Published var programs_pass_mode = false
     
@@ -49,25 +49,25 @@ class AppState: ObservableObject
         }
     }
     
-    //Visual workspace view
-    //If add in view presented or not dismissed state.
+    // Visual workspace view
+    // If add in view presented or not dismissed state.
     public var add_in_view_dismissed = true
     
-    //Gallery workspace view
+    // Gallery workspace view
     @Published var gallery_disabled = false
     #if os(iOS) || os(visionOS)
-    @Published var locked = false //Does not allow you to make a duplicate connection to the scene caused by unknown reasons
+    @Published var locked = false // Does not allow you to make a duplicate connection to the scene caused by unknown reasons
     #endif
     
-    //Other
-    public var previewed_object: WorkspaceObject? //Part for preview view
-    public var preview_update_scene = false //Flag for update previewed part node in scene
-    public var object_view_was_open = false //Flag for provide model pendant_controller for model in scene
+    // Other
+    public var previewed_object: WorkspaceObject? // Part for preview view
+    public var preview_update_scene = false // Flag for update previewed part node in scene
+    public var object_view_was_open = false // Flag for provide model pendant_controller for model in scene
     
-    @Published var view_update_state = false //Flag for update parts view grid
-    @Published var add_selection = 0 //Selected item of object type for AddInWorkspace view
+    @Published var view_update_state = false // Flag for update parts view grid
+    @Published var add_selection = 0 // Selected item of object type for AddInWorkspace view
     
-    @Published var previewed_robot_module_name = "None" //Displayed model string for menu
+    @Published var previewed_robot_module_name = "None" // Displayed model string for menu
     {
         didSet
         {
@@ -75,7 +75,7 @@ class AppState: ObservableObject
         }
     }
     
-    @Published var previewed_tool_module_name = "None" //Displayed model string for menu
+    @Published var previewed_tool_module_name = "None" // Displayed model string for menu
     {
         didSet
         {
@@ -83,7 +83,7 @@ class AppState: ObservableObject
         }
     }
     
-    @Published var previewed_part_module_name = "None" //Displayed model string for menu
+    @Published var previewed_part_module_name = "None" // Displayed model string for menu
     {
         didSet
         {
@@ -91,17 +91,17 @@ class AppState: ObservableObject
         }
     }
     
-    private var did_updated = false //Objects data from property lists update state
+    private var did_updated = false // Objects data from property lists update state
     
-    //MARK: - Application state init function
+    // MARK: - Application state init function
     init()
     {
         import_internal_modules()
         import_external_modules(bookmark: modules_folder_bookmark)
     }
     
-    //MARK: - Modules handling functions
-    //MARK: Internal
+    // MARK: - Modules handling functions
+    // MARK: Internal
     @Published public var internal_modules_list: (robot: [String], tool: [String], part: [String], changer: [String]) = (robot: [], tool: [], part: [], changer: [])
     
     public func import_internal_modules()
@@ -140,7 +140,7 @@ class AppState: ObservableObject
         Changer.internal_modules_list = internal_modules_list.changer
     }
     
-    //MARK: External
+    // MARK: External
     @AppStorage("ModulesFolderBookmark") private var modules_folder_bookmark: Data?
     
     public var modules_folder_url: URL? = nil
@@ -157,7 +157,7 @@ class AppState: ObservableObject
         do
         {
             modules_folder_bookmark = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
-            //modules_folder_url = url
+            // modules_folder_url = url
             import_external_modules(bookmark: modules_folder_bookmark)
         }
         catch
@@ -184,7 +184,7 @@ class AppState: ObservableObject
             
             for file_url in directory_contents(url: try URL(resolvingBookmarkData: bookmark ?? Data(), bookmarkDataIsStale: &is_stale))
             {
-                modules_names.append(file_url.lastPathComponent) //Append file name
+                modules_names.append(file_url.lastPathComponent) // Append file name
             }
             
             external_modules_list.robot = modules_names.filter { $0.contains(".robot") }.map { $0.components(separatedBy: ".").dropLast().joined(separator: ".") }
@@ -207,7 +207,7 @@ class AppState: ObservableObject
         }
     }
     
-    public func directory_contents(url: URL) -> [URL] //Get all files URLs from frolder url
+    public func directory_contents(url: URL) -> [URL] // Get all files URLs from frolder url
     {
         do
         {
@@ -281,7 +281,7 @@ class AppState: ObservableObject
         modules_folder_url = nil
     }
     
-    //MARK: - UI Output
+    // MARK: - UI Output
     public var modules_folder_name: String
     {
         return get_relative_path(from: modules_folder_url) ?? "No folder selected"
@@ -303,7 +303,7 @@ class AppState: ObservableObject
         return "· " + names.map { $0.components(separatedBy: ".")[0] }.joined(separator: "\n· ")
     }
     
-    //Internal
+    // Internal
     public var internal_robot_modules_names: String
     {
         return internal_modules_list.robot.count > 0 ? names_to_list(internal_modules_list.robot) : "No Modules"
@@ -324,7 +324,7 @@ class AppState: ObservableObject
         return internal_modules_list.changer.count > 0 ? names_to_list(internal_modules_list.changer) : "No Modules"
     }
     
-    //External    
+    // External    
     public var external_robot_modules_names: String
     {
         external_modules_list.robot.count > 0 ? names_to_list(external_modules_list.robot) : "No Modules"
@@ -345,37 +345,37 @@ class AppState: ObservableObject
         external_modules_list.changer.count > 0 ? names_to_list(external_modules_list.changer) : "No Modules"
     }
     
-    //MARK: - Get info from dictionaries
-    //MARK: Get robots
-    public func update_robot_info() //Convert dictionary of models to array
+    // MARK: - Get info from dictionaries
+    // MARK: Get robots
+    public func update_robot_info() // Convert dictionary of models to array
     {
-        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true //Check external module by name with dot
+        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true // Check external module by name with dot
         
         previewed_object = Robot(name: "None", module_name: is_internal ? previewed_robot_module_name : String(previewed_robot_module_name.dropFirst()), is_internal: is_internal)
         preview_update_scene = true
     }
     
-    //MARK: Get tools
+    // MARK: Get tools
     public func update_tool_info()
     {
-        let is_internal = previewed_tool_module_name.hasPrefix(".") ? false : true //Check external module by name with dot
+        let is_internal = previewed_tool_module_name.hasPrefix(".") ? false : true // Check external module by name with dot
         
         previewed_object = Tool(name: "None", module_name: is_internal ? previewed_tool_module_name : String(previewed_tool_module_name.dropFirst()), is_internal: is_internal)
         preview_update_scene = true
     }
     
-    //MARK: Get parts
+    // MARK: Get parts
     public func update_part_info()
     {
-        //Get part model by selected item for preview
+        // Get part model by selected item for preview
         
-        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true //Check external module by name with dot
+        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true // Check external module by name with dot
         
         previewed_object = Part(name: "None", module_name: is_internal ? previewed_part_module_name : String(previewed_part_module_name.dropFirst()), is_internal: is_internal)        
         preview_update_scene = true
     }
     
-    //MARK: - Program elements functions
+    // MARK: - Program elements functions
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
 }
 

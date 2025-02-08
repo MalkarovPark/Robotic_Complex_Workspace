@@ -4,7 +4,7 @@ import IndustrialKit
 
 class Portal_Controller: RobotModelController
 {
-    //MARK: - Parameters
+    // MARK: - Parameters
     override var nodes_names: [String]
     {
         [
@@ -17,7 +17,7 @@ class Portal_Controller: RobotModelController
         ]
     }
     
-    //MARK: - Performing
+    // MARK: - Performing
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
         apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
@@ -43,7 +43,7 @@ class Portal_Controller: RobotModelController
         py = pointer_location[1] + origin_location[1] - lengths[2]
         pz = pointer_location[2] + origin_location[2] - lengths[0] + lengths[3] + lengths[4]
         
-        //Checking X part limit
+        // Checking X part limit
         if px < 0
         {
             px = 0
@@ -56,7 +56,7 @@ class Portal_Controller: RobotModelController
             }
         }
         
-        //Checking Y part limit
+        // Checking Y part limit
         if py < 0
         {
             py = 0
@@ -69,7 +69,7 @@ class Portal_Controller: RobotModelController
             }
         }
         
-        //Checking Z part limit
+        // Checking Z part limit
         if pz > 0
         {
             pz = 0
@@ -98,7 +98,7 @@ class Portal_Controller: RobotModelController
         #endif
     }
     
-    //MARK: - Statistics
+    // MARK: - Statistics
     private var charts = [WorkspaceObjectChart]()
     private var chart_ik_values = [Float](repeating: 0, count: 3)
     private var domain_index: Float = 0
@@ -111,7 +111,7 @@ class Portal_Controller: RobotModelController
             charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
         }
         
-        //Update tool location chart
+        // Update tool location chart
         let tool_node = pointer_node
         
         var axis_names = ["X", "Y", "Z"]
@@ -121,7 +121,7 @@ class Portal_Controller: RobotModelController
             charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0)))
         }
         
-        //Update tool rotation chart
+        // Update tool rotation chart
         axis_names = ["R", "P", "W"]
         components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
         for i in 0...axis_names.count - 1

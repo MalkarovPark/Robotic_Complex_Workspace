@@ -10,45 +10,45 @@ import IndustrialKit
 
 struct ContentView: View
 {
-    //Default robot origin location properties from user defaults
+    // Default robot origin location properties from user defaults
     @AppStorage("DefaultLocation_X") private var location_x: Double = 200
     @AppStorage("DefaultLocation_Y") private var location_y: Double = 0
     @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
     
-    //Default robot origion rotation properties from user defaults
+    // Default robot origion rotation properties from user defaults
     @AppStorage("DefaultScale_X") private var scale_x: Double = 200
     @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
     @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
     
-    //Default components resouces bookmarks
+    // Default components resouces bookmarks
     @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
     
-    //If resources not defined
+    // If resources not defined
     @AppStorage("RobotsEmpty") private var robots_empty: Bool?
     
-    //Default count of new registers
+    // Default count of new registers
     @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
     
-    @Binding var document: Robotic_Complex_WorkspaceDocument //Opened document
+    @Binding var document: Robotic_Complex_WorkspaceDocument // Opened document
     
-    @State var first_loaded = true //Fade in workspace scene property
+    @State var first_loaded = true // Fade in workspace scene property
     
     #if !os(visionOS)
-    @StateObject private var base_workspace = Workspace() //Workspace object for opened file
+    @StateObject private var base_workspace = Workspace() // Workspace object for opened file
     #else
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var pendant_controller: PendantController
     #endif
     
     #if os(iOS) || os(visionOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
     @EnvironmentObject var app_state: AppState
     
     @StateObject private var document_handler = DocumentUpdateHandler()
     
-    //MARK: Main view
+    // MARK: Main view
     var body: some View
     {
         WorkspaceNavigationView(document: $document)

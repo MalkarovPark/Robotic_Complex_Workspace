@@ -25,7 +25,7 @@ struct RobotView: View
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     #if os(iOS)
-    //MARK: Horizontal window size handler
+    // MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     #endif
     
@@ -196,7 +196,7 @@ struct RobotSceneView: View
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     #if os(iOS) || os(visionOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
     var body: some View
@@ -394,7 +394,7 @@ struct RobotSceneView: View
     
     private func on_rendrer(scene_view: SCNView)
     {
-        //Update robot
+        // Update robot
         if base_workspace.selected_robot.moving_completed
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)

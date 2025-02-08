@@ -17,7 +17,7 @@ struct GalleryWorkspaceView: View
     @EnvironmentObject var app_state: AppState
     
     #if os(iOS) || os(visionOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
     var body: some View
@@ -233,7 +233,7 @@ struct PlacedPartsGallery: View
 struct ObjectCard: View
 {
     #if os(iOS) || os(visionOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
     let name: String
@@ -368,7 +368,7 @@ struct GalleryInfoView: View
     {
         VStack(spacing: 0)
         {
-            //Selected object position editor
+            // Selected object position editor
             DynamicStack(content: {
                 switch base_workspace.selected_object_type
                 {
@@ -413,7 +413,7 @@ struct GalleryInfoView: View
                         {
                             if avaliable_attachments.count > 0
                             {
-                                Picker("Attach to", selection: $attach_robot_name) //Select object name for place in workspace
+                                Picker("Attach to", selection: $attach_robot_name) // Select object name for place in workspace
                                 {
                                     ForEach(avaliable_attachments, id: \.self)
                                     { name in

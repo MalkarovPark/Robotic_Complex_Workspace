@@ -32,7 +32,7 @@ struct CardMenu: ViewModifier
     let pass_preferences: () -> ()
     let pass_programs: () -> ()
     
-    //Full
+    // Full
     public init(object: WorkspaceObject,
                 to_rename: Binding<Bool>, name: String = String(),
                 delete_alert_presented: Bool = false,
@@ -59,7 +59,7 @@ struct CardMenu: ViewModifier
         self.pass_programs = pass_programs
     }
     
-    //Tool & Part
+    // Tool & Part
     public init(object: WorkspaceObject, to_rename: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void)
     {
         self.object = object

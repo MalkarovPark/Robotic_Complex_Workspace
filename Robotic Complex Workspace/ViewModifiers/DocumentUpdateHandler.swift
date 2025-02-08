@@ -11,7 +11,7 @@ import IndustrialKit
 
 class DocumentUpdateHandler: ObservableObject
 {
-    //MARK: - Document handling
+    // MARK: - Document handling
     @Published var update_elements_document_notify = true
     @Published var update_registers_document_notify = true
     

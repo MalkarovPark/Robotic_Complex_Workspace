@@ -20,7 +20,7 @@ struct VisualWorkspaceView: View
     @EnvironmentObject var sidebar_controller: SidebarController
     
     #if os(iOS) || os(visionOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class //Horizontal window size handler
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
     var body: some View
@@ -205,17 +205,17 @@ struct WorkspaceSceneView: UIViewRepresentable
     #if os(macOS)
     func makeNSView(context: Context) -> SCNView
     {
-        //Connect scene to class and add placed robots and parts in workspace
+        // Connect scene to class and add placed robots and parts in workspace
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
         {
             base_workspace.connect_scene(viewed_scene)
         }
         
-        //Add gesture recognizer
+        // Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
-        //Add reset double tap recognizer for macOS
+        // Add reset double tap recognizer for macOS
         let double_tap_gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_reset_double_tap(_:)))
         double_tap_gesture.numberOfClicksRequired = 2
         scene_view.addGestureRecognizer(double_tap_gesture)
@@ -231,7 +231,7 @@ struct WorkspaceSceneView: UIViewRepresentable
     #else
     func makeUIView(context: Context) -> SCNView
     {
-        //Connect scene to class and add placed robots and parts in workspace
+        // Connect scene to class and add placed robots and parts in workspace
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
         {
             if !app_state.locked
@@ -241,7 +241,7 @@ struct WorkspaceSceneView: UIViewRepresentable
             }
         }
         
-        //Add gesture recognizer
+        // Add gesture recognizer
         let tap_gesture_recognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(sender:)))
         scene_view.addGestureRecognizer(tap_gesture_recognizer)
         
@@ -262,12 +262,12 @@ struct WorkspaceSceneView: UIViewRepresentable
     #if os(macOS)
     func updateNSView(_ ui_view: SCNView, context: Context)
     {
-        //Update commands
+        // Update commands
     }
     #else
     func updateUIView(_ ui_view: SCNView, context: Context)
     {
-        //Update commands
+        // Update commands
     }
     #endif
     
@@ -341,7 +341,7 @@ struct WorkspaceSceneView: UIViewRepresentable
         #endif
     }
     
-    func scene_check() //Renderer functions
+    func scene_check() // Renderer functions
     {
         if base_workspace.element_changed
         {
@@ -372,7 +372,7 @@ struct VisualInfoView: View
     {
         VStack(spacing: 0)
         {
-            //Info view title
+            // Info view title
             switch base_workspace.selected_object_type
             {
             case .robot:
@@ -413,7 +413,7 @@ struct VisualInfoView: View
                 Text("None")
             }
             
-            //Selected object position editor
+            // Selected object position editor
             DynamicStack(content: {
                 switch base_workspace.selected_object_type
                 {
@@ -440,7 +440,7 @@ struct VisualInfoView: View
                         {
                             if avaliable_attachments.count > 0
                             {
-                                Picker("Attach to", selection: $attach_robot_name) //Select object name for place in workspace
+                                Picker("Attach to", selection: $attach_robot_name) // Select object name for place in workspace
                                 {
                                     ForEach(avaliable_attachments, id: \.self)
                                     { name in
