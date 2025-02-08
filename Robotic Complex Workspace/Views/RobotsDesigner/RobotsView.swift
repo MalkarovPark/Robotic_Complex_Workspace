@@ -74,7 +74,6 @@ struct RobotsView: View
         }
         .onDisappear
         {
-            //app_state.clear_pass()
             dismiss_pass()
         }
         #if os(iOS) || os(visionOS)

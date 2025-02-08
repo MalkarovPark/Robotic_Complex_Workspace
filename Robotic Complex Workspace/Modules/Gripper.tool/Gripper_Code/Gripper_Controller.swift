@@ -69,7 +69,6 @@ class Gripper_Controller: ToolModelController
                 closed = false
                 moved = false
                 
-                //remove_all_model_actions()
                 completion()
             }
         }

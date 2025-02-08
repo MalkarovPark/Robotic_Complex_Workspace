@@ -61,7 +61,6 @@ struct WorkspaceNavigationView: View
     @Environment(\.dismiss) private var dismiss
     #endif
     
-    //@State var sidebar_selection: navigation_item? = .WorkspaceView //Selected sidebar item
     #if os(visionOS)
     @EnvironmentObject var sidebar_controller: SidebarController
     #else

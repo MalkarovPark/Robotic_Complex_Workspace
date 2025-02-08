@@ -122,7 +122,6 @@ struct AddObjectView: View
         .onAppear
         {
             update_object_info()
-            //app_state.update_part_info()
         }
     }
     

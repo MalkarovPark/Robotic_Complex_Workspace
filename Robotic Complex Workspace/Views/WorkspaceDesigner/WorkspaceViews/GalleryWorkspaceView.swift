@@ -257,7 +257,7 @@ struct ObjectCard: View
         let card_node = node?.deep_clone()
         card_node?.physicsBody = .static()
         
-        self.node = card_node //node
+        self.node = card_node
         self.on_select = on_select
     }
     
@@ -459,7 +459,6 @@ struct GalleryInfoView: View
                                 if old_attachment == nil
                                 {
                                     attach_robot_name = avaliable_attachments.first!
-                                    //base_workspace.attach_tool_to(robot_name: attach_robot_name)
                                 }
                                 else
                                 {

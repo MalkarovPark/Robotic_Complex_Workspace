@@ -203,7 +203,7 @@ class AppState: ObservableObject
         }
         catch
         {
-            //print(error.localizedDescription)
+            print(error.localizedDescription)
         }
     }
     
@@ -285,7 +285,6 @@ class AppState: ObservableObject
     public var modules_folder_name: String
     {
         return get_relative_path(from: modules_folder_url) ?? "No folder selected"
-        //return modules_folder_url?.lastPathComponent ?? "<no selected>"
     }
     
     private func get_relative_path(from urlString: URL?) -> String?
@@ -305,7 +304,6 @@ class AppState: ObservableObject
     }
     
     //Internal
-    
     public var internal_robot_modules_names: String
     {
         return internal_modules_list.robot.count > 0 ? names_to_list(internal_modules_list.robot) : "No Modules"
@@ -326,8 +324,7 @@ class AppState: ObservableObject
         return internal_modules_list.changer.count > 0 ? names_to_list(internal_modules_list.changer) : "No Modules"
     }
     
-    //External
-    
+    //External    
     public var external_robot_modules_names: String
     {
         external_modules_list.robot.count > 0 ? names_to_list(external_modules_list.robot) : "No Modules"

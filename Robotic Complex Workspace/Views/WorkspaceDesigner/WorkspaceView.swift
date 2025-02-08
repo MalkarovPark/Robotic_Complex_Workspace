@@ -275,10 +275,6 @@ struct AddInWorkspaceView: View
                     Text(self.add_items[index]).tag(index)
                 }
             }
-            .onChange(of: app_state.add_selection)
-            { _, _ in
-                //base_workspace.object_pointer_node?.remove_all_child_nodes()
-            }
             .pickerStyle(.segmented)
             .labelsHidden()
             .padding([.horizontal, .top])

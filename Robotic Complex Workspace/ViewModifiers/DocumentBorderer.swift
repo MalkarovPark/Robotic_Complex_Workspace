@@ -19,14 +19,7 @@ struct DocumentBorderer: ViewModifier
         .clipShape(RoundedRectangle(cornerRadius: 13))
         .shadow(color: .black.opacity(0.2), radius: 5)
         .frame(maxWidth: .infinity)
-        .padding(.top) //.padding()
+        .padding(.top)
         .ignoresSafeArea(.container, edges: .bottom)
-        /*.background
-        {
-            Rectangle()
-                .foregroundStyle(.secondary)
-                .ignoresSafeArea()
-                .frame(maxWidth: .infinity)
-        }*/
     }
 }

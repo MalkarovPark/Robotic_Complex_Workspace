@@ -13,7 +13,7 @@ struct CardMenu: ViewModifier
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    @ObservedObject var object: WorkspaceObject //StateObject ???
+    @ObservedObject var object: WorkspaceObject
     
     @Binding var to_rename: Bool
     
@@ -294,7 +294,6 @@ struct WorkspaceMenu: ViewModifier
         if base_workspace.performed
         {
             base_workspace.reset_performing()
-            //base_workspace.update_view()
         }
         flip_func()
     }

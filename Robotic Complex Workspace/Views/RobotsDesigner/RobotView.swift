@@ -2,7 +2,7 @@
 //  RobotView.swift
 //  Robotic Complex Workspace
 //
-//  Created by Artem Malkarov on 13.05.2024.
+//  Created by Artem on 13.05.2024.
 //
 
 import SwiftUI
@@ -234,7 +234,6 @@ struct RobotSceneView: View
                         OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
                             .onChange(of: base_workspace.selected_robot.origin_rotation)
                         { _, _ in
-                            //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
                         }
@@ -332,7 +331,6 @@ struct RobotSceneView: View
                         OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
                             .onChange(of: base_workspace.selected_robot.origin_rotation)
                         { _, _ in
-                            //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
                         }
@@ -355,7 +353,6 @@ struct RobotSceneView: View
                         OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
                             .onChange(of: base_workspace.selected_robot.origin_location)
                         { _, _ in
-                            //base_workspace.selected_robot.robot_location_place()
                             base_workspace.update_view()
                             document_handler.document_update_robots()
                         }

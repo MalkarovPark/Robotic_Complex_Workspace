@@ -339,7 +339,7 @@ struct OperationParameterView: View
                 {
                     parameter_value = 0
                 }
-                //parameter_value = 0
+                
                 position_parameter_view_presented.toggle()
             })
             {

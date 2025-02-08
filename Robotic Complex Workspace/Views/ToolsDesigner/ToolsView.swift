@@ -136,7 +136,7 @@ struct ToolCardView: View
         #endif
             .overlay
             {
-                NavigationLink(destination: ToolView(tool: $tool_item).onAppear(perform: remove_tool_constraints))
+                NavigationLink(destination: ToolView(tool: $tool_item))
                 {
                     Rectangle()
                         .fill(.clear)
@@ -155,18 +155,6 @@ struct ToolCardView: View
                     .padding(8)
                     .background(.clear)
             }
-    }
-    
-    private func remove_tool_constraints()
-    {
-        /*if tool_item.node?.constraints?.count ?? 0 > 0 //tool_item.is_attached
-        {
-            tool_item.node?.remove_all_constraints()
-            tool_item.node?.position = SCNVector3Zero
-            tool_item.node?.rotation = SCNVector4Zero
-            
-            update_toggle.toggle()
-        }*/
     }
     
     private func removed_constraints(node: SCNNode) -> SCNNode

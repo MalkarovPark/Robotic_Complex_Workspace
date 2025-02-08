@@ -110,10 +110,9 @@ struct RobotInspectorView: View
                 }
             }
             
-            //Spacer()
             PositionControl(location: $robot.pointer_location, rotation: $robot.pointer_rotation, scale: $robot.space_scale)
             
-            HStack(spacing: 0) //(spacing: 12)
+            HStack(spacing: 0)
             {
                 Picker("Program", selection: $robot.selected_program_index)
                 {
@@ -272,9 +271,7 @@ struct PositionItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(robot.inspector_point_color(point: point_item)) //.gray)
-            
-            //Spacer()
+                .foregroundColor(robot.inspector_point_color(point: point_item))
             
             ZStack(alignment: .center)
             {
@@ -283,16 +280,6 @@ struct PositionItemView: View
                     .frame(maxWidth: .infinity, maxHeight: 256)
                     .overlay
                     {
-                        /*VStack(spacing: 0)
-                        {
-                            Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
-                                .font(.caption)
-                            
-                            Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
-                                .font(.caption)
-                        }
-                        .frame(maxWidth: .infinity)*/
-                        
                         HStack(spacing: 0)
                         {
                             Spacer()
@@ -328,8 +315,6 @@ struct PositionItemView: View
                     .presentationDetents([.height(576)])
                 #endif
             }
-            
-            //Spacer()
         }
         .onTapGesture
         {

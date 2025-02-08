@@ -109,21 +109,12 @@ class Drill_Controller: ToolModelController
             velocity = acceleration_data(acceleration: 0).velocity_values
         }
         
-        //acceleration = acceleration_data(acceleration: 8).acceleration_values
-        //velocity = acceleration_data(acceleration: 8).velocity_values
-        
         for i in 0..<velocity.count
         {
             charts[0].data.append(ChartDataItem(name: "Velocity", domain: ["": domain_index], codomain: velocity[i]))
             charts[0].data.append(ChartDataItem(name: "Acceleration", domain: ["": domain_index], codomain: acceleration[i]))
             domain_index += 1
         }
-        
-        /*for i in 0...10
-        {
-            charts[0].data.append(ChartDataItem(name: "Velocity", domain: ["": Float(i)], codomain: Float(i)))
-            charts[0].data.append(ChartDataItem(name: "Acceleration", domain: ["": Float(i)], codomain: Float(10 - i)))
-        }*/
         
         return charts
     }
@@ -139,9 +130,6 @@ class Drill_Controller: ToolModelController
             acceleration_values.append(acceleration)
             velocity = acceleration + velocity
             velocity_values.append(velocity)
-            
-            //acceleration_values.append(Float(i))
-            //velocity_values.append(Float(-i))
         }
 
         return (acceleration_values, velocity_values)
