@@ -23,7 +23,7 @@ class Drill_Controller: ToolModelController
     {
         info_output = [256, 256, 64, 64]
         
-        if nodes.count == 1 // Drill has one rotated node
+        if nodes.count == 1 //Drill has one rotated node
         {
             switch code
             {

@@ -87,7 +87,7 @@ class _6DOF_Controller: RobotModelController
             B = p5z - lengths[0]
             theta[1] = Float(atan2(M * A - N * B, N * A + M * B))
             
-            // Jionts 4, 5, 6
+            // Joints 4, 5, 6
             C1 = cos(Float(theta[0]))
             C23 = cos(Float(theta[1]) + Float(theta[2]))
             S1 = sin(Float(theta[0]))

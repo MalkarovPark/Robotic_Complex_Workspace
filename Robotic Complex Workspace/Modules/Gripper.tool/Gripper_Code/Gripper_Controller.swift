@@ -27,7 +27,7 @@ class Gripper_Controller: ToolModelController
         {
             switch code
             {
-            case 0: // Grip
+            case 0: // Close
                 if !closed && !moved
                 {
                     moved = true
@@ -46,7 +46,7 @@ class Gripper_Controller: ToolModelController
                 {
                     completion()
                 }
-            case 1: // Release
+            case 1: // Open
                 if closed && !moved
                 {
                     moved = true
