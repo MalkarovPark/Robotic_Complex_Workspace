@@ -94,14 +94,10 @@ struct GeneralSettingsView: View
                             {
                                 ForEach(RepresentationType.allCases, id: \.self)
                                 { representation in
-                                    #if !os(visionOS)
                                     if representation != .spatial
                                     {
                                         Text(representation.rawValue).tag(representation)
                                     }
-                                    #else
-                                    Text(representation.rawValue).tag(representation)
-                                    #endif
                                 }
                             }
                             .labelsHidden()
@@ -162,28 +158,18 @@ struct GeneralSettingsView: View
                 {
                     ForEach(RepresentationType.allCases, id: \.self)
                     { representation in
+                        #if !os(visionOS)
+                        if representation != .spatial
+                        {
+                            Text(representation.rawValue).tag(representation)
+                        }
+                        #else
                         Text(representation.rawValue).tag(representation)
+                        #endif
                     }
                 }
                 .tint(.accentColor)
             }
-            #if os(visionOS)
-            /*.onChange(of: representation_type)
-            { _, new_value in
-                if new_value
-                {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                    {
-                        sidebar_controller.sidebar_selection = nil
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                        {
-                            sidebar_controller.sidebar_selection = .WorkspaceView
-                        }
-                    }
-                }
-            }*/
-            #endif
             
             Section("Workspace")
             {
