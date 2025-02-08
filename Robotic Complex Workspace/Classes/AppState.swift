@@ -215,7 +215,7 @@ class AppState: ObservableObject
         }
         catch
         {
-            print(error)
+            print(error.localizedDescription)
             return []
         }
     }

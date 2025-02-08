@@ -490,7 +490,6 @@ struct ModulesSettingsView: View
                 if let url = urls.first
                 {
                     app_state.update_external_modules_bookmark(url: url)
-                    print("Selected folder: \(url)")
                 }
             case .failure(let error):
                 print(error.localizedDescription)
