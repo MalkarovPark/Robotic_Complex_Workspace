@@ -26,8 +26,7 @@ struct Robotic_Complex_WorkspaceApp: App
     var body: some Scene
     {
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
-        {
-            file in ContentView(document: file.$document) // Pass document instance to main app view in closure
+        { file in ContentView(document: file.$document) // Pass document instance to main app view in closure
                 .environmentObject(app_state)
             #if os(visionOS)
                 .environmentObject(base_workspace)
