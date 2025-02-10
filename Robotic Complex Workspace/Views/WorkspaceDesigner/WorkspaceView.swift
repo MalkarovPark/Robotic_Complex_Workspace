@@ -470,6 +470,7 @@ struct AddRobotInWorkspaceView: View
                     {
                         Label("New", systemImage: "plus")
                     }
+                    .buttonStyle(.bordered)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -614,6 +615,7 @@ struct AddToolInWorkspaceView: View
                     {
                         Label("New", systemImage: "plus")
                     }
+                    .buttonStyle(.bordered)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -709,6 +711,7 @@ struct AddPartInWorkspaceView: View
                     {
                         Label("New", systemImage: "plus")
                     }
+                    .buttonStyle(.bordered)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -758,9 +761,5 @@ struct WorkspaceView_Previews: PreviewProvider
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
         }
-        #if os(iOS)
-        .previewDevice("iPad mini (6th generation)")
-        .previewInterfaceOrientation(.landscapeLeft)
-        #endif
     }
 }
