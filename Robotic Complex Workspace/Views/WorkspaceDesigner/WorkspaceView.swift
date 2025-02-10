@@ -22,7 +22,7 @@ struct WorkspaceView: View
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    #if os(iOS) || os(visionOS)
+    #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     #endif
     
