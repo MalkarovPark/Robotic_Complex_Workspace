@@ -5,7 +5,6 @@
 //  Created by Artem on 23.12.2022.
 //
 
-#if !os(visionOS)
 import SwiftUI
 import UniformTypeIdentifiers
 import IndustrialKit
@@ -14,7 +13,8 @@ struct ControlProgramView: View
 {
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
     @State private var dragged_element: WorkspaceProgramElement?
-    @State private var add_element_view_presented = false
+    
+    @State private var view_program_as_text: Bool = false
     
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var base_workspace: Workspace
@@ -24,86 +24,157 @@ struct ControlProgramView: View
     {
         VStack
         {
-            // MARK: Scroll view for program elements
-            ScrollView
+            if !view_program_as_text
             {
-                LazyVGrid(columns: program_columns)
+                // MARK: Scroll view for program elements
+                ScrollView
                 {
-                    ForEach(base_workspace.elements)
-                    { element in
-                        ProgramElementItemView(elements: $base_workspace.elements, element: element, on_delete: remove_elements)
-                        .onDrag({
-                            self.dragged_element = element
-                            return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
-                        }, preview: {
-                            ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color)
-                        })
-                        .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, workspace_elements: base_workspace.file_data().elements, element: element, document_handler: document_handler))
-                    }
-                    .padding(4)
-                    
-                    Spacer(minLength: 64)
-                }
-                .padding()
-                .disabled(base_workspace.performed)
-            }
-            .animation(.spring(), value: base_workspace.elements)
-        }
-        .overlay(alignment: .bottomTrailing)
-        {
-            // MARK: New program element button
-            ZStack(alignment: .trailing)
-            {
-                Button(action: add_new_program_element) // Add element button
-                {
-                    HStack
+                    LazyVGrid(columns: program_columns)
                     {
-                        Image(systemName: "plus")
-                        Spacer()
+                        ForEach(base_workspace.elements)
+                        { element in
+                            ProgramElementItemView(elements: $base_workspace.elements, element: element, on_delete: remove_elements)
+                            .onDrag({
+                                self.dragged_element = element
+                                return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
+                            }, preview: {
+                                ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color)
+                            })
+                            .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $base_workspace.elements, dragged_element: $dragged_element, workspace_elements: base_workspace.file_data().elements, element: element, document_handler: document_handler))
+                        }
+                        .padding(4)
+                        
+                        Spacer(minLength: 64)
                     }
                     .padding()
+                    .disabled(base_workspace.performed)
                 }
-                #if os(macOS)
-                .frame(maxWidth: 80, alignment: .leading)
-                #else
-                .frame(maxWidth: 86, alignment: .leading)
-                #endif
-                .background(.thinMaterial)
-                .cornerRadius(32)
-                .shadow(radius: 4)
-                #if os(macOS)
-                .buttonStyle(BorderlessButtonStyle())
-                #endif
-                .padding()
-                
-                Button(action: { add_element_view_presented.toggle() }) // Configure new element button
-                {
-                    Circle()
-                        .foregroundStyle(app_state.new_program_element.color)
-                        .overlay(
-                            app_state.new_program_element.image
-                                .foregroundColor(.white)
-                                .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
-                        )
-                        .frame(width: 32, height: 32)
-                        .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.color)
-                }
-                .popover(isPresented: $add_element_view_presented)
-                {
-                    AddElementView(add_element_view_presented: $add_element_view_presented, new_program_element: $app_state.new_program_element)
-                    #if os(iOS) || os(visionOS)
-                        .presentationDetents([.height(128)])
-                    #endif
-                }
-                #if os(macOS)
-                .buttonStyle(BorderlessButtonStyle())
-                #endif
-                .padding(.trailing, 24)
+                .animation(.spring(), value: base_workspace.elements)
+                .transition(.move(edge: .leading))
+                //.transition(.slide)
             }
+            else
+            {
+                ControlProgramTextView()
+                    .transition(.move(edge: .trailing))
+                    //.transition(.slide)
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: view_program_as_text)
+        .overlay(alignment: .bottomTrailing)
+        {
+            AddProgramElementButton()
+        }
+        .overlay(alignment: .bottomLeading)
+        {
+            Button(action: { view_program_as_text.toggle() })
+            {
+                Circle()
+                    .foregroundStyle(.thinMaterial)
+                    .overlay(
+                        program_representation_image
+                            .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
+                    )
+                    .frame(width: 32, height: 32)
+                    .animation(.easeInOut(duration: 0.2), value: view_program_as_text)
+            }
+            #if os(macOS)
+            .buttonStyle(BorderlessButtonStyle())
+            .shadow(radius: 4)
+            #endif
+            #if os(visionOS)
+            .glassBackgroundEffect()
+            #endif
+            .padding()
+            .padding(.vertical, 8)
         }
     }
     
-    func add_new_program_element()
+    private func remove_elements(at offsets: IndexSet) // Remove program element function
+    {
+        withAnimation
+        {
+            base_workspace.elements.remove(atOffsets: offsets)
+        }
+        
+        document_handler.document_update_elements()
+    }
+    
+    private var program_representation_image: Image
+    {
+        if view_program_as_text
+        {
+            return Image(systemName: "rectangle.grid.1x2")
+        }
+        else
+        {
+            return Image(systemName: "text.justify.left")
+        }
+    }
+}
+
+// MARK: New program element button
+struct AddProgramElementButton: View
+{
+    @State private var add_element_view_presented = false
+    
+    @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    
+    var body: some View
+    {
+        ZStack(alignment: .trailing)
+        {
+            Button(action: add_new_program_element) // Add element button
+            {
+                HStack
+                {
+                    Image(systemName: "plus")
+                    Spacer()
+                }
+                .padding()
+            }
+            #if os(macOS)
+            .frame(maxWidth: 80, alignment: .leading)
+            #else
+            .frame(maxWidth: 86, alignment: .leading)
+            #endif
+            .background(.thinMaterial)
+            .cornerRadius(32)
+            .shadow(radius: 4)
+            #if os(macOS)
+            .buttonStyle(BorderlessButtonStyle())
+            #endif
+            .padding()
+            
+            Button(action: { add_element_view_presented.toggle() }) // Configure new element button
+            {
+                Circle()
+                    .foregroundStyle(app_state.new_program_element.color)
+                    .overlay(
+                        app_state.new_program_element.image
+                            .foregroundColor(.white)
+                            .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
+                    )
+                    .frame(width: 32, height: 32)
+                    .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.color)
+            }
+            .popover(isPresented: $add_element_view_presented)
+            {
+                AddElementView(add_element_view_presented: $add_element_view_presented, new_program_element: $app_state.new_program_element)
+                #if os(iOS) || os(visionOS)
+                    .presentationDetents([.height(128)])
+                #endif
+            }
+            #if os(macOS)
+            .buttonStyle(BorderlessButtonStyle())
+            #endif
+            .padding(.trailing, 24)
+        }
+    }
+    
+    private func add_new_program_element()
     {
         base_workspace.update_view()
         let new_program_element = app_state.new_program_element
@@ -114,23 +185,13 @@ struct ControlProgramView: View
         
         document_handler.document_update_elements()
     }
-    
-    func remove_elements(at offsets: IndexSet) // Remove program element function
-    {
-        withAnimation
-        {
-            base_workspace.elements.remove(atOffsets: offsets)
-        }
-        
-        document_handler.document_update_elements()
-    }
 }
 
 //MARK: - Drag and Drop delegate
-struct WorkspaceDropDelegate : DropDelegate
+struct WorkspaceDropDelegate: DropDelegate
 {
-    @Binding var elements : [WorkspaceProgramElement]
-    @Binding var dragged_element : WorkspaceProgramElement?
+    @Binding var elements: [WorkspaceProgramElement]
+    @Binding var dragged_element: WorkspaceProgramElement?
     
     @State var workspace_elements: [WorkspaceProgramElementStruct]
     
@@ -534,6 +595,33 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
     case mark = "Mark"
 }
 
+//MARK: - Text View
+struct ControlProgramTextView: View
+{
+    @State private var code = String()
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    
+    var body: some View
+    {
+        VStack
+        {
+            TextEditor(text: $code)
+            .textFieldStyle(.plain)
+            .font(.custom("Menlo", size: 12))
+        }
+        .onAppear
+        {
+            base_workspace.elements = code_to_elements(code: code)
+        }
+        .onDisappear
+        {
+            code = elements_to_code(elements: base_workspace.elements)
+        }
+    }
+}
+
 //MARK: - Previews
 struct ControlProgramView_Previews: PreviewProvider
 {
@@ -544,8 +632,9 @@ struct ControlProgramView_Previews: PreviewProvider
             ControlProgramView()
                 .environmentObject(AppState())
                 .environmentObject(Workspace())
+                .frame(width: 256)
+            
             ElementView(element: .constant(WorkspaceProgramElement()), on_update: {})
         }
     }
 }
-#endif
