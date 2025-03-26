@@ -183,6 +183,8 @@ struct AddProgramElementButton: View
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         base_workspace.elements_check()
         
+        app_state.code_editor_text = elements_to_code(elements: base_workspace.elements)
+        
         document_handler.document_update_elements()
     }
 }
@@ -600,6 +602,7 @@ struct ControlProgramTextView: View
 {
     @State private var code = String()
     
+    @EnvironmentObject var app_state: AppState
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
@@ -607,17 +610,17 @@ struct ControlProgramTextView: View
     {
         VStack
         {
-            TextEditor(text: $code)
+            TextEditor(text: $app_state.code_editor_text)
             .textFieldStyle(.plain)
             .font(.custom("Menlo", size: 12))
         }
         .onAppear
         {
-            base_workspace.elements = code_to_elements(code: code)
+            app_state.code_editor_text = elements_to_code(elements: base_workspace.elements)
         }
         .onDisappear
         {
-            code = elements_to_code(elements: base_workspace.elements)
+            //base_workspace.elements = code_to_elements(code: code)
         }
     }
 }
