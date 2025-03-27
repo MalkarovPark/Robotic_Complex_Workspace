@@ -21,4 +21,8 @@ class SidebarController: ObservableObject
     @Published var perform_workspace_view_reset = false
     
     @Published var from_workspace_view = false
+    
+    #if !os(visionOS)
+    @Published public var code_editor_text = String()
+    #endif
 }

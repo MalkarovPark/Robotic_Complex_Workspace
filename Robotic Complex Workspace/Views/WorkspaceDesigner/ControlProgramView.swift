@@ -122,6 +122,10 @@ struct AddProgramElementButton: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
+    #if !os(visionOS)
+    @EnvironmentObject var sidebar_controller: SidebarController
+    #endif
+    
     var body: some View
     {
         ZStack(alignment: .trailing)
@@ -183,7 +187,7 @@ struct AddProgramElementButton: View
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         base_workspace.elements_check()
         
-        app_state.code_editor_text = elements_to_code(elements: base_workspace.elements)
+        sidebar_controller.code_editor_text = elements_to_code(elements: base_workspace.elements)
         
         document_handler.document_update_elements()
     }
@@ -546,6 +550,9 @@ struct ElementView: View
                 ChangerElementView(element: $element, on_update: on_update)
             case is ObserverModifierElement:
                 ObserverElementView(element: $element, on_update: on_update)
+                #if os(macOS)
+                    .frame(width: 192)
+                #endif
             case is CleanerModifierElement:
                 EmptyView()
             case is JumpLogicElement:
@@ -600,9 +607,10 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
 //MARK: - Text View
 struct ControlProgramTextView: View
 {
-    @State private var code = String()
+    #if !os(visionOS)
+    @EnvironmentObject var sidebar_controller: SidebarController
+    #endif
     
-    @EnvironmentObject var app_state: AppState
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
@@ -610,17 +618,18 @@ struct ControlProgramTextView: View
     {
         VStack
         {
-            TextEditor(text: $app_state.code_editor_text)
+            TextEditor(text: $sidebar_controller.code_editor_text)
             .textFieldStyle(.plain)
             .font(.custom("Menlo", size: 12))
         }
         .onAppear
         {
-            app_state.code_editor_text = elements_to_code(elements: base_workspace.elements)
+            sidebar_controller.code_editor_text = elements_to_code(elements: base_workspace.elements)
         }
         .onDisappear
         {
-            //base_workspace.elements = code_to_elements(code: code)
+            base_workspace.elements = code_to_elements(code: sidebar_controller.code_editor_text)
+            document_handler.document_update_elements()
         }
     }
 }
