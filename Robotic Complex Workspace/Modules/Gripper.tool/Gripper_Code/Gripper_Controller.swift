@@ -37,7 +37,7 @@ class Gripper_Controller: ToolModelController
                         self.moved = false
                         self.closed = true
                         
-                        self.info_output = [16, 64]
+                        self.info = [16, 64]
                         
                         completion()
                     }
@@ -56,7 +56,7 @@ class Gripper_Controller: ToolModelController
                         self.moved = false
                         self.closed = false
                         
-                        self.info_output = [64, 16]
+                        self.info = [64, 16]
                         
                         completion()
                     }
@@ -88,6 +88,14 @@ class Gripper_Controller: ToolModelController
             nodes[safe: "jaw", default: SCNNode()].position.z = 46
             nodes[safe: "jaw2", default: SCNNode()].position.z = -46
         }
+    }
+    
+    // MARK: - Info
+    var info = [Float]()
+    
+    override var info_output: [Float]?
+    {
+        return info
     }
     
     // MARK: - Statistics

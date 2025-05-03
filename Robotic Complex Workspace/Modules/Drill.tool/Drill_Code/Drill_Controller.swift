@@ -21,7 +21,7 @@ class Drill_Controller: ToolModelController
     
     override func nodes_perform(code: Int)
     {
-        info_output = [256, 256, 64, 64]
+        info = [256, 256, 64, 64]
         
         if nodes.count == 1 //Drill has one rotated node
         {
@@ -66,6 +66,14 @@ class Drill_Controller: ToolModelController
         remove_all_model_actions()
         rotated[0] = false
         rotated[1] = false
+    }
+    
+    // MARK: - Info
+    var info = [Float]()
+    
+    override var info_output: [Float]?
+    {
+        return info
     }
     
     // MARK: - Statistics

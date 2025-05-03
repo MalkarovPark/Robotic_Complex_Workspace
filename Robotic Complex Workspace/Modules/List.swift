@@ -15,8 +15,8 @@ public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [P
         Gripper_Module
     ],
     [
-        Books_Module,
-        Cup_Module
+        Cup_Module,
+        Books_Module
     ],
     [
         Random_Module
