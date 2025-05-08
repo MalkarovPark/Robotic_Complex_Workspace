@@ -349,7 +349,7 @@ class AppState: ObservableObject
     // MARK: Get robots
     public func update_robot_info() // Convert dictionary of models to array
     {
-        let is_internal = previewed_part_module_name.hasPrefix(".") ? false : true // Check external module by name with dot
+        let is_internal = previewed_robot_module_name.hasPrefix(".") ? false : true // Check external module by name with dot
         
         previewed_object = Robot(name: "None", module_name: is_internal ? previewed_robot_module_name : String(previewed_robot_module_name.dropFirst()), is_internal: is_internal)
         preview_update_scene = true
