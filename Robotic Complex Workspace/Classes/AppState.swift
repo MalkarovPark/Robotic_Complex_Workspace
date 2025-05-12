@@ -100,13 +100,6 @@ class AppState: ObservableObject
         import_external_modules(bookmark: modules_folder_bookmark)
     }
     
-    deinit
-    {
-        Robot.external_modules_server_stop()
-        Tool.external_modules_server_stop()
-        Changer.external_modules_server_stop()
-    }
-    
     // MARK: - Modules handling functions
     // MARK: Internal
     @Published public var internal_modules_list: (robot: [String], tool: [String], part: [String], changer: [String]) = (robot: [], tool: [], part: [], changer: [])
@@ -163,9 +156,14 @@ class AppState: ObservableObject
         
         do
         {
+            clear_modules()
             modules_folder_bookmark = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
             // modules_folder_url = url
+            
             import_external_modules(bookmark: modules_folder_bookmark)
+            #if os(macOS)
+            start_external_modules_servers()
+            #endif
         }
         catch
         {
@@ -232,6 +230,10 @@ class AppState: ObservableObject
         modules_folder_bookmark = nil
         external_modules_list = (robot: [], tool: [], part: [], changer: [])
         
+        #if os(macOS)
+        stop_external_modules_servers()
+        #endif
+        
         Robot.external_modules.removeAll()
         Tool.external_modules.removeAll()
         Part.external_modules.removeAll()
@@ -239,6 +241,50 @@ class AppState: ObservableObject
         
         modules_folder_url = nil
     }
+    
+    #if os(macOS)
+    private var first_loaded = true
+    
+    private var opened_documents_count = 0
+    
+    public func inc_documents_count()
+    {
+        opened_documents_count += 1
+        
+        //print(opened_documents_count)
+        
+        if opened_documents_count == 1
+        {
+            start_external_modules_servers()
+        }
+    }
+    
+    public func dec_documents_count()
+    {
+        opened_documents_count -= 1
+        
+        //print(opened_documents_count)
+        
+        if opened_documents_count == 0
+        {
+            stop_external_modules_servers()
+        }
+    }
+    
+    private func stop_external_modules_servers()
+    {
+        Robot.external_modules_servers_stop()
+        Tool.external_modules_servers_stop()
+        Changer.external_modules_servers_stop()
+    }
+    
+    private func start_external_modules_servers()
+    {
+        Robot.external_modules_servers_start()
+        Tool.external_modules_servers_start()
+        Changer.external_modules_servers_start()
+    }
+    #endif
     
     // MARK: - UI Output
     public var modules_folder_name: String

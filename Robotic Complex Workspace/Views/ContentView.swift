@@ -82,7 +82,16 @@ struct ContentView: View
             {
                 update_preferences()
                 base_workspace.file_view(preset: document.preset)
+                #if os(macOS)
+                app_state.inc_documents_count()
+                #endif
             }
+        #if os(macOS)
+            .onDisappear
+            {
+                app_state.dec_documents_count()
+            }
+        #endif
     }
     
     private func update_preferences()

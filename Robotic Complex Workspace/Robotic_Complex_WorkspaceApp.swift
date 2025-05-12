@@ -32,7 +32,6 @@ struct Robotic_Complex_WorkspaceApp: App
                 .environmentObject(base_workspace)
                 .environmentObject(pendant_controller)
                 .environmentObject(sidebar_controller)
-            #endif
                 .onAppear
                 {
                     #if os(visionOS)
@@ -53,7 +52,6 @@ struct Robotic_Complex_WorkspaceApp: App
                     }
                     #endif
                 }
-            #if os(visionOS)
                 .onDisappear
                 {
                     sidebar_controller.sidebar_selection = .WorkspaceView
