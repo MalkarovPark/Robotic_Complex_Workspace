@@ -100,6 +100,13 @@ class AppState: ObservableObject
         import_external_modules(bookmark: modules_folder_bookmark)
     }
     
+    deinit
+    {
+        Robot.external_modules_server_stop()
+        Tool.external_modules_server_stop()
+        Changer.external_modules_server_stop()
+    }
+    
     // MARK: - Modules handling functions
     // MARK: Internal
     @Published public var internal_modules_list: (robot: [String], tool: [String], part: [String], changer: [String]) = (robot: [], tool: [], part: [], changer: [])
@@ -196,10 +203,10 @@ class AppState: ObservableObject
             
             WorkspaceObject.modules_folder_bookmark = bookmark
             
-            Robot.external_modules = external_robot_modules
-            Tool.external_modules = external_tool_modules
-            Part.external_modules = external_part_modules
-            Changer.external_modules = external_changer_modules
+            Robot.external_modules_import(by: external_modules_list.robot)
+            Tool.external_modules_import(by: external_modules_list.tool)
+            Part.external_modules_import(by: external_modules_list.part)
+            Changer.external_modules_import(by: external_modules_list.changer)
         }
         catch
         {
@@ -218,54 +225,6 @@ class AppState: ObservableObject
             print(error.localizedDescription)
             return []
         }
-    }
-    
-    private var external_robot_modules: [RobotModule]
-    {
-        var modules: [RobotModule] = []
-        
-        for module_name in external_modules_list.robot
-        {
-            modules.append(RobotModule(external_name: module_name))
-        }
-        
-        return modules
-    }
-    
-    private var external_tool_modules: [ToolModule]
-    {
-        var modules: [ToolModule] = []
-        
-        for module_name in external_modules_list.tool
-        {
-            modules.append(ToolModule(external_name: module_name))
-        }
-        
-        return modules
-    }
-    
-    private var external_part_modules: [PartModule]
-    {
-        var modules: [PartModule] = []
-        
-        for module_name in external_modules_list.part
-        {
-            modules.append(PartModule(external_name: module_name))
-        }
-        
-        return modules
-    }
-    
-    private var external_changer_modules: [ChangerModule]
-    {
-        var modules: [ChangerModule] = []
-        
-        for module_name in external_modules_list.changer
-        {
-            modules.append(ChangerModule(external_name: module_name))
-        }
-        
-        return modules
     }
     
     public func clear_modules()
