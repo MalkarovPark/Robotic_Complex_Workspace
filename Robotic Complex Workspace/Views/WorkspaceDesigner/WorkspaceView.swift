@@ -463,7 +463,7 @@ struct AddRobotInWorkspaceView: View
             {
                 VStack(spacing: 0)
                 {
-                    Text("No avalaible robots")
+                    Text("No available robots")
                         .padding(.bottom)
                     
                     Button(action: new_object)
@@ -608,7 +608,7 @@ struct AddToolInWorkspaceView: View
             {
                 VStack(spacing: 0)
                 {
-                    Text("No avalaible tools")
+                    Text("No available tools")
                         .padding(.bottom)
                     
                     Button(action: new_object)
@@ -704,7 +704,7 @@ struct AddPartInWorkspaceView: View
             {
                 VStack(spacing: 0)
                 {
-                    Text("No avalaible parts")
+                    Text("No available parts")
                         .padding(.bottom)
                     
                     Button(action: new_object)
