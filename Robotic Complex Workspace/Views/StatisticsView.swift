@@ -18,7 +18,10 @@ struct StatisticsView: View
     
     // Picker data for chart view
     @State private var stats_selection = 0
-    private let stats_items: [String] = ["Charts", "State"]
+    
+    @State private var update_scope_selection = 0
+    @State private var update_interval_view_presented = false
+    @State var update_time_interval: TimeInterval = 1.0 //!
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -27,13 +30,12 @@ struct StatisticsView: View
     var clear_states_data: () -> Void
     var update_file_data: () -> Void
     
-    public init(is_presented: Binding<Bool>, get_statistics: Binding<Bool>, charts_data: Binding<[WorkspaceObjectChart]?>, states_data: Binding<[StateItem]?>, stats_selection: Int = 0, clear_chart_data: @escaping () -> Void, clear_states_data: @escaping () -> Void, update_file_data: @escaping () -> Void)
+    public init(is_presented: Binding<Bool>, get_statistics: Binding<Bool>, charts_data: Binding<[WorkspaceObjectChart]?>, states_data: Binding<[StateItem]?>, clear_chart_data: @escaping () -> Void, clear_states_data: @escaping () -> Void, update_file_data: @escaping () -> Void)
     {
         self._is_presented = is_presented
         self._get_statistics = get_statistics
         self._charts_data = charts_data
         self._states_data = states_data
-        self.stats_selection = stats_selection
         self.clear_chart_data = clear_chart_data
         self.clear_states_data = clear_states_data
         self.update_file_data = update_file_data
@@ -66,36 +68,50 @@ struct StatisticsView: View
                 }
             }
             
-            #if os(macOS)
-            Toggle(isOn: $get_statistics)
-            {
-                Text("Enable Collection")
-            }
-            .toggleStyle(.switch)
-            .padding(.horizontal)
-            .onChange(of: get_statistics)
-            { _, _ in
-                update_file_data()
-            }
-            #else
             HStack(spacing: 0)
             {
-                Text("Enable Collection")
-                    .padding(.trailing)
                 Toggle(isOn: $get_statistics)
                 {
-                    Text("Enable Collection")
+                    Text("Enabled")
                 }
                 .toggleStyle(.switch)
+                .onChange(of: get_statistics)
+                { _, _ in
+                    update_file_data()
+                }
+                #if !os(macOS)
                 .tint(.accentColor)
-                .labelsHidden()
+                .modifier(PickerLabelModifier(text: "Enabled"))
+                #endif
+                .padding(.trailing)
+                
+                Picker(selection: $update_scope_selection, label: Text("Update"))
+                {
+                    Text("Constantly").tag(0)
+                    Text("If selected").tag(1)
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity)
+                .modifier(PickerBorderer())
+                #if !os(macOS)
+                .modifier(PickerLabelModifier(text: "Update"))
+                #endif
+                .padding(.trailing)
+                
+                Button(action: { update_interval_view_presented = true })
+                {
+                    Text("Interval")//, systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
+                }
+                #if os(iOS)
+                .modifier(ButtonBorderer())
+                #endif
+                .popover(isPresented: $update_interval_view_presented)
+                {
+                    UpdateIntervalView(is_presented: $update_interval_view_presented, time_interval: $update_time_interval)
+                }
             }
+            .controlSize(.regular)
             .padding(.horizontal)
-            .onChange(of: get_statistics)
-            { _, _ in
-                update_file_data()
-            }
-            #endif
             
             HStack(spacing: 0)
             {
@@ -129,12 +145,10 @@ struct StatisticsView: View
                 #endif
                 .padding([.vertical, .leading])
                 
-                Picker("Statistics", selection: $stats_selection)
+                Picker(selection: $stats_selection, label: Text("Statistics"))
                 {
-                    ForEach(0..<stats_items.count, id: \.self)
-                    { index in
-                        Text(stats_items[index]).tag(index)
-                    }
+                    Text("Charts").tag(0)
+                    Text("State").tag(1)
                 }
                 .pickerStyle(.segmented)
                 .frame(maxWidth: .infinity)
@@ -186,6 +200,44 @@ struct EmptyStatisticsView: View
                 .foregroundColor(quaternary_label_color)
             Spacer()
         }
+    }
+}
+
+struct UpdateIntervalView: View
+{
+    @Binding var is_presented: Bool
+    @Binding var time_interval: TimeInterval
+    
+    var body: some View
+    {
+        HStack
+        {
+            TextField("Time", text: Binding(
+                get:
+                    {
+                        String(format: "%.2f", time_interval)
+                    },
+                set:
+                    { newValue in
+                        if let value = Double(newValue)
+                        {
+                            time_interval = value
+                        }
+                    })
+            )
+            .frame(minWidth: 64, maxWidth: 96)
+            #if os(iOS) || os(visionOS)
+                .frame(idealWidth: 96)
+                .textFieldStyle(.roundedBorder)
+            #endif
+            
+            Stepper("Time", value: $time_interval, in: 0.1...60, step: 0.1)
+                .labelsHidden()
+        }
+        .padding()
+        #if os(iOS)
+        .presentationDetents([.height(96)])
+        #endif
     }
 }
 

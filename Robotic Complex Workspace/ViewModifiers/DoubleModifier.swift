@@ -25,3 +25,21 @@ struct DoubleModifier: ViewModifier
         }
     }
 }
+
+#if !os(macOS)
+struct PickerLabelModifier: ViewModifier
+{
+    let text: String
+    
+    public func body(content: Content) -> some View
+    {
+        HStack(spacing: 8)
+        {
+            Text(text)
+            
+            content
+                .labelsHidden()
+        }
+    }
+}
+#endif
