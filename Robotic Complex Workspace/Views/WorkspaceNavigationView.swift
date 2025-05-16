@@ -179,10 +179,10 @@ struct WorkspaceNavigationView: View
                 }
                 .environmentObject(sidebar_controller)
             }
-            .onAppear
+            /*.onAppear
             {
                 base_workspace.perform_update()
-            }
+            }*/
         }
     }
 }

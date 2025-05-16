@@ -15,13 +15,13 @@ struct StatisticsView: View
     @Binding var get_statistics: Bool
     @Binding var charts_data: [WorkspaceObjectChart]?
     @Binding var states_data: [StateItem]?
+    @Binding var update_interval: TimeInterval
+    @Binding var scope_type: ScopeType
     
     // Picker data for chart view
     @State private var stats_selection = 0
     
-    @State private var update_scope_selection = 0
     @State private var update_interval_view_presented = false
-    @State var update_time_interval: TimeInterval = 1.0 //!
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -30,12 +30,25 @@ struct StatisticsView: View
     var clear_states_data: () -> Void
     var update_file_data: () -> Void
     
-    public init(is_presented: Binding<Bool>, get_statistics: Binding<Bool>, charts_data: Binding<[WorkspaceObjectChart]?>, states_data: Binding<[StateItem]?>, clear_chart_data: @escaping () -> Void, clear_states_data: @escaping () -> Void, update_file_data: @escaping () -> Void)
+    public init(
+        is_presented: Binding<Bool>,
+        get_statistics: Binding<Bool>,
+        charts_data: Binding<[WorkspaceObjectChart]?>,
+        states_data: Binding<[StateItem]?>,
+        scope_type: Binding<ScopeType>,
+        update_interval: Binding<TimeInterval>,
+        clear_chart_data: @escaping () -> Void,
+        clear_states_data: @escaping () -> Void,
+        update_file_data: @escaping () -> Void
+    )
     {
         self._is_presented = is_presented
         self._get_statistics = get_statistics
         self._charts_data = charts_data
         self._states_data = states_data
+        self._update_interval = update_interval
+        self._scope_type = scope_type
+        
         self.clear_chart_data = clear_chart_data
         self.clear_states_data = clear_states_data
         self.update_file_data = update_file_data
@@ -85,16 +98,22 @@ struct StatisticsView: View
                 #endif
                 .padding(.trailing)
                 
-                Picker(selection: $update_scope_selection, label: Text("Update"))
+                Picker(selection: $scope_type, label: Text("Update type"))
                 {
-                    Text("Constantly").tag(0)
-                    Text("If selected").tag(1)
+                    ForEach(ScopeType.allCases, id: \.self)
+                    { scope_type in
+                        Text(scope_type.rawValue).tag(scope_type)
+                    }
+                }
+                .onChange(of: scope_type)
+                { _, _ in
+                    update_file_data()
                 }
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity)
-                .modifier(PickerBorderer())
                 #if !os(macOS)
-                .modifier(PickerLabelModifier(text: "Update"))
+                .modifier(PickerBorderer())
+                .modifier(PickerLabelModifier(text: "Update type"))
                 #endif
                 .padding(.trailing)
                 
@@ -102,12 +121,16 @@ struct StatisticsView: View
                 {
                     Text("Interval")//, systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
                 }
+                .onChange(of: update_interval)
+                { _, _ in
+                    update_file_data()
+                }
                 #if os(iOS)
                 .modifier(ButtonBorderer())
                 #endif
                 .popover(isPresented: $update_interval_view_presented)
                 {
-                    UpdateIntervalView(is_presented: $update_interval_view_presented, time_interval: $update_time_interval)
+                    UpdateIntervalView(is_presented: $update_interval_view_presented, time_interval: $update_interval)
                 }
             }
             .controlSize(.regular)
@@ -245,8 +268,24 @@ struct StatisticsView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        StatisticsView(is_presented: .constant(true), get_statistics: .constant(true), charts_data: .constant([WorkspaceObjectChart(name: "Chart 1", style: .line), WorkspaceObjectChart(name: "Chart 2", style: .line)]), states_data: .constant([
-            StateItem(name: "Temperature", image: "thermometer", children: [StateItem(name: "Base", value: "70º"), StateItem(name: "Electrode", value: "150º")])]), clear_chart_data: {}, clear_states_data: {}, update_file_data: {})
-            .environmentObject(Workspace())
+        StatisticsView(
+            is_presented: .constant(true),
+            get_statistics: .constant(true),
+            charts_data: .constant([
+                    WorkspaceObjectChart(name: "Chart 1", style: .line),
+                    WorkspaceObjectChart(name: "Chart 2", style: .line)
+            ]),
+            states_data: .constant([
+                StateItem(name: "Temperature", image: "thermometer", children: [
+                    StateItem(name: "Base", value: "70º"), StateItem(name: "Electrode", value: "150º")
+                ])
+            ]),
+            scope_type: .constant(.selected),
+            update_interval: .constant(10),
+            clear_chart_data: {},
+            clear_states_data: {},
+            update_file_data: {}
+        )
+        .environmentObject(Workspace())
     }
 }

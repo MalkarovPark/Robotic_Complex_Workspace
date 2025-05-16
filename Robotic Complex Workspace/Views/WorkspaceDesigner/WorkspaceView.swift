@@ -115,7 +115,17 @@ struct WorkspaceView: View
                 }
                 .sheet(isPresented: $statistics_view_presented)
                 {
-                    /*StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: base_workspace.selected_robot.charts_binding(), states_data: base_workspace.selected_robot.states_binding(), clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_states_data: base_workspace.selected_robot.clear_states_data, update_file_data: { document_handler.document_update_robots() })
+                    /*StatisticsView(
+                        is_presented: $statistics_view_presented,
+                        get_statistics: $base_workspace.selected_robot.get_statistics,
+                        charts_data: base_workspace.selected_robot.charts_binding(),
+                        states_data: base_workspace.selected_robot.states_binding(),
+                        scope_type: $base_workspace.selected_robot.scope_type,
+                        update_interval: $base_workspace.selected_robot.update_interval,
+                        clear_chart_data: { base_workspace.selected_robot.clear_chart_data() },
+                        clear_states_data: base_workspace.selected_robot.clear_states_data,
+                        update_file_data: { document_handler.document_update_robots() }
+                    )
                     #if os(visionOS)
                         .frame(width: 512, height: 512)
                     #endif*/

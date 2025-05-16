@@ -84,6 +84,8 @@ struct RobotView: View
             #endif
             
             base_workspace.selected_robot.clear_finish_handler()
+            base_workspace.selected_robot.perform_update()
+            
             if base_workspace.selected_robot.programs_count > 0
             {
                 base_workspace.selected_robot.select_program(index: 0)
@@ -118,7 +120,17 @@ struct RobotView: View
                 }
                 .sheet(isPresented: $statistics_view_presented)
                 {
-                    StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_robot.get_statistics, charts_data: base_workspace.selected_robot.charts_binding(), states_data: base_workspace.selected_robot.states_binding(), clear_chart_data: { base_workspace.selected_robot.clear_chart_data() }, clear_states_data: base_workspace.selected_robot.clear_states_data, update_file_data: { document_handler.document_update_robots() })
+                    StatisticsView(
+                        is_presented: $statistics_view_presented,
+                        get_statistics: $base_workspace.selected_robot.get_statistics,
+                        charts_data: base_workspace.selected_robot.charts_binding(),
+                        states_data: base_workspace.selected_robot.states_binding(),
+                        scope_type: $base_workspace.selected_robot.scope_type,
+                        update_interval: $base_workspace.selected_robot.update_interval,
+                        clear_chart_data: { base_workspace.selected_robot.clear_chart_data() },
+                        clear_states_data: base_workspace.selected_robot.clear_states_data,
+                        update_file_data: { document_handler.document_update_robots() }
+                    )
                     #if os(visionOS)
                         .frame(width: 512, height: 512)
                     #endif
@@ -150,7 +162,8 @@ struct RobotView: View
     
     private func close_view()
     {
-        base_workspace.selected_robot.reset_moving()
+        //base_workspace.selected_robot.reset_moving()
+        base_workspace.selected_robot.disable_update()
         #if os(visionOS)
         if sidebar_controller.sidebar_selection != .WorkspaceView
         {

@@ -115,7 +115,17 @@ struct ToolView: View
                 }
                 .sheet(isPresented: $statistics_view_presented)
                 {
-                    StatisticsView(is_presented: $statistics_view_presented, get_statistics: $base_workspace.selected_tool.get_statistics, charts_data: base_workspace.selected_tool.charts_binding(), states_data: base_workspace.selected_tool.states_binding(), clear_chart_data: { base_workspace.selected_tool.clear_chart_data() }, clear_states_data: base_workspace.selected_tool.clear_states_data, update_file_data: { document_handler.document_update_tools() })
+                    StatisticsView(
+                        is_presented: $statistics_view_presented,
+                        get_statistics: $base_workspace.selected_tool.get_statistics,
+                        charts_data: base_workspace.selected_tool.charts_binding(),
+                        states_data: base_workspace.selected_tool.states_binding(),
+                        scope_type: $base_workspace.selected_tool.scope_type,
+                        update_interval: $base_workspace.selected_tool.update_interval,
+                        clear_chart_data: { base_workspace.selected_tool.clear_chart_data() },
+                        clear_states_data: base_workspace.selected_tool.clear_states_data,
+                        update_file_data: { document_handler.document_update_tools() }
+                    )
                     #if os(visionOS)
                         .frame(width: 512, height: 512)
                     #endif
@@ -146,6 +156,7 @@ struct ToolView: View
         .onAppear
         {
             app_state.preview_update_scene = true
+            base_workspace.selected_tool.perform_update()
             
             if tool.codes.count > 0
             {
@@ -160,7 +171,8 @@ struct ToolView: View
     
     private func close_view()
     {
-        base_workspace.selected_tool.reset_performing()
+        //base_workspace.selected_tool.reset_performing()
+        base_workspace.selected_tool.disable_update()
         #if os(visionOS)
         if sidebar_controller.sidebar_selection != .WorkspaceView
         {
