@@ -254,7 +254,7 @@ struct UpdateIntervalView: View
                 .textFieldStyle(.roundedBorder)
             #endif
             
-            Stepper("Time", value: $time_interval, in: 0.1...60, step: 0.1)
+            Stepper("Time", value: $time_interval, in: 0.1...60, step: 0.01)
                 .labelsHidden()
         }
         .padding()
