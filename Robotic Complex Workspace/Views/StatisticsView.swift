@@ -23,6 +23,10 @@ struct StatisticsView: View
     
     @State private var update_interval_view_presented = false
     
+    // View update handling
+    @State private var diagram_updated = false
+    @State private var diagram_update_task: Task<Void, Never>?
+    
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
@@ -189,6 +193,18 @@ struct StatisticsView: View
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         #endif
+        .onAppear()
+        {
+            perform_update()
+        }
+        .onDisappear()
+        {
+            disable_update()
+        }
+        .onChange(of: charts_data)
+        { oldValue, newValue in
+            base_workspace.update_view()
+        }
     }
     
     private func clear_chart_view()
@@ -208,6 +224,35 @@ struct StatisticsView: View
     private func caption_text() -> String
     {
         return "Statistics"
+    }
+    
+    private func perform_update(interval: Double = 0.001)
+    {
+        diagram_updated = true
+        
+        diagram_update_task = Task
+        {
+            while diagram_updated
+            {
+                try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+                await MainActor.run
+                {
+                    base_workspace.update_view()
+                }
+                
+                if diagram_update_task == nil
+                {
+                    return
+                }
+            }
+        }
+    }
+    
+    private func disable_update()
+    {
+        diagram_updated = false
+        diagram_update_task?.cancel()
+        diagram_update_task = nil
     }
 }
 
