@@ -64,7 +64,7 @@ struct StatisticsView: View
         {
             if stats_selection == 0
             {
-                if get_statistics && charts_data?.count ?? 0 > 0
+                if charts_data?.count ?? 0 > 0
                 {
                     ChartsView(charts_data: $charts_data)
                 }
@@ -75,7 +75,7 @@ struct StatisticsView: View
             }
             else
             {
-                if get_statistics && states_data?.count ?? 0 > 0
+                if states_data?.count ?? 0 > 0
                 {
                     StateView(states_data: $states_data)
                 }
@@ -111,7 +111,9 @@ struct StatisticsView: View
                 }
                 .onChange(of: scope_type)
                 { _, _ in
+                    //disable_update()
                     update_file_data()
+                    //perform_update()
                 }
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity)
@@ -142,7 +144,7 @@ struct StatisticsView: View
             
             HStack(spacing: 0)
             {
-                Button(role: .destructive, action: clear_chart_view)
+                Button(role: .destructive, action: clear_statistics_view)
                 {
                     Image(systemName: "eraser")
                 }
@@ -201,13 +203,13 @@ struct StatisticsView: View
         {
             disable_update()
         }
-        .onChange(of: charts_data)
-        { oldValue, newValue in
+        /*.onChange(of: charts_data)
+        { _, _ in
             base_workspace.update_view()
-        }
+        }*/
     }
     
-    private func clear_chart_view()
+    private func clear_statistics_view()
     {
         if stats_selection == 0
         {
