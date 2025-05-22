@@ -93,8 +93,17 @@ struct StatisticsView: View
                 }
                 .toggleStyle(.switch)
                 .onChange(of: get_statistics)
-                { _, _ in
+                { _, new_value in
                     update_file_data()
+                    
+                    if new_value
+                    {
+                        perform_update()
+                    }
+                    else
+                    {
+                        disable_update()
+                    }
                 }
                 #if !os(macOS)
                 .tint(.accentColor)
@@ -102,7 +111,7 @@ struct StatisticsView: View
                 #endif
                 .padding(.trailing)
                 
-                Picker(selection: $scope_type, label: Text("Update type"))
+                Picker(selection: $scope_type, label: Text("Scope"))
                 {
                     ForEach(ScopeType.allCases, id: \.self)
                     { scope_type in
@@ -119,13 +128,25 @@ struct StatisticsView: View
                 .frame(maxWidth: .infinity)
                 #if !os(macOS)
                 .modifier(PickerBorderer())
-                .modifier(PickerLabelModifier(text: "Update type"))
+                .modifier(PickerLabelModifier(text: "Scope"))
                 #endif
                 .padding(.trailing)
+                .disabled(get_statistics)
+                /*.onHover
+                { hovered in
+                    if hovered
+                    {
+                        disable_update()
+                    }
+                    else
+                    {
+                        perform_update()
+                    }
+                }*/
                 
                 Button(action: { update_interval_view_presented = true })
                 {
-                    Text("Interval")//, systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
+                    Text("Update Interval")//, systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
                 }
                 .onChange(of: update_interval)
                 { _, _ in
@@ -197,16 +218,15 @@ struct StatisticsView: View
         #endif
         .onAppear()
         {
-            perform_update()
+            if get_statistics
+            {
+                perform_update()
+            }
         }
         .onDisappear()
         {
             disable_update()
         }
-        /*.onChange(of: charts_data)
-        { _, _ in
-            base_workspace.update_view()
-        }*/
     }
     
     private func clear_statistics_view()
@@ -282,6 +302,8 @@ struct UpdateIntervalView: View
     {
         HStack
         {
+            Text("sec")
+            
             TextField("Time", text: Binding(
                 get:
                     {
@@ -301,7 +323,7 @@ struct UpdateIntervalView: View
                 .textFieldStyle(.roundedBorder)
             #endif
             
-            Stepper("Time", value: $time_interval, in: 0.1...60, step: 0.01)
+            Stepper("Time", value: $time_interval, in: 0.01...60, step: 0.01)
                 .labelsHidden()
         }
         .padding()
@@ -334,5 +356,6 @@ struct StatisticsView_Previews: PreviewProvider
             update_file_data: {}
         )
         .environmentObject(Workspace())
+        .environmentObject(AppState())
     }
 }
