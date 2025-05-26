@@ -556,14 +556,46 @@ private struct ProgramComponentsManagerView: View
 {
     let module_type: ModuleType
     
+    private var restart_all: () -> Void
+    private var stop_all: () -> Void
+    
+    // View update handling
+    //@State private var update_toggle = false
+    //var timer = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+    
     public init(module_type: ModuleType)
     {
         self.module_type = module_type
+        
+        switch module_type
+        {
+        case .robot:
+            restart_all = {
+                Robot.external_modules_servers_stop()
+                Robot.external_modules_servers_start()
+            }
+            stop_all = Robot.external_modules_servers_stop
+        case .tool:
+            restart_all = {
+                Tool.external_modules_servers_stop()
+                Tool.external_modules_servers_start()
+            }
+            stop_all = Tool.external_modules_servers_stop
+        case .part:
+            restart_all = {}
+            stop_all = {}
+        case .changer:
+            restart_all = {
+                Changer.external_modules_servers_stop()
+                Changer.external_modules_servers_start()
+            }
+            stop_all = Changer.external_modules_servers_stop
+        }
     }
     
     var body: some View
     {
-        VStack
+        VStack(spacing: 0)
         {
             List
             {
@@ -572,8 +604,26 @@ private struct ProgramComponentsManagerView: View
                     ProgramComponentGroupView(module: $0)
                 }
             }
-            .backgroundStyle(.thinMaterial)
+            .modifier(ListBorderer())
+            .padding(.bottom)
+            
+            HStack(spacing: 0)
+            {
+                Spacer()
+                
+                Button(action: restart_all)
+                {
+                    Text("Restart All")
+                }
+                .padding(.trailing)
+                
+                Button(action: stop_all)
+                {
+                    Text("Stop All")
+                }
+            }
         }
+        .padding()
     }
 }
 
