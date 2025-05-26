@@ -32,6 +32,7 @@
 		62398C8A2BF2A42C001A5B8A /* ToolInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C892BF2A42C001A5B8A /* ToolInspectorView.swift */; platformFilters = (ios, macos, ); };
 		62398C8E2BF2A70D001A5B8A /* PartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62398C8D2BF2A70D001A5B8A /* PartView.swift */; };
 		623E72142D04316300A1FC25 /* SpatialWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E165E82B20C6E8005E318A /* SpatialWorkspaceView.swift */; platformFilters = (xros, ); };
+		62507A882DE1B66D000D511D /* WorkspaceStatisticView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62507A872DE1B66D000D511D /* WorkspaceStatisticView.swift */; };
 		6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */; };
 		626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 626EF85D2AD3493900F2A361 /* IndustrialKit */; };
 		627C25502C9DA7660087D777 /* AddObjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627C254F2C9DA7660087D777 /* AddObjectView.swift */; };
@@ -70,6 +71,7 @@
 		62398C872BF2A3B1001A5B8A /* ToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolView.swift; sourceTree = "<group>"; };
 		62398C892BF2A42C001A5B8A /* ToolInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolInspectorView.swift; sourceTree = "<group>"; };
 		62398C8D2BF2A70D001A5B8A /* PartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartView.swift; sourceTree = "<group>"; };
+		62507A872DE1B66D000D511D /* WorkspaceStatisticView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStatisticView.swift; sourceTree = "<group>"; };
 		6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentUpdateHandler.swift; sourceTree = "<group>"; };
 		627C254F2C9DA7660087D777 /* AddObjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddObjectView.swift; sourceTree = "<group>"; };
 		627D3E9A2AD34A7600D5988D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */,
 				62E165E32B20C336005E318A /* WorkspaceViews */,
 				6236F9532AD345C4008FA7C4 /* ControlProgramView.swift */,
+				62507A872DE1B66D000D511D /* WorkspaceStatisticView.swift */,
 			);
 			path = WorkspaceDesigner;
 			sourceTree = "<group>";
@@ -317,6 +320,7 @@
 				6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */,
 				6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */,
 				62398C8E2BF2A70D001A5B8A /* PartView.swift in Sources */,
+				62507A882DE1B66D000D511D /* WorkspaceStatisticView.swift in Sources */,
 				62398C822BF29FDB001A5B8A /* RobotInspectorView.swift in Sources */,
 				62398C842BF2A0D9001A5B8A /* RobotView.swift in Sources */,
 				6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */,

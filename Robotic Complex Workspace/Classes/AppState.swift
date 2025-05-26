@@ -10,7 +10,7 @@ import SceneKit
 import SwiftUI
 import IndustrialKit
 
-//MARK: - Class for work with various application data
+// MARK: - Class for work with various application data
 class AppState: ObservableObject
 {
     // Commands
@@ -384,7 +384,7 @@ class AppState: ObservableObject
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
 }
 
-//MARK: - Control modifier
+// MARK: - Control modifier
 struct MenuHandlingModifier: ViewModifier
 {
     @EnvironmentObject var app_state: AppState

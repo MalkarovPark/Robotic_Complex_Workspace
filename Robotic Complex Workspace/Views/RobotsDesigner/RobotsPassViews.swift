@@ -83,7 +83,7 @@ struct PassPreferencesView: View
     }
 }
 
-//MARK: Pass programs view
+// MARK: Pass programs view
 struct PassProgramsView: View
 {
     @Binding var is_presented: Bool
@@ -156,7 +156,7 @@ struct PassProgramsView: View
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     PassPreferencesView(is_presented: .constant(true))

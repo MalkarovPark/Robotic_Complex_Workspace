@@ -61,7 +61,7 @@ struct SettingsView: View
     }
 }
 
-//MARK: - Settings view with tab bar
+// MARK: - Settings view with tab bar
 struct GeneralSettingsView: View
 {
     @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
@@ -106,24 +106,6 @@ struct GeneralSettingsView: View
                         .padding(4)
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
-                    
-                    /*Divider()
-                    
-                    VStack(spacing: 4)
-                    {
-                        HStack
-                        {
-                            Text("Store robots previews")
-                            
-                            Spacer()
-                            
-                            Toggle("Visual", isOn: .constant(true))
-                                .toggleStyle(.switch)
-                                .labelsHidden()
-                        }
-                        .padding(4)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity)*/
                 }
                 .padding(.bottom)
                 
@@ -197,12 +179,18 @@ struct GeneralSettingsView: View
     }
 }
 
-//MARK: - Modules settings view
+// MARK: - Modules settings view
 struct ModulesSettingsView: View
 {
     @EnvironmentObject var app_state: AppState
     
     @State private var folder_picker_is_presented: Bool = false
+    
+    #if os(macOS)
+    @State private var pcm_view_presented: [Bool] = [false, false, false, false]
+    
+    @State private var pcm_view_hovered: [Bool] = [false, false, false, false]
+    #endif
     
     var body: some View
     {
@@ -218,24 +206,76 @@ struct ModulesSettingsView: View
                     {
                         HStack
                         {
-                            VStack
+                            Button(action: { pcm_view_presented[0] = true })
                             {
-                                Text("\(app_state.external_modules_list.robot.count)")
-                                    .foregroundColor(.secondary)
-                                Text("Robot")
-                                    .foregroundColor(.secondary)
+                                VStack
+                                {
+                                    Text("\(app_state.external_modules_list.robot.count)")
+                                        .foregroundColor(.secondary)
+                                    Text("Robot")
+                                        .foregroundColor(.secondary)
+                                }
+                                .overlay(alignment: .topTrailing)
+                                {
+                                    if pcm_view_hovered[0]
+                                    {
+                                        Image(systemName: "chevron.forward")
+                                            .imageScale(.small)
+                                            .foregroundStyle(.tertiary)
+                                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                    }
+                                }
                             }
+                            .buttonStyle(.plain)
                             .frame(width: 64)
+                            .onHover
+                            { hovered in
+                                withAnimation
+                                {
+                                    pcm_view_hovered[0] = hovered
+                                }
+                            }
+                            .popover(isPresented: $pcm_view_presented[0], arrowEdge: .trailing)
+                            {
+                                ProgramComponentsManagerView(module_type: .robot)
+                                    .frame(width: 256, height: 384)
+                            }
                             .help(app_state.external_robot_modules_names)
                             
-                            VStack
+                            Button(action: { pcm_view_presented[1] = true })
                             {
-                                Text("\(app_state.external_modules_list.tool.count)")
-                                    .foregroundColor(.secondary)
-                                Text("Tool")
-                                    .foregroundColor(.secondary)
+                                VStack
+                                {
+                                    Text("\(app_state.external_modules_list.tool.count)")
+                                        .foregroundColor(.secondary)
+                                    Text("Tool")
+                                        .foregroundColor(.secondary)
+                                }
+                                .overlay(alignment: .topTrailing)
+                                {
+                                    if pcm_view_hovered[1]
+                                    {
+                                        Image(systemName: "chevron.forward")
+                                            .imageScale(.small)
+                                            .foregroundStyle(.tertiary)
+                                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                    }
+                                }
                             }
+                            .buttonStyle(.plain)
                             .frame(width: 64)
+                            .onHover
+                            { hovered in
+                                withAnimation
+                                {
+                                    pcm_view_hovered[1] = hovered
+                                }
+                            }
+                            .popover(isPresented: $pcm_view_presented[1], arrowEdge: .trailing)
+                            {
+                                ProgramComponentsManagerView(module_type: .tool)
+                                    .frame(width: 256, height: 384)
+                            }
                             .help(app_state.external_tool_modules_names)
                             
                             VStack
@@ -248,14 +288,40 @@ struct ModulesSettingsView: View
                             .frame(width: 64)
                             .help(app_state.external_part_modules_names)
                             
-                            VStack
+                            Button(action: { pcm_view_presented[3] = true })
                             {
-                                Text("\(app_state.external_modules_list.changer.count)")
-                                    .foregroundColor(.secondary)
-                                Text("Changer")
-                                    .foregroundColor(.secondary)
+                                VStack
+                                {
+                                    Text("\(app_state.external_modules_list.changer.count)")
+                                        .foregroundColor(.secondary)
+                                    Text("Changer")
+                                        .foregroundColor(.secondary)
+                                }
+                                .overlay(alignment: .topTrailing)
+                                {
+                                    if pcm_view_hovered[3]
+                                    {
+                                        Image(systemName: "chevron.forward")
+                                            .imageScale(.small)
+                                            .foregroundStyle(.tertiary)
+                                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                    }
+                                }
                             }
+                            .buttonStyle(.plain)
                             .frame(width: 64)
+                            .onHover
+                            { hovered in
+                                withAnimation
+                                {
+                                    pcm_view_hovered[3] = hovered
+                                }
+                            }
+                            .popover(isPresented: $pcm_view_presented[3], arrowEdge: .trailing)
+                            {
+                                ProgramComponentsManagerView(module_type: .changer)
+                                    .frame(width: 256, height: 384)
+                            }
                             .help(app_state.external_changer_modules_names)
                         }
                         .padding(4)
@@ -485,7 +551,213 @@ struct ModulesSettingsView: View
     }
 }
 
-//MARK: - Advanced settings view
+#if os(macOS)
+private struct ProgramComponentsManagerView: View
+{
+    let module_type: ModuleType
+    
+    public init(module_type: ModuleType)
+    {
+        self.module_type = module_type
+    }
+    
+    var body: some View
+    {
+        VStack
+        {
+            List
+            {
+                ForEach(module_type.modules, id: \.name)
+                {
+                    ProgramComponentGroupView(module: $0)
+                }
+            }
+            .backgroundStyle(.thinMaterial)
+        }
+    }
+}
+
+private struct ProgramComponentGroupView: View
+{
+    let module: (name: String, url: URL, paths: [(file: String, socket: String)])
+    
+    @State private var is_expanded = false
+    
+    var body: some View
+    {
+        DisclosureGroup(isExpanded: $is_expanded)
+        {
+            ForEach(module.paths, id: \.file)
+            { paths in
+                ProgramComponentItemView(name: paths.file, url: module.url, sockets_paths: [paths.socket], file_paths: [paths.file])
+            }
+        }
+        label:
+        {
+            ProgramComponentItemView(name: module.name, url: module.url, sockets_paths: module.paths.map { $0.socket }, file_paths: module.paths.map { $0.file })
+        }
+    }
+}
+
+private struct ProgramComponentItemView: View
+{
+    let name: String
+    
+    let url: URL
+    
+    let sockets_paths: [String]
+    let file_paths: [String]
+    
+    @State private var control_items_presented = false
+    
+    var body: some View
+    {
+        HStack(spacing: 4)
+        {
+            Text(name)
+            
+            Spacer()
+            
+            if control_items_presented
+            {
+                Button(action: {
+                    stop_processes()
+                    start_processes()
+                })
+                {
+                    Image(systemName: "arrow.counterclockwise.circle.fill")
+                }
+                .buttonStyle(.plain)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                
+                Button(action: stop_processes)
+                {
+                    Image(systemName: "xmark.circle.fill")
+                }
+                .buttonStyle(.plain)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+            }
+            
+            Image(systemName: "circle.fill")
+                .foregroundColor(process_state.color)
+        }
+        .onHover
+        { hovered in
+            withAnimation
+            {
+                control_items_presented = hovered
+            }
+        }
+    }
+    
+    private var process_state: ProcessState
+    {
+        let existing = sockets_paths.filter
+        {
+            is_socket_active(at: $0)
+        }
+        
+        if existing.count == sockets_paths.count
+        {
+            return .running
+        }
+        else if existing.isEmpty
+        {
+            return .stopped
+        }
+        else
+        {
+            return .partially
+        }
+    }
+    
+    private func stop_processes()
+    {
+        for socket_path in sockets_paths
+        {
+            if is_socket_active(at: socket_path)
+            {
+                send_via_unix_socket(at: socket_path, command: "stop")
+            }
+        }
+    }
+    
+    private func start_processes()
+    {
+        for (socket_path, file_path) in zip(sockets_paths, file_paths)
+        {
+            if !is_socket_active(at: socket_path)
+            {
+                perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
+            }
+        }
+    }
+    
+    enum ProcessState: String, CaseIterable
+    {
+        case stopped
+        case running
+        case partially
+        
+        var color: Color
+        {
+            switch self
+            {
+            case .stopped:
+                .gray
+            case .running:
+                .green
+            case .partially:
+                .yellow
+            }
+        }
+    }
+}
+
+enum ModuleType: Hashable
+{
+    case robot
+    case tool
+    case part
+    case changer
+    
+    var modules: [
+        (
+            name: String,
+            url: URL,
+            paths: [(file: String, socket: String)]
+        )
+    ]
+    {
+        var modules = [(name: String, url: URL, paths: [(file: String, socket: String)])]()
+        
+        switch self
+        {
+        case .robot:
+            for external_module in Robot.external_modules
+            {
+                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_components_paths))
+            }
+        case .tool:
+            for external_module in Tool.external_modules
+            {
+                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_components_paths))
+            }
+        case .part:
+            return modules
+        case .changer:
+            for external_module in Changer.external_modules
+            {
+                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_components_paths))
+            }
+        }
+        
+        return modules
+    }
+}
+#endif
+
+// MARK: - Advanced settings view
 struct CellSettingsView: View
 {
     // Default robot origin location properties from user defaults
@@ -709,7 +981,7 @@ struct CellSettingsView: View
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 struct SettingsView_Previews: PreviewProvider
 {
     static var previews: some View
@@ -718,6 +990,9 @@ struct SettingsView_Previews: PreviewProvider
         {
             #if os(macOS)
             SettingsView()
+                .environmentObject(AppState())
+            
+            ProgramComponentsManagerView(module_type: .robot)
                 .environmentObject(AppState())
             #else
             SettingsView(setting_view_presented: .constant(true))

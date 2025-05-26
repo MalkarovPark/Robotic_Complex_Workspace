@@ -45,7 +45,7 @@ enum navigation_item: Int, Hashable, CaseIterable, Identifiable
     }
 }
 
-//MARK: - Sidebar view and content
+// MARK: - Sidebar view and content
 struct WorkspaceNavigationView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
@@ -187,7 +187,7 @@ struct WorkspaceNavigationView: View
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     WorkspaceNavigationView(document: .constant(Robotic_Complex_WorkspaceDocument()))

@@ -314,6 +314,7 @@ struct OperationDropDelegate: DropDelegate
         {
             let from = points.firstIndex(of: dragged_point)!
             let to = points.firstIndex(of: point)!
+            
             withAnimation(.default)
             {
                 self.points.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
@@ -322,7 +323,7 @@ struct OperationDropDelegate: DropDelegate
     }
 }
 
-//MARK: Position parameter view
+// MARK: Position parameter view
 struct OperationParameterView: View
 {
     @Binding var position_parameter_view_presented: Bool
@@ -370,7 +371,7 @@ struct OperationParameterView: View
     }
 }
 
-//MARK: - Position item view for list
+// MARK: - Position item view for list
 struct OperationItemView: View
 {
     @Binding var codes: [OperationCode]
@@ -440,7 +441,7 @@ struct OperationItemView: View
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     ToolInspectorView(tool: .constant(Tool()))

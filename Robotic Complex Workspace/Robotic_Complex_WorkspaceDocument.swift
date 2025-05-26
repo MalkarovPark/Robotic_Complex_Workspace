@@ -9,13 +9,13 @@ import SwiftUI
 import UniformTypeIdentifiers
 import IndustrialKit
 
-//MARK: - Extension info
+// MARK: - Extension info
 extension UTType
 {
     static let workspace_preset_document = UTType(exportedAs: "celadon.RoboticComplexWorkspace.preset")
 }
 
-//MARK: - Preset file document structure
+// MARK: - Preset file document structure
 struct Robotic_Complex_WorkspaceDocument: FileDocument
 {
     var preset: WorkspacePreset

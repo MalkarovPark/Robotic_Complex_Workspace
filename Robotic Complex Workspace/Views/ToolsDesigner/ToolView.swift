@@ -213,7 +213,7 @@ struct ToolView: View
     }
 }
 
-//MARK: - Scene views
+// MARK: - Scene views
 struct ToolSceneView: View
 {
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
@@ -276,7 +276,7 @@ struct ToolSceneView: View
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     ToolView(tool: .constant(Tool()))

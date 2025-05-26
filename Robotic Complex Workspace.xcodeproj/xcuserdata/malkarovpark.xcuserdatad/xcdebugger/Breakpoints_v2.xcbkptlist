@@ -1532,8 +1532,8 @@
             filePath = "Robotic Complex Workspace/Views/SettingsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "460"
-            endingLineNumber = "460"
+            startingLineNumber = "526"
+            endingLineNumber = "526"
             landmarkName = "ModulesSettingsView"
             landmarkType = "14">
          </BreakpointContent>
@@ -1962,8 +1962,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1247"
             endingLineNumber = "1247"
-            landmarkName = "inspector_point_color(point:)"
-            landmarkType = "7">
+            landmarkName = "Robot"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1978,8 +1978,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1224"
             endingLineNumber = "1224"
-            landmarkName = "Robot"
-            landmarkType = "3">
+            landmarkName = "clear_states_data()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1994,8 +1994,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1248"
             endingLineNumber = "1248"
-            landmarkName = "inspector_point_color(point:)"
-            landmarkType = "7">
+            landmarkName = "Robot"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2282,8 +2282,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "207"
             endingLineNumber = "207"
-            landmarkName = "encode(to:)"
-            landmarkType = "7">
+            landmarkName = "IndustrialModule"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2298,8 +2298,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "218"
             endingLineNumber = "218"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "CodingKeys"
+            landmarkType = "13">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2314,8 +2314,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "219"
             endingLineNumber = "219"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "CodingKeys"
+            landmarkType = "13">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2970,8 +2970,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "188"
             endingLineNumber = "188"
-            landmarkName = "IndustrialModule"
-            landmarkType = "3">
+            landmarkName = "no_model_node()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2986,8 +2986,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "197"
             endingLineNumber = "197"
-            landmarkName = "init(from:)"
-            landmarkType = "7">
+            landmarkName = "IndustrialModule"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3114,8 +3114,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "867"
             endingLineNumber = "867"
-            landmarkName = "Robot"
-            landmarkType = "3">
+            landmarkName = "workcell_connect(scene:name:connect_camera:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3938,8 +3938,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "704"
             endingLineNumber = "704"
-            landmarkName = "Robot"
-            landmarkType = "3">
+            landmarkName = "sync_model_controller_parameters()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4290,7 +4290,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "609"
             endingLineNumber = "609"
-            landmarkName = "string_to_codable(from:)"
+            landmarkName = "string_to_action(from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4882,7 +4882,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "397"
             endingLineNumber = "397"
-            landmarkName = "send_via_unix_socket(at:command:completion:)"
+            landmarkName = "send_via_unix_socket(at:command:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4890,7 +4890,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E846C9C7-A9BE-41FD-8C7F-A6F7BE5FA0FF"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/Functions.swift"
@@ -4898,7 +4898,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "683"
             endingLineNumber = "683"
-            landmarkName = "string_to_action(from:)"
+            landmarkName = "set_position(for:from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4930,8 +4930,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "666"
             endingLineNumber = "666"
-            landmarkName = "string_to_action(from:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4946,7 +4946,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "562"
             endingLineNumber = "562"
-            landmarkName = "send_via_unix_socket(at:command:)"
+            landmarkName = "string_to_action(from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4962,8 +4962,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "574"
             endingLineNumber = "574"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "string_to_action(from:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4978,8 +4978,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "621"
             endingLineNumber = "621"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "string_to_action(from:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -5442,7 +5442,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "393"
             endingLineNumber = "393"
-            landmarkName = "send_via_unix_socket(at:command:completion:)"
+            landmarkName = "send_via_unix_socket(at:command:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5458,7 +5458,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "425"
             endingLineNumber = "425"
-            landmarkName = "send_via_unix_socket(at:command:completion:)"
+            landmarkName = "send_via_unix_socket(at:command:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5490,7 +5490,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "420"
             endingLineNumber = "420"
-            landmarkName = "send_via_unix_socket(at:command:completion:)"
+            landmarkName = "send_via_unix_socket(at:command:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5650,8 +5650,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "217"
             endingLineNumber = "217"
-            landmarkName = "start_program_components()"
-            landmarkType = "7">
+            landmarkName = "RobotModule"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -5714,8 +5714,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "216"
             endingLineNumber = "216"
-            landmarkName = "start_program_components()"
-            landmarkType = "7">
+            landmarkName = "RobotModule"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6050,8 +6050,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1359"
             endingLineNumber = "1359"
-            landmarkName = "init(from:)"
-            landmarkType = "7">
+            landmarkName = "Robot"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6082,7 +6082,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "707"
             endingLineNumber = "707"
-            landmarkName = "string_to_action(from:)"
+            landmarkName = "set_position(for:from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6114,8 +6114,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "223"
             endingLineNumber = "223"
-            landmarkName = "stop_program_components()"
-            landmarkType = "7">
+            landmarkName = "RobotModule"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6466,7 +6466,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "575"
             endingLineNumber = "575"
-            landmarkName = "send_via_unix_socket(at:with:)"
+            landmarkName = "string_to_action(from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

@@ -154,7 +154,7 @@ struct PartsView: View
     }
 }
 
-//MARK: - Parts card view
+// MARK: - Parts card view
 struct PartCardView: View
 {
     @State var part_item: Part
@@ -211,7 +211,7 @@ struct PartCardView: View
     }
 }
 
-//MARK: - Drag and Drop delegate
+// MARK: - Drag and Drop delegate
 struct PartDropDelegate : DropDelegate
 {
     @Binding var parts : [Part]
@@ -240,6 +240,7 @@ struct PartDropDelegate : DropDelegate
         {
             let from = parts.firstIndex(of: dragged_part) ?? 0
             let to = parts.firstIndex(of: part) ?? 0
+            
             withAnimation(.default)
             {
                 self.parts.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
@@ -248,14 +249,14 @@ struct PartDropDelegate : DropDelegate
     }
 }
 
-//MARK: - Scene Views typealilases
+// MARK: - Scene Views typealilases
 #if os(macOS)
 typealias UIViewRepresentable = NSViewRepresentable
 typealias UITapGestureRecognizer = NSClickGestureRecognizer
 typealias UIColor = NSColor
 #endif
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     PartsView()

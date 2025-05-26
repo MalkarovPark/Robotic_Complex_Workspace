@@ -114,7 +114,7 @@ struct ToolsView: View
     }
 }
 
-//MARK: - Tools card view
+// MARK: - Tools card view
 struct ToolCardView: View
 {
     @State var tool_item: Tool
@@ -180,7 +180,7 @@ struct ToolCardView: View
     }
 }
 
-//MARK: - Drag and Drop delegate
+// MARK: - Drag and Drop delegate
 struct ToolDropDelegate : DropDelegate
 {
     @Binding var tools : [Tool]
@@ -216,7 +216,7 @@ struct ToolDropDelegate : DropDelegate
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     ToolsView()

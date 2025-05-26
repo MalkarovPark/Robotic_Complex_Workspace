@@ -193,7 +193,7 @@ struct AddProgramElementButton: View
     }
 }
 
-//MARK: - Drag and Drop delegate
+// MARK: - Drag and Drop delegate
 struct WorkspaceDropDelegate: DropDelegate
 {
     @Binding var elements: [WorkspaceProgramElement]
@@ -229,7 +229,7 @@ struct WorkspaceDropDelegate: DropDelegate
     }
 }
 
-//MARK: - Workspace program element card view
+// MARK: - Workspace program element card view
 struct ProgramElementItemView: View
 {
     @Binding var elements: [WorkspaceProgramElement]
@@ -348,7 +348,7 @@ struct ProgramElementItemView: View
     }
 }
 
-//MARK: - Add element view
+// MARK: - Add element view
 struct AddElementView: View
 {
     @Binding var add_element_view_presented: Bool
@@ -569,7 +569,7 @@ struct ElementView: View
     }
 }
 
-//MARK: - Type enums
+// MARK: - Type enums
 ///A program element type enum.
 public enum ProgramElementType: String, Codable, Equatable, CaseIterable
 {
@@ -604,7 +604,7 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
     case mark = "Mark"
 }
 
-//MARK: - Text View
+// MARK: - Text View
 struct ControlProgramTextView: View
 {
     #if !os(visionOS)
@@ -634,7 +634,7 @@ struct ControlProgramTextView: View
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 struct ControlProgramView_Previews: PreviewProvider
 {
     static var previews: some View

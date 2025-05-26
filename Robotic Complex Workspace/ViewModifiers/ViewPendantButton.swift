@@ -40,7 +40,7 @@ struct ViewPendantButton: ViewModifier
     }
 }
 #else
-//MARK: - Workspace scene views
+// MARK: - Workspace scene views
 struct ViewPendantButton: View
 {
     let operation: () -> ()

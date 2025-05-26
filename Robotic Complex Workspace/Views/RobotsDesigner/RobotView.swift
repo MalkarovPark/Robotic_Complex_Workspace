@@ -195,7 +195,7 @@ struct RobotView: View
     }
 }
 
-//MARK: - Cell scene views
+// MARK: - Cell scene views
 struct RobotSceneView: View
 {
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
@@ -427,7 +427,7 @@ struct RobotSceneView: View
     }
 }
 
-//MARK: Scale elements
+// MARK: Scale elements
 struct SpaceScaleView: View
 {
     @Binding var space_scale_view_presented: Bool
@@ -489,7 +489,7 @@ struct SpaceScaleView: View
     }
 }
 
-//MARK: Move elements
+// MARK: Move elements
 struct OriginMoveView: View
 {
     @Binding var origin_move_view_presented: Bool
@@ -551,7 +551,7 @@ struct OriginMoveView: View
     }
 }
 
-//MARK: Rotate elements
+// MARK: Rotate elements
 struct OriginRotateView: View
 {
     @Binding var origin_rotate_view_presented: Bool
@@ -621,7 +621,7 @@ let label_width = 20.0
 let label_width = 26.0
 #endif
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     RobotView(robot: Robot())

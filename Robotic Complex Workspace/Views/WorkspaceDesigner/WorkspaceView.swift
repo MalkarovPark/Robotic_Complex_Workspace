@@ -272,7 +272,7 @@ struct WorkspaceView: View
     }
 }
 
-//MARK: - Workspace scene views
+// MARK: - Workspace scene views
 struct AddInWorkspaceView: View
 {
     @State var selected_robot_name = String()
@@ -771,7 +771,7 @@ struct AddPartInWorkspaceView: View
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 struct WorkspaceView_Previews: PreviewProvider
 {
     @EnvironmentObject var base_workspace: Workspace

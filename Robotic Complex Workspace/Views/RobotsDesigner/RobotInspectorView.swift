@@ -249,7 +249,7 @@ struct PositionDropDelegate: DropDelegate
     }
 }
 
-//MARK: - Position item view for list
+// MARK: - Position item view for list
 struct PositionItemView: View
 {
     @Binding var robot: Robot
@@ -323,7 +323,7 @@ struct PositionItemView: View
     }
 }
 
-//MARK: - Position item edit view
+// MARK: - Position item edit view
 struct PositionPointView: View
 {
     @Binding var robot: Robot
@@ -488,7 +488,7 @@ struct PositionPointView: View
     }
 }
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     RobotInspectorView(robot: .constant(Robot()))

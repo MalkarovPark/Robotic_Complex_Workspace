@@ -7,7 +7,7 @@
 
 import Foundation
 
-//MARK: - Class for sidebar handling
+// MARK: - Class for sidebar handling
 class SidebarController: ObservableObject
 {
     #if os(macOS)

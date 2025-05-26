@@ -300,7 +300,7 @@ struct RobotCardView: View
     }
 }
 
-//MARK: - Drag and Drop delegate
+// MARK: - Drag and Drop delegate
 struct RobotDropDelegate : DropDelegate
 {
     @Binding var robots : [Robot]
@@ -337,7 +337,7 @@ struct RobotDropDelegate : DropDelegate
 }
 
 
-//MARK: - Previews
+// MARK: - Previews
 #Preview
 {
     RobotsView()

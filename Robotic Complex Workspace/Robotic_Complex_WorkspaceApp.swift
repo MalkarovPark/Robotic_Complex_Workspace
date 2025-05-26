@@ -129,7 +129,7 @@ struct Robotic_Complex_WorkspaceApp: App
     }
 }
 
-//MARK: - View element propeties
+// MARK: - View element propeties
 #if os(macOS)
 let toolbar_item_placement_trailing: ToolbarItemPlacement = .automatic
 let toolbar_item_placement_leading: ToolbarItemPlacement = .navigation
@@ -140,14 +140,14 @@ let toolbar_item_placement_leading: ToolbarItemPlacement = .cancellationAction
 let quaternary_label_color: Color = Color(UIColor.quaternaryLabel)
 #endif
 
-//MARK: - Arrow edge positions
+// MARK: - Arrow edge positions
 #if os(macOS)
 let default_popover_edge: Edge = .top
 #else
 let default_popover_edge: Edge = .bottom
 #endif
 
-//MARK: - Representation enum
+// MARK: - Representation enum
 public enum RepresentationType: String, Equatable, CaseIterable
 {
     case visual = "Visual"
@@ -155,7 +155,7 @@ public enum RepresentationType: String, Equatable, CaseIterable
     case spatial = "Spatial"
 }
 
-//MARK: – Scene transparency parameter
+// MARK: – Scene transparency parameter
 #if !os(visionOS)
 let is_scene_transparent = false
 #else
