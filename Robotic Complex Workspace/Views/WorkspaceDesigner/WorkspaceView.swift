@@ -115,6 +115,7 @@ struct WorkspaceView: View
                 }
                 .sheet(isPresented: $statistics_view_presented)
                 {
+                    WorkspaceStatisticView()
                     /*StatisticsView(
                         is_presented: $statistics_view_presented,
                         get_statistics: $base_workspace.selected_robot.get_statistics,
