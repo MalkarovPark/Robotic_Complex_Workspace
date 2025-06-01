@@ -581,18 +581,18 @@ struct AddToolInWorkspaceView: View
                 }
                 else
                 {
-                    if base_workspace.attachable_robots_names.count > 0
+                    if base_workspace.placed_robots_names.count > 0
                     {
                         Picker("Attached to", selection: $attach_robot_name) // Select object name for place in workspace
                         {
-                            ForEach(base_workspace.attachable_robots_names, id: \.self)
+                            ForEach(base_workspace.placed_robots_names, id: \.self)
                             { name in
                                 Text(name)
                             }
                         }
                         .onAppear
                         {
-                            attach_robot_name = base_workspace.attachable_robots_names.first ?? "None"
+                            attach_robot_name = base_workspace.placed_robots_names.first ?? "None"
                             base_workspace.attach_tool_to(robot_name: attach_robot_name)
                         }
                         .onDisappear

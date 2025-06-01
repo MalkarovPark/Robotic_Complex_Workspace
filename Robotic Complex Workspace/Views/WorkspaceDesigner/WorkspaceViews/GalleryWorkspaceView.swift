@@ -358,7 +358,6 @@ struct GalleryInfoView: View
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    @State private var avaliable_attachments = [String]()
     @State private var attach_robot_name = String()
     @State private var old_attachment: String?
     
@@ -411,11 +410,11 @@ struct GalleryInfoView: View
                     {
                         HStack(spacing: 0)
                         {
-                            if avaliable_attachments.count > 0
+                            if base_workspace.placed_robots_names.count > 0
                             {
                                 Picker("Attach to", selection: $attach_robot_name) // Select object name for place in workspace
                                 {
-                                    ForEach(avaliable_attachments, id: \.self)
+                                    ForEach(base_workspace.placed_robots_names, id: \.self)
                                     { name in
                                         Text(name)
                                     }
@@ -454,11 +453,10 @@ struct GalleryInfoView: View
                             {
                                 old_attachment = base_workspace.selected_tool.attached_to
                                 base_workspace.selected_tool.attached_to = nil
-                                avaliable_attachments = base_workspace.attachable_robots_names
                                 
                                 if old_attachment == nil
                                 {
-                                    attach_robot_name = avaliable_attachments.first!
+                                    attach_robot_name = base_workspace.placed_robots_names.first!
                                 }
                                 else
                                 {
