@@ -26,6 +26,8 @@ struct ToolView: View
     
     @State private var new_operation_code = OperationCodeInfo()
     
+    @Environment(\.openWindow) private var openWindow
+    
     #if os(iOS)
     // MARK: Horizontal window size handler
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
@@ -108,8 +110,7 @@ struct ToolView: View
             
             ToolbarItem(id: "Statistics", placement: compact_placement())
             {
-                Button(action: { statistics_view_presented.toggle()
-                })
+                Button(action: { statistics_view_presented.toggle() })
                 {
                     Label("Statistics", systemImage:"chart.bar")
                 }
@@ -131,6 +132,14 @@ struct ToolView: View
                     #endif
                 }
             }
+            
+            /*ToolbarItem(id: "Statistics", placement: .automatic)
+            {
+                Button(action: { openWindow(id: "StatisticsWindow") })
+                {
+                    Label("Statistics", systemImage:"chart.bar.fill")
+                }
+            }*/
             
             #if !os(visionOS)
             ToolbarItem(id: "Controls", placement: compact_placement())

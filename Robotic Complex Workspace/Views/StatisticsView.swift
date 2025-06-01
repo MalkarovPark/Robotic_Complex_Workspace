@@ -28,7 +28,7 @@ struct StatisticsView: View
     @State private var diagram_update_task: Task<Void, Never>?
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
+    //@EnvironmentObject var app_state: AppState
     
     var clear_chart_data: () -> Void
     var clear_states_data: () -> Void
@@ -332,6 +332,85 @@ struct UpdateIntervalView: View
         #endif
     }
 }
+
+/*public struct StatisticsWindow: Scene
+{
+    var window_id: String
+    let workspace: Workspace
+    
+    @Binding var is_presented: Bool
+    
+    @Binding var get_statistics: Bool
+    @Binding var charts_data: [WorkspaceObjectChart]?
+    @Binding var states_data: [StateItem]?
+    @Binding var update_interval: TimeInterval
+    @Binding var scope_type: ScopeType
+    
+    // Picker data for chart view
+    @State private var stats_selection = 0
+    
+    @State private var update_interval_view_presented = false
+    
+    // View update handling
+    @State private var diagram_updated = false
+    @State private var diagram_update_task: Task<Void, Never>?
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    
+    var clear_chart_data: () -> Void
+    var clear_states_data: () -> Void
+    var update_file_data: () -> Void
+    
+    public init(
+        window_id: String = String(),
+        workspace: Workspace = Workspace(),
+        
+        is_presented: Binding<Bool>,
+        get_statistics: Binding<Bool>,
+        charts_data: Binding<[WorkspaceObjectChart]?>,
+        states_data: Binding<[StateItem]?>,
+        scope_type: Binding<ScopeType>,
+        update_interval: Binding<TimeInterval>,
+        clear_chart_data: @escaping () -> Void,
+        clear_states_data: @escaping () -> Void,
+        update_file_data: @escaping () -> Void
+    )
+    {
+        self.window_id = window_id
+        self.workspace = workspace
+        
+        self._is_presented = is_presented
+        self._get_statistics = get_statistics
+        self._charts_data = charts_data
+        self._states_data = states_data
+        self._update_interval = update_interval
+        self._scope_type = scope_type
+        
+        self.clear_chart_data = clear_chart_data
+        self.clear_states_data = clear_states_data
+        self.update_file_data = update_file_data
+    }
+    
+    @SceneBuilder public var body: some Scene
+    {
+        WindowGroup(id: window_id)
+        {
+            StatisticsView(
+                is_presented: .constant(true),
+                get_statistics: $get_statistics,
+                charts_data: $charts_data,
+                states_data: $states_data,
+                scope_type: $scope_type,
+                update_interval: $update_interval,
+                clear_chart_data: clear_chart_data,
+                clear_states_data: clear_states_data,
+                update_file_data: update_file_data
+            )
+        }
+        .windowResizability(.contentSize)
+    }
+}*/
 
 struct StatisticsView_Previews: PreviewProvider
 {

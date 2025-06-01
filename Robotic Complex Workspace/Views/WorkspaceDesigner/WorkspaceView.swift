@@ -106,7 +106,7 @@ struct WorkspaceView: View
         #if !os(visionOS)
         .toolbar(id: "workspace")
         {
-            ToolbarItem(id: "Statistics")
+            /*ToolbarItem(id: "Statistics")
             {
                 Button(action: { statistics_view_presented.toggle()
                 })
@@ -132,7 +132,7 @@ struct WorkspaceView: View
                     #endif*/
                 }
             }
-            .defaultCustomization(.hidden)
+            .defaultCustomization(.hidden)*/
             
             #if !os(visionOS)
             ToolbarItem(id: "Registers")

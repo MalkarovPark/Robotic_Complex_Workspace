@@ -126,6 +126,14 @@ struct Robotic_Complex_WorkspaceApp: App
         #if os(visionOS)
         SpatialPendant(controller: pendant_controller, workspace: base_workspace)
         #endif
+        
+        /*WindowGroup("UwU", id: "StatisticsWindow")
+        {
+            EmptyView()
+                .frame(maxWidth: 400, maxHeight: 300)
+        }
+        .windowResizability(.contentSize)
+        .windowStyle(.hiddenTitleBar)*/
     }
 }
 
