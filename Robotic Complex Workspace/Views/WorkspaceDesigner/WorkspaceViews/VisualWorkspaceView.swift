@@ -465,24 +465,17 @@ struct VisualInfoView: View
                         }
                         .onAppear
                         {
-                            if !base_workspace.selected_tool.is_attached
+                            if base_workspace.selected_tool.attached_to == nil
                             {
+                                attach_robot_name = base_workspace.placed_robots_names.first ?? "??"
                                 base_workspace.attach_tool_to(robot_name: attach_robot_name)
                             }
                             else
                             {
-                                old_attachment = base_workspace.selected_tool.attached_to
-                                base_workspace.selected_tool.attached_to = nil
-                                
-                                if old_attachment == nil
-                                {
-                                    base_workspace.attach_tool_to(robot_name: base_workspace.placed_robots_names.first!)
-                                }
-                                else
-                                {
-                                    attach_robot_name = old_attachment!
-                                }
+                                attach_robot_name = base_workspace.selected_tool.attached_to!
                             }
+                            
+                            base_workspace.selected_tool.attached_to = attach_robot_name
                         }
                     }
                 case .part:

@@ -155,6 +155,7 @@ struct PlacedRobotsGallery: View
 struct PlacedToolsGallery: View
 {
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: object_card_scale, maximum: .infinity), spacing: object_card_spacing)]
     
@@ -173,6 +174,18 @@ struct PlacedToolsGallery: View
                                 base_workspace.select_tool(name: name)
                             }
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                            .overlay(alignment: .bottomLeading)
+                            {
+                                Toggle(isOn: binding_to_attached(for: name))
+                                {
+                                    Image(systemName: base_workspace.tool_by_name(name).is_attached ? "pin.slash.fill" : "pin.fill")
+                                        .foregroundStyle(.white)
+                                        .font(.system(size: 16))
+                                }
+                                .toggleStyle(.button)
+                                .buttonStyle(.borderless)
+                                .padding()
+                            }
                     }
                 }
                 #if os(macOS)
@@ -188,6 +201,19 @@ struct PlacedToolsGallery: View
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, object_card_spacing / 1.5)
+    }
+    
+    private func binding_to_attached(for name: String) -> Binding<Bool>
+    {
+        Binding(
+            get: {
+                base_workspace.tool_by_name(name).is_attached
+            },
+            set: { newValue in
+                document_handler.document_update_tools()
+                base_workspace.tool_by_name(name).is_attached = newValue
+            }
+        )
     }
 }
 
@@ -380,31 +406,13 @@ struct GalleryInfoView: View
                 case .tool:
                     if !base_workspace.selected_tool.is_attached
                     {
-                        VStack(spacing: 0)
-                        {
-                            Toggle(isOn: $base_workspace.selected_tool.is_attached)
-                            {
-                                Image(systemName: "pin.fill")
-                            }
-                            .toggleStyle(.button)
-                            .padding(.bottom)
-                            .onChange(of: base_workspace.selected_tool.is_attached)
-                            { _, new_value in
-                                if !new_value
-                                {
-                                    base_workspace.remove_attachment()
+                        DynamicStack(content: {
+                            PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                                .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                                { _, _ in
+                                    document_handler.document_update_tools()
                                 }
-                                document_handler.document_update_tools()
-                            }
-                            
-                            DynamicStack(content: {
-                                PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                                    .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
-                                    { _, _ in
-                                        document_handler.document_update_tools()
-                                    }
-                            }, is_compact: $is_compact, spacing: 16)
-                        }
+                        }, is_compact: $is_compact, spacing: 16)
                     }
                     else
                     {
@@ -425,20 +433,6 @@ struct GalleryInfoView: View
                                 #if os(iOS) || os(visionOS)
                                 .buttonStyle(.bordered)
                                 #endif
-                                
-                                Toggle(isOn: $base_workspace.selected_tool.is_attached)
-                                {
-                                    Image(systemName: "pin.fill")
-                                }
-                                .toggleStyle(.button)
-                                .onChange(of: base_workspace.selected_tool.is_attached)
-                                { _, new_value in
-                                    if !new_value
-                                    {
-                                        base_workspace.selected_tool.attached_to = nil
-                                    }
-                                    document_handler.document_update_tools()
-                                }
                             }
                             else
                             {
@@ -449,20 +443,17 @@ struct GalleryInfoView: View
                         .frame(minWidth: 224)
                         .onAppear
                         {
-                            if base_workspace.selected_tool.is_attached
+                            if base_workspace.selected_tool.attached_to == nil
                             {
-                                old_attachment = base_workspace.selected_tool.attached_to
-                                base_workspace.selected_tool.attached_to = nil
-                                
-                                if old_attachment == nil
-                                {
-                                    attach_robot_name = base_workspace.placed_robots_names.first!
-                                }
-                                else
-                                {
-                                    attach_robot_name = old_attachment!
-                                }
+                                attach_robot_name = base_workspace.placed_robots_names.first ?? "??"
+                                base_workspace.attach_tool_to(robot_name: attach_robot_name)
                             }
+                            else
+                            {
+                                attach_robot_name = base_workspace.selected_tool.attached_to!
+                            }
+                            
+                            base_workspace.selected_tool.attached_to = attach_robot_name
                         }
                     }
                 case .part:
