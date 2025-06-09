@@ -46,7 +46,7 @@ class _6DOF_Connector: RobotConnector
         }
     }
     
-    override func disconnection_process() async
+    override func disconnection_process()// async
     {
         new_line_check()
         output += "Disconnected"
@@ -63,7 +63,12 @@ class _6DOF_Connector: RobotConnector
     // MARK: - Performing
     override func move_to(point: PositionPoint)
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=code@*//*@END_MENU_TOKEN@*/
+        var seconds = 2
+        usleep(UInt32(seconds * 1_000_000))
+        
+        model_controller?.pointer_location = [point.x, point.y, point.z]
+        model_controller?.pointer_rotation = [point.r, point.p, point.w]
+        //usleep(UInt32(point.move_speed) * 1_000_000)
     }
     
     // MARK: - Statistics
@@ -85,5 +90,10 @@ class _6DOF_Connector: RobotConnector
     override func updated_states_data() -> [StateItem]?
     {
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
+    }
+    
+    override open func sync_model()
+    {
+        //model_controller?.update_by_pointer()
     }
 }

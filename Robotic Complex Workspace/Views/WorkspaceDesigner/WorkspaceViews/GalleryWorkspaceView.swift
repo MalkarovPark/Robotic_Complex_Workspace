@@ -420,7 +420,7 @@ struct GalleryInfoView: View
                         {
                             if base_workspace.placed_robots_names.count > 0
                             {
-                                Picker("Attach to", selection: $attach_robot_name) // Select object name for place in workspace
+                                Picker("Attached to", selection: $attach_robot_name) // Select object name for place in workspace
                                 {
                                     ForEach(base_workspace.placed_robots_names, id: \.self)
                                     { name in
@@ -429,7 +429,6 @@ struct GalleryInfoView: View
                                 }
                                 .pickerStyle(.menu)
                                 .frame(maxWidth: .infinity)
-                                .padding(.horizontal)
                                 #if os(iOS) || os(visionOS)
                                 .buttonStyle(.bordered)
                                 #endif

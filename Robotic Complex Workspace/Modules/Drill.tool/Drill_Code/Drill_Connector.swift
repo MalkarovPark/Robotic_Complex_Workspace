@@ -46,7 +46,7 @@ class Drill_Connector: ToolConnector
         }
     }
     
-    override func disconnection_process() async
+    override func disconnection_process()// async
     {
         new_line_check()
         output += "Disconnected"

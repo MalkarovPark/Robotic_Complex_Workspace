@@ -261,11 +261,14 @@ struct RobotCardView: View
             }
             .overlay(alignment: .bottomTrailing)
             {
-                Image(systemName: "line.3.horizontal")
-                    .foregroundStyle(.tertiary)
-                    .frame(width: 32, height: 32)
-                    .padding(8)
-                    .background(.clear)
+                if !to_rename
+                {
+                    Image(systemName: "line.3.horizontal")
+                        .foregroundStyle(.tertiary)
+                        .frame(width: 32, height: 32)
+                        .padding(8)
+                        .background(.clear)
+                }
             }
     }
     

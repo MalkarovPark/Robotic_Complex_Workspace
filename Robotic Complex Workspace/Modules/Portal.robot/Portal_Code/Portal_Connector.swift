@@ -46,7 +46,7 @@ class Portal_Connector: RobotConnector
         }
     }
     
-    override func disconnection_process() async
+    override func disconnection_process()// async
     {
         new_line_check()
         output += "Disconnected"
