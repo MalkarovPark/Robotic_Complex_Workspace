@@ -63,7 +63,6 @@ class Drill_Controller: ToolModelController
     
     override func reset_nodes()
     {
-        remove_all_model_actions()
         rotated[0] = false
         rotated[1] = false
     }

@@ -63,7 +63,11 @@ class Portal_Connector: RobotConnector
     // MARK: - Performing
     override func move_to(point: PositionPoint)
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=code@*//*@END_MENU_TOKEN@*/
+        var seconds = 2
+        usleep(UInt32(seconds * 1_000_000))
+        
+        model_controller?.pointer_location = [point.x, point.y, point.z]
+        model_controller?.pointer_rotation = [point.r, point.p, point.w]
     }
     
     // MARK: - Statistics

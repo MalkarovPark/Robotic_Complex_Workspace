@@ -376,7 +376,7 @@ struct OperationItemView: View
 {
     @Binding var codes: [OperationCode]
     
-    @State var code_item: OperationCode
+    @StateObject var code_item: OperationCode
     @State private var new_code = OperationCodeInfo()
     @State private var update_data = false
     
@@ -392,7 +392,7 @@ struct OperationItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(base_workspace.selected_tool.inspector_code_color(code: code_item))
+                .foregroundColor(code_item.performing_state.color)
             #if os(macOS)
                 .padding(.trailing)
             #endif

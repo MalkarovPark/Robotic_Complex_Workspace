@@ -216,7 +216,7 @@ struct RobotSceneView: View
     {
         ObjectSceneView(scene: SCNScene(named: "Components.scnassets/Workcell.scn")!, transparent: is_scene_transparent)
         { scene_view in
-            on_rendrer(scene_view: scene_view)
+            
         }
         on_init:
         { scene_view in
@@ -403,27 +403,6 @@ struct RobotSceneView: View
                 .glassBackgroundEffect()
             }
         #endif
-    }
-    
-    private func on_rendrer(scene_view: SCNView)
-    {
-        // Update robot
-        if base_workspace.selected_robot.moving_completed
-        {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                base_workspace.selected_robot.moving_completed = false
-                base_workspace.update_view()
-            }
-        }
-        
-        if base_workspace.selected_robot.performed
-        {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
-            {
-                base_workspace.update_view()
-            }
-        }
     }
 }
 

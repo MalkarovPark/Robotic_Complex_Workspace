@@ -236,7 +236,7 @@ struct ToolSceneView: View
     {
         ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn")!, node: tool.node ?? SCNNode(), transparent: is_scene_transparent)
         { scene_view in
-            update_view_node(scene_view: scene_view)
+            
         }
         on_init:
         { scene_view in
@@ -258,30 +258,6 @@ struct ToolSceneView: View
         viewed_node?.rotation = SCNVector4(x: 0, y: 0, z: 0, w: 0)
         
         tool.workcell_connect(scene: scene_view.scene!, name: "Node")
-    }
-    
-    private func update_view_node(scene_view: SCNView)
-    {
-        if base_workspace.selected_object_type == .tool
-        {
-            if tool.performing_completed
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                {
-                    tool.performing_completed = false
-                    base_workspace.update_view()
-                }
-            }
-            
-            if tool.code_changed
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now())
-                {
-                    base_workspace.update_view()
-                    tool.code_changed = false
-                }
-            }
-        }
     }
 }
 

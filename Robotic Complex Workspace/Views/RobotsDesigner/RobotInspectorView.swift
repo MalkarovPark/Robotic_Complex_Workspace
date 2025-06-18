@@ -255,7 +255,7 @@ struct PositionItemView: View
     @Binding var robot: Robot
     @Binding var points: [PositionPoint]
     
-    @State var point_item: PositionPoint
+    @StateObject var point_item: PositionPoint
     @State var position_item_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -271,7 +271,7 @@ struct PositionItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(robot.inspector_point_color(point: point_item))
+                .foregroundColor(point_item.performing_state.color)
             
             ZStack(alignment: .center)
             {
@@ -308,10 +308,10 @@ struct PositionItemView: View
                      arrowEdge: .trailing)
             {
                 #if os(macOS)
-                PositionPointView(robot: $robot, points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
+                PositionPointView(robot: $robot, points: $points, point_item: force_bind(point_item), position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
-                PositionPointView(robot: $robot, points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
+                PositionPointView(robot: $robot, points: $points, point_item: force_bind(point_item), position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], is_compact: horizontal_size_class == .compact, on_delete: on_delete)
                     .presentationDetents([.height(576)])
                 #endif
             }
@@ -320,6 +320,14 @@ struct PositionItemView: View
         {
             position_item_view_presented.toggle()
         }
+    }
+    
+    private func force_bind(_ point: PositionPoint) -> Binding<PositionPoint>
+    {
+        Binding<PositionPoint>(
+            get: { point },
+            set: { _ in } // Ничего не делаем, потому что `point` — ссылочный тип
+        )
     }
 }
 

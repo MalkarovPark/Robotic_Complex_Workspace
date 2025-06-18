@@ -68,7 +68,6 @@ class _6DOF_Connector: RobotConnector
         
         model_controller?.pointer_location = [point.x, point.y, point.z]
         model_controller?.pointer_rotation = [point.r, point.p, point.w]
-        //usleep(UInt32(point.move_speed) * 1_000_000)
     }
     
     // MARK: - Statistics
@@ -90,10 +89,5 @@ class _6DOF_Connector: RobotConnector
     override func updated_states_data() -> [StateItem]?
     {
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
-    }
-    
-    override open func sync_model()
-    {
-        //model_controller?.update_by_pointer()
     }
 }
