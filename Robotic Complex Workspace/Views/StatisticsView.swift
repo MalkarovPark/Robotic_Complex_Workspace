@@ -132,17 +132,6 @@ struct StatisticsView: View
                 #endif
                 .padding(.trailing)
                 .disabled(get_statistics)
-                /*.onHover
-                { hovered in
-                    if hovered
-                    {
-                        disable_update()
-                    }
-                    else
-                    {
-                        perform_update()
-                    }
-                }*/
                 
                 Button(action: { update_interval_view_presented = true })
                 {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		622EE4F82E030D33002EB2C5 /* ProgramComponentsManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 622EE4F72E030D32002EB2C5 /* ProgramComponentsManagerView.swift */; platformFilters = (macos, ); };
 		6236F9372AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */; };
 		6236F9392AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */; };
 		6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F93C2AD3439C008FA7C4 /* Assets.xcassets */; };
@@ -44,6 +45,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		622EE4F72E030D32002EB2C5 /* ProgramComponentsManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramComponentsManagerView.swift; sourceTree = "<group>"; };
 		6236F9342AD3439B008FA7C4 /* RCWorkspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RCWorkspace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceApp.swift; sourceTree = "<group>"; };
 		6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robotic_Complex_WorkspaceDocument.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				627C254F2C9DA7660087D777 /* AddObjectView.swift */,
 				6236F9542AD345C4008FA7C4 /* ContentView.swift */,
 				6236F94F2AD345C4008FA7C4 /* SettingsView.swift */,
+				622EE4F72E030D32002EB2C5 /* ProgramComponentsManagerView.swift */,
 				6236F94B2AD345C4008FA7C4 /* WorkspaceNavigationView.swift */,
 				6236F9502AD345C4008FA7C4 /* StatisticsView.swift */,
 			);
@@ -338,6 +341,7 @@
 				62398C8A2BF2A42C001A5B8A /* ToolInspectorView.swift in Sources */,
 				6236F9392AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift in Sources */,
 				6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */,
+				622EE4F82E030D33002EB2C5 /* ProgramComponentsManagerView.swift in Sources */,
 				6236F9372AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
 				6236F9652AD345FC008FA7C4 /* DoubleModifier.swift in Sources */,
 				6236F9492AD34591008FA7C4 /* Functions.swift in Sources */,

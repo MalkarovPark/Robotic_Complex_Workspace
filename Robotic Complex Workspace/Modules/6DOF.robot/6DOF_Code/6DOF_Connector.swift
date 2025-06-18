@@ -63,7 +63,7 @@ class _6DOF_Connector: RobotConnector
     // MARK: - Performing
     override func move_to(point: PositionPoint)
     {
-        var seconds = 2
+        let seconds = 2
         usleep(UInt32(seconds * 1_000_000))
         
         model_controller?.pointer_location = [point.x, point.y, point.z]

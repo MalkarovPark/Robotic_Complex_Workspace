@@ -6401,9 +6401,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1152"
-            endingLineNumber = "1152"
-            landmarkName = "robot_connector_state_decode(from:)"
-            landmarkType = "9">
+            endingLineNumber = "1152">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6772,6 +6770,22 @@
             endingLineNumber = "480"
             landmarkName = "perform_next_code()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C35B4A7D-B6A7-445F-8AAC-42A072141279"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/Functions.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "540"
+            endingLineNumber = "540"
+            landmarkName = "is_socket_active(at:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
