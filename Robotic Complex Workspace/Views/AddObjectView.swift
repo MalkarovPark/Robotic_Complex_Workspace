@@ -80,19 +80,25 @@ struct AddObjectView: View
                 Picker(selection: $previewed_object_name, label: Text("Model")
                         .bold())
                 {
-                    Section(header: Text("Internal"))
+                    if internal_modules_list.count > 0
                     {
-                        ForEach(internal_modules_list, id: \.self)
+                        Section(header: Text("Internal"))
                         {
-                            Text($0).tag($0)
+                            ForEach(internal_modules_list, id: \.self)
+                            {
+                                Text($0).tag($0)
+                            }
                         }
                     }
                     
-                    Section(header: Text("External"))
+                    if external_modules_list.count > 0
                     {
-                        ForEach(external_modules_list, id: \.self)
+                        Section(header: Text("External"))
                         {
-                            Text($0).tag(".\($0)")
+                            ForEach(external_modules_list, id: \.self)
+                            {
+                                Text($0).tag(".\($0)")
+                            }
                         }
                     }
                 }

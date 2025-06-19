@@ -66,6 +66,8 @@ struct RobotsView: View
         }
         .onAppear
         {
+            base_workspace.remove_all_tools_attachments(nodes_only: true)
+            
             if sidebar_controller.from_workspace_view
             {
                 sidebar_controller.from_workspace_view = false

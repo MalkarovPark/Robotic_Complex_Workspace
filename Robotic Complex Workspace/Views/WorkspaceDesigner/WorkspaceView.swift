@@ -87,6 +87,10 @@ struct WorkspaceView: View
         {
             base_workspace.elements_check()
         }
+        /*.onDisappear
+        {
+            base_workspace.remove_all_tools_attachments(nodes_only: true)
+        }*/
         .sheet(isPresented: $registers_view_presented)
         {
             RegistersDataView(is_presented: $registers_view_presented)
@@ -597,7 +601,7 @@ struct AddToolInWorkspaceView: View
                         }
                         .onDisappear
                         {
-                            base_workspace.remove_attachment()
+                            base_workspace.remove_edited_node_attachment()
                             tool_attached = false
                         }
                         .onChange(of: attach_robot_name)

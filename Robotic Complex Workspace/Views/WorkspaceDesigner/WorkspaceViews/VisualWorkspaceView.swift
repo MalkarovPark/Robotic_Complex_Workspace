@@ -399,7 +399,7 @@ struct VisualInfoView: View
                     { _, new_value in
                         if !new_value
                         {
-                            base_workspace.remove_attachment()
+                            base_workspace.remove_attachment(tool: base_workspace.selected_tool)
                         }
                         document_handler.document_update_tools()
                     }
@@ -526,7 +526,7 @@ struct VisualInfoView: View
                 }
                 else
                 {
-                    base_workspace.remove_attachment()
+                    base_workspace.remove_attachment(tool: base_workspace.selected_tool)
                 }
             }
             
@@ -546,7 +546,7 @@ struct VisualInfoView: View
         case .tool:
             if base_workspace.selected_tool.is_attached
             {
-                base_workspace.remove_attachment()
+                base_workspace.remove_attachment(tool: base_workspace.selected_tool)
                 base_workspace.selected_tool.is_attached = false
             }
             document_handler.document_update_tools()
