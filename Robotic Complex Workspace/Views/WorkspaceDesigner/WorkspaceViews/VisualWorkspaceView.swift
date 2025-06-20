@@ -343,14 +343,14 @@ struct WorkspaceSceneView: UIViewRepresentable
     
     func scene_check() // Renderer functions
     {
-        if base_workspace.element_changed
+        /*if base_workspace.element_changed
         {
             DispatchQueue.main.asyncAfter(deadline: .now())
             {
                 base_workspace.update_view()
                 base_workspace.element_changed = false
             }
-        }
+        }*/
     }
 }
 
