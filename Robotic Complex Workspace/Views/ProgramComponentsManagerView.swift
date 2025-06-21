@@ -41,7 +41,6 @@ struct ProgramComponentsManagerView: View
                 Changer.external_modules_servers_stop()
                 Changer.external_modules_servers_start()
             }
-            
             stop_all = Changer.external_modules_servers_stop
         }
     }
@@ -85,7 +84,6 @@ private struct ProgramComponentGroupView: View
     let module: (name: String, url: URL, paths: [(file: String, socket: String)])
     
     @State private var is_expanded = false
-    @State private var group_state: ProgramComponentItemView.ProcessState = .stopped
     
     var body: some View
     {
@@ -93,60 +91,12 @@ private struct ProgramComponentGroupView: View
         {
             ForEach(module.paths, id: \.file)
             { paths in
-                ProgramComponentItemView(
-                    name: paths.file,
-                    url: module.url,
-                    sockets_paths: [paths.socket],
-                    file_paths: [paths.file],
-                    onStateChanged: update_group_state
-                )
+                ProgramComponentItemView(name: paths.file, url: module.url, sockets_paths: [paths.socket], file_paths: [paths.file])
             }
         }
         label:
         {
-            ProgramComponentItemView(
-                name: module.name,
-                url: module.url,
-                sockets_paths: module.paths.map { $0.socket },
-                file_paths: module.paths.map { $0.file },
-                overrideState: group_state
-            )
-        }
-        .task
-        {
-            await update_group_state()
-        }
-    }
-    
-    private func update_group_state() async
-    {
-        var activeCount = 0
-        for path in module.paths.map(\.socket)
-        {
-            if await is_socket_active_async(at: path)
-            {
-                activeCount += 1
-            }
-        }
-        if activeCount == module.paths.count
-        {
-            group_state = .running
-        }
-        else if activeCount == 0
-        {
-            group_state = .stopped
-        }
-        else
-        {
-            group_state = .partially
-        }
-    }
-    
-    private func update_group_state(_ : String, _ : ProgramComponentItemView.ProcessState)
-    {
-        Task
-        {
-            await update_group_state()
+            ProgramComponentItemView(name: module.name, url: module.url, sockets_paths: module.paths.map { $0.socket }, file_paths: module.paths.map { $0.file })
         }
     }
 }
@@ -158,11 +108,9 @@ private struct ProgramComponentItemView: View
     let sockets_paths: [String]
     let file_paths: [String]
     
-    var overrideState: ProcessState? = nil
-    var onStateChanged: ((String, ProcessState) -> Void)? = nil
-
     @State private var control_items_presented = false
     @State private var process_state: ProcessState = .stopped
+    @State private var timer: Timer?
     
     var body: some View
     {
@@ -174,11 +122,7 @@ private struct ProgramComponentItemView: View
             
             if control_items_presented
             {
-                Button(action:
-                {
-                    stop_processes()
-                    start_processes()
-                })
+                Button(action: restart_process)
                 {
                     Image(systemName: "arrow.counterclockwise.circle.fill")
                 }
@@ -194,8 +138,23 @@ private struct ProgramComponentItemView: View
             }
             
             Image(systemName: "circle.fill")
-                .foregroundColor((overrideState ?? process_state).color)
+                .foregroundColor(process_state.color)
         }
+        .onAppear
+        {
+            update_process_state()
+            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                update_process_state()
+            }
+        }
+        /*.onDisappear
+         {
+         timer?.invalidate()
+         timer = nil
+         }*/
+        //.onAppear(perform: update_process_state)
+        .onChange(of: control_items_presented) { _, _ in update_process_state() }
+        .onChange(of: sockets_paths) { _, _ in update_process_state() }
         .onHover
         { hovered in
             withAnimation
@@ -203,39 +162,34 @@ private struct ProgramComponentItemView: View
                 control_items_presented = hovered
             }
         }
-        .task
-        {
-            await update_process_state()
-        }
     }
     
-    private func update_process_state() async
+    private func update_process_state()
     {
-        var activeCount = 0
-        for path in sockets_paths
+        Task
         {
-            if await is_socket_active_async(at: path)
-            {
-                activeCount += 1
+            let statuses = await sockets_paths.concurrentMap
+            { path in
+                await is_socket_active_async(at: path)
             }
-        }
-        let newState: ProcessState
-        if activeCount == sockets_paths.count
-        {
-            newState = .running
-        }
-        else if activeCount == 0
-        {
-            newState = .stopped
-        }
-        else
-        {
-            newState = .partially
-        }
-        DispatchQueue.main.async
-        {
-            process_state = newState
-            onStateChanged?(name, newState)
+            
+            let active_count = statuses.filter { $0 }.count
+            
+            await MainActor.run
+            {
+                if active_count == sockets_paths.count
+                {
+                    process_state = .running
+                }
+                else if active_count == 0
+                {
+                    process_state = .stopped
+                }
+                else
+                {
+                    process_state = .partially
+                }
+            }
         }
     }
     
@@ -243,13 +197,9 @@ private struct ProgramComponentItemView: View
     {
         for socket_path in sockets_paths
         {
-            Task
+            if is_socket_active(at: socket_path)
             {
-                if await is_socket_active_async(at: socket_path)
-                {
-                    send_via_unix_socket(at: socket_path, command: "stop")
-                }
-                await update_process_state()
+                send_via_unix_socket(at: socket_path, command: "stop")
             }
         }
     }
@@ -258,16 +208,27 @@ private struct ProgramComponentItemView: View
     {
         for (socket_path, file_path) in zip(sockets_paths, file_paths)
         {
-            Task
+            if !is_socket_active(at: socket_path)
             {
-                if !(await is_socket_active_async(at: socket_path))
-                {
-                    perform_terminal_app_sync(
-                        at: url.appendingPathComponent(file_path),
-                        with: [" > /dev/null 2>&1 &"]
-                    )
+                perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
+            }
+        }
+    }
+    
+    private func restart_process()
+    {
+        for (socket_path, file_path) in zip(sockets_paths, file_paths)
+        {
+            if is_socket_active(at: socket_path)
+            {
+                send_via_unix_socket(at: socket_path, command: "stop")
+                {_ in
+                    perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
                 }
-                await update_process_state()
+            }
+            else
+            {
+                perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
             }
         }
     }
@@ -283,24 +244,65 @@ private struct ProgramComponentItemView: View
             switch self
             {
             case .stopped:
-                return .gray
+                    .gray
             case .running:
-                return .green
+                    .green
             case .partially:
-                return .yellow
+                    .yellow
             }
         }
     }
 }
 
-private func is_socket_active_async(at path: String) async -> Bool
+private extension Array
 {
-    await withCheckedContinuation
+    func concurrentMap<T>(transform: @escaping (Element) async -> T) async -> [T]
+    {
+        await withTaskGroup(of: (Int, T).self)
+        { group in
+            for (index, element) in self.enumerated()
+            {
+                group.addTask
+                {
+                    let value = await transform(element)
+                    return (index, value)
+                }
+            }
+            var results = Array<T?>(repeating: nil, count: self.count)
+            for await (index, value) in group
+            {
+                results[index] = value
+            }
+            return results.compactMap { $0 }
+        }
+    }
+}
+
+public func is_socket_active_async(at path: String) async -> Bool
+{
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
+    process.arguments = ["-U", path]
+    
+    let outputPipe = Pipe()
+    process.standardOutput = outputPipe
+    process.standardError = Pipe()
+    
+    do {
+        try process.run()
+    } catch {
+        return false
+    }
+    
+    return await withCheckedContinuation
     { continuation in
-        DispatchQueue.global().async
+        Task
         {
-            let result = is_socket_active(at: path)
-            continuation.resume(returning: result)
+            let outputData = try? outputPipe.fileHandleForReading.readToEnd()
+            process.waitUntilExit()
+            
+            let output = String(data: outputData ?? Data(), encoding: .utf8) ?? ""
+            continuation.resume(returning: output.contains(path))
         }
     }
 }
@@ -312,7 +314,13 @@ enum ModuleType: Hashable
     case part
     case changer
     
-    var modules: [(name: String, url: URL, paths: [(file: String, socket: String)])]
+    var modules: [
+        (
+            name: String,
+            url: URL,
+            paths: [(file: String, socket: String)]
+        )
+    ]
     {
         var modules = [(name: String, url: URL, paths: [(file: String, socket: String)])]()
         

@@ -48,7 +48,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "838"
             endingLineNumber = "838"
-            landmarkName = "perform_tool(by:completion:)"
+            landmarkName = "move(by:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -224,8 +224,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "564"
             endingLineNumber = "564"
-            landmarkName = "pause_handler()"
-            landmarkType = "9">
+            landmarkName = "start_pause_moving()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -352,8 +352,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1556"
             endingLineNumber = "1556"
-            landmarkName = "duplicate_robot(index:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -368,8 +368,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1285"
             endingLineNumber = "1285"
-            landmarkName = "main_object_node(result_node:object_bit_mask:)"
-            landmarkType = "9">
+            landmarkName = "select_object_for_edit(node:type:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -384,8 +384,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "651"
             endingLineNumber = "651"
-            landmarkName = "pause_performing()"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -656,8 +656,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2055"
             endingLineNumber = "2055"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "select_part(index:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -672,7 +672,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2067"
             endingLineNumber = "2067"
-            landmarkName = "select_part(index:)"
+            landmarkName = "select_part(name:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -688,8 +688,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2065"
             endingLineNumber = "2065"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "select_part(name:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -862,7 +862,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1468"
             endingLineNumber = "1468"
-            landmarkName = "unplace_selected_object()"
+            landmarkName = "deselect_object()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -878,7 +878,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1443"
             endingLineNumber = "1443"
-            landmarkName = "deselect_object_for_edit()"
+            landmarkName = "unplace_selected_object()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -894,7 +894,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1471"
             endingLineNumber = "1471"
-            landmarkName = "unplace_selected_object()"
+            landmarkName = "deselect_object()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -910,7 +910,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1448"
             endingLineNumber = "1448"
-            landmarkName = "deselect_object_for_edit()"
+            landmarkName = "unplace_selected_object()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -926,8 +926,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1458"
             endingLineNumber = "1458"
-            landmarkName = "unplace_selected_object()"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -942,8 +942,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1473"
             endingLineNumber = "1473"
-            landmarkName = "unplace_selected_object()"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -990,8 +990,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1770"
             endingLineNumber = "1770"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "select_tool(index:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1262,7 +1262,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "471"
             endingLineNumber = "471"
-            landmarkName = "perform_next_element()"
+            landmarkName = "perform_constant_objects_update()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1642,8 +1642,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2006"
             endingLineNumber = "2006"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "duplicate_part(index:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1658,7 +1658,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1999"
             endingLineNumber = "1999"
-            landmarkName = "delete_part(name:)"
+            landmarkName = "duplicate_part(index:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1850,7 +1850,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1223"
             endingLineNumber = "1223"
-            landmarkName = "inspector_point_color(point:)"
+            landmarkName = "charts_binding()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1866,7 +1866,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1247"
             endingLineNumber = "1247"
-            landmarkName = "inspector_point_color(point:)"
+            landmarkName = "states_binding()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1882,7 +1882,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1224"
             endingLineNumber = "1224"
-            landmarkName = "inspector_point_color(point:)"
+            landmarkName = "charts_binding()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1898,8 +1898,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1248"
             endingLineNumber = "1248"
-            landmarkName = "Robot"
-            landmarkType = "3">
+            landmarkName = "states_binding()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1914,8 +1914,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1494"
             endingLineNumber = "1494"
-            landmarkName = "deselect_object()"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2746,8 +2746,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "188"
             endingLineNumber = "188"
-            landmarkName = "no_model_node()"
-            landmarkType = "7">
+            landmarkName = "IndustrialModule"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2762,8 +2762,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "197"
             endingLineNumber = "197"
-            landmarkName = "IndustrialModule"
-            landmarkType = "3">
+            landmarkName = "no_model_node()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3478,7 +3478,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "970"
             endingLineNumber = "970"
-            landmarkName = "reset_performing()"
+            landmarkName = "defining_elements_indexes()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3814,8 +3814,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "609"
             endingLineNumber = "609"
-            landmarkName = "string_to_action(from:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4237,22 +4237,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F3DA2037-2934-4F13-9914-413B60B3504D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/Functions.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "397"
-            endingLineNumber = "397"
-            landmarkName = "send_via_unix_socket(at:command:)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "E846C9C7-A9BE-41FD-8C7F-A6F7BE5FA0FF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -4278,8 +4262,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "655"
             endingLineNumber = "655"
-            landmarkName = "string_to_action(from:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4310,8 +4294,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "562"
             endingLineNumber = "562"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "is_socket_active(at:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4326,7 +4310,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "574"
             endingLineNumber = "574"
-            landmarkName = "string_to_codable(from:)"
+            landmarkName = "is_socket_active(at:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4342,8 +4326,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "621"
             endingLineNumber = "621"
-            landmarkName = "string_to_action(from:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4358,8 +4342,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "625"
             endingLineNumber = "625"
-            landmarkName = "string_to_action(from:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4438,8 +4422,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1877"
             endingLineNumber = "1877"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "attach(node:to:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4470,8 +4454,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1899"
             endingLineNumber = "1899"
-            landmarkName = "attach(node:to:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4520,38 +4504,6 @@
             endingLineNumber = "217"
             landmarkName = "updated_charts_data()"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A73538B5-F56E-4B0C-9C9C-9B4DB1CC3DE3"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/Functions.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "391"
-            endingLineNumber = "391"
-            landmarkName = "unknown"
-            landmarkType = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "34F0C6F5-20CC-4F7D-A5A8-4CC0775C49C3"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/Functions.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "389"
-            endingLineNumber = "389"
-            landmarkName = "unknown"
-            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4694,7 +4646,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1904"
             endingLineNumber = "1904"
-            landmarkName = "attach(node:to:)"
+            landmarkName = "remove_attachment(from:to:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4726,8 +4678,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1908"
             endingLineNumber = "1908"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "remove_attachment(from:to:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4758,24 +4710,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1566"
             endingLineNumber = "1566"
-            landmarkName = "duplicate_robot(index:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "161FC29A-A26E-4E5C-9F45-C120C81A6C1C"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/Functions.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "393"
-            endingLineNumber = "393"
-            landmarkName = "send_via_unix_socket(at:command:)"
-            landmarkType = "9">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -5317,9 +5253,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1359"
-            endingLineNumber = "1359"
-            landmarkName = "encode(to:)"
-            landmarkType = "7">
+            endingLineNumber = "1359">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -5494,7 +5428,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "487"
             endingLineNumber = "487"
-            landmarkName = "perform_constant_objects_update()"
+            landmarkName = "disable_constant_objects_update()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5510,7 +5444,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "485"
             endingLineNumber = "485"
-            landmarkName = "perform_constant_objects_update()"
+            landmarkName = "disable_constant_objects_update()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5638,8 +5572,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "635"
             endingLineNumber = "635"
-            landmarkName = "select_new_element()"
-            landmarkType = "7">
+            landmarkName = "pause_tool()"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -5702,7 +5636,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "575"
             endingLineNumber = "575"
-            landmarkName = "string_to_codable(from:)"
+            landmarkName = "is_socket_active(at:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5938,8 +5872,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1926"
             endingLineNumber = "1926"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "remove_attachment(tool:node_only:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6034,7 +5968,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1042"
             endingLineNumber = "1042"
-            landmarkName = "update_object_pointer_position(by_node:)"
+            landmarkName = "view_object_node(type:name:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6050,8 +5984,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "497"
             endingLineNumber = "497"
-            landmarkName = "Robot"
-            landmarkType = "3">
+            landmarkName = "move_to(point:completion:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6066,7 +6000,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "709"
             endingLineNumber = "709"
-            landmarkName = "set_position(for:from:)"
+            landmarkName = "string_to_action(from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6082,7 +6016,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "711"
             endingLineNumber = "711"
-            landmarkName = "set_position(for:from:)"
+            landmarkName = "string_to_action(from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6098,7 +6032,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "714"
             endingLineNumber = "714"
-            landmarkName = "set_position(for:from:)"
+            landmarkName = "string_to_action(from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6146,8 +6080,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "496"
             endingLineNumber = "496"
-            landmarkName = "Robot"
-            landmarkType = "3">
+            landmarkName = "move_to(point:completion:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6162,8 +6096,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "498"
             endingLineNumber = "498"
-            landmarkName = "Robot"
-            landmarkType = "3">
+            landmarkName = "move_to(point:completion:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6178,7 +6112,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "876"
             endingLineNumber = "876"
-            landmarkName = "update_rotation()"
+            landmarkName = "update_location()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6226,7 +6160,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "482"
             endingLineNumber = "482"
-            landmarkName = "get_pointer_position()"
+            landmarkName = "update()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6274,7 +6208,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "619"
             endingLineNumber = "619"
-            landmarkName = "reset_moving()"
+            landmarkName = "clear_finish_handler()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6290,7 +6224,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "667"
             endingLineNumber = "667"
-            landmarkName = "sync_connector_parameters()"
+            landmarkName = "pointer_position_to_robot()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6306,7 +6240,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "668"
             endingLineNumber = "668"
-            landmarkName = "sync_connector_parameters()"
+            landmarkName = "pointer_position_to_robot()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -6401,7 +6335,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1152"
-            endingLineNumber = "1152">
+            endingLineNumber = "1152"
+            landmarkName = "colors_by_seed(seed:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6624,8 +6560,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "612"
             endingLineNumber = "612"
-            landmarkName = "string_to_action(from:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6640,8 +6576,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "603"
             endingLineNumber = "603"
-            landmarkName = "string_to_action(from:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6786,6 +6722,102 @@
             endingLineNumber = "540"
             landmarkName = "is_socket_active(at:)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B117FF11-A6AA-46F0-98DF-E9D8DF112148"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "226"
+            endingLineNumber = "226"
+            landmarkName = "stop_perform()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "23BC5B41-F58B-4098-A0E3-96281AD1D7C9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "227"
+            endingLineNumber = "227"
+            landmarkName = "stop_perform()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EDAB3CCF-118D-40F3-8BD9-C0150E9718F9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
+            landmarkName = "stop_perform()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "55CC8966-1A45-4F02-BA77-406C42AB5E98"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
+            landmarkName = "WorkspaceView"
+            landmarkType = "14">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0582F6A1-2658-4EAD-93AF-6F0C492FCBE8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/Functions.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "541"
+            endingLineNumber = "541"
+            landmarkName = "is_socket_active(at:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2382EA3B-C394-437E-8E25-37CD5B5C31C0"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/Functions.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "616"
+            endingLineNumber = "616"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
