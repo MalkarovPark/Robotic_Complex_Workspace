@@ -2954,7 +2954,7 @@
                   endingLineNumber = "0">
                </Location>
                <Location
-                  uuid = "3A033759-36A4-486B-BB5C-766D839FD03D - f6f89cc795550115"
+                  uuid = "3A033759-36A4-486B-BB5C-766D839FD03D - f6f89cc795550e0e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -2964,8 +2964,8 @@
                   urlString = "file:///Users/malkarovpark/Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/WorkspaceObjects/Tool.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "190"
-                  endingLineNumber = "190">
+                  startingLineNumber = "197"
+                  endingLineNumber = "197">
                </Location>
             </Locations>
          </BreakpointContent>

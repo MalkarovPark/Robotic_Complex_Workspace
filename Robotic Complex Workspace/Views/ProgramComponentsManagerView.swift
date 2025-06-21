@@ -170,7 +170,7 @@ private struct ProgramComponentItemView: View
         {
             let statuses = await sockets_paths.concurrentMap
             { path in
-                await is_socket_active_async(at: path)
+                await is_socket_active(at: path)
             }
             
             let active_count = statuses.filter { $0 }.count
@@ -195,40 +195,49 @@ private struct ProgramComponentItemView: View
     
     private func stop_processes()
     {
-        for socket_path in sockets_paths
+        Task
         {
-            if is_socket_active(at: socket_path)
+            for socket_path in sockets_paths
             {
-                send_via_unix_socket(at: socket_path, command: "stop")
+                if await is_socket_active(at: socket_path)
+                {
+                    send_via_unix_socket(at: socket_path, command: "stop")
+                }
             }
         }
     }
     
     private func start_processes()
     {
-        for (socket_path, file_path) in zip(sockets_paths, file_paths)
+        Task
         {
-            if !is_socket_active(at: socket_path)
+            for (socket_path, file_path) in zip(sockets_paths, file_paths)
             {
-                perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
+                if await !is_socket_active(at: socket_path)
+                {
+                    perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
+                }
             }
         }
     }
     
     private func restart_process()
     {
-        for (socket_path, file_path) in zip(sockets_paths, file_paths)
+        Task
         {
-            if is_socket_active(at: socket_path)
+            for (socket_path, file_path) in zip(sockets_paths, file_paths)
             {
-                send_via_unix_socket(at: socket_path, command: "stop")
-                {_ in
+                if await is_socket_active(at: socket_path)
+                {
+                    send_via_unix_socket(at: socket_path, command: "stop")
+                    {_ in
+                        perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
+                    }
+                }
+                else
+                {
                     perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
                 }
-            }
-            else
-            {
-                perform_terminal_app_sync(at: url.appendingPathComponent(file_path), with: [" > /dev/null 2>&1 &"])
             }
         }
     }
@@ -274,35 +283,6 @@ private extension Array
                 results[index] = value
             }
             return results.compactMap { $0 }
-        }
-    }
-}
-
-public func is_socket_active_async(at path: String) async -> Bool
-{
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
-    process.arguments = ["-U", path]
-    
-    let outputPipe = Pipe()
-    process.standardOutput = outputPipe
-    process.standardError = Pipe()
-    
-    do {
-        try process.run()
-    } catch {
-        return false
-    }
-    
-    return await withCheckedContinuation
-    { continuation in
-        Task
-        {
-            let outputData = try? outputPipe.fileHandleForReading.readToEnd()
-            process.waitUntilExit()
-            
-            let output = String(data: outputData ?? Data(), encoding: .utf8) ?? ""
-            continuation.resume(returning: output.contains(path))
         }
     }
 }
