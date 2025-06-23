@@ -14,7 +14,7 @@ struct ControlProgramView: View
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
     @State private var dragged_element: WorkspaceProgramElement?
     
-    @State private var view_program_as_text: Bool = false
+    //@State private var view_program_as_text: Bool = false
     
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var base_workspace: Workspace
@@ -24,7 +24,7 @@ struct ControlProgramView: View
     {
         VStack
         {
-            if !view_program_as_text
+            if !app_state.view_program_as_text
             {
                 // MARK: Scroll view for program elements
                 ScrollView
@@ -51,36 +51,37 @@ struct ControlProgramView: View
                 }
                 .animation(.spring(), value: base_workspace.elements)
                 .transition(.move(edge: .leading))
-                //.transition(.slide)
             }
             else
             {
-                ControlProgramTextView()
-                    .transition(.move(edge: .trailing))
-                    //.transition(.slide)
+                ControlProgramTextView(elements: $base_workspace.elements)
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: view_program_as_text)
+        .animation(.easeInOut(duration: 0.3), value: app_state.view_program_as_text)
         .overlay(alignment: .bottomTrailing)
         {
             AddProgramElementButton()
         }
         .overlay(alignment: .bottomLeading)
         {
-            Button(action: { view_program_as_text.toggle() })
+            Button(action: { app_state.view_program_as_text.toggle() })
             {
-                Circle()
-                    .foregroundStyle(.thinMaterial)
-                    .overlay(
-                        program_representation_image
-                            .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
-                    )
-                    .frame(width: 32, height: 32)
-                    .animation(.easeInOut(duration: 0.2), value: view_program_as_text)
+                ZStack
+                {
+                    Circle()
+                        .foregroundStyle(.thinMaterial)
+                        #if !os(visionOS)
+                        .shadow(radius: 4)
+                        #endif
+                    
+                    program_representation_image
+                        .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
+                        .animation(.easeInOut(duration: 0.2), value: app_state.view_program_as_text)
+                }
+                .frame(width: 32, height: 32)
             }
-            #if os(macOS)
+            #if !os(visionOS)
             .buttonStyle(BorderlessButtonStyle())
-            .shadow(radius: 4)
             #endif
             #if os(visionOS)
             .glassBackgroundEffect()
@@ -102,7 +103,7 @@ struct ControlProgramView: View
     
     private var program_representation_image: Image
     {
-        if view_program_as_text
+        if app_state.view_program_as_text
         {
             return Image(systemName: "rectangle.grid.1x2")
         }
@@ -186,8 +187,6 @@ struct AddProgramElementButton: View
         // Add new program element and save to file
         base_workspace.elements.append(element_from_struct(new_program_element.file_info))
         base_workspace.elements_check()
-        
-        sidebar_controller.code_editor_text = elements_to_code(elements: base_workspace.elements)
         
         document_handler.document_update_elements()
     }
@@ -602,36 +601,6 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
     case jump = "Jump"
     case comparator = "Comparator"
     case mark = "Mark"
-}
-
-// MARK: - Text View
-struct ControlProgramTextView: View
-{
-    #if !os(visionOS)
-    @EnvironmentObject var sidebar_controller: SidebarController
-    #endif
-    
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
-    
-    var body: some View
-    {
-        VStack
-        {
-            TextEditor(text: $sidebar_controller.code_editor_text)
-            .textFieldStyle(.plain)
-            .font(.custom("Menlo", size: 12))
-        }
-        .onAppear
-        {
-            sidebar_controller.code_editor_text = elements_to_code(elements: base_workspace.elements)
-        }
-        .onDisappear
-        {
-            base_workspace.elements = code_to_elements(code: sidebar_controller.code_editor_text)
-            document_handler.document_update_elements()
-        }
-    }
 }
 
 // MARK: - Previews

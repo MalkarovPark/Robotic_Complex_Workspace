@@ -382,6 +382,10 @@ class AppState: ObservableObject
     
     // MARK: - Program elements functions
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
+    
+    #if !os(visionOS)
+    @Published public var view_program_as_text = false
+    #endif
 }
 
 // MARK: - Control modifier

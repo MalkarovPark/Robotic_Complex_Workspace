@@ -237,6 +237,7 @@ struct WorkspaceView: View
     
     private func toggle_perform()
     {
+        app_state.view_program_as_text = false
         base_workspace.start_pause_performing()
     }
     
