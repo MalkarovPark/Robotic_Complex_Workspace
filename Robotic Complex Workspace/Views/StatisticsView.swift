@@ -120,13 +120,11 @@ struct StatisticsView: View
                 }
                 .onChange(of: scope_type)
                 { _, _ in
-                    //disable_update()
                     update_file_data()
-                    //perform_update()
                 }
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity)
-                #if !os(macOS)
+                #if os(iOS)
                 .modifier(PickerBorderer())
                 .modifier(PickerLabelModifier(text: "Scope"))
                 #endif
