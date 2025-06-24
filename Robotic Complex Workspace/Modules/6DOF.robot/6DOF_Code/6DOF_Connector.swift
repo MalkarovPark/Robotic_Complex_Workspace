@@ -32,7 +32,7 @@ class _6DOF_Connector: RobotConnector
         }
         output += "\n"
         
-        sleep(4)
+        sleep(2)
         
         if parameters[3].value as! Bool
         {
@@ -46,11 +46,18 @@ class _6DOF_Connector: RobotConnector
         }
     }
     
-    override func disconnection_process()// async
+    override func disconnection_process()
     {
         new_line_check()
         output += "Disconnected"
     }
+    
+    override var performing_state: (output: PerformingState, log: String)
+    {
+        return (output: local_state, log: String())
+    }
+    
+    private var local_state: PerformingState = .completed
     
     private func new_line_check()
     {
@@ -66,8 +73,12 @@ class _6DOF_Connector: RobotConnector
         let seconds = 2
         usleep(UInt32(seconds * 1_000_000))
         
+        local_state = .processing
+        
         model_controller?.pointer_location = [point.x, point.y, point.z]
         model_controller?.pointer_rotation = [point.r, point.p, point.w]
+        
+        local_state = .completed
     }
     
     // MARK: - Statistics

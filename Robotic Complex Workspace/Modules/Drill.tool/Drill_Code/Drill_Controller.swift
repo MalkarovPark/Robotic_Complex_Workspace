@@ -25,36 +25,28 @@ class Drill_Controller: ToolModelController
         
         if nodes.count == 1 //Drill has one rotated node
         {
+            nodes[safe_name: "drill"].removeAllActions()
+            
             switch code
             {
             case 0: // Strop rotation
-                nodes[safe_name: "drill"].removeAllActions()
                 rotated[0] = false
                 rotated[1] = false
             case 1: // Clockwise rotation
                 if !rotated[0]
                 {
-                    nodes[safe_name: "drill"].removeAllActions()
-                    DispatchQueue.main.asyncAfter(deadline: .now())
-                    {
-                        self.nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
-                        self.rotated[0] = true
-                        self.rotated[1] = false
-                    }
+                    nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                    rotated[0] = true
+                    rotated[1] = false
                 }
             case 2: // Counter clockwise rotation
                 if !rotated[1]
                 {
-                    nodes[safe_name: "drill"].removeAllActions()
-                    DispatchQueue.main.asyncAfter(deadline: .now())
-                    {
-                        self.nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
-                        self.rotated[1] = true
-                        self.rotated[0] = false
-                    }
+                    nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                    rotated[1] = true
+                    rotated[0] = false
                 }
             default:
-                remove_all_model_actions()
                 rotated[0] = false
                 rotated[1] = false
             }

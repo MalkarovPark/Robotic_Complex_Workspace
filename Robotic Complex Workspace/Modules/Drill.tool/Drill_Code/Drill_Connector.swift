@@ -4,6 +4,7 @@
 
 import Foundation
 import IndustrialKit
+import SceneKit
 
 class Drill_Connector: ToolConnector
 {
@@ -32,7 +33,7 @@ class Drill_Connector: ToolConnector
         }
         output += "\n"
         
-        sleep(4)
+        sleep(2)
         
         if parameters[3].value as! Bool
         {
@@ -60,10 +61,39 @@ class Drill_Connector: ToolConnector
         }
     }
     
+    override var performing_state: (output: PerformingState, log: String)
+    {
+        return (output: local_state, log: String())
+    }
+    
+    private var local_state: PerformingState = .completed
+    
     // MARK: - Performing
     override func perform(code: Int)
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=code@*//*@END_MENU_TOKEN@*/
+        guard let nodes = model_controller?.nodes else { return }
+        
+        if nodes.count == 1 //Drill has one rotated node
+        {
+            nodes[safe_name: "drill"].removeAllActions()
+            
+            switch code
+            {
+            case 0: // Strop rotation
+                break
+            case 1: // Clockwise rotation
+                nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+            case 2: // Counter clockwise rotation
+                nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+            default:
+                model_controller?.remove_all_model_actions()
+            }
+        }
+        
+        let seconds = 2
+        usleep(UInt32(seconds * 1_000_000))
+        
+        local_state = .completed
     }
     
     // MARK: - Statistics
