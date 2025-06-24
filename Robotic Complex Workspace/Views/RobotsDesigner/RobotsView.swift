@@ -23,11 +23,13 @@ struct RobotsView: View
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 24)]
     
+    @State private var appeared = false
+    
     var body: some View
     {
         NavigationStack
         {
-            if base_workspace.robots.count > 0
+            if base_workspace.robots.count > 0 && appeared
             {
                 // MARK: Scroll view for robots
                 ScrollView(.vertical)
@@ -73,6 +75,8 @@ struct RobotsView: View
                 sidebar_controller.from_workspace_view = false
                 add_robot_view_presented = true
             }
+            
+            appeared = true
         }
         .onDisappear
         {
