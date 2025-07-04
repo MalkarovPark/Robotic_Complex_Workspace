@@ -10,6 +10,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 #endif
 import IndustrialKit
+import IndustrialKitUI
 
 struct SettingsView: View
 {

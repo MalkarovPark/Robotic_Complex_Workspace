@@ -7,6 +7,7 @@
 
 import SwiftUI
 import IndustrialKit
+import IndustrialKitUI
 import SceneKit
 
 struct AddObjectView: View

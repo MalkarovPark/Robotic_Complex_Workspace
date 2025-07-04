@@ -38,6 +38,8 @@
 		626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 626EF85D2AD3493900F2A361 /* IndustrialKit */; };
 		627C25502C9DA7660087D777 /* AddObjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627C254F2C9DA7660087D777 /* AddObjectView.swift */; };
 		627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627D3E9A2AD34A7600D5988D /* AppState.swift */; };
+		629DF71F2E180C41008DE761 /* RCWorkspace.icon in Resources */ = {isa = PBXBuildFile; fileRef = 629DF71E2E180C41008DE761 /* RCWorkspace.icon */; };
+		629DF7212E181C5A008DE761 /* IndustrialKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 629DF7202E181C5A008DE761 /* IndustrialKitUI */; };
 		62BFD7862B85699B00966525 /* ViewPendantButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BFD7852B85699B00966525 /* ViewPendantButton.swift */; };
 		62BFD7882B8C8B4000966525 /* SidebarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BFD7872B8C8B4000966525 /* SidebarController.swift */; };
 		62E165E52B20C422005E318A /* VisualWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E165E42B20C422005E318A /* VisualWorkspaceView.swift */; };
@@ -77,6 +79,7 @@
 		6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentUpdateHandler.swift; sourceTree = "<group>"; };
 		627C254F2C9DA7660087D777 /* AddObjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddObjectView.swift; sourceTree = "<group>"; };
 		627D3E9A2AD34A7600D5988D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		629DF71E2E180C41008DE761 /* RCWorkspace.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RCWorkspace.icon; sourceTree = "<group>"; };
 		62BFD7852B85699B00966525 /* ViewPendantButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPendantButton.swift; sourceTree = "<group>"; };
 		62BFD7872B8C8B4000966525 /* SidebarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarController.swift; sourceTree = "<group>"; };
 		62E165E42B20C422005E318A /* VisualWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualWorkspaceView.swift; sourceTree = "<group>"; };
@@ -93,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				629DF7212E181C5A008DE761 /* IndustrialKitUI in Frameworks */,
 				626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -111,6 +115,7 @@
 				6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */,
 				6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */,
 				6236F9892AD347AA008FA7C4 /* Components.scnassets */,
+				629DF71E2E180C41008DE761 /* RCWorkspace.icon */,
 				6236F93C2AD3439C008FA7C4 /* Assets.xcassets */,
 				6236F93E2AD3439C008FA7C4 /* Info.plist */,
 				6236F93F2AD3439C008FA7C4 /* Robotic_Complex_Workspace.entitlements */,
@@ -261,6 +266,7 @@
 			name = RCWorkspace;
 			packageProductDependencies = (
 				626EF85D2AD3493900F2A361 /* IndustrialKit */,
+				629DF7202E181C5A008DE761 /* IndustrialKitUI */,
 			);
 			productName = "Robotic Complex Workspace";
 			productReference = 6236F9342AD3439B008FA7C4 /* RCWorkspace.app */;
@@ -308,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6236F9422AD3439C008FA7C4 /* Preview Assets.xcassets in Resources */,
+				629DF71F2E180C41008DE761 /* RCWorkspace.icon in Resources */,
 				6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */,
 				6236F98A2AD347AA008FA7C4 /* Components.scnassets in Resources */,
 			);
@@ -360,7 +367,7 @@
 		6236F9432AD3439C008FA7C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = RCWorkspace;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -411,7 +418,7 @@
 		6236F9442AD3439C008FA7C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = RCWorkspace;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -615,6 +622,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 62BD3FD829466BB500DA3167 /* XCRemoteSwiftPackageReference "IndustrialKit" */;
 			productName = IndustrialKit;
+		};
+		629DF7202E181C5A008DE761 /* IndustrialKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 62BD3FD829466BB500DA3167 /* XCRemoteSwiftPackageReference "IndustrialKit" */;
+			productName = IndustrialKitUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -8,6 +8,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import IndustrialKit
+import IndustrialKitUI
 
 struct ControlProgramView: View
 {

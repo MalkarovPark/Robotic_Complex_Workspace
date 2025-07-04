@@ -7,6 +7,7 @@
 
 import SwiftUI
 import IndustrialKit
+import IndustrialKitUI
 
 #if os(iOS) || os(visionOS)
 struct SafeAreaToggler: ViewModifier

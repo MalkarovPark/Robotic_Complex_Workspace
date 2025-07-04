@@ -9,6 +9,7 @@ import SwiftUI
 import SceneKit
 import UniformTypeIdentifiers
 import IndustrialKit
+import IndustrialKitUI
 
 struct VisualWorkspaceView: View
 {
