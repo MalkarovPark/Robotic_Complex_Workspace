@@ -47,28 +47,19 @@ struct ViewPendantButton: View
     
     var body: some View
     {
-        VStack(spacing: 0)
+        Button(action: operation)
         {
-            Button(action: operation)
-            {
-                Image(systemName: "slider.horizontal.2.square")
-                    .imageScale(.large)
-                #if os(macOS)
-                    .frame(width: 16, height: 16)
-                #else
-                    .frame(width: 24, height: 24)
-                #endif
-                    .padding()
-            }
-            .buttonStyle(.borderless)
-            #if os(iOS)
-            .foregroundColor(.black)
+            Image(systemName: "slider.horizontal.2.square")
+                .imageScale(.large)
+            #if os(macOS)
+                .frame(width: 16, height: 16)
+            #else
+                .frame(width: 24, height: 24)
             #endif
+                .padding(8)
         }
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .shadow(radius: 8)
-        .fixedSize(horizontal: true, vertical: false)
+        .buttonBorderShape(.circle)
+        .buttonStyle(.glass)
         .padding()
     }
 }

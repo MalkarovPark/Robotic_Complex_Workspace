@@ -85,119 +85,154 @@ struct StatisticsView: View
                     EmptyStatisticsView()
                 }
             }
-            
+        }
+        .modifier(SheetCaption(is_presented: $is_presented, label: caption_text()))
+        .overlay(alignment: .topTrailing)
+        {
             HStack(spacing: 0)
             {
-                Toggle(isOn: $get_statistics)
+                Menu
                 {
-                    Text("Enabled")
-                }
-                .toggleStyle(.switch)
-                .onChange(of: get_statistics)
-                { _, new_value in
-                    update_file_data()
-                    
-                    if new_value
+                    Toggle(isOn: $get_statistics)
                     {
-                        perform_update()
+                        Text("Enabled")
+                    }
+                    .onChange(of: get_statistics)
+                    { _, new_value in
+                        update_file_data()
+                        
+                        if new_value
+                        {
+                            perform_update()
+                        }
+                        else
+                        {
+                            disable_update()
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    if !get_statistics
+                    {
+                        #if os(macOS)
+                        Picker(selection: $stats_selection, label: Label("View", systemImage: "eye"))
+                        {
+                            Text("Charts").tag(0)
+                            Text("State").tag(1)
+                        }
+                        #else
+                        Menu
+                        {
+                            Picker(selection: $stats_selection, label: Label("View", systemImage: "eye"))
+                            {
+                                Text("Charts").tag(0)
+                                Text("State").tag(1)
+                            }
+                        }
+                        label:
+                        {
+                            Label("View", systemImage: "eye")
+                        }
+                        #endif
                     }
                     else
                     {
-                        disable_update()
+                        Label("View", systemImage: "eye")
+                            .disabled(true)
+                    }
+                    
+                    Button(action: { update_interval_view_presented = true })
+                    {
+                        Label("Set Interval...", systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
+                    }
+                    
+                    if !get_statistics
+                    {
+                        #if os(macOS)
+                        Picker(selection: $scope_type, label: Label("Scope", systemImage: "selection.pin.in.out"))
+                        {
+                            ForEach(ScopeType.allCases, id: \.self)
+                            { scope_type in
+                                Text(scope_type.rawValue).tag(scope_type)
+                            }
+                        }
+                        .disabled(get_statistics)
+                        .onChange(of: scope_type)
+                        { _, _ in
+                            update_file_data()
+                        }
+                        #else
+                        Menu
+                        {
+                            Picker(selection: $scope_type, label: Label("Scope", systemImage: "selection.pin.in.out"))
+                            {
+                                ForEach(ScopeType.allCases, id: \.self)
+                                { scope_type in
+                                    Text(scope_type.rawValue).tag(scope_type)
+                                }
+                            }
+                            .onChange(of: scope_type)
+                            { _, _ in
+                                update_file_data()
+                            }
+                        }
+                    label:
+                        {
+                            Label("Scope", systemImage: "selection.pin.in.out")
+                        }
+                        .disabled(get_statistics)
+                        #endif
+                    }
+                    else
+                    {
+                        Label("Scope", systemImage: "clock")
+                            .disabled(true)
+                    }
+                    
+                    Divider()
+                    
+                    Button(role: .destructive, action: clear_statistics_view)
+                    {
+                        Label("Clear Output", systemImage: "eraser")
+                    }
+                    
+                    Button(action: update_file_data)
+                    {
+                        Label("Update in File", systemImage: "arrow.down.doc")
                     }
                 }
-                #if !os(macOS)
-                .tint(.accentColor)
-                .modifier(PickerLabelModifier(text: "Enabled"))
-                #endif
-                .padding(.trailing)
-                
-                Picker(selection: $scope_type, label: Text("Scope"))
+                label:
                 {
-                    ForEach(ScopeType.allCases, id: \.self)
-                    { scope_type in
-                        Text(scope_type.rawValue).tag(scope_type)
-                    }
+                    Image(systemName: "ellipsis")
+                    #if !os(macOS)
+                        .imageScale(.large)
+                        .frame(width: 16, height: 16)
+                        .foregroundStyle(.black)
+                    #endif
                 }
-                .onChange(of: scope_type)
-                { _, _ in
-                    update_file_data()
-                }
-                .pickerStyle(.menu)
-                .frame(maxWidth: .infinity)
-                #if os(iOS)
-                .modifier(PickerBorderer())
-                .modifier(PickerLabelModifier(text: "Scope"))
+                #if os(macOS)
+                .menuStyle(.borderlessButton)
+                .padding(10)
+                #else
+                .buttonBorderShape(.circle)
+                .padding(15)
                 #endif
-                .padding(.trailing)
-                .disabled(get_statistics)
-                
-                Button(action: { update_interval_view_presented = true })
-                {
-                    Text("Update Interval")//, systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
-                }
                 .onChange(of: update_interval)
                 { _, _ in
                     update_file_data()
                 }
-                #if os(iOS)
-                .modifier(ButtonBorderer())
-                #endif
                 .popover(isPresented: $update_interval_view_presented)
                 {
                     UpdateIntervalView(is_presented: $update_interval_view_presented, time_interval: $update_interval)
                 }
+                .glassEffect()
             }
-            .controlSize(.regular)
-            .padding(.horizontal)
-            
-            HStack(spacing: 0)
-            {
-                Button(role: .destructive, action: clear_statistics_view)
-                {
-                    Image(systemName: "eraser")
-                }
-                #if !os(iOS)
-                .buttonStyle(.bordered)
-                #else
-                .modifier(Squarer(side: 34))
-                .modifier(ButtonBorderer())
-                #endif
-                #if os(visionOS)
-                .buttonBorderShape(.circle)
-                #endif
-                .padding([.vertical, .leading])
-                
-                Button(action: update_file_data)
-                {
-                    Image(systemName: "arrow.down.doc")
-                }
-                #if !os(iOS)
-                .buttonStyle(.bordered)
-                #else
-                .modifier(Squarer(side: 34))
-                .modifier(ButtonBorderer())
-                #endif
-                #if os(visionOS)
-                .buttonBorderShape(.circle)
-                #endif
-                .padding([.vertical, .leading])
-                
-                Picker(selection: $stats_selection, label: Text("Statistics"))
-                {
-                    Text("Charts").tag(0)
-                    Text("State").tag(1)
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: .infinity)
-                .labelsHidden()
-                #if !os(iOS)
-                .buttonStyle(.bordered)
-                #endif
-                .padding()
-            }
+            .padding(8)
+            #if !os(macOS)
+            .padding(.top, 4)
+            #endif
         }
-        .modifier(SheetCaption(is_presented: $is_presented, label: caption_text()))
         #if os(macOS)
         .controlSize(.large)
         .frame(minWidth: 448, idealWidth: 480, maxWidth: 512, minHeight: 448, idealHeight: 480, maxHeight: 512)
@@ -273,7 +308,7 @@ struct EmptyStatisticsView: View
         VStack(spacing: 0)
         {
             Spacer()
-            Text("None")
+            Text("No Data")
                 .font(.largeTitle)
                 .foregroundColor(quaternary_label_color)
             Spacer()

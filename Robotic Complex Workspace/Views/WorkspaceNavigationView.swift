@@ -148,9 +148,6 @@ struct WorkspaceNavigationView: View
                     {
                     case .WorkspaceView:
                         WorkspaceView()
-                        /*#if !os(visionOS)
-                            .environmentObject(sidebar_controller)
-                        #endif*/
                     case .RobotsView:
                         RobotsView()
                     case .ToolsView:

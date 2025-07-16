@@ -111,7 +111,7 @@ struct RobotInspectorView: View
                 }
             }
             
-            PositionControl(location: $robot.pointer_location, rotation: $robot.pointer_rotation, scale: $robot.space_scale)
+            PositionControl(position: $robot.pointer_position, scale: $robot.space_scale)
             
             HStack(spacing: 0)
             {
@@ -204,7 +204,7 @@ struct RobotInspectorView: View
     
     private func add_point_to_program()
     {
-        robot.selected_program.add_point(PositionPoint(x: robot.pointer_location[0], y: robot.pointer_location[1], z: robot.pointer_location[2], r: robot.pointer_rotation[0], p: robot.pointer_rotation[1], w: robot.pointer_rotation[2]))
+        robot.selected_program.add_point(PositionPoint(x: robot.pointer_position.x, y: robot.pointer_position.y, z: robot.pointer_position.z, r: robot.pointer_position.r, p: robot.pointer_position.p, w: robot.pointer_position.w))
         
         update_data()
     }
@@ -285,7 +285,7 @@ struct PositionItemView: View
                         {
                             Spacer()
                             
-                            Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
+                            Text("X \(String(format: "%.0f", point_item.x)) Y \(String(format: "%.0f", point_item.y)) Z \(String(format: "%.0f", point_item.z))")
                                 .font(.system(size: 8))
                                 .frame(width: 96)
                             
@@ -295,7 +295,7 @@ struct PositionItemView: View
                             
                             Spacer()
                             
-                            Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
+                            Text("R \(String(format: "%.0f", point_item.r)) P \(String(format: "%.0f", point_item.p)) W \(String(format: "%.0f", point_item.w))")
                                 .font(.system(size: 8))
                                 .frame(width: 96)
                             
@@ -366,7 +366,7 @@ struct PositionPointView: View
             #if os(macOS)
             HStack
             {
-                PositionView(location: $item_view_pos_location, rotation: $item_view_pos_rotation)
+                PositionView(position: pos_binding)
             }
             .padding([.horizontal, .top])
             #else
@@ -374,7 +374,7 @@ struct PositionPointView: View
             {
                 HStack
                 {
-                    PositionView(location: $item_view_pos_location, rotation: $item_view_pos_rotation)
+                    PositionView(position: pos_binding)
                 }
                 .padding([.horizontal, .top])
             }
@@ -382,7 +382,7 @@ struct PositionPointView: View
             {
                 VStack
                 {
-                    PositionView(location: $item_view_pos_location, rotation: $item_view_pos_rotation)
+                    PositionView(position: pos_binding)
                 }
                 .padding([.horizontal, .top])
                 
@@ -494,6 +494,28 @@ struct PositionPointView: View
         base_workspace.update_view()
         robot.selected_program.visual_build()
         document_handler.document_update_robots()
+    }
+    
+    var pos_binding: Binding<(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)>
+    {
+        Binding(
+            get: {
+                (x: item_view_pos_location[safe: 0] ?? 0,
+                 y: item_view_pos_location[safe: 1] ?? 0,
+                 z: item_view_pos_location[safe: 2] ?? 0,
+                 r: item_view_pos_rotation[safe: 0] ?? 0,
+                 p: item_view_pos_rotation[safe: 1] ?? 0,
+                 w: item_view_pos_rotation[safe: 2] ?? 0)
+            },
+            set: {
+                item_view_pos_location[safe: 0] = $0.x
+                item_view_pos_location[safe: 1] = $0.y
+                item_view_pos_location[safe: 2] = $0.z
+                item_view_pos_rotation[safe: 0] = $0.r
+                item_view_pos_rotation[safe: 1] = $0.p
+                item_view_pos_rotation[safe: 2] = $0.w
+            }
+        )
     }
 }
 

@@ -99,13 +99,13 @@ struct ContentView: View
         Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
         Workspace.default_registers_count = workspace_registers_count
         
-        Robot.default_origin_location[0] = Float(location_x)
+        /*Robot.default_origin_location[0] = Float(location_x)
         Robot.default_origin_location[1] = Float(location_y)
         Robot.default_origin_location[2] = Float(location_z)
         
         Robot.default_space_scale[0] = Float(scale_x)
         Robot.default_space_scale[1] = Float(scale_y)
-        Robot.default_space_scale[2] = Float(scale_z)
+        Robot.default_space_scale[2] = Float(scale_z)*/
     }
 }
 

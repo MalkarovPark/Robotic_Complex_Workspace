@@ -61,16 +61,15 @@ struct GalleryWorkspaceView: View
                 {
                     Image(systemName: "plus")
                         .imageScale(.large)
+                    #if os(macOS)
                         .frame(width: 16, height: 16)
-                        .padding()
-                    #if os(iOS)
-                        .foregroundColor(base_workspace.performed ? Color.secondary : Color.black)
+                    #else
+                        .frame(width: 24, height: 24)
                     #endif
+                        .padding(8)
                 }
-                .buttonStyle(.borderless)
-                #if os(iOS)
-                .foregroundColor(.black)
-                #endif
+                .buttonBorderShape(.circle)
+                .buttonStyle(.glass)
                 .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
                 {
                     #if os(macOS)
@@ -84,10 +83,6 @@ struct GalleryWorkspaceView: View
                 }
                 .disabled(base_workspace.performed)
             }
-            .background(.thinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .shadow(radius: 8)
-            .fixedSize(horizontal: true, vertical: false)
             .padding()
         }
         #else
@@ -399,8 +394,8 @@ struct GalleryInfoView: View
                 switch base_workspace.selected_object_type
                 {
                 case .robot:
-                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
-                        .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+                    PositionView(position: $base_workspace.selected_robot.position)
+                        .onChange(of: PositionSnapshot(base_workspace.selected_robot.position))
                         { _, _ in
                             document_handler.document_update_robots()
                         }
@@ -408,8 +403,8 @@ struct GalleryInfoView: View
                     if !base_workspace.selected_tool.is_attached
                     {
                         DynamicStack(content: {
-                            PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                                .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                            PositionView(position: $base_workspace.selected_tool.position)
+                                .onChange(of: PositionSnapshot(base_workspace.selected_tool.position))
                                 { _, _ in
                                     document_handler.document_update_tools()
                                 }
@@ -457,8 +452,8 @@ struct GalleryInfoView: View
                         }
                     }
                 case .part:
-                    PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
-                        .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
+                    PositionView(position: $base_workspace.selected_part.position)
+                        .onChange(of: PositionSnapshot(base_workspace.selected_part.position))
                         { _, _ in
                             document_handler.document_update_parts()
                         }

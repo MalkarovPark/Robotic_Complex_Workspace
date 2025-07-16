@@ -26,9 +26,16 @@ struct VisualWorkspaceView: View
     
     var body: some View
     {
-        WorkspaceSceneView()
-            .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
-            .disabled(add_in_view_presented)
+        ZStack
+        {
+            Rectangle()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .foregroundStyle(.gray)
+                //.backgroundExtensionEffect()
+            WorkspaceSceneView()
+                .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
+                .disabled(add_in_view_presented)
+        }
         #if os(iOS) || os(visionOS)
             .onDisappear
             {
@@ -39,74 +46,62 @@ struct VisualWorkspaceView: View
         #if !os(visionOS)
             .overlay(alignment: .bottomLeading)
             {
-                VStack(spacing: 0)
+                GlassEffectContainer
                 {
-                    Button(action: { add_in_view_presented.toggle() })
+                    VStack(spacing: 0)
                     {
-                        Image(systemName: "plus")
-                            .imageScale(.large)
-                        #if os(macOS)
-                            .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
-                        #endif
-                            .padding()
-                        #if os(iOS)
-                            .foregroundColor((add_in_view_disabled || base_workspace.performed) ? Color.secondary : Color.black)
-                        #endif
+                        Button(action: { add_in_view_presented.toggle() })
+                        {
+                            Image(systemName: "plus")
+                                .imageScale(.large)
+                            #if os(macOS)
+                                .frame(width: 16, height: 16)
+                            #else
+                                .frame(width: 24, height: 24)
+                            #endif
+                                .padding(8)
+                        }
+                        .disabled(add_in_view_disabled || base_workspace.performed)
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glass)
+                        .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
+                        {
+                            #if os(macOS)
+                            AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
+                                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                            #else
+                            AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
+                                .frame(maxWidth: 1024)
+                            #endif
+                        }
+                        .padding(.bottom)
+                        
+                        Button(action: { info_view_presented.toggle() })
+                        {
+                            Image(systemName: "pencil")
+                                .imageScale(.large)
+                            #if os(macOS)
+                                .frame(width: 16, height: 16)
+                            #else
+                                .frame(width: 24, height: 24)
+                            #endif
+                                .padding(8)
+                        }
+                        .disabled(!add_in_view_disabled)
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glass)
+                        .popover(isPresented: $info_view_presented, arrowEdge: default_popover_edge)
+                        {
+                            #if os(macOS)
+                            VisualInfoView(info_view_presented: $info_view_presented)
+                                .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                            #else
+                            VisualInfoView(info_view_presented: $info_view_presented, is_compact: horizontal_size_class == .compact)
+                                .frame(maxWidth: 1024)
+                            #endif
+                        }
                     }
-                    .buttonStyle(.borderless)
-                    #if os(iOS)
-                    .foregroundColor(.black)
-                    #endif
-                    .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
-                    {
-                        #if os(macOS)
-                        AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
-                            .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                        #else
-                        AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
-                            .frame(maxWidth: 1024)
-                        #endif
-                    }
-                    .disabled(add_in_view_disabled || base_workspace.performed)
-                    
-                    Divider()
-                    
-                    Button(action: { info_view_presented.toggle() })
-                    {
-                        Image(systemName: "pencil")
-                            .imageScale(.large)
-                        #if os(macOS)
-                            .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
-                        #endif
-                            .padding()
-                        #if os(iOS)
-                            .foregroundColor(!add_in_view_disabled ? Color.secondary : Color.black)
-                        #endif
-                    }
-                    .buttonStyle(.borderless)
-                    #if os(iOS)
-                    .foregroundColor(.black)
-                    #endif
-                    .popover(isPresented: $info_view_presented, arrowEdge: default_popover_edge)
-                    {
-                        #if os(macOS)
-                        VisualInfoView(info_view_presented: $info_view_presented)
-                            .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                        #else
-                        VisualInfoView(info_view_presented: $info_view_presented, is_compact: horizontal_size_class == .compact)
-                            .frame(maxWidth: 1024)
-                        #endif
-                    }
-                    .disabled(!add_in_view_disabled)
                 }
-                .background(.thinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .shadow(radius: 8)
-                .fixedSize(horizontal: true, vertical: false)
                 .padding()
             }
         #else
@@ -418,8 +413,8 @@ struct VisualInfoView: View
                 switch base_workspace.selected_object_type
                 {
                 case .robot:
-                    PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
-                        .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+                    PositionView(position: $base_workspace.selected_robot.position)
+                        .onChange(of: PositionSnapshot(base_workspace.selected_robot.position))
                         { _, _ in
                             base_workspace.update_object_position()
                             document_handler.document_update_robots()
@@ -427,8 +422,8 @@ struct VisualInfoView: View
                 case .tool:
                     if !base_workspace.selected_tool.is_attached
                     {
-                        PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
-                            .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                        PositionView(position: $base_workspace.selected_tool.position)
+                            .onChange(of: PositionSnapshot(base_workspace.selected_tool.position))
                             { _, _ in
                                 base_workspace.update_object_position()
                                 document_handler.document_update_tools()
@@ -479,8 +474,8 @@ struct VisualInfoView: View
                         }
                     }
                 case .part:
-                    PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
-                        .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
+                    PositionView(position: $base_workspace.selected_part.position)
+                        .onChange(of: PositionSnapshot(base_workspace.selected_part.position))
                         { _, _ in
                             base_workspace.update_object_position()
                             document_handler.document_update_parts()
@@ -566,4 +561,6 @@ struct VisualInfoView: View
     VisualWorkspaceView()
         .environmentObject(Workspace())
         .environmentObject(AppState())
+        .environmentObject(SidebarController())
+        .environmentObject(DocumentUpdateHandler())
 }

@@ -48,6 +48,8 @@ struct WorkspaceView: View
                     {
                         ViewPendantButton(operation: { inspector_presented.toggle() })
                     }
+                    .ignoresSafeArea(.container, edges: [.bottom])
+                    //.ignoresSafeArea(.container, edges: [.top, .bottom])
                 #endif
             case .gallery:
                 GalleryWorkspaceView()
@@ -107,35 +109,6 @@ struct WorkspaceView: View
         #if !os(visionOS)
         .toolbar(id: "workspace")
         {
-            /*ToolbarItem(id: "Statistics")
-            {
-                Button(action: { statistics_view_presented.toggle()
-                })
-                {
-                    Label("Statistics", systemImage:"chart.bar")
-                }
-                .sheet(isPresented: $statistics_view_presented)
-                {
-                    WorkspaceStatisticView()
-                    /*StatisticsView(
-                        is_presented: $statistics_view_presented,
-                        get_statistics: $base_workspace.selected_robot.get_statistics,
-                        charts_data: base_workspace.selected_robot.charts_binding(),
-                        states_data: base_workspace.selected_robot.states_binding(),
-                        scope_type: $base_workspace.selected_robot.scope_type,
-                        update_interval: $base_workspace.selected_robot.update_interval,
-                        clear_chart_data: { base_workspace.selected_robot.clear_chart_data() },
-                        clear_states_data: base_workspace.selected_robot.clear_states_data,
-                        update_file_data: { document_handler.document_update_robots() }
-                    )
-                    #if os(visionOS)
-                        .frame(width: 512, height: 512)
-                    #endif*/
-                }
-            }
-            .defaultCustomization(.hidden)*/
-            
-            #if !os(visionOS)
             ToolbarItem(id: "Registers")
             {
                 Button(action: { registers_view_presented = true })
@@ -171,50 +144,10 @@ struct WorkspaceView: View
                     }
                 }
             }
-            #else
-            ToolbarItem(id: "Registers")
-            {
-                Button(action: { registers_view_presented = true })
-                {
-                    Label("Registers", systemImage: "number")
-                }
-            }
-            
-            ToolbarItem(id: "Controls", placement: compact_placement())
-            {
-                ControlGroup
-                {
-                    Button(action: change_cycle)
-                    {
-                        if base_workspace.cycled
-                        {
-                            Label("Cycle", systemImage: "repeat")
-                        }
-                        else
-                        {
-                            Label("Cycle", systemImage: "repeat.1")
-                        }
-                    }
-                    .buttonBorderShape(.circle)
-                    .padding(.trailing)
-                    
-                    #if !os(visionOS)
-                    Button(action: stop_perform)
-                    {
-                        Label("Stop", systemImage: "stop")
-                    }
-                    
-                    Button(action: toggle_perform)
-                    {
-                        Label("Perform", systemImage: "playpause")
-                    }
-                    #endif
-                }
-            }
-            #endif
         }
         #endif
-        .toolbarRole(.editor)
+        .ignoresSafeArea(edges: .top)
+        //.toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
     }
     
@@ -471,10 +404,10 @@ struct AddRobotInWorkspaceView: View
             Divider()
             
             DynamicStack(content: {
-                PositionView(location: $base_workspace.selected_robot.location, rotation: $base_workspace.selected_robot.rotation)
+                PositionView(position: $base_workspace.selected_robot.position)
             }, is_compact: $is_compact, spacing: 16)
             .padding([.horizontal, .top])
-            .onChange(of: [base_workspace.selected_robot.location, base_workspace.selected_robot.rotation])
+            .onChange(of: PositionSnapshot(base_workspace.selected_robot.position))
             { _, _ in
                 base_workspace.update_object_position()
             }
@@ -575,10 +508,10 @@ struct AddToolInWorkspaceView: View
                 if !tool_attached
                 {
                     DynamicStack(content: {
-                        PositionView(location: $base_workspace.selected_tool.location, rotation: $base_workspace.selected_tool.rotation)
+                        PositionView(position: $base_workspace.selected_tool.position)
                     }, is_compact: $is_compact, spacing: 16)
                     .padding([.horizontal, .top])
-                    .onChange(of: [base_workspace.selected_tool.location, base_workspace.selected_tool.rotation])
+                    .onChange(of: PositionSnapshot(base_workspace.selected_tool.position))
                     { _, _ in
                         base_workspace.update_object_position()
                     }
@@ -711,10 +644,10 @@ struct AddPartInWorkspaceView: View
             Divider()
             
             DynamicStack(content: {
-                PositionView(location: $base_workspace.selected_part.location, rotation: $base_workspace.selected_part.rotation)
+                PositionView(position: $base_workspace.selected_part.position)
             }, is_compact: $is_compact, spacing: 16)
             .padding([.horizontal, .top])
-            .onChange(of: [base_workspace.selected_part.location, base_workspace.selected_part.rotation])
+            .onChange(of: PositionSnapshot(base_workspace.selected_part.position))
             { _, _ in
                 base_workspace.update_object_position()
             }

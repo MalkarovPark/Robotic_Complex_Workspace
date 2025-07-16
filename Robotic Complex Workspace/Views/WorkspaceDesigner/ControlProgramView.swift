@@ -15,8 +15,6 @@ struct ControlProgramView: View
     @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
     @State private var dragged_element: WorkspaceProgramElement?
     
-    //@State private var view_program_as_text: Bool = false
-    
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var document_handler: DocumentUpdateHandler
@@ -58,37 +56,35 @@ struct ControlProgramView: View
                 ControlProgramTextView(elements: $base_workspace.elements)
             }
         }
+        .background(.white)
         .animation(.easeInOut(duration: 0.3), value: app_state.view_program_as_text)
-        .overlay(alignment: .bottomTrailing)
+        .overlay(alignment: .bottom)
         {
-            AddProgramElementButton()
-        }
-        .overlay(alignment: .bottomLeading)
-        {
-            Button(action: { app_state.view_program_as_text.toggle() })
+            GlassEffectContainer
             {
-                ZStack
+                HStack
                 {
-                    Circle()
-                        .foregroundStyle(.thinMaterial)
-                        #if !os(visionOS)
-                        .shadow(radius: 4)
+                    Button(action: { app_state.view_program_as_text.toggle() })
+                    {
+                        program_representation_image
+                            .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
+                            .animation(.easeInOut(duration: 0.2), value: app_state.view_program_as_text)//.imageScale(.large)
+                        #if os(macOS)
+                            .frame(width: 16, height: 16)
+                        #else
+                            .frame(width: 24, height: 24)
                         #endif
+                            .padding(6)
+                    }
+                    .buttonBorderShape(.circle)
+                    .buttonStyle(.glass)
+                    .padding()
                     
-                    program_representation_image
-                        .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
-                        .animation(.easeInOut(duration: 0.2), value: app_state.view_program_as_text)
+                    Spacer()
+                    
+                    AddProgramElementButton()
                 }
-                .frame(width: 32, height: 32)
             }
-            #if !os(visionOS)
-            .buttonStyle(BorderlessButtonStyle())
-            #endif
-            #if os(visionOS)
-            .glassBackgroundEffect()
-            #endif
-            .padding()
-            .padding(.vertical, 8)
         }
     }
     
@@ -130,42 +126,38 @@ struct AddProgramElementButton: View
     
     var body: some View
     {
-        ZStack(alignment: .trailing)
+        HStack(spacing: 0)
         {
             Button(action: add_new_program_element) // Add element button
             {
-                HStack
-                {
-                    Image(systemName: "plus")
-                    Spacer()
-                }
-                .padding()
+                Image(systemName: "plus")
+                #if os(macOS)
+                    .frame(width: 16, height: 16)
+                #else
+                    .frame(width: 24, height: 24)
+                #endif
+                    //.padding(8)
             }
-            #if os(macOS)
-            .frame(maxWidth: 80, alignment: .leading)
-            #else
-            .frame(maxWidth: 86, alignment: .leading)
-            #endif
-            .background(.thinMaterial)
-            .cornerRadius(32)
-            .shadow(radius: 4)
-            #if os(macOS)
-            .buttonStyle(BorderlessButtonStyle())
-            #endif
-            .padding()
+            .padding(.leading, 10)
+            .buttonStyle(.borderless)
             
             Button(action: { add_element_view_presented.toggle() }) // Configure new element button
             {
-                Circle()
-                    .foregroundStyle(app_state.new_program_element.color)
-                    .overlay(
-                        app_state.new_program_element.image
-                            .foregroundColor(.white)
-                            .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
-                    )
-                    .frame(width: 32, height: 32)
+                app_state.new_program_element.image
+                    .foregroundColor(app_state.new_program_element.color)
+                    .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
+                    //.imageScale(.large)
+                #if os(macOS)
+                    .frame(width: 16, height: 16)
+                #else
+                    .frame(width: 24, height: 24)
+                #endif
+                    .padding(4)
                     .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.color)
             }
+            .foregroundStyle(app_state.new_program_element.color.opacity(0.75))
+            .buttonBorderShape(.circle)
+            .padding(6)
             .popover(isPresented: $add_element_view_presented)
             {
                 AddElementView(add_element_view_presented: $add_element_view_presented, new_program_element: $app_state.new_program_element)
@@ -173,11 +165,9 @@ struct AddProgramElementButton: View
                     .presentationDetents([.height(128)])
                 #endif
             }
-            #if os(macOS)
-            .buttonStyle(BorderlessButtonStyle())
-            #endif
-            .padding(.trailing, 24)
         }
+        .glassEffect(.regular.interactive())
+        .padding()
     }
     
     private func add_new_program_element()

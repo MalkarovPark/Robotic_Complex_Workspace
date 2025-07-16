@@ -75,8 +75,7 @@ class _6DOF_Connector: RobotConnector
         
         local_state = .processing
         
-        model_controller?.pointer_location = [point.x, point.y, point.z]
-        model_controller?.pointer_rotation = [point.r, point.p, point.w]
+        model_controller?.pointer_position = (x: point.x, y: point.y, z: point.z, r: point.r, p: point.p, w: point.w)
         
         local_state = .completed
     }

@@ -14,8 +14,6 @@ struct AddObjectView: View
 {
     @Binding var is_presented: Bool
     
-    let title: String
-    
     @State private var new_object_name = ""
     
     let previewed_object: WorkspaceObject?
@@ -27,11 +25,15 @@ struct AddObjectView: View
     private var update_object_info: () -> Void
     private var add_object: (String) -> Void
     
-    public init(is_presented: Binding<Bool>, title: String = "Object", previewed_object: WorkspaceObject?, previewed_object_name: Binding<String>, internal_modules_list: Binding<[String]>, external_modules_list: Binding<[String]>, update_object_info: @escaping () -> Void, add_object: @escaping (String) -> Void)
+    public init(is_presented: Binding<Bool>,
+                previewed_object: WorkspaceObject?,
+                previewed_object_name: Binding<String>,
+                internal_modules_list: Binding<[String]>,
+                external_modules_list: Binding<[String]>,
+                update_object_info: @escaping () -> Void,
+                add_object: @escaping (String) -> Void)
     {
         self._is_presented = is_presented
-        
-        self.title = title
         
         self.previewed_object = previewed_object
         
@@ -50,74 +52,85 @@ struct AddObjectView: View
             ObjectPreviewSceneView()
                 .overlay(alignment: .top)
                 {
-                    Text("New \(title)")
-                        .font(.title2)
-                        .padding(8)
-                        .background(.bar)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                        .padding([.top, .leading, .trailing])
+                    HStack(spacing: 0)
+                    {
+                        Button(action: { is_presented = false })
+                        {
+                            Image(systemName: "xmark")
+                                .imageScale(.large)
+                                .frame(width: 16, height: 16)
+                        }
+                        .keyboardShortcut(.cancelAction)
+                        #if !os(visionOS)
+                        .controlSize(.extraLarge)
+                        #endif
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glass)
+                        
+                        Spacer()
+                        
+                        Button(action: add_object_in_workspace)
+                        {
+                            Image(systemName: "checkmark")
+                                .imageScale(.large)
+                                .frame(width: 16, height: 16)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        #if !os(visionOS)
+                        .controlSize(.extraLarge)
+                        #endif
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glassProminent)
+                        
+                    }
+                    .padding(8)
+                    #if !os(macOS)
+                    .padding(.top, 4)
+                    #endif
                 }
-            
-            Divider()
-            Spacer()
-            
-            HStack
-            {
-                Text("Name")
-                    .bold()
-                TextField("None", text: $new_object_name)
-                #if os(iOS) || os(visionOS)
-                    .textFieldStyle(.roundedBorder)
-                #endif
-            }
-            .padding(.top, 8)
-            .padding(.horizontal)
-            
-            HStack(spacing: 0)
-            {
-                #if os(iOS) || os(visionOS)
-                Spacer()
-                #endif
-                Picker(selection: $previewed_object_name, label: Text("Model")
-                        .bold())
+                .overlay(alignment: .bottom)
                 {
-                    if internal_modules_list.count > 0
+                    HStack(spacing: 0)
                     {
-                        Section(header: Text("Internal"))
+                        TextField("Name", text: $new_object_name)
+                            .textFieldStyle(.roundedBorder)
+                            .padding(.trailing)
+                        
+                        Picker(selection: $previewed_object_name, label: Text("Model")
+                                .bold())
                         {
-                            ForEach(internal_modules_list, id: \.self)
+                            if internal_modules_list.count > 0
                             {
-                                Text($0).tag($0)
+                                Section(header: Text("Internal"))
+                                {
+                                    ForEach(internal_modules_list, id: \.self)
+                                    {
+                                        Text($0).tag($0)
+                                    }
+                                }
+                            }
+                            
+                            if external_modules_list.count > 0
+                            {
+                                Section(header: Text("External"))
+                                {
+                                    ForEach(external_modules_list, id: \.self)
+                                    {
+                                        Text($0).tag(".\($0)")
+                                    }
+                                }
                             }
                         }
+                        #if os(macOS)
+                        .buttonStyle(.bordered)
+                        #else
+                        .buttonStyle(.plain)
+                        #endif
                     }
-                    
-                    if external_modules_list.count > 0
-                    {
-                        Section(header: Text("External"))
-                        {
-                            ForEach(external_modules_list, id: \.self)
-                            {
-                                Text($0).tag(".\($0)")
-                            }
-                        }
-                    }
-                }
-                .textFieldStyle(.roundedBorder)
-                .buttonStyle(.bordered)
-                .padding(.vertical, 8)
-                .padding(.leading)
-                
-                Button("Cancel", action: { is_presented.toggle() })
-                    .keyboardShortcut(.cancelAction)
-                    .buttonStyle(.bordered)
-                    .padding([.top, .leading, .bottom])
-                
-                Button("Add", action: add_object_in_workspace)
-                    .keyboardShortcut(.defaultAction)
-                    .buttonStyle(.borderedProminent)
+                    .padding(10)
+                    .glassEffect(in: .rect(cornerRadius: 16.0))
                     .padding()
-            }
+                }
         }
         .controlSize(.regular)
         #if os(macOS)

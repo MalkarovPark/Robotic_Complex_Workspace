@@ -582,7 +582,7 @@ struct CellSettingsView: View
                         
                         HStack(spacing: 8)
                         {
-                            Text("X:")
+                            Text("X")
                                 .frame(width: 20)
                             TextField("0", value: $location_x, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -592,12 +592,12 @@ struct CellSettingsView: View
                         }
                         .onChange(of: location_x)
                         { _, new_value in
-                            Robot.default_origin_location[0] = Float(new_value)
+                            Robot.default_origin_position.x = Float(new_value)
                         }
                         
                         HStack(spacing: 8)
                         {
-                            Text("Y:")
+                            Text("Y")
                                 .frame(width: 20)
                             TextField("0", value: $location_y, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -607,12 +607,12 @@ struct CellSettingsView: View
                         }
                         .onChange(of: location_y)
                         { _, new_value in
-                            Robot.default_origin_location[1] = Float(new_value)
+                            Robot.default_origin_position.y = Float(new_value)
                         }
                         
                         HStack(spacing: 8)
                         {
-                            Text("Z:")
+                            Text("Z")
                                 .frame(width: 20)
                             TextField("0", value: $location_z, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -622,7 +622,7 @@ struct CellSettingsView: View
                         }
                         .onChange(of: location_z)
                         { _, new_value in
-                            Robot.default_origin_location[2] = Float(new_value)
+                            Robot.default_origin_position.z = Float(new_value)
                         }
                     }
                     .padding(8)
@@ -634,7 +634,7 @@ struct CellSettingsView: View
                         
                         HStack(spacing: 8)
                         {
-                            Text("X:")
+                            Text("X")
                                 .frame(width: 20)
                             TextField("0", value: $scale_x, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -644,12 +644,12 @@ struct CellSettingsView: View
                         }
                         .onChange(of: scale_x)
                         { _, new_value in
-                            Robot.default_space_scale[0] = Float(new_value)
+                            Robot.default_space_scale.x = Float(new_value)
                         }
                         
                         HStack(spacing: 8)
                         {
-                            Text("Y:")
+                            Text("Y")
                                 .frame(width: 20)
                             TextField("0", value: $scale_y, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -659,12 +659,12 @@ struct CellSettingsView: View
                         }
                         .onChange(of: scale_y)
                         { _, new_value in
-                            Robot.default_space_scale[1] = Float(new_value)
+                            Robot.default_space_scale.y = Float(new_value)
                         }
                         
                         HStack(spacing: 8)
                         {
-                            Text("Z:")
+                            Text("Z")
                                 .frame(width: 20)
                             TextField("0", value: $scale_z, format: .number)
                                 .textFieldStyle(.roundedBorder)
@@ -674,7 +674,7 @@ struct CellSettingsView: View
                         }
                         .onChange(of: scale_z)
                         { _, new_value in
-                            Robot.default_space_scale[2] = Float(new_value)
+                            Robot.default_space_scale.z = Float(new_value)
                         }
                     }
                     .padding(8)
@@ -685,7 +685,7 @@ struct CellSettingsView: View
                 {
                     HStack(spacing: 8)
                     {
-                        Text("X:")
+                        Text("X")
                             .frame(width: 20)
                         TextField("0", value: $location_x, format: .number)
                             .labelsHidden()
@@ -694,12 +694,12 @@ struct CellSettingsView: View
                     }
                     .onChange(of: location_x)
                     { _, new_value in
-                        Robot.default_origin_location[0] = Float(new_value)
+                        Robot.default_origin_position.x = Float(new_value)
                     }
                     
                     HStack(spacing: 8)
                     {
-                        Text("Y:")
+                        Text("Y")
                             .frame(width: 20)
                         TextField("0", value: $location_y, format: .number)
                             .labelsHidden()
@@ -708,12 +708,12 @@ struct CellSettingsView: View
                     }
                     .onChange(of: location_y)
                     { _, new_value in
-                        Robot.default_origin_location[1] = Float(new_value)
+                        Robot.default_origin_position.y = Float(new_value)
                     }
                     
                     HStack(spacing: 8)
                     {
-                        Text("Z:")
+                        Text("Z")
                             .frame(width: 20)
                         TextField("0", value: $location_z, format: .number)
                             .labelsHidden()
@@ -722,7 +722,7 @@ struct CellSettingsView: View
                     }
                     .onChange(of: location_z)
                     { _, new_value in
-                        Robot.default_origin_location[2] = Float(new_value)
+                        Robot.default_origin_position.z = Float(new_value)
                     }
                 }
                 
@@ -730,7 +730,7 @@ struct CellSettingsView: View
                 {
                     HStack(spacing: 8)
                     {
-                        Text("X:")
+                        Text("X")
                             .frame(width: 20)
                         TextField("0", value: $scale_x, format: .number)
                             .labelsHidden()
@@ -739,12 +739,12 @@ struct CellSettingsView: View
                     }
                     .onChange(of: scale_x)
                     { _, new_value in
-                        Robot.default_space_scale[0] = Float(new_value)
+                        Robot.default_space_scale.x = Float(new_value)
                     }
                     
                     HStack(spacing: 8)
                     {
-                        Text("Y:")
+                        Text("Y")
                             .frame(width: 20)
                         TextField("0", value: $scale_y, format: .number)
                             .labelsHidden()
@@ -753,12 +753,12 @@ struct CellSettingsView: View
                     }
                     .onChange(of: scale_y)
                     { _, new_value in
-                        Robot.default_space_scale[1] = Float(new_value)
+                        Robot.default_space_scale.y = Float(new_value)
                     }
                     
                     HStack(spacing: 8)
                     {
-                        Text("Z:")
+                        Text("Z")
                             .frame(width: 20)
                         TextField("0", value: $scale_z, format: .number)
                             .labelsHidden()
@@ -767,7 +767,7 @@ struct CellSettingsView: View
                     }
                     .onChange(of: scale_z)
                     { _, new_value in
-                        Robot.default_space_scale[2] = Float(new_value)
+                        Robot.default_space_scale.z = Float(new_value)
                     }
                 }
                 #endif

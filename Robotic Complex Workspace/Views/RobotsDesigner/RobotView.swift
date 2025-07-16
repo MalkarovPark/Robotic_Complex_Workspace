@@ -201,13 +201,11 @@ struct RobotSceneView: View
 {
     @AppStorage("WorkspaceImagesStore") private var workspace_images_store: Bool = true
     
-    @State private var origin_move_view_presented = false
-    @State private var origin_rotate_view_presented = false
-    @State private var space_scale_view_presented = false
+    @State private var space_origin_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var app_state: AppState
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    //@EnvironmentObject var app_state: AppState
+    //@EnvironmentObject var document_handler: DocumentUpdateHandler
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
@@ -223,375 +221,229 @@ struct RobotSceneView: View
         { scene_view in
             base_workspace.selected_robot.workcell_connect(scene: scene_view.scene ?? SCNScene(), name: "unit", connect_camera: true)
         }
-        #if !os(visionOS)
-            .overlay(alignment: .bottomLeading)
+        .overlay(alignment: .bottomLeading)
+        {
+            Button(action: { space_origin_view_presented = true })
             {
-                VStack(spacing: 0)
+                Image(systemName: "cube")
+                    .imageScale(.large)
+                    #if os(macOS)
+                    .frame(width: 16, height: 16)
+                    #else
+                    .frame(width: 24, height: 24)
+                    #endif
+                    .padding(8)
+            }
+            .buttonBorderShape(.circle)
+            .buttonStyle(.glass)
+            .popover(isPresented: $space_origin_view_presented)
+            {
+                SpaceOriginView(is_presented: $space_origin_view_presented, origin_position: $base_workspace.selected_robot.origin_position, space_scale: $base_workspace.selected_robot.space_scale)
+            }
+            .padding()
+        }
+    }
+}
+
+// MARK: Origin settings
+struct SpaceOriginView: View
+{
+    @Binding var is_presented: Bool
+    
+    @Binding var origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)
+    @Binding var space_scale: (x: Float, y: Float, z: Float)
+    
+    @State private var editor_selection = 0
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            Picker(selection: $editor_selection, label: Text("Editor"))
+            {
+                /*Image(systemName: "move.3d").tag(0)
+                Image(systemName: "rotate.3d").tag(1)
+                Image(systemName: "scale.3d").tag(2)*/
+                
+                Label("Location", systemImage: "move.3d").tag(0)
+                Label("Rotation", systemImage: "rotate.3d").tag(1)
+                Label("Scale", systemImage: "scale.3d").tag(2)
+            }
+            .labelsHidden()
+            .pickerStyle(.segmented)
+            .frame(maxWidth: .infinity)
+            .padding()
+            
+            switch editor_selection
+            {
+            case 0:
+                VStack(spacing: 12)
                 {
-                    Button(action: { origin_rotate_view_presented.toggle() })
+                    HStack(spacing: 8)
                     {
-                        Image(systemName: "rotate.3d")
-                            .imageScale(.large)
-                        #if os(macOS)
-                            .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
+                        Text("X")
+                            .frame(width: 20)
+                        TextField("0", value: $origin_position.x, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
                         #endif
-                            .padding()
+                        Stepper("Enter", value: $origin_position.x, in: -20000...20000)
+                            .labelsHidden()
                     }
-                    .buttonStyle(.borderless)
-                    #if os(iOS)
-                    .foregroundColor(.black)
-                    #endif
-                    .popover(isPresented: $origin_rotate_view_presented, arrowEdge: default_popover_edge)
-                    {
-                        OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
-                            .onChange(of: base_workspace.selected_robot.origin_rotation)
-                        { _, _ in
-                            base_workspace.update_view()
-                            document_handler.document_update_robots()
-                        }
-                    }
-                    .onDisappear
-                    {
-                        origin_rotate_view_presented.toggle()
-                    }
-                    Divider()
                     
-                    Button(action: { origin_move_view_presented.toggle() })
+                    HStack(spacing: 8)
                     {
-                        Image(systemName: "move.3d")
-                            .imageScale(.large)
-                        #if os(macOS)
-                            .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
+                        Text("Y")
+                            .frame(width: 20)
+                        TextField("0", value: $origin_position.y, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
                         #endif
-                            .padding()
+                        Stepper("Enter", value: $origin_position.y, in: -20000...20000)
+                            .labelsHidden()
                     }
-                    .buttonBorderShape(.circle)
-                    .buttonStyle(.borderless)
-                    #if os(iOS)
-                    .foregroundColor(.black)
-                    #endif
-                    .popover(isPresented: $origin_move_view_presented, arrowEdge: default_popover_edge)
-                    {
-                        OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
-                            .onChange(of: base_workspace.selected_robot.origin_location)
-                        { _, _ in
-                            base_workspace.update_view()
-                            document_handler.document_update_robots()
-                        }
-                    }
-                    .onDisappear
-                    {
-                        origin_move_view_presented.toggle()
-                    }
-                    Divider()
                     
-                    Button(action: { space_scale_view_presented.toggle() })
+                    HStack(spacing: 8)
                     {
-                        Image(systemName: "scale.3d")
-                            .imageScale(.large)
-                        #if os(macOS)
-                            .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
+                        Text("Z")
+                            .frame(width: 20)
+                        TextField("0", value: $origin_position.z, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
                         #endif
-                            .padding()
-                    }
-                    .buttonBorderShape(.circle)
-                    .buttonStyle(.borderless)
-                    #if os(iOS)
-                    .foregroundColor(.black)
-                    #endif
-                    .popover(isPresented: $space_scale_view_presented, arrowEdge: default_popover_edge)
-                    {
-                        SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
-                            .onChange(of: base_workspace.selected_robot.space_scale)
-                        { _, _ in
-                            base_workspace.selected_robot.update_space_scale()
-                            base_workspace.update_view()
-                            document_handler.document_update_robots()
-                        }
-                    }
-                    .onDisappear
-                    {
-                        space_scale_view_presented.toggle()
+                        Stepper("Enter", value: $origin_position.z, in: -20000...20000)
+                            .labelsHidden()
                     }
                 }
-                .background(.thinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .shadow(radius: 8)
-                .fixedSize(horizontal: true, vertical: false)
-                .padding()
-            }
-        #else
-            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 16, style: .continuous))
-            .ornament(attachmentAnchor: .scene(.bottom))
-            {
-                HStack(spacing: 0)
+                .padding([.horizontal, .bottom])
+                #if os(macOS)
+                .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
+                #else
+                .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
+                #endif
+            case 1:
+                VStack(spacing: 12)
                 {
-                    Button(action: { origin_rotate_view_presented.toggle() })
+                    HStack(spacing: 8)
                     {
-                        Image(systemName: "rotate.3d")
-                            .imageScale(.large)
-                            .padding()
-                    }
-                    .buttonStyle(.borderless)
-                    .buttonBorderShape(.circle)
-                    .popover(isPresented: $origin_rotate_view_presented, arrowEdge: default_popover_edge)
-                    {
-                        OriginRotateView(origin_rotate_view_presented: $origin_rotate_view_presented, origin_view_pos_rotation: $base_workspace.selected_robot.origin_rotation)
-                            .onChange(of: base_workspace.selected_robot.origin_rotation)
-                        { _, _ in
-                            base_workspace.update_view()
-                            document_handler.document_update_robots()
-                        }
-                    }
-                    .onDisappear
-                    {
-                        origin_rotate_view_presented.toggle()
+                        Text("R")
+                            .frame(width: label_width)
+                        TextField("0", value: $origin_position.r, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
+                        #endif
+                        Stepper("Enter", value: $origin_position.r, in: -180...180)
+                            .labelsHidden()
                     }
                     
-                    Button(action: { origin_move_view_presented.toggle() })
+                    HStack(spacing: 8)
                     {
-                        Image(systemName: "move.3d")
-                            .imageScale(.large)
-                            .padding()
-                    }
-                    .buttonStyle(.borderless)
-                    .buttonBorderShape(.circle)
-                    .popover(isPresented: $origin_move_view_presented, arrowEdge: default_popover_edge)
-                    {
-                        OriginMoveView(origin_move_view_presented: $origin_move_view_presented, origin_view_pos_location: $base_workspace.selected_robot.origin_location)
-                            .onChange(of: base_workspace.selected_robot.origin_location)
-                        { _, _ in
-                            base_workspace.update_view()
-                            document_handler.document_update_robots()
-                        }
-                    }
-                    .onDisappear
-                    {
-                        origin_move_view_presented.toggle()
+                        Text("P")
+                            .frame(width: label_width)
+                        TextField("0", value: $origin_position.p, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
+                        #endif
+                        Stepper("Enter", value: $origin_position.p, in: -180...180)
+                            .labelsHidden()
                     }
                     
-                    Button(action: { space_scale_view_presented.toggle() })
+                    HStack(spacing: 8)
                     {
-                        Image(systemName: "scale.3d")
-                            .imageScale(.large)
-                            .padding()
+                        Text("W")
+                            .frame(width: label_width)
+                        TextField("0", value: $origin_position.w, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
+                        #endif
+                        Stepper("Enter", value: $origin_position.w, in: -180...180)
+                            .labelsHidden()
                     }
-                    .buttonBorderShape(.circle)
-                    .popover(isPresented: $space_scale_view_presented, arrowEdge: default_popover_edge)
-                    {
-                        SpaceScaleView(space_scale_view_presented: $space_scale_view_presented, space_scale: $base_workspace.selected_robot.space_scale)
-                            .onChange(of: base_workspace.selected_robot.space_scale)
-                        { _, _ in
-                            base_workspace.selected_robot.update_space_scale()
-                            base_workspace.update_view()
-                            document_handler.document_update_robots()
-                        }
-                    }
-                    .onDisappear
-                    {
-                        space_scale_view_presented.toggle()
-                    }
-                    .buttonStyle(.borderless)
                 }
-                .padding()
-                .labelStyle(.iconOnly)
-                .glassBackgroundEffect()
-            }
-        #endif
-    }
-}
-
-// MARK: Scale elements
-struct SpaceScaleView: View
-{
-    @Binding var space_scale_view_presented: Bool
-    @Binding var space_scale: [Float]
-    
-    var body: some View
-    {
-        VStack(spacing: 12)
-        {
-            Text("Space Scale")
-                .font(.title3)
-                .padding([.top, .leading, .trailing])
-            
-            HStack(spacing: 8)
-            {
-                Text("X:")
-                    .frame(width: 20)
-                TextField("0", value: $space_scale[0], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
+                .padding([.horizontal, .bottom])
+                #if os(macOS)
+                .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
+                #elseif os(iOS)
+                .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
+                #else
+                .frame(minWidth: 256, idealWidth: 288, maxWidth: 320)
                 #endif
-                Stepper("Enter", value: $space_scale[0], in: 2...1000)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("Y:")
-                    .frame(width: 20)
-                TextField("0", value: $space_scale[1], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
+            case 2:
+                VStack(spacing: 12)
+                {
+                    HStack(spacing: 8)
+                    {
+                        Text("X")
+                            .frame(width: 20)
+                        TextField("0", value: $space_scale.x, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
+                        #endif
+                        Stepper("Enter", value: $space_scale.x, in: 2...1000)
+                            .labelsHidden()
+                    }
+                    
+                    HStack(spacing: 8)
+                    {
+                        Text("Y")
+                            .frame(width: 20)
+                        TextField("0", value: $space_scale.y, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
+                        #endif
+                        Stepper("Enter", value: $space_scale.y, in: 2...1000)
+                            .labelsHidden()
+                    }
+                    
+                    HStack(spacing: 8)
+                    {
+                        Text("Z")
+                            .frame(width: 20)
+                        TextField("0", value: $space_scale.z, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
+                        #endif
+                        Stepper("Enter", value: $space_scale.z, in: 2...1000)
+                            .labelsHidden()
+                    }
+                }
+                .padding([.horizontal, .bottom])
+                #if os(macOS)
+                .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
+                #else
+                .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
                 #endif
-                Stepper("Enter", value: $space_scale[1], in: 2...1000)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("Z:")
-                    .frame(width: 20)
-                TextField("0", value: $space_scale[2], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $space_scale[2], in: 2...1000)
-                    .labelsHidden()
+            default:
+                EmptyView()
             }
         }
-        .padding([.bottom, .leading, .trailing])
-        #if os(macOS)
-        .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
-        #else
-        .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
-        #endif
-    }
-}
-
-// MARK: Move elements
-struct OriginMoveView: View
-{
-    @Binding var origin_move_view_presented: Bool
-    @Binding var origin_view_pos_location: [Float]
-    
-    var body: some View
-    {
-        VStack(spacing: 12)
-        {
-            Text("Origin Location")
-                .font(.title3)
-                .padding([.top, .leading, .trailing])
-            
-            HStack(spacing: 8)
-            {
-                Text("X:")
-                    .frame(width: 20)
-                TextField("0", value: $origin_view_pos_location[0], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $origin_view_pos_location[0], in: -20000...20000)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("Y:")
-                    .frame(width: 20)
-                TextField("0", value: $origin_view_pos_location[1], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $origin_view_pos_location[1], in: -20000...20000)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("Z:")
-                    .frame(width: 20)
-                TextField("0", value: $origin_view_pos_location[2], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $origin_view_pos_location[2], in: -20000...20000)
-                    .labelsHidden()
-            }
+        .onChange(of: PositionSnapshot(base_workspace.selected_robot.origin_position))
+        { _, _ in
+            //base_workspace.update_view()
+            document_handler.document_update_robots()
         }
-        .padding([.bottom, .leading, .trailing])
-        #if os(macOS)
-        .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
-        #else
-        .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
-        #endif
-    }
-}
-
-// MARK: Rotate elements
-struct OriginRotateView: View
-{
-    @Binding var origin_rotate_view_presented: Bool
-    @Binding var origin_view_pos_rotation: [Float]
-    
-    var body: some View
-    {
-        VStack(spacing: 12)
-        {
-            Text("Origin Rotation")
-                .font(.title3)
-                .padding([.top, .leading, .trailing])
-            
-            HStack(spacing: 8)
-            {
-                Text("R:")
-                    .frame(width: label_width)
-                TextField("0", value: $origin_view_pos_rotation[0], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $origin_view_pos_rotation[0], in: -180...180)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("P:")
-                    .frame(width: label_width)
-                TextField("0", value: $origin_view_pos_rotation[1], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $origin_view_pos_rotation[1], in: -180...180)
-                    .labelsHidden()
-            }
-            
-            HStack(spacing: 8)
-            {
-                Text("W:")
-                    .frame(width: label_width)
-                TextField("0", value: $origin_view_pos_rotation[2], format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $origin_view_pos_rotation[2], in: -180...180)
-                    .labelsHidden()
-            }
+        .onChange(of: ScaleSnapshot(base_workspace.selected_robot.space_scale))
+        { _, _ in
+            base_workspace.selected_robot.update_space_scale()
+            //base_workspace.update_view()
+            document_handler.document_update_robots()
         }
-        .padding([.bottom, .leading, .trailing])
-        #if os(macOS)
-        .frame(minWidth: 128, idealWidth: 192, maxWidth: 256)
-        #elseif os(iOS)
-        .frame(minWidth: 192, idealWidth: 256, maxWidth: 288)
-        #else
-        .frame(minWidth: 256, idealWidth: 288, maxWidth: 320)
-        #endif
+        .onChange(of: PositionSnapshot(base_workspace.selected_robot.position))
+        { _, _ in
+            base_workspace.update_object_position()
+        }
     }
 }
 
@@ -600,6 +452,18 @@ let label_width = 20.0
 #else
 let label_width = 26.0
 #endif
+
+public struct ScaleSnapshot: Equatable
+{
+    let x: Float, y: Float, z: Float
+    
+    public init(_ tuple: (x: Float, y: Float, z: Float))
+    {
+        self.x = tuple.x
+        self.y = tuple.y
+        self.z = tuple.z
+    }
+}
 
 // MARK: - Previews
 #Preview
