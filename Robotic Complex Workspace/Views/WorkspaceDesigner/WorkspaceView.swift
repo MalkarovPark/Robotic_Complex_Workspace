@@ -48,8 +48,7 @@ struct WorkspaceView: View
                     {
                         ViewPendantButton(operation: { inspector_presented.toggle() })
                     }
-                    .ignoresSafeArea(.container, edges: [.bottom])
-                    //.ignoresSafeArea(.container, edges: [.top, .bottom])
+                    .ignoresSafeArea(.container, edges: .bottom)
                 #endif
             case .gallery:
                 GalleryWorkspaceView()
@@ -109,7 +108,7 @@ struct WorkspaceView: View
         #if !os(visionOS)
         .toolbar(id: "workspace")
         {
-            ToolbarItem(id: "Registers")
+            ToolbarItem(id: "Registers", placement: compact_placement())
             {
                 Button(action: { registers_view_presented = true })
                 {
@@ -187,7 +186,7 @@ struct WorkspaceView: View
         }
         else
         {
-            return .automatic
+            return .navigationBarTrailing
         }
         #else
         return toolbar_item_placement_trailing

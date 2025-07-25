@@ -222,7 +222,7 @@ struct StatisticsView: View
                 { _, _ in
                     update_file_data()
                 }
-                .popover(isPresented: $update_interval_view_presented)
+                .popover(isPresented: $update_interval_view_presented, arrowEdge: .bottom)
                 {
                     UpdateIntervalView(is_presented: $update_interval_view_presented, time_interval: $update_interval)
                 }

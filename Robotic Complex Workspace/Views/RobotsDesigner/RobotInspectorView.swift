@@ -31,6 +31,71 @@ struct RobotInspectorView: View
     {
         VStack(spacing: 0)
         {
+            // MARK: Program Picker
+            HStack(spacing: 0)
+            {
+                Picker("Program", selection: $robot.selected_program_index)
+                {
+                    if robot.programs_names.count > 0
+                    {
+                        ForEach(0 ..< robot.programs_names.count, id: \.self)
+                        {
+                            Text(robot.programs_names[$0])
+                        }
+                    }
+                    else
+                    {
+                        Text("None")
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity)
+                .disabled(robot.programs_names.count == 0)
+                .padding(.leading, 8)
+                
+                Button(action: delete_positions_program)
+                {
+                    Image(systemName: "minus")
+                        .imageScale(.large)
+                    #if os(macOS)
+                        .frame(width: 16, height: 16)
+                    #else
+                        .frame(width: 24, height: 24)
+                    #endif
+                        .padding(8)
+                }
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+                
+                Button(action: { add_program_view_presented.toggle() })
+                {
+                    Image(systemName: "plus")
+                        .imageScale(.large)
+                    #if os(macOS)
+                        .frame(width: 16, height: 16)
+                    #else
+                        .frame(width: 24, height: 24)
+                    #endif
+                        .padding(8)
+                }
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+                .popover(isPresented: $add_program_view_presented, arrowEdge: .top)
+                {
+                    AddNewView(is_presented: $add_program_view_presented)
+                    { new_name in
+                        robot.add_program(PositionsProgram(name: new_name))
+                        robot.selected_program_index = robot.programs_names.count - 1
+                        
+                        document_handler.document_update_robots()
+                        add_program_view_presented.toggle()
+                    }
+                }
+            }
+            .glassEffect(in: .rect(cornerRadius: 8))
+            .padding([.horizontal, .top])
+            
+            // MARK: Program Editor
             ZStack
             {
                 List
@@ -69,6 +134,26 @@ struct RobotInspectorView: View
                 }
                 .modifier(ListBorderer())
                 .padding([.horizontal, .top])
+                .overlay(alignment: .bottomTrailing)
+                {
+                    Button(action: add_point_to_program)
+                    {
+                        Image(systemName: "plus")
+                            .imageScale(.large)
+                            .frame(width: 8, height: 8)
+                            .padding(8)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .buttonBorderShape(.circle)
+                    .disabled(robot.programs_count == 0)
+                    #if os(macOS)
+                    .padding(.trailing)
+                    .padding(10)
+                    #else
+                    .padding(.trailing, 10)
+                    .padding()
+                    #endif
+                }
                 
                 if robot.programs_count == 0
                 {
@@ -84,83 +169,12 @@ struct RobotInspectorView: View
                     }
                 }
             }
-            .overlay(alignment: .bottomTrailing)
-            {
-                if robot.programs_count > 0
-                {
-                    Spacer()
-                    Button(action: add_point_to_program)
-                    {
-                        Image(systemName: "plus")
-                            .padding(8)
-                    }
-                    .disabled(robot.programs_count == 0)
-                    #if os(macOS) || os(iOS)
-                    .foregroundColor(.white)
-                    #endif
-                    .background(Color.accentColor)
-                    .clipShape(Circle())
-                    .frame(width: 24, height: 24)
-                    .shadow(radius: 4)
-                    #if os(macOS)
-                    .buttonStyle(BorderlessButtonStyle())
-                    #endif
-                    .padding(.trailing, 32)
-                    .padding(.bottom, 16)
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                }
-            }
             
             PositionControl(position: $robot.pointer_position, scale: $robot.space_scale)
-            
-            HStack(spacing: 0)
-            {
-                Picker("Program", selection: $robot.selected_program_index)
-                {
-                    if robot.programs_names.count > 0
-                    {
-                        ForEach(0 ..< robot.programs_names.count, id: \.self)
-                        {
-                            Text(robot.programs_names[$0])
-                        }
-                    }
-                    else
-                    {
-                        Text("None")
-                    }
-                }
-                .pickerStyle(.menu)
-                .disabled(robot.programs_names.count == 0)
-                .frame(maxWidth: .infinity)
-                #if os(iOS)
-                .modifier(PickerNamer(name: "Program"))
-                #endif
-                
-                Button("-")
-                {
-                    delete_positions_program()
-                }
-                .disabled(robot.programs_names.count == 0)
-                .padding(.horizontal)
-                
-                Button("+")
-                {
-                    add_program_view_presented.toggle()
-                }
-                .popover(isPresented: $add_program_view_presented, arrowEdge: default_popover_edge)
-                {
-                    AddNewView(is_presented: $add_program_view_presented)
-                    { new_name in
-                        robot.add_program(PositionsProgram(name: new_name))
-                        robot.selected_program_index = robot.programs_names.count - 1
-                        
-                        document_handler.document_update_robots()
-                        add_program_view_presented.toggle()
-                    }
-                }
-            }
-            .padding([.horizontal, .bottom])
         }
+        #if !os(macOS)
+        .ignoresSafeArea(.container, edges: [.bottom])
+        #endif
     }
     
     private func point_item_move(from source: IndexSet, to destination: Int)

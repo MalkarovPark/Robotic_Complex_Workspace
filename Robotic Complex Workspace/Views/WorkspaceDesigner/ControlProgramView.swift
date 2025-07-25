@@ -86,6 +86,9 @@ struct ControlProgramView: View
                 }
             }
         }
+        #if !os(macOS)
+        .ignoresSafeArea(.container, edges: [.bottom])
+        #endif
     }
     
     private func remove_elements(at offsets: IndexSet) // Remove program element function
@@ -120,9 +123,7 @@ struct AddProgramElementButton: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    #if !os(visionOS)
     @EnvironmentObject var sidebar_controller: SidebarController
-    #endif
     
     var body: some View
     {
@@ -135,10 +136,15 @@ struct AddProgramElementButton: View
                     .frame(width: 16, height: 16)
                 #else
                     .frame(width: 24, height: 24)
+                    .foregroundStyle(.black)
                 #endif
                     //.padding(8)
             }
+            #if os(macOS)
             .padding(.leading, 10)
+            #else
+            .padding(.leading, 14)
+            #endif
             .buttonStyle(.borderless)
             
             Button(action: { add_element_view_presented.toggle() }) // Configure new element button
@@ -146,18 +152,27 @@ struct AddProgramElementButton: View
                 app_state.new_program_element.image
                     .foregroundColor(app_state.new_program_element.color)
                     .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
-                    //.imageScale(.large)
                 #if os(macOS)
+                    .imageScale(.medium)
                     .frame(width: 16, height: 16)
                 #else
+                    .imageScale(.large)
                     .frame(width: 24, height: 24)
                 #endif
                     .padding(4)
                     .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.color)
             }
+            #if os(macOS)
             .foregroundStyle(app_state.new_program_element.color.opacity(0.75))
+            #else
+            .buttonStyle(.bordered)
+            .tint(app_state.new_program_element.color.opacity(0.75))
+            #endif
             .buttonBorderShape(.circle)
             .padding(6)
+            #if !os(macOS)
+            .padding(.vertical, 4)
+            #endif
             .popover(isPresented: $add_element_view_presented)
             {
                 AddElementView(add_element_view_presented: $add_element_view_presented, new_program_element: $app_state.new_program_element)
@@ -353,79 +368,90 @@ struct AddElementView: View
     {
         VStack(spacing: 0)
         {
-            VStack
+            // MARK: Type picker
+            Picker("Type", selection: $element_type)
             {
-                // MARK: Type picker
-                Picker("Type", selection: $element_type)
+                ForEach(ProgramElementType.allCases, id: \.self)
+                { type in
+                    Text(type.rawValue).tag(type)
+                }
+                .onChange(of: element_type)
+                { _, _ in
+                    build_element()
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            #if os(macOS)
+            .padding()
+            #else
+            .padding([.horizontal, .top])
+            #endif
+            
+            // MARK: Subtype pickers cases
+            switch element_type
+            {
+            case .perofrmer:
+                Picker("Type", selection: $performer_type)
                 {
-                    ForEach(ProgramElementType.allCases, id: \.self)
+                    ForEach(PerformerType.allCases, id: \.self)
                     { type in
                         Text(type.rawValue).tag(type)
                     }
-                    .onChange(of: element_type)
-                    { _, _ in
-                        build_element()
+                }
+                #if os(macOS)
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity)
+                .buttonStyle(.bordered)
+                .padding([.horizontal, .bottom])
+                #else
+                .pickerStyle(.wheel)
+                #endif
+                .onChange(of: performer_type)
+                { _, _ in
+                    build_element()
+                }
+            case .modifier:
+                Picker("Type", selection: $modifier_type)
+                {
+                    ForEach(ModifierType.allCases, id: \.self)
+                    { type in
+                        Text(type.rawValue).tag(type)
                     }
                 }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .padding(.bottom, 8)
-                
-                // MARK: Subtype pickers cases
-                HStack(spacing: 16)
+                #if os(macOS)
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity)
+                .buttonStyle(.bordered)
+                .padding([.horizontal, .bottom])
+                #else
+                .pickerStyle(.wheel)
+                #endif
+                .onChange(of: modifier_type)
+                { _, _ in
+                    build_element()
+                }
+            case .logic:
+                Picker("Type", selection: $logic_type)
                 {
-                    #if os(iOS) || os(visionOS)
-                    Text("Type")
-                        .font(.subheadline)
-                    #endif
-                    switch element_type
-                    {
-                    case .perofrmer:
-                        Picker("Type", selection: $performer_type)
-                        {
-                            ForEach(PerformerType.allCases, id: \.self)
-                            { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity)
-                        .buttonStyle(.bordered)
-                        .onChange(of: performer_type) { _, _ in
-                            build_element()
-                        }
-                    case .modifier:
-                        Picker("Type", selection: $modifier_type)
-                        {
-                            ForEach(ModifierType.allCases, id: \.self)
-                            { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity)
-                        .buttonStyle(.bordered)
-                        .onChange(of: modifier_type) { _, _ in
-                            build_element()
-                        }
-                    case .logic:
-                        Picker("Type", selection: $logic_type)
-                        {
-                            ForEach(LogicType.allCases, id: \.self)
-                            { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity)
-                        .buttonStyle(.bordered)
-                        .onChange(of: logic_type) { _, _ in
-                            build_element()
-                        }
+                    ForEach(LogicType.allCases, id: \.self)
+                    { type in
+                        Text(type.rawValue).tag(type)
                     }
+                }
+                #if os(macOS)
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity)
+                .buttonStyle(.bordered)
+                .padding([.horizontal, .bottom])
+                #else
+                .pickerStyle(.wheel)
+                #endif
+                .onChange(of: logic_type)
+                { _, _ in
+                    build_element()
                 }
             }
-            .padding()
         }
         .onAppear(perform: get_parameters)
     }

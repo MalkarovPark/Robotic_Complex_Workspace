@@ -39,7 +39,7 @@ struct SettingsView: View
             
             ModulesSettingsView()
             #if os(iOS) || os(visionOS)
-                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Modules"))
+                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Modules", plain: true))
             #endif
                 .tabItem
             {
@@ -48,7 +48,7 @@ struct SettingsView: View
             
             CellSettingsView()
             #if os(iOS) || os(visionOS)
-                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Cell"))
+                .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Cell", plain: true))
             #endif
                 .tabItem
             {
@@ -341,11 +341,13 @@ struct ModulesSettingsView: View
                             Button(action: { folder_picker_is_presented = true })
                             {
                                 Image(systemName: "folder")
+                                    .frame(width: 16, height: 16)
                             }
                             
                             Button(action: { app_state.clear_modules() })
                             {
                                 Image(systemName: "arrow.counterclockwise")
+                                    .frame(width: 16, height: 16)
                             }
                         }
                         .padding(4)
@@ -465,20 +467,16 @@ struct ModulesSettingsView: View
                     Button(action: { folder_picker_is_presented = true })
                     {
                         Image(systemName: "folder")
-                            .frame(height: 24)
+                            .frame(width: 24, height: 24)
                     }
-                    #if !os(visionOS)
-                    .modifier(ButtonBorderer())
-                    #endif
+                    .buttonStyle(.bordered)
                     
                     Button(action: { app_state.clear_modules() })
                     {
                         Image(systemName: "arrow.counterclockwise")
-                            .frame(height: 24)
+                            .frame(width: 24, height: 24)
                     }
-                    #if !os(visionOS)
-                    .modifier(ButtonBorderer())
-                    #endif
+                    .buttonStyle(.bordered)
                 }
             }
             

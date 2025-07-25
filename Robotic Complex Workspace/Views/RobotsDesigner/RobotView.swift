@@ -57,11 +57,7 @@ struct RobotView: View
                 #if os(iOS) || os(visionOS)
                     .navigationBarTitleDisplayMode(.inline)
                 #endif
-                #if os(iOS)
-                    .ignoresSafeArea(.container, edges: !(horizontal_size_class == .compact) ? .bottom : .leading)
-                #elseif os(visionOS)
                     .ignoresSafeArea(.container, edges: .bottom)
-                #endif
             }
         }
         #if !os(visionOS)
@@ -188,7 +184,7 @@ struct RobotView: View
         }
         else
         {
-            return .automatic
+            return .topBarTrailing
         }
         #else
         return .automatic
