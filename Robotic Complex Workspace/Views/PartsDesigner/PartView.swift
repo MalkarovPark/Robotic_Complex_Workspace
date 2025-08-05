@@ -27,13 +27,18 @@ struct PartView: View
     
     var body: some View
     {
-        VStack(spacing: 0)
+        ZStack
         {
             PartSceneView(part: $part_item)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            Divider()
-            
+        }
+        .modifier(ViewCloseButton(is_presented: $part_view_presented))
+        .controlSize(.regular)
+        #if os(macOS)
+        .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
+        #endif
+        .overlay(alignment: .bottom)
+        {
             HStack(spacing: 0)
             {
                 Picker("Physics", selection: $new_physics)
@@ -43,10 +48,11 @@ struct PartView: View
                         Text(type.rawValue).tag(type)
                     }
                 }
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                #if os(iOS) || os(visionOS)
+                #if os(macOS)
                 .buttonStyle(.bordered)
-                .frame(maxWidth: .infinity)
+                #else
+                .buttonStyle(.plain)
+                .frame(maxWidth: 112)
                 #endif
                 .padding(.horizontal)
                 .onChange(of: new_physics)
@@ -64,13 +70,10 @@ struct PartView: View
                     .frame(width: 112)
                 #endif
             }
-            .padding(.vertical)
+            .padding(10)
+            .glassEffect(in: .rect(cornerRadius: 16.0))
+            .padding()
         }
-        .modifier(ViewCloseButton(is_presented: $part_view_presented))
-        .controlSize(.regular)
-        #if os(macOS)
-        .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
-        #endif
         .onAppear()
         {
             app_state.previewed_object = part_item

@@ -49,7 +49,7 @@ struct PartsView: View
                                     self.dragged_part = part_item
                                     return NSItemProvider(object: part_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    SmallCardView(color: part_item.card_info.color, image: part_item.card_info.image, title: part_item.card_info.title)
+                                    LargeCardView(title: part_item.card_info.title, color: part_item.card_info.color, image: part_item.card_info.image)
                                 })
                                 .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, workspace_parts: base_workspace.file_data().parts, part: part_item, document_handler: document_handler))
                                 .transition(AnyTransition.scale)
@@ -167,9 +167,9 @@ struct PartCardView: View
     
     var body: some View
     {
-        SmallCardView(color: part_item.card_info.color, node: part_item.node ?? SCNNode(), title: part_item.card_info.title, to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
+        LargeCardView(title: part_item.card_info.title, /*color: part_item.card_info.color,*/ node: part_item.node ?? SCNNode(), to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
         #if !os(visionOS)
-            .shadow(radius: 8)
+            .shadow(color: .black.opacity(0.2), radius: 8)
         #endif
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name)

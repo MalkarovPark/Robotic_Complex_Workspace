@@ -44,7 +44,7 @@ struct RobotsView: View
                                     self.dragged_robot = robot_item
                                     return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    LargeCardView(color: robot_item.card_info.color, image: robot_item.card_info.image, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle)
+                                    LargeCardView(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ image: robot_item.card_info.image)
                                 })
                                 .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, workspace_robots: base_workspace.file_data().robots, robot: robot_item, document_handler: document_handler))
                                 .transition(AnyTransition.scale)
@@ -211,39 +211,38 @@ struct RobotCardView: View
     
     var body: some View
     {
-        LargeCardView(color: robot_item.card_info.color, node: robot_item.node, title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+        LargeCardView(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ node: robot_item.node, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+        {
+            if !pass_programs_presented && !pass_programs_presented
+            {
+                NavigationLink(destination: RobotView(robot: robot_item))
+                {
+                    Rectangle()
+                        .fill(.clear)
+                }
+                .buttonStyle(.borderless)
+                .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, duplicate_object: {
+                    base_workspace.duplicate_robot(name: robot_item.name)
+                }, delete_object: delete_robot, update_file: update_file, set_default_position: {
+                    robot_item.set_default_pointer_position()
+                    document_handler.document_update_robots()
+                }, clear_default_position: {
+                    robot_item.clear_default_pointer_position()
+                    document_handler.document_update_robots()
+                }, reset_robot_to: robot_item.reset_pointer_to_default, pass_preferences: {
+                    app_state.robot_from = robot_item
+                    pass_preferences_presented = true
+                }, pass_programs: {
+                    app_state.robot_from = robot_item
+                    pass_programs_presented = true
+                }))
+            }
+        }
         #if !os(visionOS)
-            .shadow(radius: 8)
+            .shadow(color: .black.opacity(0.2), radius: 8)
         /*#else
             .frame(depth: 24)*/
         #endif
-            .overlay
-            {
-                if !pass_programs_presented && !pass_programs_presented
-                {
-                    NavigationLink(destination: RobotView(robot: robot_item))
-                    {
-                        Rectangle()
-                            .fill(.clear)
-                    }
-                    .buttonStyle(.borderless)
-                    .modifier(CardMenu(object: robot_item, to_rename: $to_rename, name: robot_item.name, duplicate_object: {
-                        base_workspace.duplicate_robot(name: robot_item.name)
-                    }, delete_object: delete_robot, update_file: update_file, set_default_position: {
-                        robot_item.set_default_pointer_position()
-                        document_handler.document_update_robots()
-                    }, clear_default_position: {
-                        robot_item.clear_default_pointer_position()
-                        document_handler.document_update_robots()
-                    }, reset_robot_to: robot_item.reset_pointer_to_default, pass_preferences: {
-                        app_state.robot_from = robot_item
-                        pass_preferences_presented = true
-                    }, pass_programs: {
-                        app_state.robot_from = robot_item
-                        pass_programs_presented = true
-                    }))
-                }
-            }
             .popover(isPresented: $pass_preferences_presented, arrowEdge: .top)
             {
                 PassPreferencesView(is_presented: $pass_preferences_presented)
@@ -266,7 +265,7 @@ struct RobotCardView: View
                     .fitted()
                 #endif
             }
-            .overlay(alignment: .bottomTrailing)
+            /*.overlay(alignment: .bottomTrailing)
             {
                 if !to_rename
                 {
@@ -276,7 +275,7 @@ struct RobotCardView: View
                         .padding(8)
                         .background(.clear)
                 }
-            }
+            }*/
     }
     
     // MARK: Robots manage functions

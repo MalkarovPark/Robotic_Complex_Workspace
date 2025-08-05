@@ -28,10 +28,10 @@ struct VisualWorkspaceView: View
     {
         ZStack
         {
-            Rectangle()
+            /*Rectangle()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .foregroundStyle(.gray)
-                //.backgroundExtensionEffect()
+                //.backgroundExtensionEffect()*/
             WorkspaceSceneView()
                 .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
                 .disabled(add_in_view_presented)

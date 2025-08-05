@@ -42,7 +42,7 @@ struct ToolsView: View
                                     self.dragged_tool = tool_item
                                     return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    LargeCardView(color: tool_item.card_info.color, node: tool_item.node, title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle)
+                                    LargeCardView(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: tool_item.node)
                                 })
                                 .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, workspace_tools: base_workspace.file_data().tools, tool: tool_item, document_handler: document_handler))
                                 .transition(AnyTransition.scale)
@@ -129,26 +129,25 @@ struct ToolCardView: View
     
     var body: some View
     {
-        LargeCardView(color: tool_item.card_info.color, node: removed_constraints(node: tool_item.node ?? SCNNode()), title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+        LargeCardView(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: removed_constraints(node: tool_item.node ?? SCNNode()), to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+        {
+            NavigationLink(destination: ToolView(tool: $tool_item))
+            {
+                Rectangle()
+                    .fill(.clear)
+            }
+            .buttonStyle(.borderless)
+            .modifier(CardMenu(object: tool_item, to_rename: $to_rename, duplicate_object: {
+                base_workspace.duplicate_tool(name: tool_item.name)
+            }, delete_object: delete_tool, update_file: update_file))
+            .modifier(DoubleModifier(update_toggle: $update_toggle))
+        }
         #if !os(visionOS)
-            .shadow(radius: 8)
+            .shadow(color: .black.opacity(0.2), radius: 8)
         /*#else
             .frame(depth: 24)*/
         #endif
-            .overlay
-            {
-                NavigationLink(destination: ToolView(tool: $tool_item))
-                {
-                    Rectangle()
-                        .fill(.clear)
-                }
-                .buttonStyle(.borderless)
-                .modifier(CardMenu(object: tool_item, to_rename: $to_rename, duplicate_object: {
-                    base_workspace.duplicate_tool(name: tool_item.name)
-                }, delete_object: delete_tool, update_file: update_file))
-                .modifier(DoubleModifier(update_toggle: $update_toggle))
-            }
-            .overlay(alignment: .bottomTrailing)
+            /*.overlay(alignment: .bottomTrailing)
             {
                 if !to_rename
                 {
@@ -158,7 +157,7 @@ struct ToolCardView: View
                         .padding(8)
                         .background(.clear)
                 }
-            }
+            }*/
     }
     
     private func removed_constraints(node: SCNNode) -> SCNNode
