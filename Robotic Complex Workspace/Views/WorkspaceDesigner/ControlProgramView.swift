@@ -73,8 +73,12 @@ struct ControlProgramView: View
                             .frame(width: 16, height: 16)
                         #else
                             .frame(width: 24, height: 24)
+                            .padding(8)
                         #endif
                             .padding(6)
+                        #if os(iOS)
+                            .foregroundStyle(.black)
+                        #endif
                     }
                     .buttonBorderShape(.circle)
                     //.buttonStyle(.glass)
