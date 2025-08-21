@@ -42,7 +42,7 @@ struct ToolsView: View
                                     self.dragged_tool = tool_item
                                     return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    LargeCardView(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: tool_item.node)
+                                    BoxCardView(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: tool_item.node)
                                 })
                                 .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, workspace_tools: base_workspace.file_data().tools, tool: tool_item, document_handler: document_handler))
                                 .transition(AnyTransition.scale)
@@ -129,7 +129,7 @@ struct ToolCardView: View
     
     var body: some View
     {
-        LargeCardView(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: removed_constraints(node: tool_item.node ?? SCNNode()), to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+        BoxCardView(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: removed_constraints(node: tool_item.node ?? SCNNode()), to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
         {
             NavigationLink(destination: ToolView(tool: $tool_item))
             {
@@ -142,11 +142,6 @@ struct ToolCardView: View
             }, delete_object: delete_tool, update_file: update_file))
             .modifier(DoubleModifier(update_toggle: $update_toggle))
         }
-        #if !os(visionOS)
-            .shadow(color: .black.opacity(0.2), radius: 8)
-        /*#else
-            .frame(depth: 24)*/
-        #endif
             /*.overlay(alignment: .bottomTrailing)
             {
                 if !to_rename

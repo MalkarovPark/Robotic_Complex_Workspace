@@ -26,16 +26,10 @@ struct VisualWorkspaceView: View
     
     var body: some View
     {
-        ZStack
-        {
-            /*Rectangle()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .foregroundStyle(.gray)
-                //.backgroundExtensionEffect()*/
-            WorkspaceSceneView()
-                .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
-                .disabled(add_in_view_presented)
-        }
+        WorkspaceSceneView()
+            .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
+            .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
+            .disabled(add_in_view_presented)
         #if os(iOS) || os(visionOS)
             .onDisappear
             {

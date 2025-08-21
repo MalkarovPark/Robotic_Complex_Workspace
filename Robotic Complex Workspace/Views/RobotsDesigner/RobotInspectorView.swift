@@ -92,7 +92,7 @@ struct RobotInspectorView: View
                     }
                 }
             }
-            .glassEffect(in: .rect(cornerRadius: 8))
+            .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
             .padding([.horizontal, .top])
             
             // MARK: Program Editor
@@ -132,7 +132,10 @@ struct RobotInspectorView: View
                         }
                     }
                 }
-                .modifier(ListBorderer())
+                .listStyle(.plain)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
+                //.modifier(ListBorderer())
                 .padding([.horizontal, .top])
                 .overlay(alignment: .bottomTrailing)
                 {

@@ -44,7 +44,7 @@ struct RobotsView: View
                                     self.dragged_robot = robot_item
                                     return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    LargeCardView(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ image: robot_item.card_info.image)
+                                    BoxCardView(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ image: robot_item.card_info.image)
                                 })
                                 .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, workspace_robots: base_workspace.file_data().robots, robot: robot_item, document_handler: document_handler))
                                 .transition(AnyTransition.scale)
@@ -211,7 +211,7 @@ struct RobotCardView: View
     
     var body: some View
     {
-        LargeCardView(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ node: robot_item.node, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+        BoxCardView(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ node: robot_item.node, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
         {
             if !pass_programs_presented && !pass_programs_presented
             {
@@ -238,33 +238,28 @@ struct RobotCardView: View
                 }))
             }
         }
-        #if !os(visionOS)
-            .shadow(color: .black.opacity(0.2), radius: 8)
-        /*#else
-            .frame(depth: 24)*/
-        #endif
-            .popover(isPresented: $pass_preferences_presented, arrowEdge: .top)
-            {
-                PassPreferencesView(is_presented: $pass_preferences_presented)
-                    #if os(macOS)
-                    .frame(width: 192, height: 196)
-                    #else
-                    .frame(minWidth: 288, minHeight: 320)
-                    .presentationDetents([.medium])
-                    #endif
-            }
-            .sheet(isPresented: $pass_programs_presented)
-            {
-                PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
-                #if os(macOS)
-                    .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
-                    .fitted()
-                #endif
-                #if os(visionOS)
-                    .frame(width: 512, height: 512)
-                    .fitted()
-                #endif
-            }
+        .popover(isPresented: $pass_preferences_presented, arrowEdge: .top)
+        {
+            PassPreferencesView(is_presented: $pass_preferences_presented)
+            #if os(macOS)
+                .frame(width: 192, height: 196)
+            #else
+                .frame(minWidth: 288, minHeight: 320)
+                .presentationDetents([.medium])
+            #endif
+        }
+        .sheet(isPresented: $pass_programs_presented)
+        {
+            PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
+            #if os(macOS)
+                .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
+                .fitted()
+            #endif
+            #if os(visionOS)
+                .frame(width: 512, height: 512)
+                .fitted()
+            #endif
+        }
             /*.overlay(alignment: .bottomTrailing)
             {
                 if !to_rename

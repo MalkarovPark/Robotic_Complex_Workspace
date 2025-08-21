@@ -152,6 +152,12 @@ let default_popover_edge: Edge = .top
 let default_popover_edge: Edge = .bottom
 #endif
 
+#if os(macOS)
+let default_popover_edge_inv: Edge = .bottom
+#else
+let default_popover_edge_inv: Edge = .top
+#endif
+
 // MARK: - Representation enum
 public enum RepresentationType: String, Equatable, CaseIterable
 {

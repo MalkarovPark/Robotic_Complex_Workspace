@@ -56,7 +56,7 @@ struct ControlProgramView: View
                 ControlProgramTextView(elements: $base_workspace.elements)
             }
         }
-        .background(.white)
+        //.background(.white)
         .animation(.easeInOut(duration: 0.3), value: app_state.view_program_as_text)
         .overlay(alignment: .bottom)
         {
@@ -77,7 +77,8 @@ struct ControlProgramView: View
                             .padding(6)
                     }
                     .buttonBorderShape(.circle)
-                    .buttonStyle(.glass)
+                    //.buttonStyle(.glass)
+                    .glassEffect(.regular.tint(.white).interactive())
                     .padding()
                     
                     Spacer()
@@ -181,7 +182,8 @@ struct AddProgramElementButton: View
                 #endif
             }
         }
-        .glassEffect(.regular.interactive())
+        .glassEffect(.regular.tint(.white).interactive())
+        //.glassEffect(.regular.interactive())
         .padding()
     }
     
@@ -256,7 +258,7 @@ struct ProgramElementItemView: View
         ZStack
         {
             ElementCardView(program_element: element)
-                .shadow(radius: 8)
+                .shadow(color: .black.opacity(0.2), radius: 8)
                 .onTapGesture
             {
                 element_view_presented = true

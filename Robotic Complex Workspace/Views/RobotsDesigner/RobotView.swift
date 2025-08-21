@@ -216,6 +216,7 @@ struct RobotSceneView: View
         { scene_view in
             base_workspace.selected_robot.workcell_connect(scene: scene_view.scene ?? SCNScene(), name: "unit", connect_camera: true)
         }
+        .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
         .overlay(alignment: .bottomLeading)
         {
             Button(action: { space_origin_view_presented = true })

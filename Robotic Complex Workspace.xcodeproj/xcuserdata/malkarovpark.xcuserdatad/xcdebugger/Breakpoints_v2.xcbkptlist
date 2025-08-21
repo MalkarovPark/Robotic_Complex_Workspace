@@ -2296,8 +2296,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/ControlProgramView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
+            startingLineNumber = "300"
+            endingLineNumber = "300"
             landmarkName = "update_program_element()"
             landmarkType = "7">
          </BreakpointContent>
@@ -3188,8 +3188,8 @@
             filePath = "Robotic Complex Workspace/Views/ToolsDesigner/ToolInspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
             landmarkName = "ToolInspectorView"
             landmarkType = "14">
          </BreakpointContent>
@@ -5724,8 +5724,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/VisualWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "438"
-            endingLineNumber = "438"
+            startingLineNumber = "432"
+            endingLineNumber = "432"
             landmarkName = "VisualInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -5756,8 +5756,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/VisualWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "465"
-            endingLineNumber = "465"
+            startingLineNumber = "459"
+            endingLineNumber = "459"
             landmarkName = "VisualInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -5772,8 +5772,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/VisualWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "473"
-            endingLineNumber = "473"
+            startingLineNumber = "467"
+            endingLineNumber = "467"
             landmarkName = "VisualInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -6844,8 +6844,8 @@
             filePath = "Robotic Complex Workspace/Views/RobotsDesigner/RobotInspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
             landmarkName = "delete_positions_program()"
             landmarkType = "7">
          </BreakpointContent>
@@ -6860,8 +6860,8 @@
             filePath = "Robotic Complex Workspace/Views/RobotsDesigner/RobotInspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "204"
-            endingLineNumber = "204"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
             landmarkName = "delete_positions_program()"
             landmarkType = "7">
          </BreakpointContent>

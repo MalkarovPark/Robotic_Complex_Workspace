@@ -222,9 +222,10 @@ struct StatisticsView: View
                 { _, _ in
                     update_file_data()
                 }
-                .popover(isPresented: $update_interval_view_presented, arrowEdge: .bottom)
+                .popover(isPresented: $update_interval_view_presented, arrowEdge: default_popover_edge_inv)
                 {
                     UpdateIntervalView(is_presented: $update_interval_view_presented, time_interval: $update_interval)
+                        .controlSize(.regular)
                 }
                 .glassEffect()
             }

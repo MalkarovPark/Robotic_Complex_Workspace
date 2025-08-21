@@ -36,6 +36,7 @@
 		62507A882DE1B66D000D511D /* WorkspaceStatisticView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62507A872DE1B66D000D511D /* WorkspaceStatisticView.swift */; };
 		6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */; };
 		626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 626EF85D2AD3493900F2A361 /* IndustrialKit */; };
+		627002F32E57A43B001D48C5 /* BackgroundExtensionModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */; };
 		627C25502C9DA7660087D777 /* AddObjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627C254F2C9DA7660087D777 /* AddObjectView.swift */; };
 		627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627D3E9A2AD34A7600D5988D /* AppState.swift */; };
 		629DF71F2E180C41008DE761 /* RCWorkspace.icon in Resources */ = {isa = PBXBuildFile; fileRef = 629DF71E2E180C41008DE761 /* RCWorkspace.icon */; };
@@ -77,6 +78,7 @@
 		62398C8D2BF2A70D001A5B8A /* PartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartView.swift; sourceTree = "<group>"; };
 		62507A872DE1B66D000D511D /* WorkspaceStatisticView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStatisticView.swift; sourceTree = "<group>"; };
 		6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentUpdateHandler.swift; sourceTree = "<group>"; };
+		627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundExtensionModifier.swift; sourceTree = "<group>"; };
 		627C254F2C9DA7660087D777 /* AddObjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddObjectView.swift; sourceTree = "<group>"; };
 		627D3E9A2AD34A7600D5988D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		629DF71E2E180C41008DE761 /* RCWorkspace.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RCWorkspace.icon; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				6236F9602AD345FC008FA7C4 /* DynamicStack.swift */,
 				62BFD7852B85699B00966525 /* ViewPendantButton.swift */,
 				6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */,
+				627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */,
 			);
 			path = ViewModifiers;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				6236F95E2AD345C4008FA7C4 /* ContentView.swift in Sources */,
 				62E165E72B20C692005E318A /* GalleryWorkspaceView.swift in Sources */,
 				6236F95A2AD345C4008FA7C4 /* StatisticsView.swift in Sources */,
+				627002F32E57A43B001D48C5 /* BackgroundExtensionModifier.swift in Sources */,
 				6236F95C2AD345C4008FA7C4 /* RobotsView.swift in Sources */,
 				6236F9552AD345C4008FA7C4 /* WorkspaceNavigationView.swift in Sources */,
 				6236F9572AD345C4008FA7C4 /* ToolsView.swift in Sources */,
