@@ -37,14 +37,14 @@ struct ToolsView: View
                     {
                         ForEach(base_workspace.tools)
                         { tool_item in
-                            ToolCardView(tool_item: tool_item)
-                                .onDrag({
+                            ToolCardView(tool_item: tool_item).frame(height: 192)
+                                /*.onDrag({
                                     self.dragged_tool = tool_item
                                     return NSItemProvider(object: tool_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    BoxCardView(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: tool_item.node)
+                                    GlassBoxCard(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: tool_item.node).frame(height: 192)
                                 })
-                                .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, workspace_tools: base_workspace.file_data().tools, tool: tool_item, document_handler: document_handler))
+                                .onDrop(of: [UTType.text], delegate: ToolDropDelegate(tools: $base_workspace.tools, dragged_tool: $dragged_tool, workspace_tools: base_workspace.file_data().tools, tool: tool_item, document_handler: document_handler))*/
                                 .transition(AnyTransition.scale)
                         }
                     }
@@ -129,7 +129,7 @@ struct ToolCardView: View
     
     var body: some View
     {
-        BoxCardView(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: removed_constraints(node: tool_item.node ?? SCNNode()), to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
+        GlassBoxCard(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: removed_constraints(node: tool_item.node ?? SCNNode()), to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
         {
             NavigationLink(destination: ToolView(tool: $tool_item))
             {

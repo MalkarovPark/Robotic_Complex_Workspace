@@ -44,14 +44,14 @@ struct PartsView: View
                         {
                             ForEach(base_workspace.parts)
                             { part_item in
-                                PartCardView(part_item: part_item)
-                                .onDrag({
+                                PartCardView(part_item: part_item).frame(height: 192)
+                                /*.onDrag({
                                     self.dragged_part = part_item
                                     return NSItemProvider(object: part_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    BoxCardView(title: part_item.card_info.title, color: part_item.card_info.color, image: part_item.card_info.image)
+                                    GlassBoxCard(title: part_item.card_info.title, color: part_item.card_info.color, image: part_item.card_info.image).frame(height: 192)
                                 })
-                                .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, workspace_parts: base_workspace.file_data().parts, part: part_item, document_handler: document_handler))
+                                .onDrop(of: [UTType.text], delegate: PartDropDelegate(parts: $base_workspace.parts, dragged_part: $dragged_part, workspace_parts: base_workspace.file_data().parts, part: part_item, document_handler: document_handler))*/
                                 .transition(AnyTransition.scale)
                             }
                         }
@@ -167,7 +167,7 @@ struct PartCardView: View
     
     var body: some View
     {
-        BoxCardView(title: part_item.card_info.title, /*color: part_item.card_info.color,*/ node: part_item.node ?? SCNNode(), to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
+        GlassBoxCard(title: part_item.card_info.title, /*color: part_item.card_info.color,*/ node: part_item.node ?? SCNNode(), to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name)
             }, delete_object: delete_part, update_file: update_file))

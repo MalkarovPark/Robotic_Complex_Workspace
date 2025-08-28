@@ -39,14 +39,14 @@ struct RobotsView: View
                     {
                         ForEach(base_workspace.robots)
                         { robot_item in
-                            RobotCardView(robot_item: robot_item)
-                                .onDrag({
+                            RobotCardView(robot_item: robot_item).frame(height: 192)
+                                /*.onDrag({
                                     self.dragged_robot = robot_item
                                     return NSItemProvider(object: robot_item.id.uuidString as NSItemProviderWriting)
                                 }, preview: {
-                                    BoxCardView(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ image: robot_item.card_info.image)
+                                    GlassBoxCard(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ image: robot_item.card_info.image).frame(height: 192)
                                 })
-                                .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, workspace_robots: base_workspace.file_data().robots, robot: robot_item, document_handler: document_handler))
+                                .onDrop(of: [UTType.text], delegate: RobotDropDelegate(robots: $base_workspace.robots, dragged_robot: $dragged_robot, workspace_robots: base_workspace.file_data().robots, robot: robot_item, document_handler: document_handler))*/
                                 .transition(AnyTransition.scale)
                         }
                     }
@@ -211,7 +211,7 @@ struct RobotCardView: View
     
     var body: some View
     {
-        BoxCardView(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ node: robot_item.node, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+        GlassBoxCard(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ node: robot_item.node, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
         {
             if !pass_programs_presented && !pass_programs_presented
             {
@@ -260,17 +260,6 @@ struct RobotCardView: View
                 .fitted()
             #endif
         }
-            /*.overlay(alignment: .bottomTrailing)
-            {
-                if !to_rename
-                {
-                    Image(systemName: "line.3.horizontal")
-                        .foregroundStyle(.tertiary)
-                        .frame(width: 32, height: 32)
-                        .padding(8)
-                        .background(.clear)
-                }
-            }*/
     }
     
     // MARK: Robots manage functions
