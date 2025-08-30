@@ -6844,8 +6844,8 @@
             filePath = "Robotic Complex Workspace/Views/RobotsDesigner/RobotInspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "205"
-            endingLineNumber = "205"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
             landmarkName = "delete_positions_program()"
             landmarkType = "7">
          </BreakpointContent>
@@ -6860,8 +6860,8 @@
             filePath = "Robotic Complex Workspace/Views/RobotsDesigner/RobotInspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "207"
-            endingLineNumber = "207"
+            startingLineNumber = "208"
+            endingLineNumber = "208"
             landmarkName = "delete_positions_program()"
             landmarkType = "7">
          </BreakpointContent>

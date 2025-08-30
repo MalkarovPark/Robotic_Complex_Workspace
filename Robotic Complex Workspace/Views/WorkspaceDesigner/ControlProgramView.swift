@@ -28,7 +28,7 @@ struct ControlProgramView: View
                 // MARK: Scroll view for program elements
                 ScrollView
                 {
-                    LazyVGrid(columns: program_columns)
+                    LazyVGrid(columns: program_columns, spacing: 12)
                     {
                         ForEach(base_workspace.elements)
                         { element in
@@ -43,7 +43,7 @@ struct ControlProgramView: View
                         }
                         .padding(4)
                         
-                        Spacer(minLength: 64)
+                        Spacer(minLength: 56)
                     }
                     .padding()
                     .disabled(base_workspace.performed)
@@ -273,7 +273,7 @@ struct ProgramElementItemView: View
                 Rectangle()
                     .foregroundStyle(.clear)
                     .popover(isPresented: $element_view_presented,
-                             arrowEdge: .trailing)
+                             arrowEdge: .leading)
                     {
                         ElementView(element: $element, on_update: update_program_element)
                         #if os(iOS) || os(visionOS)

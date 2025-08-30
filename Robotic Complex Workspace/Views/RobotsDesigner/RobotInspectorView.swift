@@ -174,6 +174,7 @@ struct RobotInspectorView: View
             }
             
             PositionControl(position: $robot.pointer_position, scale: $robot.space_scale)
+                .padding()
         }
         #if !os(macOS)
         .ignoresSafeArea(.container, edges: [.bottom])
