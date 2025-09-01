@@ -15,8 +15,6 @@ struct RobotInspectorView: View
     @Binding var robot: Robot
     
     @State private var add_program_view_presented = false
-    @State var ppv_presented_location = [false, false, false]
-    @State var ppv_presented_rotation = [false, false, false]
     @State private var teach_selection = 0
     @State var dragged_point: SCNNode?
     
@@ -135,7 +133,6 @@ struct RobotInspectorView: View
                 .listStyle(.plain)
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
-                //.modifier(ListBorderer())
                 .padding([.horizontal, .top])
                 .overlay(alignment: .bottomTrailing)
                 {
@@ -345,7 +342,7 @@ struct PositionItemView: View
     {
         Binding<PositionPoint>(
             get: { point },
-            set: { _ in } // Ничего не делаем, потому что `point` — ссылочный тип
+            set: { _ in }
         )
     }
 }
@@ -443,6 +440,14 @@ struct PositionPointView: View
                     .labelsHidden()
             }
             .padding()
+            .onChange(of: item_view_pos_location)
+            { _, _ in
+                update_point_location()
+            }
+            .onChange(of: item_view_pos_rotation)
+            { _, _ in
+                update_point_rotation()
+            }
             .onChange(of: item_view_pos_type)
             { _, new_value in
                 if appeared
@@ -459,14 +464,6 @@ struct PositionPointView: View
                     update_workspace_data()
                 }
             }
-        }
-        .onChange(of: item_view_pos_location)
-        { _, _ in
-            update_point_location()
-        }
-        .onChange(of: item_view_pos_rotation)
-        { _, _ in
-            update_point_rotation()
         }
         .onAppear()
         {
@@ -511,6 +508,7 @@ struct PositionPointView: View
     {
         base_workspace.update_view()
         robot.selected_program.visual_build()
+        
         document_handler.document_update_robots()
     }
     

@@ -8,6 +8,9 @@
 import Foundation
 import SwiftUI
 import IndustrialKit
+#if os(visionOS)
+import IndustrialKitUI
+#endif
 
 #if os(visionOS)
 struct ViewPendantButton: ViewModifier

@@ -8,6 +8,9 @@
 import SwiftUI
 import SceneKit
 import IndustrialKit
+#if os(visionOS)
+import IndustrialKitUI
+#endif
 
 @main
 struct Robotic_Complex_WorkspaceApp: App

@@ -227,7 +227,11 @@ struct StatisticsView: View
                     UpdateIntervalView(is_presented: $update_interval_view_presented, time_interval: $update_interval)
                         .controlSize(.regular)
                 }
+                #if !os(visionOS)
                 .glassEffect()
+                #else
+                .glassBackgroundEffect()
+                #endif
             }
             .padding(8)
             #if !os(macOS)

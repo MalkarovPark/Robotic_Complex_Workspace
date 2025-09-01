@@ -97,20 +97,6 @@ struct RobotsView: View
                     {
                         Label("Add Robot", systemImage: "plus")
                     }
-                    .sheet(isPresented: $add_robot_view_presented)
-                    {
-                        AddObjectView(is_presented: $add_robot_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_robot_module_name, internal_modules_list: $app_state.internal_modules_list.robot, external_modules_list: $app_state.external_modules_list.robot)
-                        {
-                            app_state.update_robot_info()
-                        }
-                        add_object:
-                        { new_name in
-                            app_state.previewed_object?.name = new_name
-
-                            base_workspace.add_robot(app_state.previewed_object! as! Robot)
-                            document_handler.document_update_robots()
-                        }
-                    }
                 }
             }
         }
@@ -151,9 +137,20 @@ struct RobotsView: View
                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.1)))
             }
         }
-    #if os(macOS) || os(iOS)
-        .background(Color.white)
-    #endif
+        .sheet(isPresented: $add_robot_view_presented)
+        {
+            AddObjectView(is_presented: $add_robot_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_robot_module_name, internal_modules_list: $app_state.internal_modules_list.robot, external_modules_list: $app_state.external_modules_list.robot)
+            {
+                app_state.update_robot_info()
+            }
+            add_object:
+            { new_name in
+                app_state.previewed_object?.name = new_name
+
+                base_workspace.add_robot(app_state.previewed_object! as! Robot)
+                document_handler.document_update_robots()
+            }
+        }
     }
     
     private func dismiss_pass()

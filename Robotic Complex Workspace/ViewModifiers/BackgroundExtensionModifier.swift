@@ -10,7 +10,7 @@ import SwiftUI
 
 struct BackgroundExtensionModifier: ViewModifier
 {
-    let color: Color
+    let color: Color = .clear
     
     func body(content: Content) -> some View
     {
@@ -20,7 +20,7 @@ struct BackgroundExtensionModifier: ViewModifier
                 VStack
                 {
                     Rectangle()
-                        .foregroundStyle(Color(red: 142/255, green: 142/255, blue: 147/255))
+                        .foregroundStyle(color)
                         .aspectRatio(contentMode: .fit)
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                         .backgroundExtensionEffect()
@@ -57,3 +57,44 @@ struct BackgroundExtensionModifier: ViewModifier
         }
     }
 }
+
+#if os(visionOS)
+struct BackgroundExtensionModifierL: ViewModifier
+{
+    let color: Color = .clear
+    
+    func body(content: Content) -> some View
+    {
+        ZStack
+        {
+            ScrollView(.vertical) {
+                VStack
+                {
+                    Rectangle()
+                        .foregroundStyle(color)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .backgroundExtensionEffect()
+                }
+            }
+            .background(color)
+            
+            content
+                .mask(
+                    LinearGradient(
+                        gradient: Gradient(stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .black, location: 0.05),
+                            .init(color: .black, location: 1)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                //.clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                //.shadow(color: .black.opacity(0.2), radius: 8)
+                //.padding(8)
+        }
+    }
+}
+#endif

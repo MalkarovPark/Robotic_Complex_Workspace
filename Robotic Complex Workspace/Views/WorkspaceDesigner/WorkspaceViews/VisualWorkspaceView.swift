@@ -28,7 +28,11 @@ struct VisualWorkspaceView: View
     {
         WorkspaceSceneView()
             .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
+        #if os(macOS) || os(iOS)
             .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
+        #else
+            .modifier(BackgroundExtensionModifierL())
+        #endif
             .disabled(add_in_view_presented)
         #if os(iOS) || os(visionOS)
             .onDisappear

@@ -1084,8 +1084,8 @@
             filePath = "Robotic Complex Workspace/Views/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
             landmarkName = "ContentView"
             landmarkType = "14">
          </BreakpointContent>
@@ -1100,8 +1100,8 @@
             filePath = "Robotic Complex Workspace/Views/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
             landmarkName = "ContentView"
             landmarkType = "14">
          </BreakpointContent>
@@ -1720,8 +1720,8 @@
             filePath = "Robotic Complex Workspace/Views/ToolsDesigner/ToolsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "87"
-            endingLineNumber = "87"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
             landmarkName = "ToolsView"
             landmarkType = "14">
          </BreakpointContent>
@@ -2905,20 +2905,6 @@
                   startingLineNumber = "197"
                   endingLineNumber = "197">
                </Location>
-               <Location
-                  uuid = "3A033759-36A4-486B-BB5C-766D839FD03D - 184f6a56fb753eb5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "default argument 4 of IndustrialKit.Tool.init(name: Swift.String, model_controller: IndustrialKit.ToolModelController, connector: IndustrialKit.ToolConnector, scene_name: Swift.String, codes: Swift.Array&lt;IndustrialKit.OperationCodeInfo&gt;) -&gt; IndustrialKit.Tool"
-                  moduleName = "RCWorkspace.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/malkarovpark/Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/WorkspaceObjects/Tool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "47"
-                  endingLineNumber = "47">
-               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -4036,8 +4022,8 @@
             filePath = "Robotic Complex Workspace/Views/AddObjectView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
             landmarkName = "AddObjectView"
             landmarkType = "14">
          </BreakpointContent>
@@ -5724,8 +5710,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/VisualWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "432"
-            endingLineNumber = "432"
+            startingLineNumber = "436"
+            endingLineNumber = "436"
             landmarkName = "VisualInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -5756,8 +5742,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/VisualWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "459"
-            endingLineNumber = "459"
+            startingLineNumber = "463"
+            endingLineNumber = "463"
             landmarkName = "VisualInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -5772,8 +5758,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/VisualWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "467"
-            endingLineNumber = "467"
+            startingLineNumber = "471"
+            endingLineNumber = "471"
             landmarkName = "VisualInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -6844,8 +6830,8 @@
             filePath = "Robotic Complex Workspace/Views/RobotsDesigner/RobotInspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
             landmarkName = "delete_positions_program()"
             landmarkType = "7">
          </BreakpointContent>
@@ -6860,8 +6846,8 @@
             filePath = "Robotic Complex Workspace/Views/RobotsDesigner/RobotInspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "208"
-            endingLineNumber = "208"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
             landmarkName = "delete_positions_program()"
             landmarkType = "7">
          </BreakpointContent>

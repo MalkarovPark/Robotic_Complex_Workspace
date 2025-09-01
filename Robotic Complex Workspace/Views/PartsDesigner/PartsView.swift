@@ -73,9 +73,6 @@ struct PartsView: View
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        #if os(macOS) || os(iOS)
-        .background(Color.white)
-        #endif
         #if os(macOS)
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) // Window sizes for macOS
         #else
@@ -100,24 +97,6 @@ struct PartsView: View
                     {
                         Label("Add Part", systemImage: "plus")
                     }
-                    .sheet(isPresented: $add_part_view_presented)
-                    {
-                        AddObjectView(is_presented: $add_part_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_part_module_name, internal_modules_list: $app_state.internal_modules_list.part, external_modules_list: $app_state.external_modules_list.part)
-                        {
-                            app_state.update_part_info()
-                        }
-                        add_object:
-                        { new_name in
-                            app_state.previewed_object?.name = new_name
-
-                            base_workspace.add_part(app_state.previewed_object! as! Part)
-                            document_handler.document_update_parts()
-                        }
-
-                        #if os(visionOS)
-                            .frame(width: 512, height: 512)
-                        #endif
-                    }
                 }
             }
         }
@@ -126,6 +105,24 @@ struct PartsView: View
             reset_all_parts_nodes()
             #if os(visionOS)
             pendant_controller.view_dismiss()
+            #endif
+        }
+        .sheet(isPresented: $add_part_view_presented)
+        {
+            AddObjectView(is_presented: $add_part_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_part_module_name, internal_modules_list: $app_state.internal_modules_list.part, external_modules_list: $app_state.external_modules_list.part)
+            {
+                app_state.update_part_info()
+            }
+            add_object:
+            { new_name in
+                app_state.previewed_object?.name = new_name
+
+                base_workspace.add_part(app_state.previewed_object! as! Part)
+                document_handler.document_update_parts()
+            }
+
+            #if os(visionOS)
+                .frame(width: 512, height: 512)
             #endif
         }
     }

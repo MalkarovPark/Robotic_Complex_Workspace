@@ -65,9 +65,6 @@ struct ToolsView: View
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        #if os(macOS) || os(iOS)
-        .background(.white)
-        #endif
         #if os(macOS)
         .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) // Window sizes for macOS
         #else
@@ -92,25 +89,25 @@ struct ToolsView: View
                     {
                         Label("Add Tool", systemImage: "plus")
                     }
-                    .sheet(isPresented: $add_tool_view_presented)
-                    {
-                        AddObjectView(is_presented: $add_tool_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_tool_module_name, internal_modules_list: $app_state.internal_modules_list.tool, external_modules_list: $app_state.external_modules_list.tool)
-                        {
-                            app_state.update_tool_info()
-                        }
-                        add_object:
-                        { new_name in
-                            app_state.previewed_object?.name = new_name
-
-                            base_workspace.add_tool(app_state.previewed_object! as! Tool)
-                            document_handler.document_update_tools()
-                        }
-                        #if os(visionOS)
-                            .frame(width: 512, height: 512)
-                        #endif
-                    }
                 }
             }
+        }
+        .sheet(isPresented: $add_tool_view_presented)
+        {
+            AddObjectView(is_presented: $add_tool_view_presented, previewed_object: app_state.previewed_object, previewed_object_name: $app_state.previewed_tool_module_name, internal_modules_list: $app_state.internal_modules_list.tool, external_modules_list: $app_state.external_modules_list.tool)
+            {
+                app_state.update_tool_info()
+            }
+            add_object:
+            { new_name in
+                app_state.previewed_object?.name = new_name
+
+                base_workspace.add_tool(app_state.previewed_object! as! Tool)
+                document_handler.document_update_tools()
+            }
+            #if os(visionOS)
+                .frame(width: 512, height: 512)
+            #endif
         }
     }
 }

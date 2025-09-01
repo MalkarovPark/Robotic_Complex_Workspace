@@ -177,7 +177,9 @@ struct RobotView: View
     
     private func compact_placement() -> ToolbarItemPlacement
     {
-        #if os(iOS)
+        #if os(macOS)
+        return .automatic
+        #elseif os(iOS)
         if horizontal_size_class == .compact
         {
             return .bottomBar
@@ -187,7 +189,7 @@ struct RobotView: View
             return .topBarTrailing
         }
         #else
-        return .automatic
+        return .topBarTrailing
         #endif
     }
 }
@@ -216,7 +218,11 @@ struct RobotSceneView: View
         { scene_view in
             base_workspace.selected_robot.workcell_connect(scene: scene_view.scene ?? SCNScene(), name: "unit", connect_camera: true)
         }
+        #if os(macOS) || os(iOS)
         .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
+        #else
+        .modifier(BackgroundExtensionModifier())
+        #endif
         .overlay(alignment: .bottomLeading)
         {
             Button(action: { space_origin_view_presented = true })
@@ -231,12 +237,20 @@ struct RobotSceneView: View
                     .padding(8)
             }
             .buttonBorderShape(.circle)
+            #if !os(visionOS)
             .buttonStyle(.glass)
+            .padding()
+            #else
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            .glassBackgroundEffect()
+            .frame(depth: 24)
+            .padding(32)
+            #endif
             .popover(isPresented: $space_origin_view_presented)
             {
                 SpaceOriginView(robot: $base_workspace.selected_robot, on_update: { document_handler.document_update_robots() })
             }
-            .padding()
         }
     }
 }

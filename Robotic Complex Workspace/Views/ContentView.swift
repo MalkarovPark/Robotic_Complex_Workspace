@@ -7,6 +7,9 @@
 
 import SwiftUI
 import IndustrialKit
+#if os(visionOS)
+import IndustrialKitUI
+#endif
 
 struct ContentView: View
 {

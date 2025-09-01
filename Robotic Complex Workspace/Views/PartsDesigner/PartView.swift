@@ -71,7 +71,11 @@ struct PartView: View
                 #endif
             }
             .padding(10)
+            #if !os(visionOS)
             .glassEffect(in: .rect(cornerRadius: 16.0))
+            #else
+            .glassBackgroundEffect()
+            #endif
             .padding()
         }
         .onAppear()

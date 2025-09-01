@@ -65,7 +65,9 @@ struct AddObjectView: View
                         .controlSize(.extraLarge)
                         #endif
                         .buttonBorderShape(.circle)
+                        #if !os(visionOS)
                         .buttonStyle(.glass)
+                        #endif
                         
                         Spacer()
                         
@@ -80,7 +82,9 @@ struct AddObjectView: View
                         .controlSize(.extraLarge)
                         #endif
                         .buttonBorderShape(.circle)
+                        #if !os(visionOS)
                         .buttonStyle(.glassProminent)
+                        #endif
                         
                     }
                     .padding(8)
@@ -128,7 +132,11 @@ struct AddObjectView: View
                         #endif
                     }
                     .padding(10)
+                    #if !os(visionOS)
                     .glassEffect(in: .rect(cornerRadius: 16.0))
+                    #else
+                    .glassBackgroundEffect()
+                    #endif
                     .padding()
                 }
         }
