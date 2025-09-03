@@ -10,7 +10,12 @@ import SwiftUI
 
 struct BackgroundExtensionModifier: ViewModifier
 {
-    let color: Color = .clear
+    let color: Color
+    
+    public init(color: Color = .clear)
+    {
+        self.color = color
+    }
     
     func body(content: Content) -> some View
     {
