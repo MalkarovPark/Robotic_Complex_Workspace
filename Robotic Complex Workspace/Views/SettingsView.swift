@@ -575,7 +575,7 @@ struct CellSettingsView: View
                 {
                     VStack(alignment: .leading)
                     {
-                        Text("Origin location")
+                        Text("Origin Location")
                             .foregroundColor(Color.gray)
                         
                         HStack(spacing: 8)
@@ -627,7 +627,7 @@ struct CellSettingsView: View
                     
                     VStack(alignment: .leading)
                     {
-                        Text("Space scale")
+                        Text("Space Scale")
                             .foregroundColor(Color.gray)
                         
                         HStack(spacing: 8)
@@ -679,7 +679,7 @@ struct CellSettingsView: View
                 }
                 .frame(width: 192)
                 #else
-                Section(header: Text("Origin location"))
+                Section(header: Text("Origin Location"))
                 {
                     HStack(spacing: 8)
                     {
@@ -724,7 +724,7 @@ struct CellSettingsView: View
                     }
                 }
                 
-                Section(header: Text("Space scale"))
+                Section(header: Text("Space Scale"))
                 {
                     HStack(spacing: 8)
                     {
