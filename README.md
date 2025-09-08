@@ -68,7 +68,7 @@ Objects are created in the relevant items available through the sidebar. All cre
 When creating a robot, in addition to the *name*, the *manufacturer*, *series* and *model* are specified. The *model* parameter determines how the visual model is controlled and direct connector.
 
 <p align="center">
-   <img width="1087" src="https://github.com/user-attachments/assets/d6362a93-a51e-4550-83f6-17e7be218141" />
+   <img width="920" height="696" alt="robot view" src="https://github.com/user-attachments/assets/b246710f-752d-406f-ba42-73e3af1b9501" />
 </p>
 
 ### Tools <a name="tools">
@@ -76,7 +76,7 @@ When creating a robot, in addition to the *name*, the *manufacturer*, *series* a
 When creating, the *name* of the tool and its *model* are specified. Likewise robot, the *model* defines a model controller and direct connector.
 
 <p align="center">
-   <img width="1087" src="https://github.com/user-attachments/assets/91206811-3478-4803-831d-ddce69c8c2ed" />
+   <img width="920" height="696" alt="tool view" src="https://github.com/user-attachments/assets/ca4b3d8d-f2f3-4785-b6e4-f32614c59802" />
 </p>
 
 ### Parts <a name="parts">
@@ -84,7 +84,7 @@ When creating, the *name* of the tool and its *model* are specified. Likewise ro
 When creating a part, its *name* and *model* are specified.
 
 <p align="center">
-   <img width="1087" src="https://github.com/user-attachments/assets/eb95f4a9-678c-49ef-88cc-4b3c3a125e9d" />
+   <img width="920" height="696" alt="part view" src="https://github.com/user-attachments/assets/0cbbdfed-125f-4e05-a006-3f91b092a5e9" />
 </p>
 
 # Visual Modeling & Physical Simulation<a name="visual-modeling">
@@ -103,7 +103,7 @@ The application is available to receive statistical data from selected devices a
 The statistics data are available in the form of various types of charts and disclosure groups of parameters.
 
 <p align="center">
-   <img width="1087" src="https://github.com/user-attachments/assets/751a9ca6-6722-4356-9c42-0b81f4203803" />
+   <img width="920" src="https://github.com/user-attachments/assets/f273d98b-dd8b-44fe-9cf1-acade4a9c86e" />
 </p>
 
 To open the statistics view, press the "<img width="12" src="https://github.com/user-attachments/assets/a9554ac8-45a8-4778-aaef-f0f167aa03d3" />" button next to the object of interest.
@@ -113,7 +113,7 @@ To open the statistics view, press the "<img width="12" src="https://github.com/
 Connection to real equipment through connectors. For each device, the connector setting is available by pressing the "<img width="12" src="https://github.com/user-attachments/assets/dbd7c728-5476-4846-b8e0-7471b189b150" />" button.
 
 <p align="center">
-   <img width="1087" src="https://github.com/user-attachments/assets/fe11df94-625c-4d4c-b2aa-4ff1c45c97bf" />
+   <img width="920" src="https://github.com/user-attachments/assets/207f2015-8221-45ab-b5cd-d1af7e87b4ac" />
 </p>
 
 The connected device can control its visual model, allowing it to be tracked in real time. The user can combine real and virtual devices in one document.
@@ -125,7 +125,7 @@ You can add support for new models of industrial equipment and new functions for
 The set of available modules is defined in the settings – here you can see the quantity for each type and their names when you hover over the number. To connect external modules, tap the "<img width="12" src="https://github.com/user-attachments/assets/d6da3890-90ff-44c6-86f3-2a641b062231" />" button and select the folder containing the external modules.
 
 <p align="center">
-   <img width="472" src="https://github.com/user-attachments/assets/1992dcee-8327-4783-8326-b4bf7ce988a0" />
+   <img width="472" height="435" alt="modules" src="https://github.com/user-attachments/assets/0a842250-3615-431e-9033-70ed61faa017" />
 </p>
 
 The development and synthesis of new modules, including the ability to integrate their project into the RCWorkspace application, is available through the [Industrial Builder](https://github.com/MalkarovPark/Industrial_Builder/) environment.
