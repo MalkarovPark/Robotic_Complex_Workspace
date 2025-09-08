@@ -242,7 +242,6 @@ struct RobotSceneView: View
             .padding()
             #else
             .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
             .glassBackgroundEffect()
             .frame(depth: 24)
             .padding(32)
