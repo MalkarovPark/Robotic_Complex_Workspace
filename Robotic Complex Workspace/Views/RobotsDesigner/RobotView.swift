@@ -237,6 +237,10 @@ struct RobotSceneView: View
                     .padding(8)
             }
             .buttonBorderShape(.circle)
+            .popover(isPresented: $space_origin_view_presented)
+            {
+                SpaceOriginView(robot: $base_workspace.selected_robot, on_update: { document_handler.document_update_robots() })
+            }
             #if !os(visionOS)
             .buttonStyle(.glass)
             .padding()
@@ -246,10 +250,6 @@ struct RobotSceneView: View
             .frame(depth: 24)
             .padding(32)
             #endif
-            .popover(isPresented: $space_origin_view_presented)
-            {
-                SpaceOriginView(robot: $base_workspace.selected_robot, on_update: { document_handler.document_update_robots() })
-            }
         }
     }
 }
