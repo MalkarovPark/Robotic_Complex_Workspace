@@ -142,7 +142,7 @@ struct AddObjectView: View
         }
         .controlSize(.regular)
         #if os(macOS)
-        .fitted()
+        .presentationSizing(.fitted)
         .frame(minWidth: 400, idealWidth: 480, maxWidth: 640, minHeight: 400, maxHeight: 480)
         #elseif os(visionOS)
         .frame(width: 512, height: 512)

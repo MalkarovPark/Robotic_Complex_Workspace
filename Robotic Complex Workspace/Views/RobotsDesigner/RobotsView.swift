@@ -250,11 +250,11 @@ struct RobotCardView: View
             PassProgramsView(is_presented: $pass_programs_presented, items: robot_item.programs_names)
             #if os(macOS)
                 .frame(minWidth: 256, maxWidth: 288, minHeight: 256, maxHeight: 512)
-                .fitted()
+                .presentationSizing(.fitted)
             #endif
             #if os(visionOS)
                 .frame(width: 512, height: 512)
-                .fitted()
+                .presentationSizing(.fitted)
             #endif
         }
     }

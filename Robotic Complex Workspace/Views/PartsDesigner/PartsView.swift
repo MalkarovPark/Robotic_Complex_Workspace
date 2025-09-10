@@ -179,7 +179,7 @@ struct PartCardView: View
                     {
                         part_view_presented = false
                     }
-                    .fitted()
+                    .presentationSizing(.fitted)
                 #if os(macOS)
                     .frame(width: 512)
                 #elseif os(iOS)
