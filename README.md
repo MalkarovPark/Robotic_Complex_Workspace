@@ -1,4 +1,4 @@
-![rcw_caption](https://github.com/user-attachments/assets/a55caf4d-b62a-43b5-b217-d67235e5bba2)
+![rcw_caption](https://github.com/user-attachments/assets/63669580-0188-489a-b658-cc7a17623fe9)
 
 # Robotic Complex Workspace
 
