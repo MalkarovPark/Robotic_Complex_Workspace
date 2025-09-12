@@ -25,13 +25,6 @@ struct ViewPendantButton: ViewModifier
                 Button(action: pendant_controller.toggle_pendant)
                 {
                     Image(systemName: "slider.horizontal.2.square")
-                    /*ZStack
-                    {
-                        Image(systemName: "slider.horizontal.2.square")
-                            .resizable()
-                            .padding()
-                    }
-                    .frame(width: 64, height: 64)*/
                 }
                 .controlSize(.large)
                 .buttonStyle(.borderless)

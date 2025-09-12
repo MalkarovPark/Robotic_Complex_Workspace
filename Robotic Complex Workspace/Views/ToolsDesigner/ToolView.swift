@@ -204,7 +204,9 @@ struct ToolView: View
     
     private func compact_placement() -> ToolbarItemPlacement
     {
-        #if os(iOS)
+        #if os(macOS)
+        return .automatic
+        #elseif os(iOS)
         if horizontal_size_class == .compact
         {
             return .bottomBar
@@ -214,7 +216,7 @@ struct ToolView: View
             return .topBarTrailing
         }
         #else
-        return .automatic
+        return .topBarTrailing
         #endif
     }
 }

@@ -110,8 +110,7 @@ struct RobotView: View
             
             ToolbarItem(id: "Statistics", placement: compact_placement())
             {
-                Button(action: { statistics_view_presented.toggle()
-                })
+                Button(action: { statistics_view_presented.toggle() })
                 {
                     Label("Statistics", systemImage:"chart.bar")
                 }
@@ -228,6 +227,7 @@ struct RobotSceneView: View
             Button(action: { space_origin_view_presented = true })
             {
                 Image(systemName: "cube")
+                #if !os(visionOS)
                     .imageScale(.large)
                     #if os(macOS)
                     .frame(width: 16, height: 16)
@@ -235,6 +235,7 @@ struct RobotSceneView: View
                     .frame(width: 24, height: 24)
                     #endif
                     .padding(8)
+                #endif
             }
             .buttonBorderShape(.circle)
             .popover(isPresented: $space_origin_view_presented)
@@ -245,6 +246,7 @@ struct RobotSceneView: View
             .buttonStyle(.glass)
             .padding()
             #else
+            .controlSize(.large)
             .buttonStyle(.borderless)
             .glassBackgroundEffect()
             .frame(depth: 24)
