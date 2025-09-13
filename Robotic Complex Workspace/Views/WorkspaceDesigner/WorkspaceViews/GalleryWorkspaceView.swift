@@ -29,28 +29,25 @@ struct GalleryWorkspaceView: View
             {
                 VStack(spacing: 8)
                 {
-                    GroupBox
+                    GroupBox("Robots")
                     {
                         PlacedRobotsGallery()
                     }
                     
-                    GroupBox
+                    GroupBox("Tools")
                     {
                         PlacedToolsGallery()
                     }
                     
-                    GroupBox
+                    GroupBox("Parts")
                     {
                         PlacedPartsGallery()
                     }
                     
-                    Spacer(minLength: 64)
+                    Spacer(minLength: 56)
                 }
+                .padding(8)
             }
-            #if os(visionOS)
-            .clipShape(UnevenRoundedRectangle(topTrailingRadius: 40, style: .continuous))
-            #endif
-            .padding(8)
         }
         #if !os(visionOS)
         .overlay(alignment: .bottomLeading)
@@ -130,7 +127,14 @@ struct PlacedRobotsGallery: View
             }
             else
             {
-                Text("No robots placed")
+                Text("No placed")
+                #if os(macOS)
+                    .font(.system(size: 16))
+                #else
+                    .font(.system(size: 24))
+                #endif
+                    .foregroundStyle(.secondary)
+                    .padding(32)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -168,11 +172,20 @@ struct PlacedToolsGallery: View
                                     {
                                         Image(systemName: base_workspace.tool_by_name(name).is_attached ? "pin.slash.fill" : "pin.fill")
                                             .foregroundStyle(.black)
+                                        #if os(macOS)
+                                            .font(.system(size: 12))
+                                        #else
                                             .font(.system(size: 16))
+                                        #endif
                                             .padding(8)
                                     }
                                     .toggleStyle(.button)
                                     .buttonStyle(.plain)
+                                    #if os(macOS)
+                                    .frame(width: 32, height: 32)
+                                    #else
+                                    .frame(width: 36, height: 36)
+                                    #endif
                                     #if !os(visionOS)
                                     .background(.bar)
                                     #else
@@ -197,7 +210,14 @@ struct PlacedToolsGallery: View
             }
             else
             {
-                Text("No tools placed")
+                Text("No placed")
+                #if os(macOS)
+                    .font(.system(size: 16))
+                #else
+                    .font(.system(size: 24))
+                #endif
+                    .foregroundStyle(.secondary)
+                    .padding(32)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -249,7 +269,14 @@ struct PlacedPartsGallery: View
             }
             else
             {
-                Text("No parts placed")
+                Text("No placed")
+                #if os(macOS)
+                    .font(.system(size: 16))
+                #else
+                    .font(.system(size: 24))
+                #endif
+                    .foregroundStyle(.secondary)
+                    .padding(32)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -295,7 +322,7 @@ struct ObjectCard<Content: View>: View
         {
             overlay_view
         }
-        .frame(minWidth: object_card_scale, minHeight: object_card_scale / 1.618)
+        .frame(minWidth: object_card_scale, minHeight: object_card_scale)
         .onTapGesture
         {
             if !app_state.gallery_disabled
