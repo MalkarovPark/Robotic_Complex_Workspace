@@ -8,9 +8,7 @@
 import Foundation
 import SwiftUI
 import IndustrialKit
-#if os(visionOS)
 import IndustrialKitUI
-#endif
 
 #if os(visionOS)
 struct ViewPendantButton: ViewModifier
@@ -46,17 +44,47 @@ struct ViewPendantButton: View
         Button(action: operation)
         {
             Image(systemName: "slider.horizontal.2.square")
-                .imageScale(.large)
-            #if os(macOS)
-                .frame(width: 16, height: 16)
-            #else
-                .frame(width: 24, height: 24)
-            #endif
-                .padding(8)
+                .modifier(CircleButtonImageFramer())
         }
-        .buttonBorderShape(.circle)
-        .buttonStyle(.glass)
+        .modifier(CircleButtonGlassBorderer())
         .padding()
     }
 }
 #endif
+
+/*#if os(macOS) || os(iOS)
+// MARK: - Glass Button Modifiers
+struct CircleButtonGlassBorderer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        content
+            .buttonBorderShape(.circle)
+        #if os(macOS)
+            .buttonStyle(.glass)
+        #else
+            .glassEffect(.regular.interactive())
+        #endif
+            //.padding()
+    }
+}
+
+struct CircleButtonImageFramer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        content
+            .imageScale(.large)
+        #if os(macOS)
+            .frame(width: 16, height: 16)
+        #else
+            .frame(width: 24, height: 24)
+        #endif
+            .padding(8)
+        #if os(iOS)
+            .padding(6)
+            .foregroundStyle(.black)
+        #endif
+    }
+}
+#endif*/

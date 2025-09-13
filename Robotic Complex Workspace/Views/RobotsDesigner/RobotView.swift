@@ -227,15 +227,7 @@ struct RobotSceneView: View
             Button(action: { space_origin_view_presented = true })
             {
                 Image(systemName: "cube")
-                #if !os(visionOS)
-                    .imageScale(.large)
-                    #if os(macOS)
-                    .frame(width: 16, height: 16)
-                    #else
-                    .frame(width: 24, height: 24)
-                    #endif
-                    .padding(8)
-                #endif
+                    .modifier(CircleButtonImageFramer())
             }
             .buttonBorderShape(.circle)
             .popover(isPresented: $space_origin_view_presented)
@@ -243,7 +235,7 @@ struct RobotSceneView: View
                 SpaceOriginView(robot: $base_workspace.selected_robot, on_update: { document_handler.document_update_robots() })
             }
             #if !os(visionOS)
-            .buttonStyle(.glass)
+            .modifier(CircleButtonGlassBorderer())
             .padding()
             #else
             .controlSize(.large)

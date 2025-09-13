@@ -55,34 +55,24 @@ struct GalleryWorkspaceView: View
         #if !os(visionOS)
         .overlay(alignment: .bottomLeading)
         {
-            VStack(spacing: 0)
+            Button(action: { add_in_view_presented.toggle() })
             {
-                Button(action: { add_in_view_presented.toggle() })
-                {
-                    Image(systemName: "plus")
-                        .imageScale(.large)
-                    #if os(macOS)
-                        .frame(width: 16, height: 16)
-                    #else
-                        .frame(width: 24, height: 24)
-                    #endif
-                        .padding(8)
-                }
-                .buttonBorderShape(.circle)
-                .buttonStyle(.glass)
-                .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
-                {
-                    #if os(macOS)
-                    AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
-                        .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                    #else
-                    AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
-                        .frame(maxWidth: 1024)
-                        .background(.ultraThinMaterial)
-                    #endif
-                }
-                .disabled(base_workspace.performed)
+                Image(systemName: "plus")
+                    .modifier(CircleButtonImageFramer())
             }
+            .modifier(CircleButtonGlassBorderer())
+            .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
+            {
+                #if os(macOS)
+                AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
+                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
+                #else
+                AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
+                    .frame(maxWidth: 1024)
+                    .background(.ultraThinMaterial)
+                #endif
+            }
+            .disabled(base_workspace.performed)
             .padding()
         }
         #else
@@ -125,7 +115,7 @@ struct PlacedRobotsGallery: View
                 {
                     ForEach(base_workspace.placed_robots_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, color: .green, node: base_workspace.robot_by_name(name).node)
+                        ObjectCard(name: name, node: base_workspace.robot_by_name(name).node)
                             {
                                 base_workspace.select_robot(name: name)
                             }
@@ -165,23 +155,38 @@ struct PlacedToolsGallery: View
                 {
                     ForEach(base_workspace.placed_tools_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, color: .teal, node: base_workspace.tool_by_name(name).node)
+                        ObjectCard(name: name, node: base_workspace.tool_by_name(name).node, overlay: {
+                            VStack
                             {
-                                base_workspace.select_tool(name: name)
-                            }
-                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                            .overlay(alignment: .bottomLeading)
-                            {
-                                Toggle(isOn: binding_to_attached(for: name))
+                                Spacer()
+                                
+                                HStack
                                 {
-                                    Image(systemName: base_workspace.tool_by_name(name).is_attached ? "pin.slash.fill" : "pin.fill")
-                                        .foregroundStyle(.white)
-                                        .font(.system(size: 16))
+                                    Spacer()
+                                    
+                                    Toggle(isOn: binding_to_attached(for: name))
+                                    {
+                                        Image(systemName: base_workspace.tool_by_name(name).is_attached ? "pin.slash.fill" : "pin.fill")
+                                            .foregroundStyle(.black)
+                                            .font(.system(size: 16))
+                                            .padding(8)
+                                    }
+                                    .toggleStyle(.button)
+                                    .buttonStyle(.plain)
+                                    #if !os(visionOS)
+                                    .background(.bar)
+                                    #else
+                                    .background(.thinMaterial)
+                                    #endif
+                                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    .padding(8)
                                 }
-                                .toggleStyle(.button)
-                                .buttonStyle(.borderless)
-                                .padding()
                             }
+                        })
+                        {
+                            base_workspace.select_tool(name: name)
+                        }
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
                 }
                 #if os(macOS)
@@ -229,7 +234,7 @@ struct PlacedPartsGallery: View
                 {
                     ForEach(base_workspace.placed_parts_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, color: .indigo, node: base_workspace.part_by_name(name).node)
+                        ObjectCard(name: name, node: base_workspace.part_by_name(name).node)
                             {
                                 base_workspace.select_part(name: name)
                             }
@@ -252,103 +257,45 @@ struct PlacedPartsGallery: View
     }
 }
 
-struct ObjectCard: View
+struct ObjectCard<Content: View>: View
 {
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
     let name: String
-    let color: Color
     
-    let image: UIImage?
     let node: SCNNode?
     
     let on_select: () -> ()
+    
+    // Overlay
+    let overlay_view: Content?
     
     @State private var info_view_presented = false
     
     @EnvironmentObject var app_state: AppState
     
-    public init(name: String, color: Color, node: SCNNode?, on_select: @escaping () -> Void)
+    public init(name: String, node: SCNNode?, @ViewBuilder overlay: () -> Content? = { EmptyView() }, on_select: @escaping () -> Void)
     {
         self.name = name
-        self.color = color
-        self.image = nil
         
         let card_node = node?.deep_clone()
         card_node?.physicsBody = .static()
         
         self.node = card_node
         self.on_select = on_select
-    }
-    
-    public init(name: String, color: Color, image: UIImage?, on_select: @escaping () -> Void)
-    {
-        self.name = name
-        self.color = color
-        self.image = image
-        self.node = nil
-        self.on_select = on_select
+        
+        self.overlay_view = overlay()
     }
     
     var body: some View
     {
-        ZStack
+        GlassBoxCard(title: name, node: node)
         {
-            Rectangle()
-                .foregroundStyle(color)
-        }
-        .overlay(alignment: .topLeading)
-        {
-            Text(name)
-                .foregroundStyle(.white)
-                .font(.largeTitle)
-                .fontDesign(.rounded)
-                .padding()
-        }
-        .overlay(alignment: .bottomTrailing)
-        {
-            Rectangle()
-                .fill(.clear)
-                .overlay
-            {
-                if image != nil
-                {
-                    #if os(macOS)
-                    Image(nsImage: image!)
-                        .resizable()
-                        .scaledToFill()
-                    #else
-                    Image(uiImage: image!)
-                        .resizable()
-                        .scaledToFill()
-                    #endif
-                }
-                
-                if node != nil
-                {
-                    ObjectSceneView(node: node!)
-                        .disabled(true)
-                        .padding(8)
-                }
-            }
-            .frame(width: 60, height: 60)
-            .background(Color.clear)
-            .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
-            #if !os(visionOS)
-            .shadow(radius: 2)
-            #else
-            .frame(depth: 8)
-            #endif
+            overlay_view
         }
         .frame(minWidth: object_card_scale, minHeight: object_card_scale / 1.618)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        #if !os(visionOS)
-        .shadow(radius: 8)
-        #else
-        .frame(depth: 24)
-        #endif
         .onTapGesture
         {
             if !app_state.gallery_disabled
@@ -358,7 +305,7 @@ struct ObjectCard: View
                 info_view_presented = true
             }
         }
-        .popover(isPresented: $info_view_presented, arrowEdge: default_popover_edge)
+        .popover(isPresented: $info_view_presented)
         {
             #if os(macOS)
             GalleryInfoView(info_view_presented: $info_view_presented)
@@ -562,6 +509,6 @@ let object_card_spacing: CGFloat = 32
 
 #Preview
 {
-    ObjectCard(name: "Object", color: .green, node: SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)), on_select: {})
+    ObjectCard(name: "Object", node: SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)), on_select: {})
         .environmentObject(AppState())
 }

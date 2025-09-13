@@ -233,10 +233,7 @@ struct StatisticsView: View
                 .glassBackgroundEffect()
                 #endif
             }
-            .padding(8)
-            #if !os(macOS)
-            .padding(.top, 4)
-            #endif
+            .padding(10)
         }
         #if os(macOS)
         .controlSize(.large)

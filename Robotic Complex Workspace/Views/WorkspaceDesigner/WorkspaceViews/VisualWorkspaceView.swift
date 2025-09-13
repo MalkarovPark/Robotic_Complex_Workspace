@@ -51,17 +51,13 @@ struct VisualWorkspaceView: View
                         Button(action: { add_in_view_presented.toggle() })
                         {
                             Image(systemName: "plus")
-                                .imageScale(.large)
-                            #if os(macOS)
-                                .frame(width: 16, height: 16)
-                            #else
-                                .frame(width: 24, height: 24)
+                                .modifier(CircleButtonImageFramer())
+                            #if !os(macOS)
+                                .opacity(!add_in_view_disabled || base_workspace.performed ? 1 : 0.5)
                             #endif
-                                .padding(8)
                         }
                         .disabled(add_in_view_disabled || base_workspace.performed)
-                        .buttonBorderShape(.circle)
-                        .buttonStyle(.glass)
+                        .modifier(CircleButtonGlassBorderer())
                         .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
                         {
                             #if os(macOS)
@@ -77,17 +73,13 @@ struct VisualWorkspaceView: View
                         Button(action: { info_view_presented.toggle() })
                         {
                             Image(systemName: "pencil")
-                                .imageScale(.large)
-                            #if os(macOS)
-                                .frame(width: 16, height: 16)
-                            #else
-                                .frame(width: 24, height: 24)
+                                .modifier(CircleButtonImageFramer())
+                            #if !os(macOS)
+                                .opacity(add_in_view_disabled && !base_workspace.performed ? 1 : 0.5)
                             #endif
-                                .padding(8)
                         }
-                        .disabled(!add_in_view_disabled)
-                        .buttonBorderShape(.circle)
-                        .buttonStyle(.glass)
+                        .modifier(CircleButtonGlassBorderer())
+                        .disabled(!add_in_view_disabled || base_workspace.performed)
                         .popover(isPresented: $info_view_presented, arrowEdge: default_popover_edge)
                         {
                             #if os(macOS)

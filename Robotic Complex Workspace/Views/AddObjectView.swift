@@ -58,16 +58,25 @@ struct AddObjectView: View
                         {
                             Image(systemName: "xmark")
                                 .imageScale(.large)
+                            #if os(macOS)
                                 .frame(width: 16, height: 16)
+                            #else
+                                .frame(width: 24, height: 24)
+                            #endif
+                                .padding(6)
+                            #if os(iOS)
+                                .padding(4)
+                                .foregroundStyle(.black)
+                            #endif
                         }
                         .keyboardShortcut(.cancelAction)
                         #if !os(visionOS)
-                        .controlSize(.extraLarge)
-                        #endif
+                        .modifier(CircleButtonGlassBorderer())
+                        #else
                         .buttonBorderShape(.circle)
-                        #if !os(visionOS)
-                        .buttonStyle(.glass)
+                        .glassBackgroundEffect()
                         #endif
+                        .keyboardShortcut(.cancelAction)
                         
                         Spacer()
                         
@@ -75,22 +84,31 @@ struct AddObjectView: View
                         {
                             Image(systemName: "checkmark")
                                 .imageScale(.large)
+                            #if os(macOS)
                                 .frame(width: 16, height: 16)
+                            #else
+                                .frame(width: 24, height: 24)
+                            #endif
+                                .padding(6)
+                            #if os(iOS)
+                                .padding(4)
+                                .foregroundStyle(.white)
+                            #endif
                         }
                         .keyboardShortcut(.defaultAction)
                         #if !os(visionOS)
-                        .controlSize(.extraLarge)
-                        #endif
                         .buttonBorderShape(.circle)
-                        #if !os(visionOS)
+                        #if os(macOS)
                         .buttonStyle(.glassProminent)
+                        #else
+                        .glassEffect(.regular.tint(.accentColor).interactive())
                         #endif
-                        
+                        #else
+                        .buttonBorderShape(.circle)
+                        .glassBackgroundEffect()
+                        #endif
                     }
-                    .padding(8)
-                    #if !os(macOS)
-                    .padding(.top, 4)
-                    #endif
+                    .padding(10)
                 }
                 .overlay(alignment: .bottom)
                 {
