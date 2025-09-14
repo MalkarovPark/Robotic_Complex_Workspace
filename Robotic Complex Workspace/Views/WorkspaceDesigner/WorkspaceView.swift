@@ -79,7 +79,6 @@ struct WorkspaceView: View
         .modifier(SafeAreaToggler(enabled: (horizontal_size_class == .compact) || representation_type != .visual))
         #endif
         #if os(visionOS)
-        .ignoresSafeArea(.container, edges: [.top, .bottom])
         .onAppear
         {
             pendant_controller.view_workspace()
@@ -145,8 +144,6 @@ struct WorkspaceView: View
             }
         }
         #endif
-        .ignoresSafeArea(edges: .top)
-        //.toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
     }
     

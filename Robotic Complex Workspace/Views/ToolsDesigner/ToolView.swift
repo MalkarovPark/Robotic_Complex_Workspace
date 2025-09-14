@@ -93,16 +93,7 @@ struct ToolView: View
                 {
                     Label("Connector", systemImage:"link")
                 }
-                .sheet(isPresented: $connector_view_presented)
-                {
-                    ConnectorView(demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: base_workspace.selected_tool.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_tools() })
-                        .modifier(SheetCaption(is_presented: $connector_view_presented, label: "Link"))
-                    #if os(macOS)
-                        .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
-                    #elseif os(visionOS)
-                        .frame(width: 512, height: 512)
-                    #endif
-                }
+                
             }
             
             ToolbarItem(id: "Statistics", placement: compact_placement())
@@ -110,23 +101,6 @@ struct ToolView: View
                 Button(action: { statistics_view_presented.toggle() })
                 {
                     Label("Statistics", systemImage:"chart.bar")
-                }
-                .sheet(isPresented: $statistics_view_presented)
-                {
-                    StatisticsView(
-                        is_presented: $statistics_view_presented,
-                        get_statistics: $base_workspace.selected_tool.get_statistics,
-                        charts_data: base_workspace.selected_tool.charts_binding(),
-                        states_data: base_workspace.selected_tool.states_binding(),
-                        scope_type: $base_workspace.selected_tool.scope_type,
-                        update_interval: $base_workspace.selected_tool.update_interval,
-                        clear_chart_data: { base_workspace.selected_tool.clear_chart_data() },
-                        clear_states_data: base_workspace.selected_tool.clear_states_data,
-                        update_file_data: { document_handler.document_update_tools() }
-                    )
-                    #if os(visionOS)
-                        .frame(width: 512, height: 512)
-                    #endif
                 }
             }
             
@@ -171,6 +145,33 @@ struct ToolView: View
             
             #if os(visionOS)
             pendant_controller.view_tool()
+            #endif
+        }
+        .sheet(isPresented: $connector_view_presented)
+        {
+            ConnectorView(demo: $base_workspace.selected_tool.demo, update_model: $base_workspace.selected_tool.update_model_by_connector, connector: base_workspace.selected_tool.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_tools() })
+                .modifier(SheetCaption(is_presented: $connector_view_presented, label: "Link"))
+            #if os(macOS)
+                .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
+            #elseif os(visionOS)
+                .frame(width: 512, height: 512)
+            #endif
+        }
+        .sheet(isPresented: $statistics_view_presented)
+        {
+            StatisticsView(
+                is_presented: $statistics_view_presented,
+                get_statistics: $base_workspace.selected_tool.get_statistics,
+                charts_data: base_workspace.selected_tool.charts_binding(),
+                states_data: base_workspace.selected_tool.states_binding(),
+                scope_type: $base_workspace.selected_tool.scope_type,
+                update_interval: $base_workspace.selected_tool.update_interval,
+                clear_chart_data: { base_workspace.selected_tool.clear_chart_data() },
+                clear_states_data: base_workspace.selected_tool.clear_states_data,
+                update_file_data: { document_handler.document_update_tools() }
+            )
+            #if os(visionOS)
+                .frame(width: 512, height: 512)
             #endif
         }
     }

@@ -96,16 +96,6 @@ struct RobotView: View
                 {
                     Label("Connector", systemImage:"link")
                 }
-                .sheet(isPresented: $connector_view_presented)
-                {
-                    ConnectorView(demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_robots() })
-                        .modifier(SheetCaption(is_presented: $connector_view_presented, label: "Link"))
-                    #if os(macOS)
-                        .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
-                    #elseif os(visionOS)
-                        .frame(width: 512, height: 512)
-                    #endif
-                }
             }
             
             ToolbarItem(id: "Statistics", placement: compact_placement())
@@ -113,23 +103,6 @@ struct RobotView: View
                 Button(action: { statistics_view_presented.toggle() })
                 {
                     Label("Statistics", systemImage:"chart.bar")
-                }
-                .sheet(isPresented: $statistics_view_presented)
-                {
-                    StatisticsView(
-                        is_presented: $statistics_view_presented,
-                        get_statistics: $base_workspace.selected_robot.get_statistics,
-                        charts_data: base_workspace.selected_robot.charts_binding(),
-                        states_data: base_workspace.selected_robot.states_binding(),
-                        scope_type: $base_workspace.selected_robot.scope_type,
-                        update_interval: $base_workspace.selected_robot.update_interval,
-                        clear_chart_data: { base_workspace.selected_robot.clear_chart_data() },
-                        clear_states_data: base_workspace.selected_robot.clear_states_data,
-                        update_file_data: { document_handler.document_update_robots() }
-                    )
-                    #if os(visionOS)
-                        .frame(width: 512, height: 512)
-                    #endif
                 }
             }
             
@@ -154,6 +127,33 @@ struct RobotView: View
         }
         .toolbarRole(.editor)
         .modifier(MenuHandlingModifier(performed: $base_workspace.selected_robot.performed, toggle_perform: base_workspace.selected_robot.start_pause_moving, stop_perform: base_workspace.selected_robot.reset_moving))
+        .sheet(isPresented: $connector_view_presented)
+        {
+            ConnectorView(demo: $base_workspace.selected_robot.demo, update_model: $base_workspace.selected_robot.update_model_by_connector, connector: base_workspace.selected_robot.connector as WorkspaceObjectConnector, update_file_data: { document_handler.document_update_robots() })
+                .modifier(SheetCaption(is_presented: $connector_view_presented, label: "Link"))
+            #if os(macOS)
+                .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
+            #elseif os(visionOS)
+                .frame(width: 512, height: 512)
+            #endif
+        }
+        .sheet(isPresented: $statistics_view_presented)
+        {
+            StatisticsView(
+                is_presented: $statistics_view_presented,
+                get_statistics: $base_workspace.selected_robot.get_statistics,
+                charts_data: base_workspace.selected_robot.charts_binding(),
+                states_data: base_workspace.selected_robot.states_binding(),
+                scope_type: $base_workspace.selected_robot.scope_type,
+                update_interval: $base_workspace.selected_robot.update_interval,
+                clear_chart_data: { base_workspace.selected_robot.clear_chart_data() },
+                clear_states_data: base_workspace.selected_robot.clear_states_data,
+                update_file_data: { document_handler.document_update_robots() }
+            )
+            #if os(visionOS)
+                .frame(width: 512, height: 512)
+            #endif
+        }
     }
     
     private func close_view()
@@ -227,21 +227,18 @@ struct RobotSceneView: View
             Button(action: { space_origin_view_presented = true })
             {
                 Image(systemName: "cube")
+                #if !os(visionOS)
                     .modifier(CircleButtonImageFramer())
+                #endif
             }
-            .buttonBorderShape(.circle)
             .popover(isPresented: $space_origin_view_presented)
             {
                 SpaceOriginView(robot: $base_workspace.selected_robot, on_update: { document_handler.document_update_robots() })
             }
-            #if !os(visionOS)
             .modifier(CircleButtonGlassBorderer())
+            #if !os(visionOS)
             .padding()
             #else
-            .controlSize(.large)
-            .buttonStyle(.borderless)
-            .glassBackgroundEffect()
-            .frame(depth: 24)
             .padding(32)
             #endif
         }

@@ -32,6 +32,7 @@ struct VisualWorkspaceView: View
             .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
         #else
             .modifier(BackgroundExtensionModifierL())
+            .ignoresSafeArea(.container, edges: [.top, .bottom])
         #endif
             .disabled(add_in_view_presented)
         #if os(iOS) || os(visionOS)

@@ -49,15 +49,21 @@ struct GalleryWorkspaceView: View
                 .padding(8)
             }
         }
-        #if !os(visionOS)
         .overlay(alignment: .bottomLeading)
         {
             Button(action: { add_in_view_presented.toggle() })
             {
                 Image(systemName: "plus")
-                    .modifier(CircleButtonImageFramer())
             }
+            #if !os(visionOS)
             .modifier(CircleButtonGlassBorderer())
+            #else
+            .controlSize(.large)
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            .glassBackgroundEffect()
+            .frame(depth: 24)
+            #endif
             .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
             {
                 #if os(macOS)
@@ -66,33 +72,18 @@ struct GalleryWorkspaceView: View
                 #else
                 AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
                     .frame(maxWidth: 1024)
+                #if !os(visionOS)
                     .background(.ultraThinMaterial)
+                #endif
                 #endif
             }
             .disabled(base_workspace.performed)
+            #if !os(visionOS)
             .padding()
+            #else
+            .padding(32)
+            #endif
         }
-        #else
-        .ornament(attachmentAnchor: .scene(.bottom))
-        {
-            Button(action: { add_in_view_presented.toggle() })
-            {
-                Image(systemName: "plus")
-                    .imageScale(.large)
-                    .padding()
-            }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
-            {
-                AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
-                    .frame(maxWidth: 1024)
-            }
-            .disabled(base_workspace.performed)
-            .padding()
-            .glassBackgroundEffect()
-        }
-        #endif
     }
 }
 
@@ -340,7 +331,9 @@ struct ObjectCard<Content: View>: View
             #else
             GalleryInfoView(info_view_presented: $info_view_presented, is_compact: horizontal_size_class == .compact)
                 .frame(maxWidth: 1024)
+            #if !os(visionOS)
                 .background(.ultraThinMaterial)
+            #endif
             #endif
         }
     }

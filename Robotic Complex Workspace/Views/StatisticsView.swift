@@ -207,8 +207,12 @@ struct StatisticsView: View
                     Image(systemName: "ellipsis")
                     #if !os(macOS)
                         .imageScale(.large)
+                    #if !os(visionOS)
                         .frame(width: 16, height: 16)
                         .foregroundStyle(.black)
+                    #else
+                        .foregroundStyle(.white)
+                    #endif
                     #endif
                 }
                 #if os(macOS)
@@ -216,7 +220,9 @@ struct StatisticsView: View
                 .padding(10)
                 #else
                 .buttonBorderShape(.circle)
+                #if !os(visionOS)
                 .padding(15)
+                #endif
                 #endif
                 .onChange(of: update_interval)
                 { _, _ in
@@ -230,7 +236,10 @@ struct StatisticsView: View
                 #if !os(visionOS)
                 .glassEffect()
                 #else
+                .padding(4)
+                .buttonStyle(.borderless)
                 .glassBackgroundEffect()
+                .padding(6)
                 #endif
             }
             .padding(10)

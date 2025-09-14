@@ -108,7 +108,11 @@ struct AddObjectView: View
                         .glassBackgroundEffect()
                         #endif
                     }
+                    #if os(macOS) || os(iOS)
                     .padding(10)
+                    #else
+                    .padding(16)
+                    #endif
                 }
                 .overlay(alignment: .bottom)
                 {
