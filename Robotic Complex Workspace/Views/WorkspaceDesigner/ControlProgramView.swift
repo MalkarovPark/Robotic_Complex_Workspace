@@ -69,7 +69,16 @@ struct ControlProgramView: View
                         program_representation_image
                             .animation(.easeInOut(duration: 0.2), value: app_state.new_program_element.image)
                             .animation(.easeInOut(duration: 0.2), value: app_state.view_program_as_text)//.imageScale(.large)
-                            .modifier(CircleButtonImageFramer())
+                        #if os(macOS)
+                            .frame(width: 16, height: 16)
+                        #else
+                            .frame(width: 24, height: 24)
+                            .padding(8)
+                        #endif
+                            .padding(6)
+                        #if os(iOS)
+                            .foregroundStyle(.black)
+                        #endif
                     }
                     .buttonBorderShape(.circle)
                     .glassEffect(.regular.tint(.white).interactive())
