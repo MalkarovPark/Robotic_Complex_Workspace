@@ -28,7 +28,7 @@ Robotic Complex Workspace is an open source application for designing and contro
 
 # Requirements <a name="requirements"></a>
 
-The application codebase supports macOS, iOS/iPadOS and requires Xcode 14.1 or newer. The Robotic Complex Workspace application has a Base SDK version of 13.0 and 16.1 respectively.
+The application codebase supports macOS, iOS/iPadOS, visionOS and requires Xcode 16.0 or newer. The Robotic Complex Workspace application has a Base SDK version of 26.0.
 
 # Getting Started <a name="getting-started"></a>
 
