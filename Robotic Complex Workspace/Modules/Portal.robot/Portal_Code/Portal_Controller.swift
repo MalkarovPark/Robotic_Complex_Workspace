@@ -18,8 +18,7 @@ class Portal_Controller: RobotModelController
     }
     
     // MARK: - Performing
-    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
-                                              origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         let pointer_location = [pointer_position.x, pointer_position.y, pointer_position.z]
         let pointer_rotation = [pointer_position.r, pointer_position.p, pointer_position.w]
@@ -27,7 +26,7 @@ class Portal_Controller: RobotModelController
         let origin_location = [origin_position.x, origin_position.y, origin_position.z]
         let origin_rotation = [origin_position.r, origin_position.p, origin_position.w]
         
-        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
+        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
     }
     
     let lengths: [Float] = [
@@ -42,13 +41,13 @@ class Portal_Controller: RobotModelController
         160.0
     ]
     
-    private func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
+    private func inverse_kinematic_calculation(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) -> [Float]
     {
         var px, py, pz: Float
         
-        px = pointer_location[0] + origin_location[0] - lengths[1]
-        py = pointer_location[1] + origin_location[1] - lengths[2]
-        pz = pointer_location[2] + origin_location[2] - lengths[0] + lengths[3] + lengths[4]
+        px = pointer_position.x + origin_position.x - lengths[1]
+        py = pointer_position.y + origin_position.y - lengths[2]
+        pz = pointer_position.z + origin_position.z - lengths[0] + lengths[3] + lengths[4]
         
         // Checking X part limit
         if px < 0

@@ -2186,7 +2186,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "30"
             endingLineNumber = "30"
-            landmarkName = "init(external_name:)"
+            landmarkName = "init(name:description:node:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2202,8 +2202,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "32"
             endingLineNumber = "32"
-            landmarkName = "init(external_name:)"
-            landmarkType = "7">
+            landmarkName = "PartModule"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2889,6 +2889,20 @@
                   startingLineNumber = "197"
                   endingLineNumber = "197">
                </Location>
+               <Location
+                  uuid = "3A033759-36A4-486B-BB5C-766D839FD03D - 184f6a56fb753eb5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "default argument 4 of IndustrialKit.Tool.init(name: Swift.String, model_controller: IndustrialKit.ToolModelController, connector: IndustrialKit.ToolConnector, scene_name: Swift.String, codes: Swift.Array&lt;IndustrialKit.OperationCodeInfo&gt;) -&gt; IndustrialKit.Tool"
+                  moduleName = "RCWorkspace.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/malkarovpark/Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/WorkspaceObjects/Tool.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -3510,8 +3524,8 @@
             filePath = "Robotic Complex Workspace/Modules/6DOF.robot/6DOF_Code/6DOF_Controller.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
             landmarkName = "initial_charts_data()"
             landmarkType = "7">
          </BreakpointContent>
@@ -3526,8 +3540,8 @@
             filePath = "Robotic Complex Workspace/Modules/6DOF.robot/6DOF_Code/6DOF_Controller.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "207"
-            endingLineNumber = "207"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
             landmarkName = "updated_states_data()"
             landmarkType = "7">
          </BreakpointContent>
