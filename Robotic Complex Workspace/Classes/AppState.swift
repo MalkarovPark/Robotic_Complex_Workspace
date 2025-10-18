@@ -251,12 +251,7 @@ class AppState: ObservableObject
     {
         opened_documents_count += 1
         
-        //print(opened_documents_count)
-        
-        if opened_documents_count == 1
-        {
-            start_external_modules_servers()
-        }
+        start_external_modules_servers()
     }
     
     public func dec_documents_count()
@@ -280,9 +275,14 @@ class AppState: ObservableObject
     
     private func start_external_modules_servers()
     {
-        Robot.external_modules_servers_start()
-        Tool.external_modules_servers_start()
-        Changer.external_modules_servers_start()
+        //print(opened_documents_count)
+        
+        if opened_documents_count == 1
+        {
+            Robot.external_modules_servers_start()
+            Tool.external_modules_servers_start()
+            Changer.external_modules_servers_start()
+        }
     }
     #endif
     
