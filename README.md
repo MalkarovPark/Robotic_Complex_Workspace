@@ -3,7 +3,7 @@
 # Robotic Complex Workspace
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FMalkarovPark%2FIndustrialKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/MalkarovPark/IndustrialKit) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FMalkarovPark%2FIndustrialKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/MalkarovPark/IndustrialKit)
-<a href="https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html">
+<a href="https://github.com/MalkarovPark/IndustrialKit/tree/main?tab=readme-ov-file#ima"> <!-- <a href="https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html"> -->
 <img src="https://img.shields.io/badge/^__^-IMA-AB88FF"></a>
 <a href="https://github.com/MalkarovPark/IndustrialKit">
 <img src="https://img.shields.io/badge/-IndustrialKit-05A89D"></a>
