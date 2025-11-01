@@ -245,7 +245,7 @@ struct RobotCardView: View
                     .padding()
             }
         }
-        .popover(isPresented: $pass_preferences_presented, arrowEdge: .top)
+        .popover(isPresented: $pass_preferences_presented, arrowEdge: .bottom)
         {
             PassPreferencesView(is_presented: $pass_preferences_presented)
             #if os(macOS)
