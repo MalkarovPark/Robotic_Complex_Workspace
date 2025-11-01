@@ -54,6 +54,9 @@ struct GalleryWorkspaceView: View
             Button(action: { add_in_view_presented.toggle() })
             {
                 Image(systemName: "plus")
+                #if !os(visionOS)
+                    .modifier(CircleButtonImageFramer())
+                #endif
             }
             #if !os(visionOS)
             .modifier(CircleButtonGlassBorderer())
@@ -323,7 +326,7 @@ struct ObjectCard<Content: View>: View
                 info_view_presented = true
             }
         }
-        .popover(isPresented: $info_view_presented)
+        .popover(isPresented: $info_view_presented, arrowEdge: .trailing)
         {
             #if os(macOS)
             GalleryInfoView(info_view_presented: $info_view_presented)

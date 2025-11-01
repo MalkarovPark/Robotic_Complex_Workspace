@@ -24,142 +24,134 @@ struct ToolInspectorView: View
     {
         VStack(spacing: 0)
         {
-            if tool.codes.count > 0
+            // MARK: Program Picker
+            HStack(spacing: 0)
             {
-                // MARK: Program Picker
-                HStack(spacing: 0)
+                Picker("Program", selection: $base_workspace.selected_tool.selected_program_index)
                 {
-                    Picker("Program", selection: $base_workspace.selected_tool.selected_program_index)
+                    if base_workspace.selected_tool.programs_names.count > 0
                     {
-                        if base_workspace.selected_tool.programs_names.count > 0
+                        ForEach(0 ..< base_workspace.selected_tool.programs_names.count, id: \.self)
                         {
-                            ForEach(0 ..< base_workspace.selected_tool.programs_names.count, id: \.self)
+                            if base_workspace.selected_tool.programs_names.count > 0
                             {
-                                if base_workspace.selected_tool.programs_names.count > 0
-                                {
-                                    Text(base_workspace.selected_tool.programs_names[$0])
-                                }
+                                Text(base_workspace.selected_tool.programs_names[$0])
                             }
                         }
-                        else
-                        {
-                            Text("None")
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .frame(maxWidth: .infinity)
-                    .disabled(tool.programs_names.count == 0)
-                    .padding(.leading, 8)
-                    
-                    Button(action: delete_operations_program)
-                    {
-                        Image(systemName: "minus")
-                            .imageScale(.large)
-                        #if os(macOS)
-                            .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
-                        #endif
-                            .padding(8)
-                    }
-                    .buttonBorderShape(.circle)
-                    .buttonStyle(.borderless)
-                    
-                    Button(action: { add_program_view_presented.toggle() })
-                    {
-                        Image(systemName: "plus")
-                            .imageScale(.large)
-                        #if os(macOS)
-                            .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
-                        #endif
-                            .padding(8)
-                    }
-                    .buttonBorderShape(.circle)
-                    .buttonStyle(.borderless)
-                    .popover(isPresented: $add_program_view_presented, arrowEdge: .top)
-                    {
-                        AddNewView(is_presented: $add_program_view_presented)
-                        { new_name in
-                            tool.add_program(OperationsProgram(name: new_name))
-                            tool.selected_program_index = tool.programs_names.count - 1
-                            
-                            document_handler.document_update_tools()
-                            add_program_view_presented.toggle()
-                            base_workspace.update_view()
-                        }
-                    }
-                }
-                .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
-                .padding([.horizontal, .top])
-                
-                // MARK: Program Editor
-                ZStack
-                {
-                    List
-                    {
-                        if tool.programs_count > 0
-                        {
-                            if tool.selected_program.codes_count > 0
-                            {
-                                ForEach(Array(tool.selected_program.codes.enumerated()), id: \.element.id)
-                                { index, code in
-                                    OperationItemView(tool: $tool, code_item: code)
-                                        .onDrag
-                                    {
-                                        return NSItemProvider()
-                                    }
-                                    .contextMenu
-                                    {
-                                        Button(role: .destructive)
-                                        {
-                                            remove_codes(at: IndexSet(integer: index))
-                                        }
-                                        label:
-                                        {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                                }
-                                .onMove(perform: code_item_move)
-                                .onDelete(perform: remove_codes)
-                                .onChange(of: base_workspace.tools)
-                                { _, _ in
-                                    document_handler.document_update_tools()
-                                }
-                            }
-                        }
-                    }
-                    .listStyle(.plain)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
-                    //.modifier(ListBorderer())
-                    .padding([.horizontal, .top])
-                    
-                    if tool.programs_count == 0
-                    {
-                        Text("No program selected")
-                            .foregroundColor(.gray)
                     }
                     else
                     {
-                        if tool.selected_program.codes_count == 0
+                        Text("None")
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity)
+                .disabled(tool.programs_names.count == 0)
+                .padding(.leading, 8)
+                
+                Button(action: delete_operations_program)
+                {
+                    Image(systemName: "minus")
+                        .imageScale(.large)
+                    #if os(macOS)
+                        .frame(width: 16, height: 16)
+                    #else
+                        .frame(width: 24, height: 24)
+                    #endif
+                        .padding(8)
+                }
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+                
+                Button(action: { add_program_view_presented.toggle() })
+                {
+                    Image(systemName: "plus")
+                        .imageScale(.large)
+                    #if os(macOS)
+                        .frame(width: 16, height: 16)
+                    #else
+                        .frame(width: 24, height: 24)
+                    #endif
+                        .padding(8)
+                }
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+                .popover(isPresented: $add_program_view_presented, arrowEdge: .top)
+                {
+                    AddNewView(is_presented: $add_program_view_presented)
+                    { new_name in
+                        tool.add_program(OperationsProgram(name: new_name))
+                        tool.selected_program_index = tool.programs_names.count - 1
+                        
+                        document_handler.document_update_tools()
+                        add_program_view_presented.toggle()
+                        base_workspace.update_view()
+                    }
+                }
+            }
+            .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
+            .padding([.horizontal, .top])
+            
+            // MARK: Program Editor
+            ZStack
+            {
+                List
+                {
+                    if tool.programs_count > 0
+                    {
+                        if tool.selected_program.codes_count > 0
                         {
-                            Text("Empty Program")
-                                .foregroundColor(.gray)
+                            ForEach(Array(tool.selected_program.codes.enumerated()), id: \.element.id)
+                            { index, code in
+                                OperationItemView(tool: $tool, code_item: code)
+                                    .onDrag
+                                {
+                                    return NSItemProvider()
+                                }
+                                .contextMenu
+                                {
+                                    Button(role: .destructive)
+                                    {
+                                        remove_codes(at: IndexSet(integer: index))
+                                    }
+                                    label:
+                                    {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                            }
+                            .onMove(perform: code_item_move)
+                            .onDelete(perform: remove_codes)
+                            .onChange(of: base_workspace.tools)
+                            { _, _ in
+                                document_handler.document_update_tools()
+                            }
                         }
                     }
                 }
-                .padding(.bottom)
-                .overlay(alignment: .bottomTrailing)
+                .listStyle(.plain)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
+                .padding([.horizontal, .top])
+                
+                if tool.programs_count == 0
                 {
-                    AddOperationCodeButton(tool: $tool)
+                    Text("No program selected")
+                        .foregroundColor(.gray)
+                }
+                else
+                {
+                    if tool.selected_program.codes_count == 0
+                    {
+                        Text("Empty Program")
+                            .foregroundColor(.gray)
+                    }
                 }
             }
-            else
+            .padding(.bottom)
+            .overlay(alignment: .bottomTrailing)
             {
-                Text("This tool has no control")
+                AddOperationCodeButton(tool: $tool)
             }
         }
         #if !os(macOS)

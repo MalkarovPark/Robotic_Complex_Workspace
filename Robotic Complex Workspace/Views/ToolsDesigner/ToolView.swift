@@ -50,7 +50,18 @@ struct ToolView: View
                 #if !os(visionOS)
                     .overlay(alignment: .bottomTrailing)
                     {
-                        ViewPendantButton(operation: { inspector_presented.toggle() })
+                        if tool.codes.count > 0
+                        {
+                            ViewPendantButton(operation: { inspector_presented.toggle() })
+                        }
+                        else
+                        {
+                            Text("Tool without control")
+                                .foregroundStyle(.tertiary)
+                                .padding(8)
+                                .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
+                                .padding()
+                        }
                     }
                 #endif
                 #if os(iOS) || os(visionOS)
@@ -62,7 +73,7 @@ struct ToolView: View
         #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
         {
-            if selection_finished
+            if selection_finished && tool.codes.count > 0
             {
                 ToolInspectorView(tool: $tool)
                     .disabled(base_workspace.selected_tool.performed)

@@ -3165,22 +3165,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7CB9C1E0-D8E8-42A3-9E02-E061401D0007"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Robotic Complex Workspace/Views/ToolsDesigner/ToolInspectorView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
-            landmarkName = "ToolInspectorView"
-            landmarkType = "14">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "EFF88001-0666-4E2E-A729-4A06856DEDFE"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -3204,8 +3188,8 @@
             filePath = "Robotic Complex Workspace/Views/ToolsDesigner/ToolView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
             landmarkName = "ToolView"
             landmarkType = "14">
          </BreakpointContent>
@@ -3220,8 +3204,8 @@
             filePath = "Robotic Complex Workspace/Views/ToolsDesigner/ToolView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "76"
-            endingLineNumber = "76"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
             landmarkName = "ToolView"
             landmarkType = "14">
          </BreakpointContent>
@@ -3268,8 +3252,8 @@
             filePath = "Robotic Complex Workspace/Views/ToolsDesigner/ToolView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
             landmarkName = "close_view()"
             landmarkType = "7">
          </BreakpointContent>
@@ -3284,8 +3268,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/GalleryWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "478"
-            endingLineNumber = "478"
+            startingLineNumber = "481"
+            endingLineNumber = "481"
             landmarkName = "GalleryInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -3300,8 +3284,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/GalleryWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "480"
-            endingLineNumber = "480"
+            startingLineNumber = "483"
+            endingLineNumber = "483"
             landmarkName = "GalleryInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -3316,8 +3300,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/GalleryWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "462"
-            endingLineNumber = "462"
+            startingLineNumber = "465"
+            endingLineNumber = "465"
             landmarkName = "GalleryInfoView"
             landmarkType = "14">
          </BreakpointContent>
@@ -3380,8 +3364,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/GalleryWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "482"
-            endingLineNumber = "482"
+            startingLineNumber = "485"
+            endingLineNumber = "485"
             landmarkName = "GalleryInfoView"
             landmarkType = "14">
          </BreakpointContent>
