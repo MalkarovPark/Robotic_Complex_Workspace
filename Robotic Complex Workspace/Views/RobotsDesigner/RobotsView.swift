@@ -234,6 +234,16 @@ struct RobotCardView: View
                     pass_programs_presented = true
                 }))
             }
+            
+            if !robot_item.has_avaliable_module
+            {
+                Image(systemName: "nosign")
+                    .font(.system(size: 96))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
+                    .opacity(0.1)
+                    .padding()
+            }
         }
         .popover(isPresented: $pass_preferences_presented, arrowEdge: .top)
         {

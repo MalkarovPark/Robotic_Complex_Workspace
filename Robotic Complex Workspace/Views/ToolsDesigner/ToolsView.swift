@@ -138,6 +138,16 @@ struct ToolCardView: View
                 base_workspace.duplicate_tool(name: tool_item.name)
             }, delete_object: delete_tool, update_file: update_file))
             .modifier(DoubleModifier(update_toggle: $update_toggle))
+            
+            if !tool_item.has_avaliable_module
+            {
+                Image(systemName: "nosign")
+                    .font(.system(size: 96))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
+                    .opacity(0.1)
+                    .padding()
+            }
         }
             /*.overlay(alignment: .bottomTrailing)
             {

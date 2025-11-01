@@ -242,6 +242,21 @@ class AppState: ObservableObject
         modules_folder_url = nil
     }
     
+    /*public func is_module_avalibale(for workspace_object: WorkspaceObject) -> Bool
+    {
+        switch workspace_object
+        {
+        case is Robot:
+            return workspace_object.is_internal_module ? Robot.internal_modules.contains(where: { $0.name == workspace_object.name }) : Robot.external_modules.contains(where: { $0.name == workspace_object.name })
+        case is Tool:
+            return workspace_object.is_internal_module ? Tool.internal_modules.contains(where: { $0.name == workspace_object.name }) : Tool.external_modules.contains(where: { $0.name == workspace_object.name })
+        case is Part:
+            return workspace_object.is_internal_module ? Part.internal_modules.contains(where: { $0.name == workspace_object.name }) : Part.external_modules.contains(where: { $0.name == workspace_object.name })
+        default:
+            return false
+        }
+    }*/
+    
     #if os(macOS)
     private var first_loaded = true
     
