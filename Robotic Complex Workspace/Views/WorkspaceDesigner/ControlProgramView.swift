@@ -292,7 +292,7 @@ struct ProgramElementItemView: View
                 delete_program_element()
             })
             {
-                Label("Delete", systemImage: "xmark")
+                Label("Delete", systemImage: "trash")
             }
         }
     }
