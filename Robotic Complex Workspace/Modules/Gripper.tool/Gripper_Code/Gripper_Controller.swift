@@ -21,7 +21,7 @@ class Gripper_Controller: ToolModelController
     private var closed = false
     private var moved = false
     
-    override func nodes_perform(code: Int, completion: @escaping () -> Void)
+    override func nodes_perform(code: Int, completion: @escaping () -> Void) throws
     {
         if nodes.count == 2 // Gripper model has two nodes of jaws
         {
@@ -44,6 +44,14 @@ class Gripper_Controller: ToolModelController
                 }
                 else
                 {
+                    throw NSError(
+                        domain: "Performing Error",
+                        code: 1,
+                        userInfo: [
+                            NSLocalizedDescriptionKey: "Release the gripper first"
+                        ]
+                    )
+                    
                     completion()
                 }
             case 1: // Open
@@ -63,6 +71,14 @@ class Gripper_Controller: ToolModelController
                 }
                 else
                 {
+                    throw NSError(
+                        domain: "Performing Error",
+                        code: 1,
+                        userInfo: [
+                            NSLocalizedDescriptionKey: "Close the gripper first"
+                        ]
+                    )
+                    
                     completion()
                 }
             default:

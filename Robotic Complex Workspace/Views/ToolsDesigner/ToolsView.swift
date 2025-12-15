@@ -128,7 +128,7 @@ struct ToolCardView: View
     {
         GlassBoxCard(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: removed_constraints(node: tool_item.node ?? SCNNode()), to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
         {
-            NavigationLink(destination: ToolView(tool: $tool_item))
+            NavigationLink(destination: ToolView(tool: $tool_item).modifier(ForceUpdateModifier()))
             {
                 Rectangle()
                     .fill(.clear)

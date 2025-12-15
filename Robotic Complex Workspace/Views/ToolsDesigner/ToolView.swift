@@ -18,6 +18,7 @@ struct ToolView: View
     
     @State private var connector_view_presented = false
     @State private var statistics_view_presented = false
+    @State private var performing_state_view_presented = false
     
     @State private var inspector_presented = false
     
@@ -27,7 +28,7 @@ struct ToolView: View
     
     @State private var new_operation_code = OperationCodeInfo()
     
-    @Environment(\.openWindow) private var openWindow
+    //@Environment(\.openWindow) private var openWindow
     
     #if os(iOS)
     // MARK: Horizontal window size handler
@@ -123,6 +124,31 @@ struct ToolView: View
                 }
             }*/
             
+            ToolbarItem(id: "State", placement: compact_placement(), showsByDefault: false)
+            {
+                Button(action: { performing_state_view_presented.toggle() })
+                {
+                    //Image(systemName: "app.badge")
+                    Label("Process State", systemImage:"app.badge")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(
+                            base_workspace.selected_tool.performing_state.color,
+                            .black
+                        )
+                    /*Label("Process State", systemImage:"circlebadge.fill")
+                    #if os(macOS)
+                        .foregroundColor(base_workspace.selected_tool.performing_state.color)
+                    #endif*/
+                }
+                /*#if !os(macOS)
+                .tint(base_workspace.selected_tool.performing_state.color)
+                #endif*/
+                .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+                {
+                    PerformingStateView(error: $tool.last_error)
+                }
+            }
+            
             #if !os(visionOS)
             ToolbarItem(id: "Controls", placement: compact_placement())
             {
@@ -206,7 +232,7 @@ struct ToolView: View
         base_workspace.deselect_tool()
     }
     
-    func close_tool()
+    private func close_tool()
     {
         #if os(visionOS)
         pendant_controller.view_dismiss()
@@ -231,6 +257,24 @@ struct ToolView: View
         #else
         return .topBarTrailing
         #endif
+    }
+}
+
+struct PerformingStateView: View
+{
+    @Binding var error: Error?
+    
+    var body: some View
+    {
+        VStack(alignment: .leading)
+        {
+            /*Label("\(error?.localizedDescription ?? "No Errors")", systemImage:"xmark.circle.fill")
+                .foregroundStyle(.red)
+                .padding()*/
+            
+            Text("\(error?.localizedDescription ?? "No Errors")")
+                .padding()
+        }
     }
 }
 
