@@ -139,6 +139,7 @@ struct ToolView: View
                         Label("Perform", systemImage: "playpause")
                     }
                 }
+                .disabled(tool.codes.count == 0)
             }
             #endif
         }

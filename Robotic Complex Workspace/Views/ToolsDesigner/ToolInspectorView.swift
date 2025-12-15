@@ -126,6 +126,23 @@ struct ToolInspectorView: View
                             { _, _ in
                                 document_handler.document_update_tools()
                             }
+                            /*ForEach(Array(tool.selected_program.codes.enumerated()), id: \.element.id)
+                            { index, code in
+                                OperationItemView(tool: $tool, code_item: code)
+                                    .contextMenu
+                                {
+                                    Button(role: .destructive)
+                                    {
+                                        remove_codes(at: IndexSet(integer: index))
+                                    }
+                                    label:
+                                    {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                            }
+                            .onMove(perform: code_item_move)
+                            .onDelete(perform: remove_codes)*/
                         }
                     }
                 }
