@@ -129,23 +129,23 @@ struct ToolView: View
                 Button(action: { performing_state_view_presented.toggle() })
                 {
                     //Image(systemName: "app.badge")
-                    Label("Process State", systemImage:"app.badge")
+                    /*Label("Process State", systemImage:"app.badge")
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(
                             base_workspace.selected_tool.performing_state.color,
                             .black
-                        )
-                    /*Label("Process State", systemImage:"circlebadge.fill")
+                        )*/
+                    Label("Process State", systemImage:"circlebadge.fill")
                     #if os(macOS)
                         .foregroundColor(base_workspace.selected_tool.performing_state.color)
-                    #endif*/
+                    #endif
                 }
-                /*#if !os(macOS)
+                #if !os(macOS)
                 .tint(base_workspace.selected_tool.performing_state.color)
-                #endif*/
+                #endif
                 .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
                 {
-                    PerformingStateView(error: $tool.last_error)
+                    PerformingStateView(performing_state: tool.performing_state, error: $tool.last_error)
                 }
             }
             
@@ -262,6 +262,7 @@ struct ToolView: View
 
 struct PerformingStateView: View
 {
+    let performing_state: PerformingState
     @Binding var error: Error?
     
     var body: some View
@@ -272,9 +273,24 @@ struct PerformingStateView: View
                 .foregroundStyle(.red)
                 .padding()*/
             
-            Text("\(error?.localizedDescription ?? "No Errors")")
-                .padding()
+            Text("Current State – \(performing_state.rawValue)")
+            
+            Divider()
+            
+            if let error = error
+            {
+                Text("\(error.localizedDescription)")
+            }
+            else
+            {
+                Text("No Errors")
+                    .foregroundStyle(.secondary)
+            }
         }
+        .frame(minWidth: 192)
+        .padding(8)
+        .modifier(ListBorderer())
+        .padding()
     }
 }
 
