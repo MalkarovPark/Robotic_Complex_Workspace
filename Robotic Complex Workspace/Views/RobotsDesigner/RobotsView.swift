@@ -212,7 +212,7 @@ struct RobotCardView: View
         {
             if !pass_programs_presented && !pass_programs_presented
             {
-                NavigationLink(destination: RobotView(robot: robot_item))
+                NavigationLink(destination: RobotView(robot: $robot_item).modifier(ForceUpdateModifier()))
                 {
                     Rectangle()
                         .fill(.clear)

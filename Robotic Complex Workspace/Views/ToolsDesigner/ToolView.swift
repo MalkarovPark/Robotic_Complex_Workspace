@@ -92,6 +92,8 @@ struct ToolView: View
             #endif
             
             base_workspace.selected_tool.clear_finish_handler()
+            base_workspace.selected_tool.clear_error_handler()
+            
             if base_workspace.selected_tool.programs_count > 0
             {
                 base_workspace.selected_tool.select_program(index: 0)
@@ -105,7 +107,6 @@ struct ToolView: View
                 {
                     Label("Connector", systemImage:"link")
                 }
-                
             }
             
             ToolbarItem(id: "Statistics", placement: compact_placement())
@@ -257,40 +258,6 @@ struct ToolView: View
         #else
         return .topBarTrailing
         #endif
-    }
-}
-
-struct PerformingStateView: View
-{
-    let performing_state: PerformingState
-    @Binding var error: Error?
-    
-    var body: some View
-    {
-        VStack(alignment: .leading)
-        {
-            /*Label("\(error?.localizedDescription ?? "No Errors")", systemImage:"xmark.circle.fill")
-                .foregroundStyle(.red)
-                .padding()*/
-            
-            Text("Current State – \(performing_state.rawValue)")
-            
-            Divider()
-            
-            if let error = error
-            {
-                Text("\(error.localizedDescription)")
-            }
-            else
-            {
-                Text("No Errors")
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .frame(minWidth: 192)
-        .padding(8)
-        .modifier(ListBorderer())
-        .padding()
     }
 }
 

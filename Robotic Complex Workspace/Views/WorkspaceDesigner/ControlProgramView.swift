@@ -54,6 +54,10 @@ struct ControlProgramView: View
             else
             {
                 ControlProgramTextView(elements: $base_workspace.elements)
+                    .onChange(of: base_workspace.elements)
+                    { _, _ in
+                        document_handler.document_update_elements()
+                    }
             }
         }
         //.background(.white)
