@@ -146,7 +146,7 @@ struct ToolView: View
                 #endif
                 .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
                 {
-                    PerformingStateView(performing_state: tool.performing_state, error: $tool.last_error)
+                    PerformingStateView(performing_state: tool.performing_state, error: tool.last_error)
                 }
             }
             
@@ -155,13 +155,11 @@ struct ToolView: View
             {
                 ControlGroup
                 {
-                    Button(action: { base_workspace.selected_tool.reset_performing()
-                    })
+                    Button(action: { base_workspace.selected_tool.reset_performing() })
                     {
                         Label("Stop", systemImage: "stop")
                     }
-                    Button(action: { base_workspace.selected_tool.start_pause_performing()
-                    })
+                    Button(action: { base_workspace.selected_tool.start_pause_performing() })
                     {
                         Label("Perform", systemImage: "playpause")
                     }

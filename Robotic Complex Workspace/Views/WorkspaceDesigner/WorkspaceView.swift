@@ -20,6 +20,7 @@ struct WorkspaceView: View
     @State private var inspector_presented = false
     
     @State private var statistics_view_presented = false
+    @State private var performing_state_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -112,6 +113,27 @@ struct WorkspaceView: View
                 Button(action: { registers_view_presented = true })
                 {
                     Label("Registers", systemImage: "number")
+                }
+            }
+            
+            ToolbarItem(id: "State", placement: compact_placement(), showsByDefault: false)
+            {
+                ControlGroup
+                {
+                    Button(action: { performing_state_view_presented.toggle() })
+                    {
+                        Label("Process State", systemImage:"circlebadge.fill")
+                        #if os(macOS)
+                            .foregroundColor(base_workspace.performing_state.color)
+                        #endif
+                    }
+                    #if !os(macOS)
+                    .tint(base_workspace.performing_state.color)
+                    #endif
+                    .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+                    {
+                        PerformingStateView(performing_state: base_workspace.performing_state, error: base_workspace.last_error)
+                    }
                 }
             }
             

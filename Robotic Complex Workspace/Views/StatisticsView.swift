@@ -477,7 +477,7 @@ struct StatisticsView_Previews: PreviewProvider
 struct PerformingStateView: View
 {
     let performing_state: PerformingState
-    @Binding var error: Error?
+    let error: Error?
     
     var body: some View
     {

@@ -130,7 +130,7 @@ struct RobotView: View
                 #endif
                 .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
                 {
-                    PerformingStateView(performing_state: robot.performing_state, error: $robot.last_error)
+                    PerformingStateView(performing_state: robot.performing_state, error: robot.last_error)
                 }
             }
             
