@@ -44,13 +44,13 @@ class Gripper_Controller: ToolModelController
                 }
                 else
                 {
-                    /*throw NSError(
+                    throw NSError(
                         domain: "Performing Error",
                         code: 1,
                         userInfo: [
                             NSLocalizedDescriptionKey: "Release the gripper first"
                         ]
-                    )*/
+                    )
                     
                     completion()
                 }

@@ -110,9 +110,12 @@ struct WorkspaceView: View
         {
             ToolbarItem(id: "Registers", placement: compact_placement())
             {
-                Button(action: { registers_view_presented = true })
+                ControlGroup
                 {
-                    Label("Registers", systemImage: "number")
+                    Button(action: { registers_view_presented = true })
+                    {
+                        Label("Registers", systemImage: "number")
+                    }
                 }
             }
             
