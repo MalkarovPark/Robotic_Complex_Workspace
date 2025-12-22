@@ -168,6 +168,7 @@ struct WorkspaceView: View
                 }
             }
         }
+        .toolbarRole(.editor)
         #endif
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
     }
@@ -201,17 +202,19 @@ struct WorkspaceView: View
     
     private func compact_placement() -> ToolbarItemPlacement
     {
-        #if os(iOS)
+        #if os(macOS)
+        return .primaryAction
+        #elseif os(iOS)
         if horizontal_size_class == .compact
         {
             return .bottomBar
         }
         else
         {
-            return .navigationBarTrailing
+            return .topBarTrailing
         }
         #else
-        return toolbar_item_placement_trailing
+        return .topBarTrailing
         #endif
     }
     

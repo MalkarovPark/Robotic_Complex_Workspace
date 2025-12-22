@@ -126,7 +126,7 @@ struct RobotView: View
                     #endif
                 }
                 #if !os(macOS)
-                .tint(base_workspace.selected_tool.performing_state.color)
+                .tint(base_workspace.selected_robot.performing_state.color)
                 #endif
                 .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
                 {
@@ -205,7 +205,7 @@ struct RobotView: View
     private func compact_placement() -> ToolbarItemPlacement
     {
         #if os(macOS)
-        return .automatic
+        return .primaryAction
         #elseif os(iOS)
         if horizontal_size_class == .compact
         {
@@ -245,8 +245,10 @@ struct RobotSceneView: View
         { scene_view in
             base_workspace.selected_robot.workcell_connect(scene: scene_view.scene ?? SCNScene(), name: "unit", connect_camera: true)
         }
-        #if os(macOS) || os(iOS)
+        #if os(macOS)
         .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
+        #elseif os(iOS)
+        .modifier(BackgroundExtensionModifier(color: Color(red: 124/255, green: 123/255, blue: 129/255)))
         #else
         .modifier(BackgroundExtensionModifier())
         #endif
