@@ -116,7 +116,7 @@ struct VisualWorkspaceView: View
                             .frame(maxWidth: 1024)
                     }
                     .disabled(add_in_view_disabled || base_workspace.performed)
-                    .padding(.trailing)
+                    .padding(.trailing, 8)
                     
                     Button(action: { info_view_presented.toggle() })
                     {
@@ -133,7 +133,7 @@ struct VisualWorkspaceView: View
                     }
                     .disabled(!add_in_view_disabled)
                 }
-                .padding()
+                .padding(8)
                 .labelStyle(.iconOnly)
                 .glassBackgroundEffect()
             }

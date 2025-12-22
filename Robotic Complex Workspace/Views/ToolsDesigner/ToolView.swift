@@ -125,6 +125,7 @@ struct ToolView: View
                 }
             }*/
             
+            #if !os(visionOS)
             ToolbarItem(id: "State", placement: compact_placement(), showsByDefault: false)
             {
                 Button(action: { performing_state_view_presented.toggle() })
@@ -150,7 +151,6 @@ struct ToolView: View
                 }
             }
             
-            #if !os(visionOS)
             ToolbarItem(id: "Controls", placement: compact_placement())
             {
                 ControlGroup
