@@ -208,7 +208,7 @@ struct RobotCardView: View
     
     var body: some View
     {
-        GlassBoxCard(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, /*color: robot_item.card_info.color,*/ node: robot_item.node, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
+        GlassBoxCard(title: robot_item.card_info.title, subtitle: robot_item.card_info.subtitle, node: robot_item.node, to_rename: $to_rename, edited_name: $robot_item.name, on_rename: update_file)
         {
             if !pass_programs_presented && !pass_programs_presented
             {

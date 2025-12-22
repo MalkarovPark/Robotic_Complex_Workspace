@@ -36,11 +36,6 @@ struct RobotView: View
     @EnvironmentObject var sidebar_controller: SidebarController
     #endif
     
-    /*public init(robot: Robot)
-    {
-        self.robot = robot
-    }*/
-    
     var body: some View
     {
         HStack(spacing: 0)
