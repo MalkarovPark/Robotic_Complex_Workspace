@@ -65,7 +65,7 @@ Objects are created in the relevant items available through the sidebar. All cre
 
 ### Robots <a name="robots">
 
-When creating a robot, in addition to the *name*, the *manufacturer*, *series* and *model* are specified. The *model* parameter determines how the visual model is controlled and direct connector.
+When creating a robot, in addition to the *name*, the *model* is specified. This parameter determines how the visual model is controlled and direct connector.
 
 <p align="center">
    <img width="920" height="696" alt="robot view" src="https://github.com/user-attachments/assets/b246710f-752d-406f-ba42-73e3af1b9501" />
