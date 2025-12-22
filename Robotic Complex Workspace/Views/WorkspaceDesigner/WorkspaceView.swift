@@ -20,6 +20,7 @@ struct WorkspaceView: View
     @State private var inspector_presented = false
     
     @State private var statistics_view_presented = false
+    @State private var performing_state_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -109,9 +110,33 @@ struct WorkspaceView: View
         {
             ToolbarItem(id: "Registers", placement: compact_placement())
             {
-                Button(action: { registers_view_presented = true })
+                ControlGroup
                 {
-                    Label("Registers", systemImage: "number")
+                    Button(action: { registers_view_presented = true })
+                    {
+                        Label("Registers", systemImage: "number")
+                    }
+                }
+            }
+            
+            ToolbarItem(id: "State", placement: compact_placement(), showsByDefault: false)
+            {
+                ControlGroup
+                {
+                    Button(action: { performing_state_view_presented.toggle() })
+                    {
+                        Label("Process State", systemImage:"circlebadge.fill")
+                        #if os(macOS)
+                            .foregroundColor(base_workspace.performing_state.color)
+                        #endif
+                    }
+                    #if !os(macOS)
+                    .tint(base_workspace.performing_state.color)
+                    #endif
+                    .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+                    {
+                        PerformingStateView(performing_state: base_workspace.performing_state, error: base_workspace.last_error)
+                    }
                 }
             }
             
@@ -143,6 +168,7 @@ struct WorkspaceView: View
                 }
             }
         }
+        .toolbarRole(.editor)
         #endif
         .modifier(MenuHandlingModifier(performed: $base_workspace.performed, toggle_perform: toggle_perform, stop_perform: stop_perform))
     }
@@ -176,17 +202,19 @@ struct WorkspaceView: View
     
     private func compact_placement() -> ToolbarItemPlacement
     {
-        #if os(iOS)
+        #if os(macOS)
+        return .primaryAction
+        #elseif os(iOS)
         if horizontal_size_class == .compact
         {
             return .bottomBar
         }
         else
         {
-            return .navigationBarTrailing
+            return .topBarTrailing
         }
         #else
-        return toolbar_item_placement_trailing
+        return .topBarTrailing
         #endif
     }
     

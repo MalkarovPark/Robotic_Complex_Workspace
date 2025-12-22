@@ -54,6 +54,10 @@ struct ControlProgramView: View
             else
             {
                 ControlProgramTextView(elements: $base_workspace.elements)
+                    .onChange(of: base_workspace.elements)
+                    { _, _ in
+                        document_handler.document_update_elements()
+                    }
             }
         }
         //.background(.white)
@@ -269,16 +273,24 @@ struct ProgramElementItemView: View
             
             if !is_deliting && !(element is CleanerModifierElement)
             {
+                #if os(macOS)
                 Rectangle()
                     .foregroundStyle(.clear)
                     .popover(isPresented: $element_view_presented,
                              arrowEdge: .leading)
                     {
                         ElementView(element: $element, on_update: update_program_element)
-                        #if os(iOS) || os(visionOS)
-                            .presentationDetents([.height(240)])
-                        #endif
                     }
+                #else
+                Rectangle()
+                    .foregroundStyle(.clear)
+                    .popover(isPresented: $element_view_presented,
+                             arrowEdge: .trailing)
+                    {
+                        ElementView(element: $element, on_update: update_program_element)
+                            .presentationDetents([.height(240)])
+                    }
+                #endif
             }
         }
         .disabled(is_deliting)
@@ -292,7 +304,7 @@ struct ProgramElementItemView: View
                 delete_program_element()
             })
             {
-                Label("Delete", systemImage: "xmark")
+                Label("Delete", systemImage: "trash")
             }
         }
     }

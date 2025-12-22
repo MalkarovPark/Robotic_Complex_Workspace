@@ -472,3 +472,38 @@ struct StatisticsView_Previews: PreviewProvider
         .environmentObject(AppState())
     }
 }
+
+// MARK: - Performing State View
+struct PerformingStateView: View
+{
+    let performing_state: PerformingState
+    let error: Error?
+    
+    var body: some View
+    {
+        VStack(alignment: .leading)
+        {
+            /*Label("\(error?.localizedDescription ?? "No Errors")", systemImage:"xmark.circle.fill")
+                .foregroundStyle(.red)
+                .padding()*/
+            
+            Text("Current State – \(performing_state.rawValue)")
+            
+            Divider()
+            
+            if let error = error
+            {
+                Text("\(error.localizedDescription)")
+            }
+            else
+            {
+                Text("No Errors")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(minWidth: 192)
+        .padding(8)
+        .modifier(ListBorderer())
+        .padding()
+    }
+}

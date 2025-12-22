@@ -212,7 +212,7 @@ struct RobotCardView: View
         {
             if !pass_programs_presented && !pass_programs_presented
             {
-                NavigationLink(destination: RobotView(robot: robot_item))
+                NavigationLink(destination: RobotView(robot: $robot_item).modifier(ForceUpdateModifier()))
                 {
                     Rectangle()
                         .fill(.clear)
@@ -234,8 +234,18 @@ struct RobotCardView: View
                     pass_programs_presented = true
                 }))
             }
+            
+            if !robot_item.has_avaliable_module
+            {
+                Image(systemName: "nosign")
+                    .font(.system(size: 96))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
+                    .opacity(0.1)
+                    .padding()
+            }
         }
-        .popover(isPresented: $pass_preferences_presented, arrowEdge: .top)
+        .popover(isPresented: $pass_preferences_presented, arrowEdge: .bottom)
         {
             PassPreferencesView(is_presented: $pass_preferences_presented)
             #if os(macOS)

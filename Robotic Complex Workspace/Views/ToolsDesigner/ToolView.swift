@@ -18,6 +18,7 @@ struct ToolView: View
     
     @State private var connector_view_presented = false
     @State private var statistics_view_presented = false
+    @State private var performing_state_view_presented = false
     
     @State private var inspector_presented = false
     
@@ -27,7 +28,7 @@ struct ToolView: View
     
     @State private var new_operation_code = OperationCodeInfo()
     
-    @Environment(\.openWindow) private var openWindow
+    //@Environment(\.openWindow) private var openWindow
     
     #if os(iOS)
     // MARK: Horizontal window size handler
@@ -50,7 +51,18 @@ struct ToolView: View
                 #if !os(visionOS)
                     .overlay(alignment: .bottomTrailing)
                     {
-                        ViewPendantButton(operation: { inspector_presented.toggle() })
+                        if tool.codes.count > 0
+                        {
+                            ViewPendantButton(operation: { inspector_presented.toggle() })
+                        }
+                        else
+                        {
+                            Text("Tool without control")
+                                .foregroundStyle(.tertiary)
+                                .padding(8)
+                                .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 8))
+                                .padding()
+                        }
                     }
                 #endif
                 #if os(iOS) || os(visionOS)
@@ -62,7 +74,7 @@ struct ToolView: View
         #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
         {
-            if selection_finished
+            if selection_finished && tool.codes.count > 0
             {
                 ToolInspectorView(tool: $tool)
                     .disabled(base_workspace.selected_tool.performed)
@@ -80,6 +92,8 @@ struct ToolView: View
             #endif
             
             base_workspace.selected_tool.clear_finish_handler()
+            base_workspace.selected_tool.clear_error_handler()
+            
             if base_workspace.selected_tool.programs_count > 0
             {
                 base_workspace.selected_tool.select_program(index: 0)
@@ -93,7 +107,6 @@ struct ToolView: View
                 {
                     Label("Connector", systemImage:"link")
                 }
-                
             }
             
             ToolbarItem(id: "Statistics", placement: compact_placement())
@@ -113,21 +126,45 @@ struct ToolView: View
             }*/
             
             #if !os(visionOS)
+            ToolbarItem(id: "State", placement: compact_placement(), showsByDefault: false)
+            {
+                Button(action: { performing_state_view_presented.toggle() })
+                {
+                    //Image(systemName: "app.badge")
+                    /*Label("Process State", systemImage:"app.badge")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(
+                            base_workspace.selected_tool.performing_state.color,
+                            .black
+                        )*/
+                    Label("Process State", systemImage:"circlebadge.fill")
+                    #if os(macOS)
+                        .foregroundColor(base_workspace.selected_tool.performing_state.color)
+                    #endif
+                }
+                #if !os(macOS)
+                .tint(base_workspace.selected_tool.performing_state.color)
+                #endif
+                .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+                {
+                    PerformingStateView(performing_state: tool.performing_state, error: tool.last_error)
+                }
+            }
+            
             ToolbarItem(id: "Controls", placement: compact_placement())
             {
                 ControlGroup
                 {
-                    Button(action: { base_workspace.selected_tool.reset_performing()
-                    })
+                    Button(action: { base_workspace.selected_tool.reset_performing() })
                     {
                         Label("Stop", systemImage: "stop")
                     }
-                    Button(action: { base_workspace.selected_tool.start_pause_performing()
-                    })
+                    Button(action: { base_workspace.selected_tool.start_pause_performing() })
                     {
                         Label("Perform", systemImage: "playpause")
                     }
                 }
+                .disabled(tool.codes.count == 0)
             }
             #endif
         }
@@ -194,7 +231,7 @@ struct ToolView: View
         base_workspace.deselect_tool()
     }
     
-    func close_tool()
+    private func close_tool()
     {
         #if os(visionOS)
         pendant_controller.view_dismiss()
@@ -206,7 +243,7 @@ struct ToolView: View
     private func compact_placement() -> ToolbarItemPlacement
     {
         #if os(macOS)
-        return .automatic
+        return .primaryAction
         #elseif os(iOS)
         if horizontal_size_class == .compact
         {

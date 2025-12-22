@@ -19,6 +19,7 @@ struct CardMenu: ViewModifier
     
     @State private var is_selected = false
     @State var name = String()
+    @State private var module_view_presented = false
     @State private var delete_alert_presented = false
     
     let duplicate_object: () -> ()
@@ -82,8 +83,8 @@ struct CardMenu: ViewModifier
             .alert(isPresented: $delete_alert_presented)
             {
                 Alert(
-                    title: Text("Delete \(object_type_name())?"),
-                    message: Text("Do you want to delete this \(object_type_name()) – \(object.name)"),
+                    title: Text("Delete \(object_type_name)?"),
+                    message: Text("Do you want to delete this \(object_type_name) – \(object.name)"),
                     primaryButton: .destructive(Text("Delete"), action: {
                         delete_object()
                         update_file()
@@ -107,6 +108,14 @@ struct CardMenu: ViewModifier
                 }
             }
             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+            .popover(isPresented: $module_view_presented, arrowEdge: .bottom)
+            {
+                ModuleViewer(is_presented: $module_view_presented,
+                             module_name: $object.module_name,
+                             is_internal_module: $object.is_internal_module,
+                             object: object,
+                             update_file: update_file)
+            }
             .contextMenu
             {
                 Toggle(isOn: $object.is_placed)
@@ -186,6 +195,13 @@ struct CardMenu: ViewModifier
                 
                 Divider()
                 
+                Button("Module...", systemImage: "puzzlepiece.extension")
+                {
+                    module_view_presented = true
+                }
+                
+                Divider()
+                
                 Button("Delete", systemImage: "trash", role: .destructive)
                 {
                     delete_alert_presented = true
@@ -240,7 +256,7 @@ struct CardMenu: ViewModifier
         }
     }
     
-    private func object_type_name() -> String
+    var object_type_name: String
     {
         switch object
         {
@@ -306,5 +322,108 @@ struct Squarer: ViewModifier
     {
         content
             .frame(width: side, height: side)
+    }
+}
+
+struct ModuleViewer: View
+{
+    @Binding var is_presented: Bool
+    @Binding var module_name: String
+    @Binding var is_internal_module: Bool
+    
+    @EnvironmentObject var app_state: AppState
+    
+    @ObservedObject var object: WorkspaceObject
+    
+    let update_file: () -> ()
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            Text("Module")
+                .font(.title2)
+                .padding(.bottom)
+            
+            TextField("Name", text: $module_name)
+                .onChange(of: object.module_name) { _, _ in update_file() }
+                .padding(.bottom)
+            
+            Toggle("Is Internal", isOn: $is_internal_module)
+                .onChange(of: object.is_internal_module) { _, _ in update_file() }
+                .padding(.bottom)
+            
+            Menu("Select...")
+            {
+                if internal_modules_list.count > 0
+                {
+                    Section(header: Text("Internal"))
+                    {
+                        ForEach(internal_modules_list, id: \.self)
+                        { module in
+                            Button(action:
+                                    {
+                                is_internal_module = true
+                                module_name = module
+                                update_file()
+                            })
+                            {
+                                Text(module)
+                            }
+                        }
+                    }
+                }
+                
+                if external_modules_list.count > 0
+                {
+                    Section(header: Text("External"))
+                    {
+                        ForEach(external_modules_list, id: \.self)
+                        { module in
+                            Button(action:
+                                    {
+                                is_internal_module = false
+                                module_name = module
+                                update_file()
+                            })
+                            {
+                                Text(module)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
+    }
+    
+    private var internal_modules_list: [String]
+    {
+        switch object
+        {
+        case is Robot:
+            return app_state.internal_modules_list.robot
+        case is Tool:
+            return app_state.internal_modules_list.tool
+        case is Part:
+            return app_state.internal_modules_list.part
+        default:
+            return [String]()
+        }
+    }
+    
+    private var external_modules_list: [String]
+    {
+        switch object
+        {
+        case is Robot:
+            return app_state.external_modules_list.robot
+        case is Tool:
+            return app_state.external_modules_list.tool
+        case is Part:
+            return app_state.external_modules_list.part
+        default:
+            return [String]()
+        }
     }
 }

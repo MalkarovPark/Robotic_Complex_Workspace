@@ -28,8 +28,10 @@ struct VisualWorkspaceView: View
     {
         WorkspaceSceneView()
             .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
-        #if os(macOS) || os(iOS)
+        #if os(macOS)
             .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
+        #elseif os(iOS)
+            .modifier(BackgroundExtensionModifier(color: Color(red: 124/255, green: 123/255, blue: 129/255)))
         #else
             .modifier(BackgroundExtensionModifierL())
             .ignoresSafeArea(.container, edges: [.top, .bottom])
@@ -114,7 +116,7 @@ struct VisualWorkspaceView: View
                             .frame(maxWidth: 1024)
                     }
                     .disabled(add_in_view_disabled || base_workspace.performed)
-                    .padding(.trailing)
+                    .padding(.trailing, 8)
                     
                     Button(action: { info_view_presented.toggle() })
                     {
@@ -131,7 +133,7 @@ struct VisualWorkspaceView: View
                     }
                     .disabled(!add_in_view_disabled)
                 }
-                .padding()
+                .padding(8)
                 .labelStyle(.iconOnly)
                 .glassBackgroundEffect()
             }

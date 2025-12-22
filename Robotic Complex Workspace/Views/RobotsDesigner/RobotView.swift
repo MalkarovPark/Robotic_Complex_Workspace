@@ -12,12 +12,13 @@ import IndustrialKitUI
 
 struct RobotView: View
 {
-    let robot: Robot
+    @Binding var robot: Robot
     
     @State private var selection_finished = false
     
     @State private var connector_view_presented = false
     @State private var statistics_view_presented = false
+    @State private var performing_state_view_presented = false
     
     @State private var inspector_presented = false
     
@@ -35,10 +36,10 @@ struct RobotView: View
     @EnvironmentObject var sidebar_controller: SidebarController
     #endif
     
-    public init(robot: Robot)
+    /*public init(robot: Robot)
     {
         self.robot = robot
-    }
+    }*/
     
     var body: some View
     {
@@ -81,6 +82,8 @@ struct RobotView: View
             #endif
             
             base_workspace.selected_robot.clear_finish_handler()
+            base_workspace.selected_robot.clear_error_handler()
+            
             base_workspace.selected_robot.perform_update()
             
             if base_workspace.selected_robot.programs_count > 0
@@ -107,6 +110,31 @@ struct RobotView: View
             }
             
             #if !os(visionOS)
+            ToolbarItem(id: "State", placement: compact_placement(), showsByDefault: false)
+            {
+                Button(action: { performing_state_view_presented.toggle() })
+                {
+                    //Image(systemName: "app.badge")
+                    /*Label("Process State", systemImage:"app.badge")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(
+                            base_workspace.selected_tool.performing_state.color,
+                            .black
+                        )*/
+                    Label("Process State", systemImage:"circlebadge.fill")
+                    #if os(macOS)
+                        .foregroundColor(base_workspace.selected_robot.performing_state.color)
+                    #endif
+                }
+                #if !os(macOS)
+                .tint(base_workspace.selected_robot.performing_state.color)
+                #endif
+                .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+                {
+                    PerformingStateView(performing_state: robot.performing_state, error: robot.last_error)
+                }
+            }
+            
             ToolbarItem(id: "Controls", placement: compact_placement())
             {
                 ControlGroup
@@ -177,7 +205,7 @@ struct RobotView: View
     private func compact_placement() -> ToolbarItemPlacement
     {
         #if os(macOS)
-        return .automatic
+        return .primaryAction
         #elseif os(iOS)
         if horizontal_size_class == .compact
         {
@@ -217,8 +245,10 @@ struct RobotSceneView: View
         { scene_view in
             base_workspace.selected_robot.workcell_connect(scene: scene_view.scene ?? SCNScene(), name: "unit", connect_camera: true)
         }
-        #if os(macOS) || os(iOS)
+        #if os(macOS)
         .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
+        #elseif os(iOS)
+        .modifier(BackgroundExtensionModifier(color: Color(red: 124/255, green: 123/255, blue: 129/255)))
         #else
         .modifier(BackgroundExtensionModifier())
         #endif
@@ -248,7 +278,7 @@ struct RobotSceneView: View
 // MARK: - Previews
 #Preview
 {
-    RobotView(robot: Robot())
+    RobotView(robot: .constant(Robot()))
         .environmentObject(Workspace())
         .environmentObject(AppState())
 }

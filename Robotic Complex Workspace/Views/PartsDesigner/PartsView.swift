@@ -164,7 +164,18 @@ struct PartCardView: View
     
     var body: some View
     {
-        GlassBoxCard(title: part_item.card_info.title, /*color: part_item.card_info.color,*/ node: part_item.node ?? SCNNode(), to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
+        GlassBoxCard(title: part_item.card_info.title, node: part_item.node ?? SCNNode(), to_rename: $to_rename, edited_name: $part_item.name, on_rename: update_file)
+            {
+                if !part_item.has_avaliable_module
+                {
+                    Image(systemName: "nosign")
+                        .font(.system(size: 96))
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .opacity(0.1)
+                        .padding()
+                }
+            }
             .modifier(CardMenu(object: part_item, to_rename: $to_rename, duplicate_object: {
                 base_workspace.duplicate_part(name: part_item.name)
             }, delete_object: delete_part, update_file: update_file))

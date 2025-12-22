@@ -128,7 +128,7 @@ struct ToolCardView: View
     {
         GlassBoxCard(title: tool_item.card_info.title, subtitle: tool_item.card_info.subtitle, /*color: tool_item.card_info.color,*/ node: removed_constraints(node: tool_item.node ?? SCNNode()), to_rename: $to_rename, edited_name: $tool_item.name, on_rename: update_file)
         {
-            NavigationLink(destination: ToolView(tool: $tool_item))
+            NavigationLink(destination: ToolView(tool: $tool_item).modifier(ForceUpdateModifier()))
             {
                 Rectangle()
                     .fill(.clear)
@@ -138,6 +138,16 @@ struct ToolCardView: View
                 base_workspace.duplicate_tool(name: tool_item.name)
             }, delete_object: delete_tool, update_file: update_file))
             .modifier(DoubleModifier(update_toggle: $update_toggle))
+            
+            if !tool_item.has_avaliable_module
+            {
+                Image(systemName: "nosign")
+                    .font(.system(size: 96))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
+                    .opacity(0.1)
+                    .padding()
+            }
         }
             /*.overlay(alignment: .bottomTrailing)
             {

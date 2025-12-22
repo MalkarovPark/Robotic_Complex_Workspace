@@ -21,8 +21,19 @@ class _6DOF_Controller: RobotModelController
     }
     
     // MARK: - Performing
-    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
+        if pointer_position.z > 60
+        {
+            throw NSError(
+                domain: "Performing Error",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Z > 60"
+                ]
+            )
+        }
+        
         apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
     }
     
