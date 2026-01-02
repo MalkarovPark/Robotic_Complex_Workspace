@@ -32,11 +32,11 @@ struct ForceUpdateModifier: ViewModifier
     public func body(content: Content) -> some View
     {
         content
-            .onAppear(perform: { perform_update() })
-            .onDisappear(perform: { disable_update() })
+            //.onAppear(perform: { perform_update() })
+            //.onDisappear(perform: { disable_update() })
     }
     
-    @State private var view_update_task: Task<Void, Never>?
+    /*@State private var view_update_task: Task<Void, Never>?
     @State private var view_updated = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -68,7 +68,7 @@ struct ForceUpdateModifier: ViewModifier
         view_updated = false
         view_update_task?.cancel()
         view_update_task = nil
-    }
+    }*/
 }
 
 #if !os(macOS)
