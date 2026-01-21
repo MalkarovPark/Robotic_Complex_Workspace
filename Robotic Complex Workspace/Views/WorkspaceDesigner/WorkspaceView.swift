@@ -13,6 +13,241 @@ import IndustrialKitUI
 
 struct WorkspaceView: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    
+    @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
+    
+    @State private var worked = false
+    @State private var registers_view_presented = false
+    @State private var inspector_presented = false
+    
+    @State private var statistics_view_presented = false
+    @State private var performing_state_view_presented = false
+    
+    #if !os(macOS)
+    @State var settings_view_presented = false
+    
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
+    #endif
+    
+    var body: some View
+    {
+        NavigationStack
+        {
+            ZStack
+            {
+                switch representation_type
+                {
+                case .visual:
+                    VisualWorkspaceView()
+                        //.onDisappear(perform: stop_perform)
+                        //.onAppear(perform: update_constrainted_positions)
+                case .gallery:
+                    GalleryWorkspaceView()
+                case .spatial:
+                    EmptyView()
+                }
+            }
+            #if !os(visionOS)
+            .inspector(isPresented: $inspector_presented)
+            {
+                InspectorView()
+                //ControlProgramView()
+                //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+            }
+            #endif
+            #if os(macOS)
+            .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) // Window sizes for macOS
+            #endif
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar(id: "workspace")
+            {
+                #if !os(macOS)
+                ToolbarItem(id: "Settings", placement: .cancellationAction)
+                {
+                    HStack(alignment: .center)
+                    {
+                        Button (action: { app_state.settings_view_presented = true })
+                        {
+                            Label("Settings", systemImage: "gear")
+                        }
+                        #if os(visionOS)
+                        .buttonBorderShape(.circle)
+                        #endif
+                    }
+                }
+                #endif
+                
+                ToolbarItem(id: "Registers", placement: compact_placement())
+                {
+                    ControlGroup
+                    {
+                        Button(action: { registers_view_presented = true })
+                        {
+                            Label("Registers", systemImage: "number")
+                        }
+                    }
+                }
+                
+                ToolbarItem(id: "State", placement: compact_placement(), showsByDefault: false)
+                {
+                    ControlGroup
+                    {
+                        Button(action: { performing_state_view_presented.toggle() })
+                        {
+                            Label("Process State", systemImage:"circlebadge.fill")
+                            #if os(macOS)
+                                .foregroundColor(base_workspace.performing_state.color)
+                            #endif
+                        }
+                        #if !os(macOS)
+                        .tint(base_workspace.performing_state.color)
+                        #endif
+                        .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+                        {
+                            PerformingStateView(performing_state: base_workspace.performing_state, error: base_workspace.last_error)
+                        }
+                    }
+                }
+                
+                /*ToolbarItem(id: "Controls", placement: compact_placement())
+                {
+                    ControlGroup
+                    {
+                        Button(action: change_cycle)
+                        {
+                            if base_workspace.cycled
+                            {
+                                Label("Cycle", systemImage: "repeat")
+                            }
+                            else
+                            {
+                                Label("Cycle", systemImage: "repeat.1")
+                            }
+                        }
+                        
+                        Button(action: stop_perform)
+                        {
+                            Label("Stop", systemImage: "stop")
+                        }
+                        
+                        Button(action: toggle_perform)
+                        {
+                            Label("Perform", systemImage: "playpause")
+                        }
+                    }
+                }*/
+                
+                ToolbarItem(id: "Inspector", placement: compact_placement())
+                {
+                    ControlGroup
+                    {
+                        Button(action: { inspector_presented.toggle() })
+                        {
+                            Label("Inspector", systemImage: "sidebar.right")
+                        }
+                    }
+                }
+            }
+            .toolbarRole(.editor)
+            #if !os(macOS)
+            .sheet(isPresented: $app_state.settings_view_presented)
+            {
+                SettingsView(setting_view_presented: $app_state.settings_view_presented)
+                    .environmentObject(app_state)
+                    .onDisappear
+                {
+                    app_state.settings_view_presented = false
+                }
+                #if os(visionOS)
+                .frame(width: 512, height: 512)
+                #endif
+            }
+            #endif
+            .sheet(isPresented: $registers_view_presented)
+            {
+                RegistersDataView(is_presented: $registers_view_presented)
+                {
+                    document_handler.document_update_registers()
+                }
+                .onDisappear()
+                {
+                    registers_view_presented = false
+                }
+                #if os(macOS)
+                    .frame(width: 420, height: 480)
+                #elseif os(visionOS)
+                    .frame(width: 600, height: 600)
+                #endif
+            }
+            .onAppear
+            {
+                base_workspace.elements_check()
+                
+                print(base_workspace.robots.count)
+                
+                for robot in base_workspace.robots
+                {
+                    print("🍺 \(robot.module_name) + \(robot.position)")
+                }
+            }
+        }
+    }
+    
+    private func stop_perform()
+    {
+        base_workspace.reset_performing()
+        
+        if base_workspace.performed
+        {
+            base_workspace.update_view()
+        }
+        
+        #if os(visionOS)
+        pendant_controller.view_dismiss()
+        #endif
+    }
+    
+    private func toggle_perform()
+    {
+        #if !os(visionOS)
+        app_state.view_program_as_text = false
+        #endif
+        base_workspace.start_pause_performing()
+    }
+    
+    private func change_cycle()
+    {
+        base_workspace.cycled.toggle()
+    }
+    
+    private func compact_placement() -> ToolbarItemPlacement
+    {
+        #if os(macOS)
+        return .primaryAction
+        #elseif os(iOS)
+        if horizontal_size_class == .compact
+        {
+            return .bottomBar
+        }
+        else
+        {
+            return .topBarTrailing
+        }
+        #else
+        return .topBarTrailing
+        #endif
+    }
+}
+
+/*struct WorkspaceView: View
+{
     @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
     
     @State private var worked = false
@@ -238,7 +473,7 @@ struct WorkspaceView: View
         pendant_controller.view_workspace()
         #endif
     }*/
-}
+}*/
 
 // MARK: - Workspace scene views
 /*struct AddInWorkspaceView: View
@@ -739,6 +974,65 @@ struct AddPartInWorkspaceView: View
     }
 }*/
 
+/*class SidebarController: ObservableObject
+{
+    #if os(macOS)
+    @Published public var sidebar_selection: navigation_item? = nil//.WorkspaceView
+    #else
+    @Published public var sidebar_selection: navigation_item? = .WorkspaceView
+    #endif
+    
+    public func flip_workspace_selection()
+    {
+        sidebar_selection = nil
+        perform_workspace_view_reset = true
+    }
+    
+    #if os(macOS)
+    @Published public var perform_workspace_view_reset = true
+    #else
+    @Published var perform_workspace_view_reset = false
+    #endif
+    
+    @Published public var from_workspace_view = false
+}*/
+
+/*enum navigation_item: Int, Hashable, CaseIterable, Identifiable
+{
+    case WorkspaceView, RobotsView, ToolsView, PartsView // Sidebar items
+    
+    var id: Int { rawValue }
+    var localizedName: LocalizedStringKey // Names of sidebar items
+    {
+        switch self
+        {
+        case .WorkspaceView:
+            return "Workspace"
+        case .RobotsView:
+            return "Robots"
+        case .ToolsView:
+            return "Tools"
+        case .PartsView:
+            return "Parts"
+        }
+    }
+    
+    var image_name: String // Names of sidebar items symbols
+    {
+        switch self
+        {
+        case .WorkspaceView:
+            return "cube.transparent"
+        case .RobotsView:
+            return "r.square"
+        case .ToolsView:
+            return "hammer"
+        case .PartsView:
+            return "shippingbox"
+        }
+    }
+}*/
+
 // MARK: - Previews
 struct WorkspaceView_Previews: PreviewProvider
 {
@@ -748,7 +1042,7 @@ struct WorkspaceView_Previews: PreviewProvider
     {
         Group
         {
-            WorkspaceView()
+            WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
             /*AddInWorkspaceView(add_in_view_presented: .constant(true))

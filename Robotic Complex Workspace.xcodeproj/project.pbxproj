@@ -12,7 +12,6 @@
 		6236F9392AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */; };
 		6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F93C2AD3439C008FA7C4 /* Assets.xcassets */; };
 		6236F9422AD3439C008FA7C4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */; };
-		6236F9552AD345C4008FA7C4 /* WorkspaceNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94B2AD345C4008FA7C4 /* WorkspaceNavigationView.swift */; };
 		6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94F2AD345C4008FA7C4 /* SettingsView.swift */; };
 		6236F95A2AD345C4008FA7C4 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9502AD345C4008FA7C4 /* StatisticsView.swift */; };
 		6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */; };
@@ -33,7 +32,6 @@
 		62BC10AD2F20EEF70057304D /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BC10AC2F20EEF70057304D /* InspectorView.swift */; };
 		62BC10AF2F20EF530057304D /* WorkspaceObjectInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BC10AE2F20EF530057304D /* WorkspaceObjectInspector.swift */; };
 		62BFD7862B85699B00966525 /* ViewPendantButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BFD7852B85699B00966525 /* ViewPendantButton.swift */; };
-		62BFD7882B8C8B4000966525 /* SidebarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BFD7872B8C8B4000966525 /* SidebarController.swift */; };
 		62DA4D2D2F1F97160052D115 /* AddObjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627C254F2C9DA7660087D777 /* AddObjectView.swift */; };
 		62E165E52B20C422005E318A /* VisualWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E165E42B20C422005E318A /* VisualWorkspaceView.swift */; };
 		62E165E72B20C692005E318A /* GalleryWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E165E62B20C692005E318A /* GalleryWorkspaceView.swift */; };
@@ -49,7 +47,6 @@
 		6236F93F2AD3439C008FA7C4 /* Robotic_Complex_Workspace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Robotic_Complex_Workspace.entitlements; sourceTree = "<group>"; };
 		6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6236F9482AD34591008FA7C4 /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
-		6236F94B2AD345C4008FA7C4 /* WorkspaceNavigationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkspaceNavigationView.swift; sourceTree = "<group>"; };
 		6236F94D2AD345C4008FA7C4 /* ToolsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
 		6236F94E2AD345C4008FA7C4 /* PartsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PartsView.swift; sourceTree = "<group>"; };
 		6236F94F2AD345C4008FA7C4 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -77,7 +74,6 @@
 		62BC10AC2F20EEF70057304D /* InspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorView.swift; sourceTree = "<group>"; };
 		62BC10AE2F20EF530057304D /* WorkspaceObjectInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceObjectInspector.swift; sourceTree = "<group>"; };
 		62BFD7852B85699B00966525 /* ViewPendantButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPendantButton.swift; sourceTree = "<group>"; };
-		62BFD7872B8C8B4000966525 /* SidebarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarController.swift; sourceTree = "<group>"; };
 		62E165E42B20C422005E318A /* VisualWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualWorkspaceView.swift; sourceTree = "<group>"; };
 		62E165E62B20C692005E318A /* GalleryWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryWorkspaceView.swift; sourceTree = "<group>"; };
 		62E165E82B20C6E8005E318A /* SpatialWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpatialWorkspaceView.swift; sourceTree = "<group>"; };
@@ -144,7 +140,6 @@
 				6236F9542AD345C4008FA7C4 /* ContentView.swift */,
 				6236F94F2AD345C4008FA7C4 /* SettingsView.swift */,
 				622EE4F72E030D32002EB2C5 /* ProgramComponentsManagerView.swift */,
-				6236F94B2AD345C4008FA7C4 /* WorkspaceNavigationView.swift */,
 				6236F9502AD345C4008FA7C4 /* StatisticsView.swift */,
 			);
 			path = Views;
@@ -167,7 +162,6 @@
 			isa = PBXGroup;
 			children = (
 				627D3E9A2AD34A7600D5988D /* AppState.swift */,
-				62BFD7872B8C8B4000966525 /* SidebarController.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -349,7 +343,6 @@
 				6236F95A2AD345C4008FA7C4 /* StatisticsView.swift in Sources */,
 				62BC10AD2F20EEF70057304D /* InspectorView.swift in Sources */,
 				627002F32E57A43B001D48C5 /* BackgroundExtensionModifier.swift in Sources */,
-				6236F9552AD345C4008FA7C4 /* WorkspaceNavigationView.swift in Sources */,
 				6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */,
 				623E72142D04316300A1FC25 /* SpatialWorkspaceView.swift in Sources */,
 				62E165E52B20C422005E318A /* VisualWorkspaceView.swift in Sources */,
@@ -361,7 +354,6 @@
 				62BFD7862B85699B00966525 /* ViewPendantButton.swift in Sources */,
 				627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */,
 				6236F95D2AD345C4008FA7C4 /* ControlProgramView.swift in Sources */,
-				62BFD7882B8C8B4000966525 /* SidebarController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

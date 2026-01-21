@@ -18,7 +18,7 @@ struct VisualWorkspaceView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
-    @EnvironmentObject var sidebar_controller: SidebarController
+    //@EnvironmentObject var sidebar_controller: SidebarController
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
@@ -653,6 +653,6 @@ struct VisualInfoView: View
     VisualWorkspaceView()
         .environmentObject(Workspace())
         .environmentObject(AppState())
-        .environmentObject(SidebarController())
+        //.environmentObject(SidebarController())
         .environmentObject(DocumentUpdateHandler())
 }

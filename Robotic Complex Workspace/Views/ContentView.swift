@@ -54,7 +54,7 @@ struct ContentView: View
     // MARK: Main view
     var body: some View
     {
-        WorkspaceNavigationView(document: $document)
+        WorkspaceView(document: $document)
         #if os(iOS) || os(visionOS)
             .navigationBarHidden(true)
         #endif

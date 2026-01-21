@@ -131,7 +131,7 @@ struct AddProgramElementButton: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    @EnvironmentObject var sidebar_controller: SidebarController
+    //@EnvironmentObject var sidebar_controller: SidebarController
     
     var body: some View
     {
