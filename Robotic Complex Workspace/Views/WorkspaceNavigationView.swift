@@ -69,35 +69,18 @@ struct WorkspaceNavigationView: View
     
     var body: some View
     {
-        NavigationSplitView
+        NavigationStack
         {
-            // MARK: Sidebar
-            List(navigation_item.allCases, selection: $sidebar_controller.sidebar_selection)
-            { selection in
-                NavigationLink(value: selection)
-                {
-                    switch selection.localizedName
-                    {
-                    case "Robots":
-                        Label(selection.localizedName, systemImage: selection.image_name)
-                            .badge(document.preset.robots.count)
-                    case "Tools":
-                        Label(selection.localizedName, systemImage: selection.image_name)
-                            .badge(document.preset.tools.count)
-                    case "Parts":
-                        Label(selection.localizedName, systemImage: selection.image_name)
-                            .badge(document.preset.parts.count)
-                    default:
-                        Label(selection.localizedName, systemImage: selection.image_name)
-                    }
-                }
+            ZStack
+            {
+                // MARK: Content
+                WorkspaceView()
             }
             #if !os(macOS)
-            .navigationTitle("Preset")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar
             {
-                ToolbarItem
+                ToolbarItem(placement: .cancellationAction)
                 {
                     HStack(alignment: .center)
                     {
@@ -132,47 +115,7 @@ struct WorkspaceNavigationView: View
                 .frame(width: 512, height: 512)
                 #endif
             }
-            #else
-            .navigationSplitViewColumnWidth(min: 150, ideal: 160, max: 180)
             #endif
-            .listStyle(.sidebar)
-        }
-        detail:
-        {
-            ZStack
-            {
-                // MARK: Content
-                switch sidebar_controller.sidebar_selection
-                {
-                case .WorkspaceView:
-                    WorkspaceView()
-                case .RobotsView:
-                    RobotsView()
-                case .ToolsView:
-                    ToolsView()
-                case .PartsView:
-                    PartsView()
-                default:
-                    Rectangle()
-                    #if os(macOS)
-                        .fill(.gray)
-                    #else
-                        .fill(.clear)
-                    #endif
-                        .onAppear
-                    {
-                        if sidebar_controller.perform_workspace_view_reset
-                        {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
-                            {
-                                sidebar_controller.sidebar_selection = .WorkspaceView
-                                sidebar_controller.perform_workspace_view_reset = false
-                            }
-                        }
-                    }
-                }
-            }
-            .environmentObject(sidebar_controller)
         }
     }
 }

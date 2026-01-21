@@ -11,6 +11,7 @@ import SwiftUI
 import IndustrialKit
 
 // MARK: - Class for work with various application data
+@MainActor
 class AppState: ObservableObject
 {
     // Commands

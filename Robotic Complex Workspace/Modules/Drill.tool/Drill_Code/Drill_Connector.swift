@@ -8,7 +8,7 @@ import SceneKit
 
 class Drill_Connector: ToolConnector
 {
-    // MARK: - Connection
+    /*// MARK: - Connection
     override var parameters: [ConnectionParameter]
     {
         [
@@ -115,5 +115,5 @@ class Drill_Connector: ToolConnector
     override func updated_states_data() -> [StateItem]?
     {
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
-    }
+    }*/
 }

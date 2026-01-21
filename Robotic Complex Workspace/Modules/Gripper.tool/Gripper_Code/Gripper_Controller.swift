@@ -8,7 +8,7 @@ import IndustrialKit
 
 class Gripper_Controller: ToolModelController
 {
-    // MARK: - Parameters
+    /*// MARK: - Parameters
     override var nodes_names: [String]
     {
         [
@@ -171,5 +171,5 @@ class Gripper_Controller: ToolModelController
         }
         
         return state
-    }
+    }*/
 }

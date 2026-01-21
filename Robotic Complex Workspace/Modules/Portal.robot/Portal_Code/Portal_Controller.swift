@@ -1,11 +1,11 @@
 import Foundation
-import SceneKit
 import IndustrialKit
+import RealityKit
 
 class Portal_Controller: RobotModelController
 {
     // MARK: - Parameters
-    override var nodes_names: [String]
+    override var entities_names: [String]
     {
         [
             "base",
@@ -18,7 +18,7 @@ class Portal_Controller: RobotModelController
     }
     
     // MARK: - Performing
-    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    override open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
     }
@@ -87,15 +87,9 @@ class Portal_Controller: RobotModelController
     
     public func apply_nodes_positions(values: [Float])
     {
-        #if os(macOS)
-        nodes[safe: "d0", default: SCNNode()].position.x = CGFloat(values[1])
-        nodes[safe: "d2", default: SCNNode()].position.y = CGFloat(values[2])
-        nodes[safe: "d1", default: SCNNode()].position.z = CGFloat(values[0])
-        #else
-        nodes[safe: "d0", default: SCNNode()].position.x = values[1]
-        nodes[safe: "d2", default: SCNNode()].position.y = values[2]
-        nodes[safe: "d1", default: SCNNode()].position.z = values[0]
-        #endif
+        entities[safe: "d0", default: Entity()].position.x = Float(values[1])
+        entities[safe: "d2", default: Entity()].position.y = Float(values[2])
+        entities[safe: "d1", default: Entity()].position.z = Float(values[0])
     }
     
     // MARK: - Statistics
@@ -112,10 +106,10 @@ class Portal_Controller: RobotModelController
         }
         
         // Update tool location chart
-        let tool_node = pointer_node
+        let tool_node = pointer_entity
         
         var axis_names = ["X", "Y", "Z"]
-        var components = [tool_node?.worldPosition.x, tool_node?.worldPosition.z, tool_node?.worldPosition.y]
+        var components = [tool_node?.position.x, tool_node?.position.z, tool_node?.position.y]
         for i in 0...axis_names.count - 1
         {
             charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0)))

@@ -8,7 +8,7 @@ import SceneKit
 
 class Gripper_Connector: ToolConnector
 {
-    // MARK: - Connection
+    /*// MARK: - Connection
     override var parameters: [ConnectionParameter]
     {
         [
@@ -114,5 +114,5 @@ class Gripper_Connector: ToolConnector
     override func updated_states_data() -> [StateItem]?
     {
         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
-    }
+    }*/
 }

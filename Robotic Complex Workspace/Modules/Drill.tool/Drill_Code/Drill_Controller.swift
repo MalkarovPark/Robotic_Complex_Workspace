@@ -8,7 +8,7 @@ import IndustrialKit
 
 class Drill_Controller: ToolModelController
 {
-    // MARK: - Parameters
+    /*// MARK: - Parameters
     override var nodes_names: [String]
     {
         [
@@ -165,5 +165,5 @@ class Drill_Controller: ToolModelController
         }
         
         return state
-    }
+    }*/
 }

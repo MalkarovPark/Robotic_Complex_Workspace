@@ -98,7 +98,7 @@ struct CardMenu: ViewModifier
                 {
                     if object is Robot
                     {
-                        tool_unplace(workspace: base_workspace, from_robot_name: object.name)
+                        //tool_unplace(workspace: base_workspace, from_robot_name: object.name)
                     }
                     else if object is Tool
                     {
@@ -272,7 +272,7 @@ struct CardMenu: ViewModifier
     }
 }
 
-func tool_unplace(workspace: Workspace, from_robot_name: String)
+/*func tool_unplace(workspace: Workspace, from_robot_name: String)
 {
     for placed_tools_name in workspace.placed_tools_names
     {
@@ -283,7 +283,7 @@ func tool_unplace(workspace: Workspace, from_robot_name: String)
             viewed_tool.is_attached = false
         }
     }
-}
+}*/
 
 struct WorkspaceMenu: ViewModifier
 {

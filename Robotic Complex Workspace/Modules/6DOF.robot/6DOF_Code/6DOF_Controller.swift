@@ -1,11 +1,11 @@
 import Foundation
-import SceneKit
 import IndustrialKit
+import RealityKit
 
-class _6DOF_Controller: RobotModelController
+nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
 {
     // MARK: - Parameters
-    override var nodes_names: [String]
+    override var entities_names: [String]
     {
         [
             "base",
@@ -21,9 +21,9 @@ class _6DOF_Controller: RobotModelController
     }
     
     // MARK: - Performing
-    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
+    override open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
-        if pointer_position.z > 50
+        /*if pointer_position.x > 100
         {
             throw NSError(
                 domain: "Performing Error",
@@ -32,7 +32,7 @@ class _6DOF_Controller: RobotModelController
                     NSLocalizedDescriptionKey: "Out of the workspace"
                 ]
             )
-        }
+        }*/
         
         apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
     }
@@ -128,21 +128,12 @@ class _6DOF_Controller: RobotModelController
     
     private func apply_nodes_positions(values: [Float])
     {
-        #if os(macOS)
-        nodes[safe: "d0", default: SCNNode()].eulerAngles.y = CGFloat(values[0])
-        nodes[safe: "d1", default: SCNNode()].eulerAngles.z = CGFloat(values[1])
-        nodes[safe: "d2", default: SCNNode()].eulerAngles.z = CGFloat(values[2])
-        nodes[safe: "d3", default: SCNNode()].eulerAngles.y = CGFloat(values[3])
-        nodes[safe: "d4", default: SCNNode()].eulerAngles.z = CGFloat(values[4])
-        nodes[safe: "d5", default: SCNNode()].eulerAngles.y = CGFloat(values[5])
-        #else
-        nodes[safe: "d0", default: SCNNode()].eulerAngles.y = Float(values[0])
-        nodes[safe: "d1", default: SCNNode()].eulerAngles.z = Float(values[1])
-        nodes[safe: "d2", default: SCNNode()].eulerAngles.z = Float(values[2])
-        nodes[safe: "d3", default: SCNNode()].eulerAngles.y = Float(values[3])
-        nodes[safe: "d4", default: SCNNode()].eulerAngles.z = Float(values[4])
-        nodes[safe: "d5", default: SCNNode()].eulerAngles.y = Float(values[5])
-        #endif
+        entities[safe: "d0", default: Entity()].eulerAngles.y = Float(values[0])
+        entities[safe: "d1", default: Entity()].eulerAngles.z = Float(values[1])
+        entities[safe: "d2", default: Entity()].eulerAngles.z = Float(values[2])
+        entities[safe: "d3", default: Entity()].eulerAngles.y = Float(values[3])
+        entities[safe: "d4", default: Entity()].eulerAngles.z = Float(values[4])
+        entities[safe: "d5", default: Entity()].eulerAngles.y = Float(values[5])
         
         if get_statistics
         {
@@ -171,10 +162,10 @@ class _6DOF_Controller: RobotModelController
         }
         
         // Update tool location chart
-        let tool_node = pointer_node
+        let tool_node = pointer_entity
         
         var axis_names = ["X", "Y", "Z"]
-        var components = [tool_node?.worldPosition.x, tool_node?.worldPosition.z, tool_node?.worldPosition.y]
+        var components = [tool_node?.position.x, tool_node?.position.z, tool_node?.position.y]
         for i in 0...axis_names.count - 1
         {
             charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0)))

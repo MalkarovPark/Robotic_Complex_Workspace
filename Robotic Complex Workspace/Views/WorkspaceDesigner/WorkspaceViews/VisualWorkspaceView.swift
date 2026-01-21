@@ -26,8 +26,13 @@ struct VisualWorkspaceView: View
     
     var body: some View
     {
-        WorkspaceSceneView()
-            .modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
+        EmptyView()
+        
+        
+        
+        //WorkspaceSceneView()
+            //.modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
+            /*.modifier(WorkspaceMenu(flip_func: sidebar_controller.flip_workspace_selection))
         #if os(macOS)
             .modifier(BackgroundExtensionModifier(color: Color(red: 142/255, green: 142/255, blue: 147/255)))
         #elseif os(iOS)
@@ -146,7 +151,7 @@ struct VisualWorkspaceView: View
             {
                 base_workspace.deselect_object()
                 base_workspace.update_view()
-            }
+            }*/
     }
     
     private var add_in_view_disabled: Bool
@@ -162,7 +167,7 @@ struct VisualWorkspaceView: View
     }
 }
 
-struct WorkspaceSceneView: UIViewRepresentable
+/*struct WorkspaceSceneView: UIViewRepresentable
 {
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -341,7 +346,7 @@ struct WorkspaceSceneView: UIViewRepresentable
             }
         }*/
     }
-}
+}*/
 
 struct VisualInfoView: View
 {

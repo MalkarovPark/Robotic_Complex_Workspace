@@ -199,7 +199,7 @@ struct ObjectPreviewSceneView: View
     
     private func update_preview_node(scene_view: SCNView)
     {
-        if app_state.preview_update_scene
+        /*if app_state.preview_update_scene
         {
             let remove_node = scene_view.scene?.rootNode.childNode(withName: "Node", recursively: true)
             remove_node?.removeFromParentNode()
@@ -207,7 +207,7 @@ struct ObjectPreviewSceneView: View
             scene_view.scene?.rootNode.addChildNode(app_state.previewed_object?.node ?? SCNNode())
             app_state.previewed_object?.node?.name = "Node"
             app_state.preview_update_scene = false
-        }
+        }*/
     }
 }
 

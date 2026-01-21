@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SceneKit
+//import SceneKit
 import UniformTypeIdentifiers
 import IndustrialKit
 import IndustrialKitUI
@@ -43,22 +43,9 @@ struct WorkspaceView: View
             case .visual:
                 VisualWorkspaceView()
                     .onDisappear(perform: stop_perform)
-                    .onAppear(perform: update_constrainted_positions)
-                #if !os(visionOS)
-                    .overlay(alignment: .bottomTrailing)
-                    {
-                        ViewPendantButton(operation: { inspector_presented.toggle() })
-                    }
-                    .ignoresSafeArea(.container, edges: .bottom)
-                #endif
+                    //.onAppear(perform: update_constrainted_positions)
             case .gallery:
                 GalleryWorkspaceView()
-                #if !os(visionOS)
-                    .overlay(alignment: .bottomTrailing)
-                    {
-                        ViewPendantButton(operation: { inspector_presented.toggle() })
-                    }
-                #endif
             case .spatial:
                 EmptyView()
             }
@@ -66,8 +53,9 @@ struct WorkspaceView: View
         #if !os(visionOS)
         .inspector(isPresented: $inspector_presented)
         {
-            ControlProgramView()
-                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+            InspectorView()
+            //ControlProgramView()
+                //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
         }
         #endif
         #if os(macOS)
@@ -88,6 +76,13 @@ struct WorkspaceView: View
         .onAppear
         {
             base_workspace.elements_check()
+            
+            print(base_workspace.robots.count)
+            
+            for robot in base_workspace.robots
+            {
+                print("🍺 \(robot.module_name) + \(robot.position)")
+            }
         }
         .sheet(isPresented: $registers_view_presented)
         {
@@ -140,7 +135,7 @@ struct WorkspaceView: View
                 }
             }
             
-            ToolbarItem(id: "Controls", placement: compact_placement())
+            /*ToolbarItem(id: "Controls", placement: compact_placement())
             {
                 ControlGroup
                 {
@@ -164,6 +159,17 @@ struct WorkspaceView: View
                     Button(action: toggle_perform)
                     {
                         Label("Perform", systemImage: "playpause")
+                    }
+                }
+            }*/
+            
+            ToolbarItem(id: "Inspector", placement: compact_placement())
+            {
+                ControlGroup
+                {
+                    Button(action: { inspector_presented.toggle() })
+                    {
+                        Label("Inspector", systemImage: "sidebar.right")
                     }
                 }
             }
@@ -218,7 +224,7 @@ struct WorkspaceView: View
         #endif
     }
     
-    private func update_constrainted_positions()
+    /*private func update_constrainted_positions()
     {
         for placed_tool_name in base_workspace.placed_tools_names
         {
@@ -231,11 +237,11 @@ struct WorkspaceView: View
         #if os(visionOS)
         pendant_controller.view_workspace()
         #endif
-    }
+    }*/
 }
 
 // MARK: - Workspace scene views
-struct AddInWorkspaceView: View
+/*struct AddInWorkspaceView: View
 {
     @State var selected_robot_name = String()
     @State var selected_tool_name = String()
@@ -731,7 +737,7 @@ struct AddPartInWorkspaceView: View
         sidebar_controller.from_workspace_view = true
         sidebar_controller.sidebar_selection = .PartsView
     }
-}
+}*/
 
 // MARK: - Previews
 struct WorkspaceView_Previews: PreviewProvider
@@ -745,9 +751,9 @@ struct WorkspaceView_Previews: PreviewProvider
             WorkspaceView()
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            AddInWorkspaceView(add_in_view_presented: .constant(true))
+            /*AddInWorkspaceView(add_in_view_presented: .constant(true))
                 .environmentObject(Workspace())
-                .environmentObject(AppState())
+                .environmentObject(AppState())*/
             VisualInfoView(info_view_presented: .constant(true))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())

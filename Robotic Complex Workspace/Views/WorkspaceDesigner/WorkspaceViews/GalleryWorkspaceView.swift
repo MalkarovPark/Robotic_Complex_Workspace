@@ -69,7 +69,7 @@ struct GalleryWorkspaceView: View
             #endif
             .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
             {
-                #if os(macOS)
+                /*#if os(macOS)
                 AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
@@ -78,7 +78,7 @@ struct GalleryWorkspaceView: View
                 #if !os(visionOS)
                     .background(.ultraThinMaterial)
                 #endif
-                #endif
+                #endif*/
             }
             .disabled(base_workspace.performed)
             #if !os(visionOS)
@@ -106,11 +106,11 @@ struct PlacedRobotsGallery: View
                 {
                     ForEach(base_workspace.placed_robots_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, node: base_workspace.robot_by_name(name).node)
+                        /*ObjectCard(name: name, node: base_workspace.robot_by_name(name).node)
                             {
                                 base_workspace.select_robot(name: name)
                             }
-                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))*/
                     }
                 }
                 #if os(macOS)
@@ -153,7 +153,7 @@ struct PlacedToolsGallery: View
                 {
                     ForEach(base_workspace.placed_tools_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, node: base_workspace.tool_by_name(name).node, overlay: {
+                        /*ObjectCard(name: name, node: base_workspace.tool_by_name(name).node, overlay: {
                             VStack
                             {
                                 Spacer()
@@ -193,7 +193,7 @@ struct PlacedToolsGallery: View
                         {
                             base_workspace.select_tool(name: name)
                         }
-                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))*/
                     }
                 }
                 #if os(macOS)
@@ -248,11 +248,11 @@ struct PlacedPartsGallery: View
                 {
                     ForEach(base_workspace.placed_parts_names, id: \.self)
                     { name in
-                        ObjectCard(name: name, node: base_workspace.part_by_name(name).node)
+                        /*ObjectCard(name: name, node: base_workspace.part_by_name(name).node)
                             {
                                 base_workspace.select_part(name: name)
                             }
-                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))*/
                     }
                 }
                 #if os(macOS)
@@ -301,10 +301,10 @@ struct ObjectCard<Content: View>: View
     {
         self.name = name
         
-        let card_node = node?.deep_clone()
-        card_node?.physicsBody = .static()
+        //let card_node = node?.deep_clone()
+        //card_node?.physicsBody = .static()
         
-        self.node = card_node
+        self.node = node//card_node
         self.on_select = on_select
         
         self.overlay_view = overlay()
