@@ -8,7 +8,7 @@
 import SwiftUI
 import IndustrialKit
 import IndustrialKitUI
-import SceneKit
+import RealityKit
 
 struct GalleryWorkspaceView: View
 {
@@ -106,7 +106,7 @@ struct PlacedRobotsGallery: View
                 {
                     ForEach(base_workspace.placed_robots_names, id: \.self)
                     { name in
-                        /*ObjectCard(name: name, node: base_workspace.robot_by_name(name).node)
+                        /*ObjectCard(name: name, entity: base_workspace.robot_by_name(name).entity)
                             {
                                 base_workspace.select_robot(name: name)
                             }
@@ -153,7 +153,7 @@ struct PlacedToolsGallery: View
                 {
                     ForEach(base_workspace.placed_tools_names, id: \.self)
                     { name in
-                        /*ObjectCard(name: name, node: base_workspace.tool_by_name(name).node, overlay: {
+                        /*ObjectCard(name: name, entity: base_workspace.tool_by_name(name).entity, overlay: {
                             VStack
                             {
                                 Spacer()
@@ -248,7 +248,7 @@ struct PlacedPartsGallery: View
                 {
                     ForEach(base_workspace.placed_parts_names, id: \.self)
                     { name in
-                        /*ObjectCard(name: name, node: base_workspace.part_by_name(name).node)
+                        /*ObjectCard(name: name, entity: base_workspace.part_by_name(name).entity)
                             {
                                 base_workspace.select_part(name: name)
                             }
@@ -286,7 +286,7 @@ struct ObjectCard<Content: View>: View
     
     let name: String
     
-    let node: SCNNode?
+    let entity: Entity?
     
     let on_select: () -> ()
     
@@ -297,14 +297,14 @@ struct ObjectCard<Content: View>: View
     
     @EnvironmentObject var app_state: AppState
     
-    public init(name: String, node: SCNNode?, @ViewBuilder overlay: () -> Content? = { EmptyView() }, on_select: @escaping () -> Void)
+    public init(name: String, entity: Entity?, @ViewBuilder overlay: () -> Content? = { EmptyView() }, on_select: @escaping () -> Void)
     {
         self.name = name
         
-        //let card_node = node?.deep_clone()
-        //card_node?.physicsBody = .static()
+        //let card_entity = entity?.deep_clone()
+        //card_entity?.physicsBody = .static()
         
-        self.node = node//card_node
+        self.entity = entity//card_entity
         self.on_select = on_select
         
         self.overlay_view = overlay()
@@ -312,7 +312,7 @@ struct ObjectCard<Content: View>: View
     
     var body: some View
     {
-        GlassBoxCard(title: name, node: node)
+        GlassBoxCard(title: name, entity: entity)
         {
             overlay_view
         }
@@ -532,6 +532,6 @@ let object_card_spacing: CGFloat = 32
 
 #Preview
 {
-    ObjectCard(name: "Object", node: SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)), on_select: {})
+    ObjectCard(name: "Object", entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)]), on_select: {})
         .environmentObject(AppState())
 }

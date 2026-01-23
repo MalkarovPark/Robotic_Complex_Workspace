@@ -23,6 +23,7 @@ struct WorkspaceView: View
     
     @State private var worked = false
     @State private var registers_view_presented = false
+    @State private var add_object_view_presented = false
     @State private var inspector_presented = false
     
     @State private var statistics_view_presented = false
@@ -84,6 +85,17 @@ struct WorkspaceView: View
                 }
                 #endif
                 
+                ToolbarItem(id: "Add Object", placement: compact_placement())
+                {
+                    ControlGroup
+                    {
+                        Button(action: { add_object_view_presented = true })
+                        {
+                            Label("Add Object", systemImage: "plus")
+                        }
+                    }
+                }
+                
                 ToolbarItem(id: "Registers", placement: compact_placement())
                 {
                     ControlGroup
@@ -144,6 +156,19 @@ struct WorkspaceView: View
                     }
                 }*/
                 
+                ToolbarItem(id: "Grid", placement: compact_placement(), showsByDefault: false)
+                {
+                    ControlGroup
+                    {
+                        Button(action: { base_workspace.toggle_grid_visiblity() })
+                        {
+                            Label("Grid", systemImage: base_workspace.is_grid_visible ? "squareshape.split.2x2" : "squareshape.split.2x2.dotted.inside")
+                                //.contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                                //.animation(.easeInOut(duration: 0.3), value: base_workspace.is_grid_visible)
+                        }
+                    }
+                }
+                
                 ToolbarItem(id: "Inspector", placement: compact_placement())
                 {
                     ControlGroup
@@ -182,6 +207,16 @@ struct WorkspaceView: View
                 }
                 #if os(macOS)
                     .frame(width: 420, height: 480)
+                #elseif os(visionOS)
+                    .frame(width: 600, height: 600)
+                #endif
+            }
+            .sheet(isPresented: $add_object_view_presented)
+            {
+                AddObjectView(is_presented: $add_object_view_presented)
+                #if os(macOS)
+                    .frame(minWidth: 420, maxWidth: 600, minHeight: 480, maxHeight: 600)
+                    //.frame(width: 420, height: 480)
                 #elseif os(visionOS)
                     .frame(width: 600, height: 600)
                 #endif

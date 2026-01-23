@@ -8,9 +8,138 @@
 import SwiftUI
 import IndustrialKit
 import IndustrialKitUI
-import SceneKit
+import RealityKit
 
 struct AddObjectView: View
+{
+    @Binding var is_presented: Bool
+    
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 128, maximum: .infinity), spacing: 24)]
+    private let card_spacing: CGFloat = 24
+    private let card_height: CGFloat = 128
+    
+    #if !os(visionOS)
+    private let top_spacing: CGFloat = 48
+    private let bottom_spacing: CGFloat = 0//40
+    #else
+    private let top_spacing: CGFloat = 96
+    private let bottom_spacing: CGFloat = 44
+    #endif
+    
+    var body: some View
+    {
+        VStack
+        {
+            ScrollView
+            {
+                if top_spacing > 0
+                {
+                    Spacer(minLength: top_spacing)
+                }
+                
+                LazyVGrid(columns: columns, spacing: card_spacing)
+                {
+                    GlassBoxCard(
+                        title: "OwO",
+                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)])
+                    )
+                    .frame(height: card_height)
+                    
+                    GlassBoxCard(
+                        title: "UwU",
+                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .green, isMetallic: false)])
+                    )
+                    .frame(height: card_height)
+                    
+                    GlassBoxCard(
+                        title: ">w<",
+                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .cyan, isMetallic: false)])
+                    )
+                    .frame(height: card_height)
+                }
+                .padding()
+                #if os(macOS)
+                .padding(.vertical, 10)
+                #else
+                .padding(.vertical)
+                #endif
+                
+                //Divider()
+                    //.padding(.horizontal)
+                
+                Text("External")
+                    .font(.headline)
+                
+                LazyVGrid(columns: columns, spacing: card_spacing)
+                {
+                    GlassBoxCard(
+                        title: "OwO",
+                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemPurple, isMetallic: false)])
+                    )
+                    .frame(height: card_height)
+                    
+                    GlassBoxCard(
+                        title: "UwU",
+                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemMint, isMetallic: false)])
+                    )
+                    .frame(height: card_height)
+                    
+                    GlassBoxCard(
+                        title: ">w<",
+                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemPink, isMetallic: false)])
+                    )
+                    .frame(height: card_height)
+                }
+                .padding()
+                #if os(macOS)
+                .padding(.vertical, 10)
+                #else
+                .padding(.vertical)
+                #endif
+                
+                if bottom_spacing > 0
+                {
+                    Spacer(minLength: bottom_spacing)
+                }
+            }
+        }
+        .modifier(SheetCaption(is_presented: $is_presented, label: "Library", plain: false))
+    }
+}
+
+/*#Preview
+{
+    AddObjectView(is_presented: .constant(true))
+}*/
+
+struct AddObjectView_PreviewsContainer: PreviewProvider
+{
+    struct Container: View
+    {
+        var body: some View
+        {
+            ZStack
+            {
+                Rectangle()
+                    .foregroundStyle(.white)
+                
+                AddObjectView(is_presented: .constant(true))
+                    .frame(width: 420, height: 480)
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    .shadow(color: .black.opacity(0.25), radius: 16)
+                    .padding(48)
+            }
+        }
+    }
+    
+    static var previews: some View
+    {
+        Container()
+    }
+}
+
+/*struct AddObjectView: View
 {
     @Binding var is_presented: Bool
     
@@ -194,7 +323,8 @@ struct ObjectPreviewSceneView: View
     
     var body: some View
     {
-        ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn") ?? SCNScene(), on_render: update_preview_node(scene_view:))
+        EmptyView()
+        //ObjectSceneView(scene: SCNScene(named: "Components.scnassets/View.scn") ?? SCNScene(), on_render: update_preview_node(scene_view:))
     }
     
     private func update_preview_node(scene_view: SCNView)
@@ -214,4 +344,4 @@ struct ObjectPreviewSceneView: View
 #Preview
 {
     AddObjectView(is_presented: .constant(true), previewed_object: nil, previewed_object_name: .constant("Name"), internal_modules_list: .constant([String]()), external_modules_list: .constant([String]()), update_object_info: {}, add_object: {_ in})
-}
+}*/
