@@ -26,86 +26,101 @@ struct AddObjectView: View
     private let bottom_spacing: CGFloat = 44
     #endif
     
+    #if os(macOS)
+    @State var tab_selection: ObjectItem = .robots
+    #endif
+    
     var body: some View
     {
-        VStack
+        VStack(spacing: 0)
         {
-            ScrollView
+            #if os(macOS)
+            switch tab_selection
             {
-                if top_spacing > 0
+            case .robots:
+                AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
+            case .tools:
+                Rectangle()
+                    .fill(.clear)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case .parts:
+                Rectangle()
+                    .fill(.clear)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            #else
+            TabView
+            {
+                Tab("Robots", systemImage: "r.square")
                 {
-                    Spacer(minLength: top_spacing)
+                    AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
                 }
                 
-                LazyVGrid(columns: columns, spacing: card_spacing)
+                Tab("Tools", systemImage: "hammer")
                 {
-                    GlassBoxCard(
-                        title: "OwO",
-                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)])
-                    )
-                    .frame(height: card_height)
-                    
-                    GlassBoxCard(
-                        title: "UwU",
-                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .green, isMetallic: false)])
-                    )
-                    .frame(height: card_height)
-                    
-                    GlassBoxCard(
-                        title: ">w<",
-                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .cyan, isMetallic: false)])
-                    )
-                    .frame(height: card_height)
+                    Rectangle()
+                        .fill(.clear)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding()
-                #if os(macOS)
-                .padding(.vertical, 10)
-                #else
-                .padding(.vertical)
-                #endif
                 
-                //Divider()
-                    //.padding(.horizontal)
-                
-                Text("External")
-                    .font(.headline)
-                
-                LazyVGrid(columns: columns, spacing: card_spacing)
+                Tab("Parts", systemImage: "shippingbox")
                 {
-                    GlassBoxCard(
-                        title: "OwO",
-                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemPurple, isMetallic: false)])
-                    )
-                    .frame(height: card_height)
-                    
-                    GlassBoxCard(
-                        title: "UwU",
-                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemMint, isMetallic: false)])
-                    )
-                    .frame(height: card_height)
-                    
-                    GlassBoxCard(
-                        title: ">w<",
-                        entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemPink, isMetallic: false)])
-                    )
-                    .frame(height: card_height)
-                }
-                .padding()
-                #if os(macOS)
-                .padding(.vertical, 10)
-                #else
-                .padding(.vertical)
-                #endif
-                
-                if bottom_spacing > 0
-                {
-                    Spacer(minLength: bottom_spacing)
+                    Rectangle()
+                        .fill(.clear)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
+            .tabViewStyle(.tabBarOnly)
+            #endif
         }
-        .modifier(SheetCaption(is_presented: $is_presented, label: "Library", plain: false))
+        .modifier(ViewCloseButton(is_presented: $is_presented))
+        #if os(macOS)
+        .overlay(alignment: .top)
+        {
+            HStack
+            {
+                // MARK: Type picker
+                Picker("Type", selection: $tab_selection)
+                {
+                    ForEach(ObjectItem.allCases, id: \.self)
+                    { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                //.padding(10)
+            }
+            .glassEffect()
+            .padding(14)
+            .controlSize(.large)
+        }
+        #endif
+        //.modifier(SheetCaption(is_presented: $is_presented, label: "Library", plain: false))
     }
 }
+
+#if os(macOS)
+enum ObjectItem: String, Codable, Equatable, CaseIterable
+{
+    case robots = "Robots"
+    case tools = "Tools"
+    case parts = "Parts"
+    
+    var image_name: String // Names of sidebar items symbols
+    {
+        switch self
+        {
+        case .robots:
+            return "r.square"
+        case .tools:
+            return "hammer"
+        case .parts:
+            return "shippingbox"
+        }
+    }
+}
+#endif
 
 /*#Preview
 {
@@ -136,6 +151,79 @@ struct AddObjectView_PreviewsContainer: PreviewProvider
     static var previews: some View
     {
         Container()
+    }
+}
+
+struct AddRobotView: View
+{
+    let columns: [GridItem]
+    let card_spacing: CGFloat
+    let card_height: CGFloat
+    
+    let top_spacing: CGFloat
+    let bottom_spacing: CGFloat
+    
+    var body: some View
+    {
+        ScrollView
+        {
+            if top_spacing > 0
+            {
+                Spacer(minLength: top_spacing)
+            }
+            
+            LazyVGrid(columns: columns, spacing: card_spacing)
+            {
+                GlassBoxCard(
+                    title: "OwO",
+                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)])
+                )
+                .frame(height: card_height)
+                
+                GlassBoxCard(
+                    title: "UwU",
+                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .green, isMetallic: false)])
+                )
+                .frame(height: card_height)
+                
+                GlassBoxCard(
+                    title: ">w<",
+                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .cyan, isMetallic: false)])
+                )
+                .frame(height: card_height)
+            }
+            .padding()
+            
+            Text("External")
+                .font(.headline)
+            
+            LazyVGrid(columns: columns, spacing: card_spacing)
+            {
+                GlassBoxCard(
+                    title: "OwO",
+                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemPurple, isMetallic: false)])
+                )
+                .frame(height: card_height)
+                
+                GlassBoxCard(
+                    title: "UwU",
+                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemMint, isMetallic: false)])
+                )
+                .frame(height: card_height)
+                
+                GlassBoxCard(
+                    title: ">w<",
+                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemPink, isMetallic: false)])
+                )
+                .frame(height: card_height)
+            }
+            .padding()
+            
+            if bottom_spacing > 0
+            {
+                Spacer(minLength: bottom_spacing)
+            }
+        }
     }
 }
 

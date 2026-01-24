@@ -175,7 +175,11 @@ struct WorkspaceView: View
                     {
                         Button(action: { inspector_presented.toggle() })
                         {
+                            #if os(macOS)
                             Label("Inspector", systemImage: "sidebar.right")
+                            #else
+                            Label("Inspector", systemImage: horizontal_size_class != .compact ? "sidebar.right" : "inset.filled.bottomthird.rectangle.portrait")
+                            #endif
                         }
                     }
                 }

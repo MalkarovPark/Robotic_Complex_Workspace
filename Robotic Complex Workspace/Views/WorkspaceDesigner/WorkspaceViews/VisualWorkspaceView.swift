@@ -52,7 +52,7 @@ struct VisualWorkspaceView: View
                 robot.origin_shift.z = 160
                 robot.origin_position.x = 200
                 robot.place_entity(to: content)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 10)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5)
                 {
                     robot.toggle_working_area_visibility()
                     robot.toggle_position_pointer_visibility()
