@@ -31,7 +31,7 @@ struct VisualWorkspaceView: View
     
     //@StateObject var workspace = WorkspaceAlt()
     
-    @StateObject var robot = Robot(name: "6DOF Robot", entity_name: "6DOF", model_controller: _6DOF_Controller())
+    @StateObject var robot = Robot(name: "6DOF Robot", entity_name: "6DOF.robot.Scene.usdz", model_controller: _6DOF_Controller())
     
     var body: some View
     {

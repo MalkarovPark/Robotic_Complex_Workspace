@@ -3,9 +3,7 @@ import IndustrialKit
 import SceneKit
 
 public let Cup_Module = PartModule(
-    name: "Cup",
-    
-    node: Cup_Node
+    name: "Cup"
 )
 
 public var Cup_Node: SCNNode

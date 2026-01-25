@@ -112,6 +112,10 @@ class AppState: ObservableObject
         Part.internal_modules = internal_modules.part
         Changer.internal_modules = internal_modules.changer
         
+        Robot.load_all_internal_modules_entities()
+        Tool.load_all_internal_modules_entities()
+        Part.load_all_internal_modules_entities()
+        
         for module in internal_modules.robot
         {
             internal_modules_list.robot.append(module.name)
@@ -206,6 +210,10 @@ class AppState: ObservableObject
             Tool.external_modules_import(by: external_modules_list.tool)
             Part.external_modules_import(by: external_modules_list.part)
             Changer.external_modules_import(by: external_modules_list.changer)
+            
+            Robot.load_all_external_modules_entities()
+            Tool.load_all_external_modules_entities()
+            Part.load_all_external_modules_entities()
         }
         catch
         {

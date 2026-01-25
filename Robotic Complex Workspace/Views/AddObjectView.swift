@@ -40,13 +40,9 @@ struct AddObjectView: View
             case .robots:
                 AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
             case .tools:
-                Rectangle()
-                    .fill(.clear)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                AddToolView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
             case .parts:
-                Rectangle()
-                    .fill(.clear)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                AddPartView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
             }
             #else
             TabView
@@ -58,16 +54,12 @@ struct AddObjectView: View
                 
                 Tab("Tools", systemImage: "hammer")
                 {
-                    Rectangle()
-                        .fill(.clear)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    AddToolView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
                 }
                 
                 Tab("Parts", systemImage: "shippingbox")
                 {
-                    Rectangle()
-                        .fill(.clear)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    AddPartView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
                 }
             }
             .tabViewStyle(.tabBarOnly)
@@ -174,50 +166,181 @@ struct AddRobotView: View
             
             LazyVGrid(columns: columns, spacing: card_spacing)
             {
-                GlassBoxCard(
-                    title: "OwO",
-                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)])
-                )
-                .frame(height: card_height)
-                
-                GlassBoxCard(
-                    title: "UwU",
-                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .green, isMetallic: false)])
-                )
-                .frame(height: card_height)
-                
-                GlassBoxCard(
-                    title: ">w<",
-                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .cyan, isMetallic: false)])
-                )
-                .frame(height: card_height)
+                ForEach(Robot.internal_modules)
+                { module in
+                    GlassBoxCard(
+                        title: module.name,
+                        entity: module.entity,
+                        vertical_repostion: true,
+                    )
+                    .frame(height: card_height)
+                    .onTapGesture
+                    {
+                        print("Tapped – \(module.name)")
+                    }
+                }
             }
             .padding()
             
-            Text("External")
-                .font(.headline)
+            if Robot.external_modules.count > 0
+            {
+                Text("External")
+                    .font(.headline)
+                
+                LazyVGrid(columns: columns, spacing: card_spacing)
+                {
+                    ForEach(Robot.external_modules)
+                    { module in
+                        GlassBoxCard(
+                            title: module.name,
+                            entity: module.entity,
+                            vertical_repostion: true,
+                        )
+                        .frame(height: card_height)
+                        .onTapGesture
+                        {
+                            print("Tapped – \(module.name)")
+                        }
+                    }
+                }
+                .padding()
+            }
+            
+            if bottom_spacing > 0
+            {
+                Spacer(minLength: bottom_spacing)
+            }
+        }
+    }
+}
+
+struct AddToolView: View
+{
+    let columns: [GridItem]
+    let card_spacing: CGFloat
+    let card_height: CGFloat
+    
+    let top_spacing: CGFloat
+    let bottom_spacing: CGFloat
+    
+    var body: some View
+    {
+        ScrollView
+        {
+            if top_spacing > 0
+            {
+                Spacer(minLength: top_spacing)
+            }
             
             LazyVGrid(columns: columns, spacing: card_spacing)
             {
-                GlassBoxCard(
-                    title: "OwO",
-                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemPurple, isMetallic: false)])
-                )
-                .frame(height: card_height)
-                
-                GlassBoxCard(
-                    title: "UwU",
-                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemMint, isMetallic: false)])
-                )
-                .frame(height: card_height)
-                
-                GlassBoxCard(
-                    title: ">w<",
-                    entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .systemPink, isMetallic: false)])
-                )
-                .frame(height: card_height)
+                ForEach(Tool.internal_modules)
+                { module in
+                    GlassBoxCard(
+                        title: module.name,
+                        entity: module.entity,
+                        vertical_repostion: true,
+                    )
+                    .frame(height: card_height)
+                    .onTapGesture
+                    {
+                        print("Tapped – \(module.name)")
+                    }
+                }
             }
             .padding()
+            
+            if Tool.external_modules.count > 0
+            {
+                Text("External")
+                    .font(.headline)
+                
+                LazyVGrid(columns: columns, spacing: card_spacing)
+                {
+                    ForEach(Tool.external_modules)
+                    { module in
+                        GlassBoxCard(
+                            title: module.name,
+                            entity: module.entity,
+                            vertical_repostion: true,
+                        )
+                        .frame(height: card_height)
+                        .onTapGesture
+                        {
+                            print("Tapped – \(module.name)")
+                        }
+                    }
+                }
+                .padding()
+            }
+            
+            if bottom_spacing > 0
+            {
+                Spacer(minLength: bottom_spacing)
+            }
+        }
+    }
+}
+
+struct AddPartView: View
+{
+    let columns: [GridItem]
+    let card_spacing: CGFloat
+    let card_height: CGFloat
+    
+    let top_spacing: CGFloat
+    let bottom_spacing: CGFloat
+    
+    var body: some View
+    {
+        ScrollView
+        {
+            if top_spacing > 0
+            {
+                Spacer(minLength: top_spacing)
+            }
+            
+            LazyVGrid(columns: columns, spacing: card_spacing)
+            {
+                ForEach(Part.internal_modules)
+                { module in
+                    GlassBoxCard(
+                        title: module.name,
+                        entity: module.entity,
+                        vertical_repostion: true,
+                    )
+                    .frame(height: card_height)
+                    .onTapGesture
+                    {
+                        print("Tapped – \(module.name)")
+                    }
+                }
+            }
+            .padding()
+            
+            if Part.external_modules.count > 0
+            {
+                Text("External")
+                    .font(.headline)
+                
+                LazyVGrid(columns: columns, spacing: card_spacing)
+                {
+                    ForEach(Part.external_modules)
+                    { module in
+                        GlassBoxCard(
+                            title: module.name,
+                            entity: module.entity,
+                            vertical_repostion: true,
+                        )
+                        .frame(height: card_height)
+                        .onTapGesture
+                        {
+                            print("Tapped – \(module.name)")
+                        }
+                    }
+                }
+                .padding()
+            }
             
             if bottom_spacing > 0
             {
@@ -433,3 +556,4 @@ struct ObjectPreviewSceneView: View
 {
     AddObjectView(is_presented: .constant(true), previewed_object: nil, previewed_object_name: .constant("Name"), internal_modules_list: .constant([String]()), external_modules_list: .constant([String]()), update_object_info: {}, add_object: {_ in})
 }*/
+
