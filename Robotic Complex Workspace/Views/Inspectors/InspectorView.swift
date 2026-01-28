@@ -6,28 +6,44 @@
 //
 
 import SwiftUI
+import IndustrialKit
 import IndustrialKitUI
 
 struct InspectorView: View
 {
-    @State private var object_name = "Workspace Object"
-    @State private var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    @ObservedObject var object: WorkspaceObject
     
     var body: some View
     {
         ScrollView
         {
-            VStack
+            VStack//(alignment: .leading)
             {
-                Text(object_name)
+                Text(object_type_name)
                     .font(.headline)
+                    .padding(4)
                     //.font(.system(size: 28))//, design: .rounded))
+                
+                GroupBox("Name")
+                {
+                    HStack
+                    {
+                        TextField("None", text: $object.name)
+                            .textFieldStyle(.plain)
+                            //.textFieldStyle(.roundedBorder)
+                    }
+                    .padding(4)
+                }
                 
                 GroupBox("Position")
                 {
                     HStack
                     {
-                        PositionView(position: $position)
+                        PositionView(position: $object.position)
+                            .onChange(of: object)
+                            { _, _ in
+                                object.update_model_position()
+                            }
                     }
                     .padding(4)
                 }
@@ -37,9 +53,24 @@ struct InspectorView: View
             .padding(10)
         }
     }
+    
+    private var object_type_name: String
+    {
+        switch object
+        {
+        case is Robot:
+            return "Robot"
+        case is Tool:
+            return "Tool"
+        case is Part:
+            return "Part"
+        default:
+            return "None"
+        }
+    }
 }
 
 #Preview
 {
-    InspectorView()
+    InspectorView(object: Robot(name: "Robot"))
 }

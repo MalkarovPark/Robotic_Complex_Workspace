@@ -357,6 +357,11 @@ struct GalleryInfoView: View
     
     var body: some View
     {
+        EmptyView()
+    }
+    
+    /*var body: some View
+    {
         VStack(spacing: 0)
         {
             // Selected object position editor
@@ -512,7 +517,7 @@ struct GalleryInfoView: View
         }
         
         info_view_presented.toggle()
-    }
+    }*/
 }
 
 #if os(macOS)
