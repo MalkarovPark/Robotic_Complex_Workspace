@@ -99,7 +99,7 @@ struct ContentView: View
     
     private func update_preferences()
     {
-        Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
+        //Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
         Workspace.default_registers_count = workspace_registers_count
         
         /*Robot.default_origin_location[0] = Float(location_x)

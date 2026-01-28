@@ -1087,7 +1087,7 @@ struct WorkspaceView_Previews: PreviewProvider
             /*AddInWorkspaceView(add_in_view_presented: .constant(true))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())*/
-            VisualInfoView(info_view_presented: .constant(true))
+            //VisualInfoView(info_view_presented: .constant(true))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
         }

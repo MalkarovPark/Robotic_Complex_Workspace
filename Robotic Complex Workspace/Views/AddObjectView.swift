@@ -38,28 +38,28 @@ struct AddObjectView: View
             switch tab_selection
             {
             case .robots:
-                AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
+                AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
             case .tools:
-                AddToolView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
+                AddToolView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
             case .parts:
-                AddPartView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
+                AddPartView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
             }
             #else
             TabView
             {
                 Tab("Robots", systemImage: "r.square")
                 {
-                    AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
+                    AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
                 }
                 
                 Tab("Tools", systemImage: "hammer")
                 {
-                    AddToolView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
+                    AddToolView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
                 }
                 
                 Tab("Parts", systemImage: "shippingbox")
                 {
-                    AddPartView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
+                    AddPartView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
                 }
             }
             .tabViewStyle(.tabBarOnly)
@@ -148,12 +148,16 @@ struct AddObjectView_PreviewsContainer: PreviewProvider
 
 struct AddRobotView: View
 {
+    @EnvironmentObject var base_workspace: Workspace
+    
     let columns: [GridItem]
     let card_spacing: CGFloat
     let card_height: CGFloat
     
     let top_spacing: CGFloat
     let bottom_spacing: CGFloat
+    
+    @Binding var is_presented: Bool
     
     var body: some View
     {
@@ -176,7 +180,7 @@ struct AddRobotView: View
                     .frame(height: card_height)
                     .onTapGesture
                     {
-                        print("Tapped – \(module.name)")
+                        add_object(module)
                     }
                 }
             }
@@ -199,7 +203,7 @@ struct AddRobotView: View
                         .frame(height: card_height)
                         .onTapGesture
                         {
-                            print("Tapped – \(module.name)")
+                            add_object(module)
                         }
                     }
                 }
@@ -212,16 +216,33 @@ struct AddRobotView: View
             }
         }
     }
+    
+    private func add_object(_ module: RobotModule)
+    {
+        base_workspace.add_robot(Robot(name: "None", module: module))
+        print(base_workspace.robots_names)
+        
+        is_presented = false
+    }
+    
+    /*private func add_object(_ module_name: String, is_internal: Bool)
+    {
+        let robot = Robot(name: "None", module_name: module_name, is_internal: is_internal)
+    }*/
 }
 
 struct AddToolView: View
 {
+    @EnvironmentObject var base_workspace: Workspace
+    
     let columns: [GridItem]
     let card_spacing: CGFloat
     let card_height: CGFloat
     
     let top_spacing: CGFloat
     let bottom_spacing: CGFloat
+    
+    @Binding var is_presented: Bool
     
     var body: some View
     {
@@ -244,7 +265,7 @@ struct AddToolView: View
                     .frame(height: card_height)
                     .onTapGesture
                     {
-                        print("Tapped – \(module.name)")
+                        add_object(module)
                     }
                 }
             }
@@ -267,7 +288,7 @@ struct AddToolView: View
                         .frame(height: card_height)
                         .onTapGesture
                         {
-                            print("Tapped – \(module.name)")
+                            add_object(module)
                         }
                     }
                 }
@@ -280,16 +301,28 @@ struct AddToolView: View
             }
         }
     }
+    
+    private func add_object(_ module: ToolModule)
+    {
+        base_workspace.add_tool(Tool(name: "None", module: module))
+        print(base_workspace.tools_names)
+        
+        is_presented = false
+    }
 }
 
 struct AddPartView: View
 {
+    @EnvironmentObject var base_workspace: Workspace
+    
     let columns: [GridItem]
     let card_spacing: CGFloat
     let card_height: CGFloat
     
     let top_spacing: CGFloat
     let bottom_spacing: CGFloat
+    
+    @Binding var is_presented: Bool
     
     var body: some View
     {
@@ -312,7 +345,7 @@ struct AddPartView: View
                     .frame(height: card_height)
                     .onTapGesture
                     {
-                        print("Tapped – \(module.name)")
+                        add_object(module)
                     }
                 }
             }
@@ -335,7 +368,7 @@ struct AddPartView: View
                         .frame(height: card_height)
                         .onTapGesture
                         {
-                            print("Tapped – \(module.name)")
+                            add_object(module)
                         }
                     }
                 }
@@ -347,6 +380,14 @@ struct AddPartView: View
                 Spacer(minLength: bottom_spacing)
             }
         }
+    }
+    
+    private func add_object(_ module: PartModule)
+    {
+        base_workspace.add_part(Part(name: "None", module: module))
+        print(base_workspace.parts_names)
+        
+        is_presented = false
     }
 }
 
