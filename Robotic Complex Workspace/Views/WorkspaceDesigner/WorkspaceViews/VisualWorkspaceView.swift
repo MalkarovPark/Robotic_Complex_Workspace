@@ -130,9 +130,15 @@ struct VisualWorkspaceView: View
         }
     }
     
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    
     private func button_action()
     {
-        base_workspace.toggle_grid_visiblity()
+        //base_workspace.toggle_grid_visiblity()
+        
+        document_handler.document_update_robots()
+        document_handler.document_update_tools()
+        document_handler.document_update_parts()
     }
     
     private var add_in_view_disabled: Bool

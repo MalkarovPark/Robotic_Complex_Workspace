@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-//import SceneKit
 import UniformTypeIdentifiers
 import IndustrialKit
 import IndustrialKitUI
@@ -239,7 +238,7 @@ struct WorkspaceView: View
                 
                 for robot in base_workspace.robots
                 {
-                    print("🍺 \(robot.module_name) + \(robot.position)")
+                    print("🍺 \(robot.name) + \(robot.module_name) + \(robot.position)")
                 }
             }
         }

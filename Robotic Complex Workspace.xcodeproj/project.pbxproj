@@ -20,7 +20,6 @@
 		6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9602AD345FC008FA7C4 /* DynamicStack.swift */; };
 		6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9612AD345FC008FA7C4 /* ContextMenus.swift */; };
 		6236F9652AD345FC008FA7C4 /* DoubleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9622AD345FC008FA7C4 /* DoubleModifier.swift */; };
-		6236F98A2AD347AA008FA7C4 /* Components.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9892AD347AA008FA7C4 /* Components.scnassets */; };
 		623E72142D04316300A1FC25 /* SpatialWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E165E82B20C6E8005E318A /* SpatialWorkspaceView.swift */; platformFilters = (xros, ); };
 		62507A882DE1B66D000D511D /* WorkspaceStatisticView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62507A872DE1B66D000D511D /* WorkspaceStatisticView.swift */; };
 		6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */; };
@@ -46,18 +45,14 @@
 		6236F93F2AD3439C008FA7C4 /* Robotic_Complex_Workspace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Robotic_Complex_Workspace.entitlements; sourceTree = "<group>"; };
 		6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6236F9482AD34591008FA7C4 /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
-		6236F94D2AD345C4008FA7C4 /* ToolsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
-		6236F94E2AD345C4008FA7C4 /* PartsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PartsView.swift; sourceTree = "<group>"; };
 		6236F94F2AD345C4008FA7C4 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		6236F9502AD345C4008FA7C4 /* StatisticsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
-		6236F9522AD345C4008FA7C4 /* RobotsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RobotsView.swift; sourceTree = "<group>"; };
 		6236F9532AD345C4008FA7C4 /* ControlProgramView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControlProgramView.swift; sourceTree = "<group>"; };
 		6236F9542AD345C4008FA7C4 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6236F9602AD345FC008FA7C4 /* DynamicStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicStack.swift; sourceTree = "<group>"; };
 		6236F9612AD345FC008FA7C4 /* ContextMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextMenus.swift; sourceTree = "<group>"; };
 		6236F9622AD345FC008FA7C4 /* DoubleModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleModifier.swift; sourceTree = "<group>"; };
-		6236F9892AD347AA008FA7C4 /* Components.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Components.scnassets; sourceTree = "<group>"; };
 		62398C7F2BF29E9A001A5B8A /* RobotsPassViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsPassViews.swift; sourceTree = "<group>"; };
 		62398C812BF29FDB001A5B8A /* RobotInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotInspectorView.swift; sourceTree = "<group>"; };
 		62398C832BF2A0D9001A5B8A /* RobotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotView.swift; sourceTree = "<group>"; };
@@ -108,7 +103,6 @@
 				6236F9482AD34591008FA7C4 /* Functions.swift */,
 				6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */,
 				6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */,
-				6236F9892AD347AA008FA7C4 /* Components.scnassets */,
 				629DF71E2E180C41008DE761 /* RCWorkspace.icon */,
 				6236F93C2AD3439C008FA7C4 /* Assets.xcassets */,
 				6236F93E2AD3439C008FA7C4 /* Info.plist */,
@@ -167,7 +161,6 @@
 		62398C772BF299CF001A5B8A /* RobotsDesigner */ = {
 			isa = PBXGroup;
 			children = (
-				6236F9522AD345C4008FA7C4 /* RobotsView.swift */,
 				62398C7F2BF29E9A001A5B8A /* RobotsPassViews.swift */,
 				62398C832BF2A0D9001A5B8A /* RobotView.swift */,
 				62398C812BF29FDB001A5B8A /* RobotInspectorView.swift */,
@@ -178,7 +171,6 @@
 		62398C782BF299E5001A5B8A /* ToolsDesigner */ = {
 			isa = PBXGroup;
 			children = (
-				6236F94D2AD345C4008FA7C4 /* ToolsView.swift */,
 				62398C872BF2A3B1001A5B8A /* ToolView.swift */,
 				62398C892BF2A42C001A5B8A /* ToolInspectorView.swift */,
 			);
@@ -188,7 +180,6 @@
 		62398C792BF299F1001A5B8A /* PartsDesigner */ = {
 			isa = PBXGroup;
 			children = (
-				6236F94E2AD345C4008FA7C4 /* PartsView.swift */,
 				62398C8D2BF2A70D001A5B8A /* PartView.swift */,
 			);
 			path = PartsDesigner;
@@ -318,7 +309,6 @@
 				6236F9422AD3439C008FA7C4 /* Preview Assets.xcassets in Resources */,
 				629DF71F2E180C41008DE761 /* RCWorkspace.icon in Resources */,
 				6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */,
-				6236F98A2AD347AA008FA7C4 /* Components.scnassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

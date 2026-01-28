@@ -149,6 +149,7 @@ struct AddObjectView_PreviewsContainer: PreviewProvider
 struct AddRobotView: View
 {
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     let columns: [GridItem]
     let card_spacing: CGFloat
@@ -180,7 +181,7 @@ struct AddRobotView: View
                     .frame(height: card_height)
                     .onTapGesture
                     {
-                        add_object(module)
+                        add_object(module, is_internal: true)
                     }
                 }
             }
@@ -203,7 +204,7 @@ struct AddRobotView: View
                         .frame(height: card_height)
                         .onTapGesture
                         {
-                            add_object(module)
+                            add_object(module, is_internal: false)
                         }
                     }
                 }
@@ -217,23 +218,19 @@ struct AddRobotView: View
         }
     }
     
-    private func add_object(_ module: RobotModule)
+    private func add_object(_ module: RobotModule, is_internal: Bool)
     {
-        base_workspace.add_robot(Robot(name: "None", module: module))
-        print(base_workspace.robots_names)
+        base_workspace.add_robot(Robot(name: "None", module: module, is_internal: is_internal))
+        document_handler.document_update_robots()
         
         is_presented = false
     }
-    
-    /*private func add_object(_ module_name: String, is_internal: Bool)
-    {
-        let robot = Robot(name: "None", module_name: module_name, is_internal: is_internal)
-    }*/
 }
 
 struct AddToolView: View
 {
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     let columns: [GridItem]
     let card_spacing: CGFloat
@@ -265,7 +262,7 @@ struct AddToolView: View
                     .frame(height: card_height)
                     .onTapGesture
                     {
-                        add_object(module)
+                        add_object(module, is_internal: true)
                     }
                 }
             }
@@ -288,7 +285,7 @@ struct AddToolView: View
                         .frame(height: card_height)
                         .onTapGesture
                         {
-                            add_object(module)
+                            add_object(module, is_internal: false)
                         }
                     }
                 }
@@ -302,10 +299,10 @@ struct AddToolView: View
         }
     }
     
-    private func add_object(_ module: ToolModule)
+    private func add_object(_ module: ToolModule, is_internal: Bool)
     {
-        base_workspace.add_tool(Tool(name: "None", module: module))
-        print(base_workspace.tools_names)
+        base_workspace.add_tool(Tool(name: "None", module: module, is_internal: is_internal))
+        document_handler.document_update_tools()
         
         is_presented = false
     }
@@ -314,6 +311,7 @@ struct AddToolView: View
 struct AddPartView: View
 {
     @EnvironmentObject var base_workspace: Workspace
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     let columns: [GridItem]
     let card_spacing: CGFloat
@@ -345,7 +343,7 @@ struct AddPartView: View
                     .frame(height: card_height)
                     .onTapGesture
                     {
-                        add_object(module)
+                        add_object(module, is_internal: true)
                     }
                 }
             }
@@ -368,7 +366,7 @@ struct AddPartView: View
                         .frame(height: card_height)
                         .onTapGesture
                         {
-                            add_object(module)
+                            add_object(module, is_internal: false)
                         }
                     }
                 }
@@ -382,10 +380,10 @@ struct AddPartView: View
         }
     }
     
-    private func add_object(_ module: PartModule)
+    private func add_object(_ module: PartModule, is_internal: Bool)
     {
-        base_workspace.add_part(Part(name: "None", module: module))
-        print(base_workspace.parts_names)
+        base_workspace.add_part(Part(name: "None", module: module, is_internal: is_internal))
+        document_handler.document_update_parts()
         
         is_presented = false
     }
