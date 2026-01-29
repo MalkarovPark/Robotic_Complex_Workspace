@@ -49,7 +49,7 @@ struct VisualWorkspaceView: View
                 base_workspace.place_entity(to: content)
                 
                 //robot.model_controller = _6DOF_Controller()
-                robot.origin_shift.z = 160
+                /*robot.origin_shift.z = 160
                 robot.origin_position.x = 200
                 
                 //robot.place_entity(to: content)
@@ -58,7 +58,7 @@ struct VisualWorkspaceView: View
                     robot.toggle_working_area_visibility()
                     robot.toggle_position_pointer_visibility()
                     //robot.toggle_position_program_visibility()
-                }
+                }*/
             }
             .realityViewCameraControls(is_pan ? .pan : .orbit)
             .highPriorityGesture(
@@ -139,18 +139,6 @@ struct VisualWorkspaceView: View
         document_handler.document_update_robots()
         document_handler.document_update_tools()
         document_handler.document_update_parts()
-    }
-    
-    private var add_in_view_disabled: Bool
-    {
-        if base_workspace.any_object_selected && app_state.add_in_view_dismissed && !base_workspace.performed
-        {
-            return true
-        }
-        else
-        {
-            return false
-        }
     }
 }
 

@@ -81,7 +81,7 @@ struct ContentView: View
         #endif
             .modifier(DocumentUpdateModifier(document: $document, base_workspace: base_workspace))
             .environmentObject(document_handler)
-            .onAppear
+            .task//.onAppear
             {
                 update_preferences()
                 base_workspace.file_view(preset: document.preset)
