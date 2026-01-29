@@ -34,6 +34,8 @@ struct WorkspaceView: View
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     #endif
     
+    @StateObject var robot = Robot(name: "6DOF Robot", entity_name: "6DOF.robot.Scene.usdz", model_controller: _6DOF_Controller()) // Test
+    
     var body: some View
     {
         NavigationStack
@@ -51,6 +53,13 @@ struct WorkspaceView: View
                 case .spatial:
                     EmptyView()
                 }
+                
+                FloatingView(alignment: .trailing)
+                {
+                    RobotControlView(robot: robot)
+                        .padding(8)
+                }
+                .padding([.horizontal, .bottom], 10)
             }
             #if !os(visionOS)
             .inspector(isPresented: $inspector_presented)
@@ -101,7 +110,7 @@ struct WorkspaceView: View
                     }
                 }
                 
-                ToolbarItem(id: "Registers", placement: compact_placement())
+                ToolbarItem(id: "Registers", placement: compact_placement(), showsByDefault: false)
                 {
                     ControlGroup
                     {

@@ -29,7 +29,7 @@ struct VisualWorkspaceView: View
     
     @State private var scene_content: RealityViewCameraContent?
     
-    @StateObject var robot = Robot(name: "6DOF Robot", entity_name: "6DOF.robot.Scene.usdz", model_controller: _6DOF_Controller())
+    //@StateObject var robot = Robot(name: "6DOF Robot", entity_name: "6DOF.robot.Scene.usdz", model_controller: _6DOF_Controller())
     
     var body: some View
     {
@@ -79,12 +79,12 @@ struct VisualWorkspaceView: View
             //.backgroundStyle(.gray.opacity(0.25))
             .ignoresSafeArea(.container, edges: [.top, .bottom])
             
-            FloatingView(alignment: .trailing)
+            /*FloatingView(alignment: .trailing)
             {
                 RobotControlView(robot: robot)
                     .padding(8)
             }
-            .padding(10)
+            .padding(10)*/
         }
         .overlay(alignment: .bottomLeading)
         {
@@ -139,6 +139,30 @@ struct VisualWorkspaceView: View
         document_handler.document_update_robots()
         document_handler.document_update_tools()
         document_handler.document_update_parts()
+    }
+    
+    #if !os(macOS)
+    @State var settings_view_presented = false
+    
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
+    #endif
+    
+    private func compact_placement() -> ToolbarItemPlacement
+    {
+        #if os(macOS)
+        return .primaryAction
+        #elseif os(iOS)
+        if horizontal_size_class == .compact
+        {
+            return .bottomBar
+        }
+        else
+        {
+            return .topBarTrailing
+        }
+        #else
+        return .topBarTrailing
+        #endif
     }
 }
 

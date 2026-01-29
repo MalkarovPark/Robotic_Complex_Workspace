@@ -37,10 +37,6 @@ struct InspectorView: View
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding(10)
-                .onChange(of: object.name)
-                { _, _ in
-                    update_document(by: object)
-                }
                 
                 Divider()
                 
@@ -50,17 +46,6 @@ struct InspectorView: View
                     HStack
                     {
                         PositionView(position: $object.position)
-                            .onChange(of: position_change_key)
-                            { _, _ in
-                                guard last_object === object else
-                                {
-                                    last_object = object
-                                    return
-                                }
-                                
-                                object.update_model_position()
-                                update_document(by: object)
-                            }
                     }
                     #else
                     VStack
@@ -91,6 +76,7 @@ struct InspectorView: View
                         Label("Remove", systemImage: "trash")
                             .frame(maxWidth: .infinity)
                     }
+                    .buttonStyle(.bordered)
                     #if os(macOS)
                     .foregroundStyle(.red)
                     #endif
@@ -101,13 +87,21 @@ struct InspectorView: View
                             .frame(maxWidth: .infinity)
                     }
                     .toggleStyle(.button)
-                    .onChange(of: object.is_placed)
-                    { _, _ in
-                        update_document(by: object)
-                    }
+                    .buttonStyle(.bordered)
                 }
                 .padding(10)
             }
+        }
+        .onChange(of: grouped_key)
+        {
+            guard last_object == object
+            else
+            {
+                last_object = object
+                return
+            }
+            
+            update_document(by: object)
         }
     }
     
@@ -124,6 +118,16 @@ struct InspectorView: View
         default:
             return "None"
         }
+    }
+    
+    private var grouped_key: String
+    {
+        let p = object.position
+        
+        return
+            "\(object.name)|" +
+            "\(object.is_placed)|" +
+            "\(p.x),\(p.y),\(p.z),\(p.r),\(p.p),\(p.w)"
     }
     
     private func remove_object()
@@ -146,12 +150,6 @@ struct InspectorView: View
         default:
             break
         }
-    }
-    
-    private var position_change_key: [Float]
-    {
-        let p = object.position
-        return [p.x, p.y, p.z, p.r, p.p, p.w]
     }
 }
 
