@@ -35,6 +35,7 @@ struct WorkspaceView: View
     #endif
     
     @StateObject var robot = Robot(name: "6DOF Robot", entity_name: "6DOF.robot.Scene.usdz", model_controller: _6DOF_Controller()) // Test
+    @StateObject var pendant_controller = PendantController()
     
     var body: some View
     {
@@ -54,12 +55,16 @@ struct WorkspaceView: View
                     EmptyView()
                 }
                 
-                FloatingView(alignment: .trailing)
+                /*FloatingView(alignment: .trailing)
                 {
                     RobotControlView(robot: robot)
                         .padding(8)
                 }
-                .padding([.horizontal, .bottom], 10)
+                .padding([.horizontal, .bottom], 10)*/
+                SpatialPendantView(controller: pendant_controller, workspace: base_workspace)
+                    //.padding(10)
+                    .ignoresSafeArea(.container, edges: [.bottom])
+                    .padding([.horizontal, .bottom], 10)
             }
             #if !os(visionOS)
             .inspector(isPresented: $inspector_presented)

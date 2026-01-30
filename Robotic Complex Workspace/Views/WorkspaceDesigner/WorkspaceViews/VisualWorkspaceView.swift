@@ -20,16 +20,14 @@ struct VisualWorkspaceView: View
     @EnvironmentObject var app_state: AppState
     //@EnvironmentObject var sidebar_controller: SidebarController
     
-    #if os(iOS) || os(visionOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
+    #if !os(macOS)
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     #endif
     
     @State private var is_spatial = false
     @State var is_pan = false
     
     @State private var scene_content: RealityViewCameraContent?
-    
-    //@StateObject var robot = Robot(name: "6DOF Robot", entity_name: "6DOF.robot.Scene.usdz", model_controller: _6DOF_Controller())
     
     var body: some View
     {
@@ -78,13 +76,6 @@ struct VisualWorkspaceView: View
             )
             //.backgroundStyle(.gray.opacity(0.25))
             .ignoresSafeArea(.container, edges: [.top, .bottom])
-            
-            /*FloatingView(alignment: .trailing)
-            {
-                RobotControlView(robot: robot)
-                    .padding(8)
-            }
-            .padding(10)*/
         }
         .overlay(alignment: .bottomLeading)
         {
@@ -97,7 +88,6 @@ struct VisualWorkspaceView: View
                         .animation(.easeInOut(duration: 0.3), value: is_pan)
                         .modifier(CircleButtonImageFramer())
                 }
-                .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
                 .keyboardShortcut(.cancelAction)
                 #if os(macOS) || os(iOS)
@@ -122,9 +112,9 @@ struct VisualWorkspaceView: View
                 .modifier(CircleButtonGlassBorderer())
                 .keyboardShortcut(.cancelAction)
                 #if os(macOS) || os(iOS)
-                .padding(10)
+                .padding([.horizontal, .top], 10)
                 #else
-                .padding(16)
+                .padding([.horizontal, .top], 16)
                 #endif
             }
         }
@@ -140,12 +130,6 @@ struct VisualWorkspaceView: View
         document_handler.document_update_tools()
         document_handler.document_update_parts()
     }
-    
-    #if !os(macOS)
-    @State var settings_view_presented = false
-    
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
-    #endif
     
     private func compact_placement() -> ToolbarItemPlacement
     {

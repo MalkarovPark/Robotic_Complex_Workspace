@@ -25,11 +25,11 @@ struct InspectorView: View
         {
             VStack(spacing: 0)
             {
-                Text(object_type_name)
+                /*Text(object_type_name)
                     .font(.headline)
                     .padding(10)
                 
-                Divider()
+                Divider()*/
                 
                 HStack
                 {
@@ -37,6 +37,30 @@ struct InspectorView: View
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding(10)
+                
+                HStack
+                {
+                    Button(role: .destructive, action: remove_object)
+                    {
+                        Label("Remove", systemImage: "trash")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.roundedRectangle)
+                    #if os(macOS)
+                    .foregroundStyle(.red)
+                    #endif
+                    
+                    Toggle(isOn: $object.is_placed)
+                    {
+                        Label("Placed", systemImage: "mappin.and.ellipse")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .toggleStyle(.button)
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.roundedRectangle)
+                }
+                .padding([.horizontal, .bottom], 10)
                 
                 Divider()
                 
@@ -51,17 +75,6 @@ struct InspectorView: View
                     VStack
                     {
                         PositionView(position: $object.position)
-                            .onChange(of: position_change_key)
-                            { _, _ in
-                                guard last_object === object else
-                                {
-                                    last_object = object
-                                    return
-                                }
-                                
-                                object.update_model_position()
-                                update_document(by: object)
-                            }
                     }
                     #endif
                 }
@@ -69,27 +82,29 @@ struct InspectorView: View
                 
                 Divider()
                 
-                HStack
+                /*if let robot = object as? Robot
                 {
-                    Button(role: .destructive, action: remove_object)
+                    DisclosureGroup("Origin", isExpanded: $position_is_expanded)
                     {
-                        Label("Remove", systemImage: "trash")
-                            .frame(maxWidth: .infinity)
+                        #if os(macOS)
+                        HStack
+                        {
+                            PositionView(position: $robot.origin_position)
+                        }
+                        #else
+                        VStack
+                        {
+                            PositionView(position: $robot.origin_position)
+                        }
+                        #endif
                     }
-                    .buttonStyle(.bordered)
-                    #if os(macOS)
-                    .foregroundStyle(.red)
-                    #endif
+                    .padding(10)
                     
-                    Toggle(isOn: $object.is_placed)
-                    {
-                        Label("Placed", systemImage: "mappin.and.ellipse")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .toggleStyle(.button)
-                    .buttonStyle(.bordered)
-                }
-                .padding(10)
+                    Divider()
+                }*/
+                //
+                
+                //Divider()
             }
         }
         .onChange(of: grouped_key)
