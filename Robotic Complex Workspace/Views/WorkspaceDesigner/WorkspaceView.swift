@@ -62,9 +62,9 @@ struct WorkspaceView: View
                 }
                 .padding([.horizontal, .bottom], 10)*/
                 SpatialPendantView(controller: pendant_controller, workspace: base_workspace)
-                    //.padding(10)
                     .ignoresSafeArea(.container, edges: [.bottom])
-                    .padding([.horizontal, .bottom], 10)
+                    .padding(10)
+                    //.padding([.horizontal, .bottom], 10)
             }
             #if !os(visionOS)
             .inspector(isPresented: $inspector_presented)
@@ -81,7 +81,7 @@ struct WorkspaceView: View
             }
             #endif
             #if os(macOS)
-            .frame(minWidth: 640, idealWidth: 800, minHeight: 480, idealHeight: 600) // Window sizes for macOS
+            .frame(minWidth: 800, idealWidth: 800, minHeight: 576, idealHeight: 600) // Window sizes for macOS
             #endif
             #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -122,27 +122,6 @@ struct WorkspaceView: View
                         Button(action: { registers_view_presented = true })
                         {
                             Label("Registers", systemImage: "number")
-                        }
-                    }
-                }
-                
-                ToolbarItem(id: "State", placement: compact_placement(), showsByDefault: false)
-                {
-                    ControlGroup
-                    {
-                        Button(action: { performing_state_view_presented.toggle() })
-                        {
-                            Label("Process State", systemImage:"circlebadge.fill")
-                            #if os(macOS)
-                                .foregroundColor(base_workspace.performing_state.color)
-                            #endif
-                        }
-                        #if !os(macOS)
-                        .tint(base_workspace.performing_state.color)
-                        #endif
-                        .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
-                        {
-                            PerformingStateView(performing_state: base_workspace.performing_state, error: base_workspace.last_error)
                         }
                     }
                 }

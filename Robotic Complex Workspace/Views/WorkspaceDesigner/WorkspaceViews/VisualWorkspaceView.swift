@@ -42,21 +42,7 @@ struct VisualWorkspaceView: View
                 scene_content?.camera = is_spatial ? .spatialTracking : .virtual
                 #endif
                 
-                scene_content?.environment
-                
                 base_workspace.place_entity(to: content)
-                
-                //robot.model_controller = _6DOF_Controller()
-                /*robot.origin_shift.z = 160
-                robot.origin_position.x = 200
-                
-                //robot.place_entity(to: content)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5)
-                {
-                    robot.toggle_working_area_visibility()
-                    robot.toggle_position_pointer_visibility()
-                    //robot.toggle_position_program_visibility()
-                }*/
             }
             .realityViewCameraControls(is_pan ? .pan : .orbit)
             .highPriorityGesture(

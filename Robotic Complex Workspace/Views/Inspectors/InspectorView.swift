@@ -18,6 +18,7 @@ struct InspectorView: View
     
     @State private var last_object: WorkspaceObject?
     @State private var position_is_expanded: Bool = true
+    @State private var origin_is_expanded: Bool = true
     
     var body: some View
     {
@@ -33,7 +34,17 @@ struct InspectorView: View
                 
                 HStack
                 {
-                    TextField("None", text: $object.name)
+                    let name_binding = Binding(
+                        get: { object.name },
+                        set:
+                            { new_value in
+                                object.name = new_value
+                                
+                                update_document(by: object)
+                            }
+                    )
+                    
+                    TextField("None", text: name_binding)
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding(10)
@@ -45,78 +56,96 @@ struct InspectorView: View
                         Label("Remove", systemImage: "trash")
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.bordered)
                     .buttonBorderShape(.roundedRectangle)
                     #if os(macOS)
+                    .buttonStyle(.bordered)
                     .foregroundStyle(.red)
                     #endif
                     
-                    Toggle(isOn: $object.is_placed)
+                    let placement_binding = Binding(
+                        get: { object.is_placed },
+                        set:
+                            { new_value in
+                                object.is_placed = new_value
+                                
+                                update_document(by: object)
+                            }
+                    )
+                    
+                    Toggle(isOn: placement_binding)
                     {
                         Label("Placed", systemImage: "mappin.and.ellipse")
                             .frame(maxWidth: .infinity)
                     }
                     .toggleStyle(.button)
+                    #if os(macOS)
                     .buttonStyle(.bordered)
+                    #endif
                     .buttonBorderShape(.roundedRectangle)
                 }
                 .padding([.horizontal, .bottom], 10)
                 
                 Divider()
                 
-                DisclosureGroup("Position", isExpanded: $position_is_expanded)
+                DisclosureGroup(isExpanded: $position_is_expanded)
                 {
+                    let position_binding = Binding(
+                        get: { object.position },
+                        set:
+                            { new_value in
+                                object.position = new_value
+                                
+                                update_document(by: object)
+                            }
+                    )
+                    
                     #if os(macOS)
-                    HStack
-                    {
-                        PositionView(position: $object.position)
-                    }
+                    PositionView(position: position_binding)
                     #else
-                    VStack
-                    {
-                        PositionView(position: $object.position)
-                    }
+                    PositionView(position: position_binding, with_steppers: false)
                     #endif
+                }
+                label:
+                {
+                    Text("Position")
+                        .font(.system(size: 13, weight: .bold))
                 }
                 .padding(10)
                 
                 Divider()
                 
-                /*if let robot = object as? Robot
+                if let robot = object as? Robot
                 {
-                    DisclosureGroup("Origin", isExpanded: $position_is_expanded)
+                    let origin_binding = Binding(
+                        get: { robot.origin_position },
+                        set:
+                            { new_value in
+                                robot.origin_position = new_value
+                                
+                                update_document(by: object)
+                            }
+                    )
+                    
+                    DisclosureGroup(isExpanded: $origin_is_expanded)
                     {
                         #if os(macOS)
-                        HStack
-                        {
-                            PositionView(position: $robot.origin_position)
-                        }
+                        PositionView(position: origin_binding)
                         #else
-                        VStack
-                        {
-                            PositionView(position: $robot.origin_position)
-                        }
+                        PositionView(position: origin_binding, with_steppers: false)
                         #endif
+                    }
+                    label:
+                    {
+                        Text("Origin")
+                            .font(.system(size: 13, weight: .bold))
                     }
                     .padding(10)
                     
                     Divider()
-                }*/
-                //
+                }
                 
                 //Divider()
             }
-        }
-        .onChange(of: grouped_key)
-        {
-            guard last_object == object
-            else
-            {
-                last_object = object
-                return
-            }
-            
-            update_document(by: object)
         }
     }
     
@@ -133,16 +162,6 @@ struct InspectorView: View
         default:
             return "None"
         }
-    }
-    
-    private var grouped_key: String
-    {
-        let p = object.position
-        
-        return
-            "\(object.name)|" +
-            "\(object.is_placed)|" +
-            "\(p.x),\(p.y),\(p.z),\(p.r),\(p.p),\(p.w)"
     }
     
     private func remove_object()
