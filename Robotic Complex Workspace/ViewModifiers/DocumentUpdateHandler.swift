@@ -12,14 +12,14 @@ import IndustrialKit
 class DocumentUpdateHandler: ObservableObject
 {
     // MARK: - Document handling
-    @Published var update_elements_document_notify = true
+    @Published var update_programs_document_notify = true
     @Published var update_registers_document_notify = true
     
     @Published var update_robots_document_notify = true
     @Published var update_tools_document_notify = true
     @Published var update_parts_document_notify = true
     
-    public func document_update_elements() { update_elements_document_notify.toggle() }
+    public func document_update_programs() { update_programs_document_notify.toggle() }
     public func document_update_registers() { update_registers_document_notify.toggle() }
     
     public func document_update_robots() { update_robots_document_notify.toggle() }
@@ -50,9 +50,9 @@ struct DocumentUpdateModifier: ViewModifier
             { _, _ in
                 document.preset.parts = base_workspace.file_data().parts
             }
-            .onChange(of: document_handler.update_elements_document_notify)
+            .onChange(of: document_handler.update_programs_document_notify)
             { _, _ in
-                document.preset.elements = base_workspace.file_data().elements
+                document.preset.programs = base_workspace.file_data().programs
             }
             .onChange(of: document_handler.update_registers_document_notify)
             { _, _ in

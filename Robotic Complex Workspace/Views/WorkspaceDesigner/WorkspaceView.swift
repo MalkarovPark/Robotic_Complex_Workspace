@@ -115,17 +115,6 @@ struct WorkspaceView: View
                     }
                 }
                 
-                ToolbarItem(id: "Registers", placement: compact_placement(), showsByDefault: false)
-                {
-                    ControlGroup
-                    {
-                        Button(action: { registers_view_presented = true })
-                        {
-                            Label("Registers", systemImage: "number")
-                        }
-                    }
-                }
-                
                 /*ToolbarItem(id: "Controls", placement: compact_placement())
                 {
                     ControlGroup
@@ -197,43 +186,6 @@ struct WorkspaceView: View
                 #endif
             }
             #endif
-            .sheet(isPresented: $registers_view_presented)
-            {
-                RegistersDataView(is_presented: $registers_view_presented)
-                {
-                    document_handler.document_update_registers()
-                }
-                .onDisappear()
-                {
-                    registers_view_presented = false
-                }
-                #if os(macOS)
-                    .frame(width: 420, height: 480)
-                #elseif os(visionOS)
-                    .frame(width: 600, height: 600)
-                #endif
-            }
-            .sheet(isPresented: $add_object_view_presented)
-            {
-                AddObjectView(is_presented: $add_object_view_presented)
-                #if os(macOS)
-                    .frame(minWidth: 420, maxWidth: 600, minHeight: 480, maxHeight: 600)
-                    //.frame(width: 420, height: 480)
-                #elseif os(visionOS)
-                    .frame(width: 600, height: 600)
-                #endif
-            }
-            .onAppear
-            {
-                base_workspace.elements_check()
-                
-                print(base_workspace.robots.count)
-                
-                for robot in base_workspace.robots
-                {
-                    print("🍺 \(robot.name) + \(robot.module_name) + \(robot.position)")
-                }
-            }
         }
     }
     

@@ -115,6 +115,8 @@ struct VisualWorkspaceView: View
         document_handler.document_update_robots()
         document_handler.document_update_tools()
         document_handler.document_update_parts()
+        
+        document_handler.document_update_programs()
     }
     
     private func compact_placement() -> ToolbarItemPlacement

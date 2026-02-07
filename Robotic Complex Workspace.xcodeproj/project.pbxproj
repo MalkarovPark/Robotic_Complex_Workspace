@@ -15,7 +15,6 @@
 		6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94F2AD345C4008FA7C4 /* SettingsView.swift */; };
 		6236F95A2AD345C4008FA7C4 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9502AD345C4008FA7C4 /* StatisticsView.swift */; };
 		6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */; };
-		6236F95D2AD345C4008FA7C4 /* ControlProgramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9532AD345C4008FA7C4 /* ControlProgramView.swift */; platformFilters = (ios, macos, ); };
 		6236F95E2AD345C4008FA7C4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9542AD345C4008FA7C4 /* ContentView.swift */; };
 		6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9602AD345FC008FA7C4 /* DynamicStack.swift */; };
 		6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9612AD345FC008FA7C4 /* ContextMenus.swift */; };
@@ -48,7 +47,6 @@
 		6236F94F2AD345C4008FA7C4 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		6236F9502AD345C4008FA7C4 /* StatisticsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
-		6236F9532AD345C4008FA7C4 /* ControlProgramView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControlProgramView.swift; sourceTree = "<group>"; };
 		6236F9542AD345C4008FA7C4 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6236F9602AD345FC008FA7C4 /* DynamicStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicStack.swift; sourceTree = "<group>"; };
 		6236F9612AD345FC008FA7C4 /* ContextMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextMenus.swift; sourceTree = "<group>"; };
@@ -190,7 +188,6 @@
 			children = (
 				6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */,
 				62E165E32B20C336005E318A /* WorkspaceViews */,
-				6236F9532AD345C4008FA7C4 /* ControlProgramView.swift */,
 				62507A872DE1B66D000D511D /* WorkspaceStatisticView.swift */,
 			);
 			path = WorkspaceDesigner;
@@ -339,7 +336,6 @@
 				6236F9652AD345FC008FA7C4 /* DoubleModifier.swift in Sources */,
 				62BFD7862B85699B00966525 /* ViewPendantButton.swift in Sources */,
 				627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */,
-				6236F95D2AD345C4008FA7C4 /* ControlProgramView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
