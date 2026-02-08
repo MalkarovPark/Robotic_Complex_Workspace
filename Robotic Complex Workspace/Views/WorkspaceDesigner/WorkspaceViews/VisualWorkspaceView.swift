@@ -75,7 +75,6 @@ struct VisualWorkspaceView: View
                         .modifier(CircleButtonImageFramer())
                 }
                 .modifier(CircleButtonGlassBorderer())
-                .keyboardShortcut(.cancelAction)
                 #if os(macOS) || os(iOS)
                 .padding(10)
                 #else
@@ -94,9 +93,7 @@ struct VisualWorkspaceView: View
                         .animation(.easeInOut(duration: 0.3), value: is_pan)
                         .modifier(CircleButtonImageFramer())
                 }
-                .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
-                .keyboardShortcut(.cancelAction)
                 #if os(macOS) || os(iOS)
                 .padding([.horizontal, .top], 10)
                 #else

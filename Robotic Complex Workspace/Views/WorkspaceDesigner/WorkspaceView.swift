@@ -186,6 +186,16 @@ struct WorkspaceView: View
             }
             #endif
         }
+        .sheet(isPresented: $add_object_view_presented)
+        {
+            AddObjectView(is_presented: $add_object_view_presented)
+            #if os(macOS)
+                .frame(minWidth: 420, maxWidth: 600, minHeight: 480, maxHeight: 600)
+                //.frame(width: 420, height: 480)
+            #elseif os(visionOS)
+                .frame(width: 600, height: 600)
+            #endif
+        }
     }
     
     private func stop_perform()
