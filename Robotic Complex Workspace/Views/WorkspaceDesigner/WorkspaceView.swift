@@ -198,33 +198,6 @@ struct WorkspaceView: View
         }
     }
     
-    private func stop_perform()
-    {
-        base_workspace.reset_performing()
-        
-        if base_workspace.performed
-        {
-            base_workspace.update_view()
-        }
-        
-        #if os(visionOS)
-        pendant_controller.view_dismiss()
-        #endif
-    }
-    
-    private func toggle_perform()
-    {
-        #if !os(visionOS)
-        app_state.view_program_as_text = false
-        #endif
-        base_workspace.start_pause_performing()
-    }
-    
-    private func change_cycle()
-    {
-        base_workspace.cycled.toggle()
-    }
-    
     private func compact_placement() -> ToolbarItemPlacement
     {
         #if os(macOS)

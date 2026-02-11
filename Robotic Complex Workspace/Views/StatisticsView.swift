@@ -274,7 +274,7 @@ struct StatisticsView: View
             clear_states_data()
         }
         
-        base_workspace.update_view()
+        //base_workspace.update_view()
     }
     
     private func caption_text() -> String
@@ -293,7 +293,7 @@ struct StatisticsView: View
                 try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
                 await MainActor.run
                 {
-                    base_workspace.update_view()
+                    //base_workspace.update_view()
                 }
                 
                 if diagram_update_task == nil
