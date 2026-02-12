@@ -17,8 +17,10 @@ struct InspectorView: View
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     @State private var last_object: WorkspaceObject?
+    
     @State private var position_is_expanded: Bool = true
-    @State private var origin_is_expanded: Bool = true
+    
+    @State private var origin_is_expanded: Bool = true // Robot
     
     var body: some View
     {
@@ -144,7 +146,62 @@ struct InspectorView: View
                     Divider()
                 }
                 
-                //Divider()
+                if let tool = object as? Tool
+                {
+                    let attached_to = Binding(
+                        get: { tool.attached_to ?? String() },
+                        set:
+                            { new_value in
+                                tool.attached_to = new_value
+                                
+                                update_document(by: object)
+                            }
+                    )
+                    
+                    let is_attached = Binding(
+                        get: { tool.attached_to != nil },
+                        set:
+                            { new_value in
+                                tool.attached_to = new_value ? base_workspace.placed_robots_names.first : nil
+                                
+                                update_document(by: object)
+                            }
+                    )
+                    
+                    HStack
+                    {
+                        Picker("Attached to", selection: attached_to)
+                        {
+                            if base_workspace.placed_robots_names.count > 0
+                            {
+                                ForEach(base_workspace.placed_robots_names, id: \.self)
+                                { name in
+                                    Text(name)
+                                }
+                            }
+                            else
+                            {
+                                Text("None")
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(tool.attached_to == nil)
+                        
+                        Toggle(isOn: is_attached)
+                        {
+                            Image(systemName: "pin.fill")
+                        }
+                        .toggleStyle(.button)
+                        #if os(macOS)
+                        .buttonStyle(.bordered)
+                        #endif
+                        .buttonBorderShape(.roundedRectangle)
+                    }
+                    .padding(10)
+                    .disabled(base_workspace.placed_robots_names.count == 0)
+                    
+                    Divider()
+                }
             }
         }
     }
@@ -168,6 +225,7 @@ struct InspectorView: View
     {
         let stored_object = object
         base_workspace.delete_object(object)
+        base_workspace.deselect_object()
         update_document(by: stored_object)
     }
     
@@ -189,6 +247,45 @@ struct InspectorView: View
 
 #Preview
 {
-    InspectorView(object: Robot(name: "Name"))
-        .frame(width: 256, height: 600)
+    ZStack
+    {
+        
+    }
+    .inspector(isPresented: .constant(true))
+    {
+        InspectorView(object: Robot(name: "Robot"))
+    }
+    .frame(width: 400, height: 600)
+    .environmentObject(Workspace())
+    .environmentObject(DocumentUpdateHandler())
+}
+
+#Preview
+{
+    ZStack
+    {
+        
+    }
+    .inspector(isPresented: .constant(true))
+    {
+        InspectorView(object: Tool(name: "Tool"))
+    }
+    .frame(width: 400, height: 600)
+    .environmentObject(Workspace())
+    .environmentObject(DocumentUpdateHandler())
+}
+
+#Preview
+{
+    ZStack
+    {
+        
+    }
+    .inspector(isPresented: .constant(true))
+    {
+        InspectorView(object: Part(name: "Part"))
+    }
+    .frame(width: 400, height: 600)
+    .environmentObject(Workspace())
+    .environmentObject(DocumentUpdateHandler())
 }
