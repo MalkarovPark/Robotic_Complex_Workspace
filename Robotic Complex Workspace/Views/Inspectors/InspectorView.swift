@@ -172,6 +172,8 @@ struct InspectorView: View
                             { new_value in
                                 tool.attached_to = new_value ? base_workspace.placed_robots_names.first : nil
                                 
+                                //base_workspace.update_tool_attachments()
+                                
                                 update_document(by: object)
                             }
                     )

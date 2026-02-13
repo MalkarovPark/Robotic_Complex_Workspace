@@ -128,16 +128,35 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
     
     private func apply_nodes_positions(values: [Float])
     {
-        entities[safe: "d0", default: Entity()].eulerAngles.y = Float(values[0])
-        entities[safe: "d1", default: Entity()].eulerAngles.z = Float(values[1])
-        entities[safe: "d2", default: Entity()].eulerAngles.z = Float(values[2])
-        entities[safe: "d3", default: Entity()].eulerAngles.y = Float(values[3])
-        entities[safe: "d4", default: Entity()].eulerAngles.z = Float(values[4])
-        entities[safe: "d5", default: Entity()].eulerAngles.y = Float(values[5])
+        let axes: [SIMD3<Float>] = [
+            SIMD3(0,1,0),
+            SIMD3(0,0,1),
+            SIMD3(0,0,1),
+            SIMD3(0,1,0),
+            SIMD3(0,0,1),
+            SIMD3(0,1,0)
+        ]
+        
+        for i in 0..<6
+        {
+            let node_key = "d\(i)"
+            let entity = entities[safe: node_key, default: Entity()]
+            
+            var target = simd_quatf(angle: values[i], axis: axes[i])
+            let current = entity.transform.rotation
+            
+            // Hemisphere correction
+            if simd_dot(current.vector, target.vector) < 0
+            {
+                target = simd_quatf(vector: -target.vector)
+            }
+            
+            entity.transform.rotation = target
+        }
         
         if get_statistics
         {
-            chart_ik_values = values // Store new parts angles array for chart
+            chart_ik_values = values
         }
     }
     
