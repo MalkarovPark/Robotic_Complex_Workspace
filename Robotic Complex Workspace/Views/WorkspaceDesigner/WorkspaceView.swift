@@ -114,34 +114,6 @@ struct WorkspaceView: View
                     }
                 }
                 
-                /*ToolbarItem(id: "Controls", placement: compact_placement())
-                {
-                    ControlGroup
-                    {
-                        Button(action: change_cycle)
-                        {
-                            if base_workspace.cycled
-                            {
-                                Label("Cycle", systemImage: "repeat")
-                            }
-                            else
-                            {
-                                Label("Cycle", systemImage: "repeat.1")
-                            }
-                        }
-                        
-                        Button(action: stop_perform)
-                        {
-                            Label("Stop", systemImage: "stop")
-                        }
-                        
-                        Button(action: toggle_perform)
-                        {
-                            Label("Perform", systemImage: "playpause")
-                        }
-                    }
-                }*/
-                
                 ToolbarItem(id: "Grid", placement: compact_placement(), showsByDefault: false)
                 {
                     ControlGroup
