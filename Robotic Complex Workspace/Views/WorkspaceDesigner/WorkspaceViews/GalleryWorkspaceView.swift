@@ -218,7 +218,7 @@ struct PlacedToolsGallery: View
         .padding(.horizontal, object_card_spacing / 1.5)
     }
     
-    private func binding_to_attached(for name: String) -> Binding<Bool>
+    /*private func binding_to_attached(for name: String) -> Binding<Bool>
     {
         Binding(
             get: {
@@ -229,7 +229,7 @@ struct PlacedToolsGallery: View
                 base_workspace.tool_by_name(name).is_attached = newValue
             }
         )
-    }
+    }*/
 }
 
 struct PlacedPartsGallery: View

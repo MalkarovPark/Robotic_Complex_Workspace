@@ -103,7 +103,7 @@ struct CardMenu: ViewModifier
                     else if object is Tool
                     {
                         (object as! Tool).attached_to = nil
-                        (object as! Tool).is_attached = false
+                        //(object as! Tool).is_attached = false
                     }
                 }
             }
