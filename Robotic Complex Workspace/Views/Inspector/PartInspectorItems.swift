@@ -17,9 +17,7 @@ struct PartInspectorItems: View
     public let on_update: () -> ()
     
     @State private var apperance_is_expanded: Bool = true
-    @State private var physics_is_expanded: Bool = true
-    
-    //@State private var physics_type: PhysicsType
+    @State private var physics_is_expanded: Bool = false
     
     var body: some View
     {
@@ -94,13 +92,13 @@ struct PartInspectorItems: View
         
         DisclosureGroup(isExpanded: $physics_is_expanded)
         {
-            VStack(spacing: 10)
+            VStack(spacing: 20)
             {
-                let is_physics_enabled = Binding(
-                    get: { part.is_physics_enabled },
+                let physics_enabled = Binding(
+                    get: { part.physics_enabled },
                     set:
                         { new_value in
-                            part.is_physics_enabled = new_value
+                            part.physics_enabled = new_value
                             
                             on_update()
                         }
@@ -108,13 +106,13 @@ struct PartInspectorItems: View
                 
                 HStack
                 {
-                    Text("Enable Physics")
+                    Text("Physics Enabled")
                         .fontWeight(.light)
                         .foregroundStyle(.secondary)
                     
                     Spacer()
                     
-                    Toggle("Use Custom Color", isOn: is_physics_enabled)
+                    Toggle("Physics Enabled", isOn: physics_enabled)
                         .labelsHidden()
                     #if os(macOS)
                         .toggleStyle(.checkbox)
@@ -152,7 +150,138 @@ struct PartInspectorItems: View
                     .pickerStyle(.menu)
                     .labelsHidden()
                 }
+                
+                HStack
+                {
+                    let mass = Binding(
+                        get: { part.physics_body_data.mass },
+                        set:
+                            { new_value in
+                                part.physics_body_data.mass = new_value
+                                
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Mass (kg)")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField("Mass", value: mass, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 64)
+                        .labelsHidden()
+                    
+                    Stepper("Enter", value: mass, in: 0...1000000)
+                        .labelsHidden()
+                    #if !os(macOS)
+                        .padding(.trailing, 4)
+                    #endif
+                }
+                
+                HStack
+                {
+                    let affected_by_gravity = Binding(
+                        get: { part.physics_body_data.affected_by_gravity },
+                        set:
+                            { new_value in
+                                part.physics_body_data.affected_by_gravity = new_value
+                                
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Affected by Gravity")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    Toggle("Affected by Gravity", isOn: affected_by_gravity)
+                        .labelsHidden()
+                    #if os(macOS)
+                        .toggleStyle(.checkbox)
+                    #else
+                        .toggleStyle(.switch)
+                        .padding(.trailing, 4)
+                    #endif
+                }
+                
+                HStack
+                {
+                    let static_friction = Binding(
+                        get: { part.physics_body_data.static_friction },
+                        set:
+                            { new_value in
+                                part.physics_body_data.static_friction = new_value
+                                
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Static Friction")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField("Static Friction", value: static_friction, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 64)
+                        .labelsHidden()
+                }
+                
+                HStack
+                {
+                    let dynamic_friction = Binding(
+                        get: { part.physics_body_data.dynamic_friction },
+                        set:
+                            { new_value in
+                                part.physics_body_data.dynamic_friction = new_value
+                                
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Dynamic Friction")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField("Dynamic Friction", value: dynamic_friction, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 64)
+                        .labelsHidden()
+                }
+                
+                HStack
+                {
+                    let restitution = Binding(
+                        get: { part.physics_body_data.restitution },
+                        set:
+                            { new_value in
+                                part.physics_body_data.restitution = new_value
+                                
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Restitution")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField("Restitution", value: restitution, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 64)
+                        .labelsHidden()
+                }
             }
+            .padding(.vertical, 10)
         }
         label:
         {

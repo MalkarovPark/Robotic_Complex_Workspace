@@ -74,7 +74,7 @@ private struct OriginScaleView: View
         {
             HStack
             {
-                Text("Scale")
+                Text("Scale (mm)")
                     .fontWeight(.light)
                     //.font(.system(size: 14, weight: .light))
                 Spacer()
@@ -159,11 +159,11 @@ private struct OriginScaleView: View
             switch self
             {
             case .x:
-                return ("X ", 0)
+                return ("X", 0)
             case .y:
-                return ("Y ", 1)
+                return ("Y", 1)
             case .z:
-                return ("Z ", 2)
+                return ("Z", 2)
             }
         }
         
