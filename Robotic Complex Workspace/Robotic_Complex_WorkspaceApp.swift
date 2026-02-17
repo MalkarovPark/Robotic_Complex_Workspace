@@ -32,6 +32,9 @@ struct Robotic_Complex_WorkspaceApp: App
         { file in
             ContentView(document: file.$document) // Pass document instance to main app view in closure
                 .environmentObject(app_state)
+            #if os(macOS)
+                .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+            #endif
             #if os(visionOS)
                 .environmentObject(base_workspace)
                 .environmentObject(pendant_controller)
