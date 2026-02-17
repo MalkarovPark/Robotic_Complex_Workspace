@@ -2,7 +2,7 @@
 //  PartInspectorItems.swift
 //  RCWorkspace
 //
-//  Created by Artem Malkarov on 14.02.2026.
+//  Created by Artem on 14.02.2026.
 //
 
 import SwiftUI
@@ -25,21 +25,21 @@ struct PartInspectorItems: View
     {
         DisclosureGroup(isExpanded: $apperance_is_expanded)
         {
-            let part_color = Binding(
-                get: { part.color ?? .indigo },
+            let is_custom_color = Binding(
+                get: { part.is_custom_color },
                 set:
                     { new_value in
-                        part.color = new_value
+                        part.is_custom_color = new_value
                         
                         on_update()
                     }
             )
             
-            let use_custom_color = Binding(
-                get: { part.color != nil },
+            let part_color = Binding(
+                get: { part.color },
                 set:
                     { new_value in
-                        part.color = new_value ? .indigo : nil
+                        part.color = new_value
                         
                         on_update()
                     }
@@ -55,7 +55,7 @@ struct PartInspectorItems: View
                     
                     Spacer()
                     
-                    Toggle("Use Custom Color", isOn: use_custom_color)
+                    Toggle("Use Custom Color", isOn: is_custom_color)
                         .labelsHidden()
                     #if os(macOS)
                         .toggleStyle(.checkbox)
@@ -74,10 +74,10 @@ struct PartInspectorItems: View
                     Spacer()
                     
                     ColorPicker("Color", selection: part_color)
-                        .disabled(part.color == nil)
+                        .disabled(!part.is_custom_color)
                         .labelsHidden()
                     #if !os(macOS)
-                        .opacity(part.color == nil ? 0.5 : 1)
+                        .opacity(!part.is_custom_color ? 0.5 : 1)
                     #endif
                 }
             }
@@ -96,13 +96,41 @@ struct PartInspectorItems: View
         {
             VStack(spacing: 10)
             {
+                let is_physics_enabled = Binding(
+                    get: { part.is_physics_enabled },
+                    set:
+                        { new_value in
+                            part.is_physics_enabled = new_value
+                            
+                            on_update()
+                        }
+                )
+                
                 HStack
                 {
-                    let physics_type = Binding(
-                        get: { part.physics_type },
+                    Text("Enable Physics")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    Toggle("Use Custom Color", isOn: is_physics_enabled)
+                        .labelsHidden()
+                    #if os(macOS)
+                        .toggleStyle(.checkbox)
+                    #else
+                        .toggleStyle(.switch)
+                        .padding(.trailing, 4)
+                    #endif
+                }
+                
+                HStack
+                {
+                    let physics_mode = Binding(
+                        get: { part.physics_body_data.mode },
                         set:
                             { new_value in
-                                part.physics_type = new_value
+                                part.physics_body_data.mode = new_value
                                 
                                 on_update()
                             }
@@ -114,9 +142,9 @@ struct PartInspectorItems: View
                     
                     Spacer()
                     
-                    Picker("Mode", selection: physics_type)
+                    Picker("Mode", selection: physics_mode)
                     {
-                        ForEach(PhysicsType.allCases, id: \.self)
+                        ForEach(PhysicsBodyModeFileData.allCases, id: \.self)
                         { type in
                             Text(type.rawValue)
                         }
@@ -134,6 +162,11 @@ struct PartInspectorItems: View
         .padding(10)
         
         Divider()
+    }
+    
+    private var physics_body_data: PhysicsBodyComponentFileData?
+    {
+        return part.physics_body_data
     }
 }
 

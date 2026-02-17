@@ -2,7 +2,7 @@
 //  ToolInspectorItems.swift
 //  RCWorkspace
 //
-//  Created by Artem Malkarov on 14.02.2026.
+//  Created by Artem on 14.02.2026.
 //
 
 import SwiftUI
