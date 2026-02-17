@@ -45,34 +45,43 @@ struct PartInspectorItems: View
                     }
             )
             
-            VStack(spacing: 10)
+            VStack(spacing: 20)
             {
                 HStack
                 {
                     Text("Use Custom Color")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
-                    Toggle("", isOn: use_custom_color)
+                    Toggle("Use Custom Color", isOn: use_custom_color)
                         .labelsHidden()
                     #if os(macOS)
                         .toggleStyle(.checkbox)
                     #else
                         .toggleStyle(.switch)
+                        .padding(.trailing, 4)
                     #endif
                 }
                 
                 HStack
                 {
                     Text("Color")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
                     ColorPicker("Color", selection: part_color)
                         .disabled(part.color == nil)
                         .labelsHidden()
+                    #if !os(macOS)
+                        .opacity(part.color == nil ? 0.5 : 1)
+                    #endif
                 }
             }
+            .padding(.vertical, 10)
         }
         label:
         {
@@ -100,6 +109,8 @@ struct PartInspectorItems: View
                     )
                     
                     Text("Mode")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     

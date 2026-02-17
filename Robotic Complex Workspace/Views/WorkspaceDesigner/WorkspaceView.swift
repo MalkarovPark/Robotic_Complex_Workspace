@@ -87,31 +87,6 @@ struct WorkspaceView: View
             #endif
             .toolbar(id: "workspace")
             {
-                ToolbarItem(id: "Pendant", placement: .cancellationAction)
-                {
-                    ControlGroup
-                    {
-                        Button(action: { pendant_controller.is_opened.toggle() })
-                        {
-                            Label("Toggle Pendant", systemImage: "rectangle.portrait")
-                                .overlay(alignment: .topTrailing)
-                                {
-                                    ZStack
-                                    {
-                                        Image(systemName: "circle.fill")
-                                            .foregroundStyle(.white)
-                                            .font(.system(size: 6))
-                                        
-                                        Image(systemName: "circle.fill")
-                                            .foregroundStyle(performing_state_color)
-                                            .font(.system(size: 4))
-                                    }
-                                    //.padding(0.1)
-                                }
-                        }
-                    }
-                }
-                
                 #if !os(macOS)
                 ToolbarItem(id: "Settings", placement: .cancellationAction)
                 {
@@ -127,6 +102,28 @@ struct WorkspaceView: View
                     }
                 }
                 #endif
+                
+                ToolbarItem(id: "Pendant", placement: .cancellationAction)
+                {
+                    Button
+                    {
+                        pendant_controller.is_opened.toggle()
+                    }
+                    label:
+                    {
+                        if pendant_controller.is_opened
+                        {
+                            Image(systemName: "circlebadge")
+                        }
+                        else
+                        {
+                            Image(systemName: "circlebadge.fill")
+                                .foregroundStyle(performing_state_color)
+                        }
+                    }
+                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    .animation(.easeInOut(duration: 0.3), value: pendant_controller.is_opened)
+                }
                 
                 ToolbarItem(id: "Add Object", placement: compact_placement())
                 {
@@ -146,8 +143,6 @@ struct WorkspaceView: View
                         Button(action: { base_workspace.toggle_grid_visiblity() })
                         {
                             Label("Grid", systemImage: base_workspace.is_grid_visible ? "squareshape.split.2x2" : "squareshape.split.2x2.dotted.inside")
-                                //.contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                                //.animation(.easeInOut(duration: 0.3), value: base_workspace.is_grid_visible)
                         }
                     }
                 }
