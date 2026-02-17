@@ -631,22 +631,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B8B56321-A39A-4BDB-9D52-DA6A2F5371C9"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "WorkspaceView"
-            landmarkType = "14">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "F922E1E2-E3CF-48FB-9935-6CC20FF531B2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -736,7 +720,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1830"
             endingLineNumber = "1830"
-            landmarkName = "add_line(index:axis:)"
+            landmarkName = "create_grid_async(center_x:center_z:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -752,7 +736,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1828"
             endingLineNumber = "1828"
-            landmarkName = "add_line(index:axis:)"
+            landmarkName = "create_grid_async(center_x:center_z:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -768,7 +752,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2077"
             endingLineNumber = "2077"
-            landmarkName = "make_object_pointer(bounds:)"
+            landmarkName = "select_object_by_entity_identifier(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -784,7 +768,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2075"
             endingLineNumber = "2075"
-            landmarkName = "make_object_pointer(bounds:)"
+            landmarkName = "select_object_by_entity_identifier(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -800,7 +784,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2073"
             endingLineNumber = "2073"
-            landmarkName = "make_object_pointer(bounds:)"
+            landmarkName = "select_object_by_entity_identifier(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -832,8 +816,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2427"
             endingLineNumber = "2427"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "comfort_placement(for:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -848,7 +832,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2433"
             endingLineNumber = "2433"
-            landmarkName = "duplicate_robot(name:)"
+            landmarkName = "comfort_placement(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -864,7 +848,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2422"
             endingLineNumber = "2422"
-            landmarkName = "duplicate_robot(index:)"
+            landmarkName = "comfort_placement(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -880,7 +864,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2420"
             endingLineNumber = "2420"
-            landmarkName = "duplicate_robot(index:)"
+            landmarkName = "comfort_placement(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -912,8 +896,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1540"
             endingLineNumber = "1540"
-            landmarkName = "place_entity(to:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -944,8 +928,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1700"
             endingLineNumber = "1700"
-            landmarkName = "update_target_tile_scale(_:_:)"
-            landmarkType = "9">
+            landmarkName = "focus(on:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -960,8 +944,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1553"
             endingLineNumber = "1553"
-            landmarkName = "place_entity(to:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -976,7 +960,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1686"
             endingLineNumber = "1686"
-            landmarkName = "move_camera_target()"
+            landmarkName = "focus(on:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -992,8 +976,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1554"
             endingLineNumber = "1554"
-            landmarkName = "place_entity(to:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

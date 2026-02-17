@@ -87,6 +87,31 @@ struct WorkspaceView: View
             #endif
             .toolbar(id: "workspace")
             {
+                ToolbarItem(id: "Pendant", placement: .cancellationAction)
+                {
+                    ControlGroup
+                    {
+                        Button(action: { pendant_controller.is_opened.toggle() })
+                        {
+                            Label("Toggle Pendant", systemImage: "rectangle.portrait")
+                                .overlay(alignment: .topTrailing)
+                                {
+                                    ZStack
+                                    {
+                                        Image(systemName: "circle.fill")
+                                            .foregroundStyle(.white)
+                                            .font(.system(size: 6))
+                                        
+                                        Image(systemName: "circle.fill")
+                                            .foregroundStyle(performing_state_color)
+                                            .font(.system(size: 4))
+                                    }
+                                    //.padding(0.1)
+                                }
+                        }
+                    }
+                }
+                
                 #if !os(macOS)
                 ToolbarItem(id: "Settings", placement: .cancellationAction)
                 {
@@ -167,6 +192,24 @@ struct WorkspaceView: View
             #elseif os(visionOS)
                 .frame(width: 600, height: 600)
             #endif
+        }
+        .onAppear
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3)
+            {
+                pendant_controller.is_opened = true
+            }
+        }
+    }
+    
+    private var performing_state_color: Color
+    {
+        switch base_workspace.selected_object
+        {
+        case let robot as Robot: return robot.performing_state.color
+        case let tool as Tool: return tool.performing_state.color
+        case let part as Part: return .black
+        default: return base_workspace.performing_state.color
         }
     }
     
