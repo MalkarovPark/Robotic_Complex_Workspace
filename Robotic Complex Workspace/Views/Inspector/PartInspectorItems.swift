@@ -130,6 +130,7 @@ struct PartInspectorItems: View
                             { new_value in
                                 part.physics_body_data.mode = new_value
                                 
+                                part.update_model_physics()
                                 on_update()
                             }
                     )
@@ -159,6 +160,7 @@ struct PartInspectorItems: View
                             { new_value in
                                 part.physics_body_data.mass = new_value
                                 
+                                part.update_model_physics()
                                 on_update()
                             }
                     )
@@ -189,6 +191,7 @@ struct PartInspectorItems: View
                             { new_value in
                                 part.physics_body_data.affected_by_gravity = new_value
                                 
+                                part.update_model_physics()
                                 on_update()
                             }
                     )
@@ -217,6 +220,7 @@ struct PartInspectorItems: View
                             { new_value in
                                 part.physics_body_data.static_friction = new_value
                                 
+                                part.update_model_physics()
                                 on_update()
                             }
                     )
@@ -241,6 +245,7 @@ struct PartInspectorItems: View
                             { new_value in
                                 part.physics_body_data.dynamic_friction = new_value
                                 
+                                part.update_model_physics()
                                 on_update()
                             }
                     )
@@ -265,6 +270,7 @@ struct PartInspectorItems: View
                             { new_value in
                                 part.physics_body_data.restitution = new_value
                                 
+                                part.update_model_physics()
                                 on_update()
                             }
                     )
