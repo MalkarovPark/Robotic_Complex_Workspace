@@ -71,7 +71,6 @@ struct GeneralSettingsView: View
     
     #if os(visionOS)
     @EnvironmentObject var app_state: AppState
-    @EnvironmentObject var sidebar_controller: SidebarController
     #endif
     
     var body: some View

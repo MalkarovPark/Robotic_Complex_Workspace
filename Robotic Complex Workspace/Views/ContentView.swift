@@ -83,11 +83,14 @@ struct ContentView: View
             .environmentObject(document_handler)
             .task//.onAppear
             {
-                update_preferences()
-                base_workspace.file_view(preset: document.preset)
                 #if os(macOS)
                 app_state.inc_documents_count()
                 #endif
+                update_preferences()
+                
+                //while !app_state.modules_loaded { }
+                print("☕️")
+                base_workspace.file_view(preset: document.preset)
             }
         #if os(macOS)
             .onDisappear
@@ -99,16 +102,7 @@ struct ContentView: View
     
     private func update_preferences()
     {
-        //Workspace.workcell_scene_address = "Components.scnassets/Workcell.scn"
         Workspace.default_registers_count = workspace_registers_count
-        
-        /*Robot.default_origin_location[0] = Float(location_x)
-        Robot.default_origin_location[1] = Float(location_y)
-        Robot.default_origin_location[2] = Float(location_z)
-        
-        Robot.default_space_scale[0] = Float(scale_x)
-        Robot.default_space_scale[1] = Float(scale_y)
-        Robot.default_space_scale[2] = Float(scale_z)*/
     }
 }
 

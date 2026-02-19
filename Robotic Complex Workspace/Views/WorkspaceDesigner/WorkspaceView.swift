@@ -46,20 +46,12 @@ struct WorkspaceView: View
                 {
                 case .visual:
                     VisualWorkspaceView()
-                        //.onDisappear(perform: stop_perform)
-                        //.onAppear(perform: update_constrainted_positions)
                 case .gallery:
                     GalleryWorkspaceView()
                 case .spatial:
                     EmptyView()
                 }
                 
-                /*FloatingView(alignment: .trailing)
-                {
-                    RobotControlView(robot: robot)
-                        .padding(8)
-                }
-                .padding([.horizontal, .bottom], 10)*/
                 SpatialPendantView(controller: pendant_controller, workspace: base_workspace)
                     .ignoresSafeArea(.container, edges: [.bottom])
                     .padding(10)
@@ -113,12 +105,21 @@ struct WorkspaceView: View
                     {
                         if pendant_controller.is_opened
                         {
+                            #if os(macOS)
+                            Label("Pendant", systemImage: "circlebadge")
+                            #else
                             Image(systemName: "circlebadge")
+                            #endif
                         }
                         else
                         {
+                            #if os(macOS)
+                            Label("Pendant", systemImage: "circlebadge.fill")
+                                .foregroundStyle(performing_state_color)
+                            #else
                             Image(systemName: "circlebadge.fill")
                                 .foregroundStyle(performing_state_color)
+                            #endif
                         }
                     }
                     .contentTransition(.symbolEffect(.replace.offUp.byLayer))
@@ -188,9 +189,11 @@ struct WorkspaceView: View
                 .frame(width: 600, height: 600)
             #endif
         }
-        .onAppear
+        .task
         {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3)
+            //while !app_state.modules_loaded { }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
                 pendant_controller.is_opened = true
             }

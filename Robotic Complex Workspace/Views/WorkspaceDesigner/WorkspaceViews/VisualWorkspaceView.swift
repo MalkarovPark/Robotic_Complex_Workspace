@@ -18,7 +18,6 @@ struct VisualWorkspaceView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
-    //@EnvironmentObject var sidebar_controller: SidebarController
     
     #if !os(macOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
@@ -44,6 +43,10 @@ struct VisualWorkspaceView: View
                 
                 base_workspace.place_entity(to: content)
             }
+            /*update:
+            { content in
+                
+            }*/
             .realityViewCameraControls(is_pan ? .pan : .orbit)
             .highPriorityGesture(
                 TapGesture()

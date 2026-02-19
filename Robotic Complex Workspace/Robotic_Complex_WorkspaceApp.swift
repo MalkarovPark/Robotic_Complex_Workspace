@@ -23,7 +23,6 @@ struct Robotic_Complex_WorkspaceApp: App
     
     @StateObject var base_workspace = Workspace() // Workspace object for opened file
     @StateObject var pendant_controller = PendantController()
-    @StateObject var sidebar_controller = SidebarController()
     #endif
     
     var body: some Scene
@@ -38,7 +37,6 @@ struct Robotic_Complex_WorkspaceApp: App
             #if os(visionOS)
                 .environmentObject(base_workspace)
                 .environmentObject(pendant_controller)
-                .environmentObject(sidebar_controller)
                 .onAppear
                 {
                     #if os(visionOS)
@@ -52,16 +50,7 @@ struct Robotic_Complex_WorkspaceApp: App
                     }
                     
                     pendant_controller.workspace = base_workspace
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                    {
-                        sidebar_controller.flip_workspace_selection()
-                    }
                     #endif
-                }
-                .onDisappear
-                {
-                    sidebar_controller.sidebar_selection = .WorkspaceView
                 }
             #endif
         }
