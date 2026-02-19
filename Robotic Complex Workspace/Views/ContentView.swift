@@ -51,6 +51,8 @@ struct ContentView: View
     
     @StateObject private var document_handler = DocumentUpdateHandler()
     
+    @State private var hover_state = false
+    
     // MARK: Main view
     var body: some View
     {
@@ -88,8 +90,6 @@ struct ContentView: View
                 #endif
                 update_preferences()
                 
-                //while !app_state.modules_loaded { }
-                print("☕️")
                 base_workspace.file_view(preset: document.preset)
             }
         #if os(macOS)
@@ -98,6 +98,18 @@ struct ContentView: View
                 app_state.dec_documents_count()
             }
         #endif
+            .onHover
+            { hovered in
+                hover_state = hovered
+                //app_state.apply_command_functions(by: base_workspace)
+            }
+            .onChange(of: hover_state)
+            { _, new_value in
+                if new_value
+                {
+                    app_state.apply_command_functions(by: base_workspace)
+                }
+            }
     }
     
     private func update_preferences()

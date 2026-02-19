@@ -73,13 +73,13 @@ struct Robotic_Complex_WorkspaceApp: App
             {
                 Button("Run/Pause")
                 {
-                    app_state.run_command.toggle()
+                    app_state.start_pause_performing()
                 }
                 .keyboardShortcut("R", modifiers: .command)
                 
                 Button("Stop")
                 {
-                    app_state.stop_command.toggle()
+                    app_state.reset_performing()
                 }
                 .keyboardShortcut(".", modifiers: .command)
             }

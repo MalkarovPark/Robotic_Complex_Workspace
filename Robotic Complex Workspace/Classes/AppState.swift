@@ -13,10 +13,6 @@ import IndustrialKit
 @MainActor
 class AppState: ObservableObject
 {
-    // Commands
-    @Published var run_command = false
-    @Published var stop_command = false
-    
     #if os(iOS) || os(visionOS)
     @Published var settings_view_presented = false // Flag for showing setting view for iOS and iPadOS
     #endif
@@ -308,36 +304,44 @@ class AppState: ObservableObject
         external_modules_list.changer.count > 0 ? names_to_list(external_modules_list.changer) : "No Modules"
     }
     
-    // MARK: - Program elements functions
-    @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
-    
-    #if !os(visionOS)
-    @Published public var view_program_as_text = false
-    #endif
-}
-
-// MARK: - Control modifier
-struct MenuHandlingModifier: ViewModifier
-{
-    @EnvironmentObject var app_state: AppState
-    
-    @Binding var performed: Bool
-    
-    let toggle_perform: () -> ()
-    let stop_perform: () -> ()
-    
-    public func body(content: Content) -> some View
+    // MARK: Controls
+    public func apply_command_functions(by workspace: Workspace)
     {
-        content
-            .onChange(of: app_state.run_command)
-            { _, _ in
-                toggle_perform()
+        start_pause_performing = {
+            switch workspace.selected_object
+            {
+            case let robot as Robot:
+                if robot.selected_program != nil { robot.start_pause_moving() }
+            case let tool as Tool:
+                if tool.selected_program != nil { tool.start_pause_performing() }
+            case is Part:
+                break
+            case .some(_):
+                break
+            case .none:
+                if workspace.selected_program != nil { workspace.start_pause_performing() }
             }
-            .onChange(of: app_state.stop_command)
-            { _, _ in
-                stop_perform()
+        }
+        
+        reset_performing = {
+            switch workspace.selected_object
+            {
+            case let robot as Robot:
+                if robot.selected_program != nil { robot.reset_moving() }
+            case let tool as Tool:
+                if tool.selected_program != nil { tool.reset_performing() }
+            case is Part:
+                break
+            case .some(_):
+                break
+            case .none:
+                if workspace.selected_program != nil { workspace.reset_performing() }
             }
+        }
     }
+    
+    var start_pause_performing: () -> () = { }
+    var reset_performing: () -> () = { }
 }
 
 func colors_by_seed(seed: Int) -> [Color]
