@@ -65,7 +65,7 @@ struct PartInspectorItems: View
                 
                 HStack
                 {
-                    Text("Color")
+                    Text("Custom Color")
                         .fontWeight(.light)
                         .foregroundStyle(.secondary)
                     

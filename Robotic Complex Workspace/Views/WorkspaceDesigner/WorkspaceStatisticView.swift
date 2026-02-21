@@ -2,7 +2,7 @@
 //  WorkspaceStatisticView.swift
 //  RCWorkspace
 //
-//  Created by Artem Malkarov on 24.05.2025.
+//  Created by Artem on 24.05.2025.
 //
 
 import SwiftUI

@@ -36,6 +36,8 @@ struct WorkspaceView: View
     
     @StateObject var pendant_controller = PendantController()
     
+    @State private var is_pan = false
+    
     var body: some View
     {
         NavigationStack
@@ -45,7 +47,7 @@ struct WorkspaceView: View
                 switch representation_type
                 {
                 case .visual:
-                    VisualWorkspaceView()
+                    VisualWorkspaceView(is_pan: $is_pan, pendant_controller: pendant_controller)
                 case .gallery:
                     GalleryWorkspaceView()
                 case .spatial:
@@ -95,38 +97,59 @@ struct WorkspaceView: View
                 }
                 #endif
                 
-                ToolbarItem(id: "Pendant", placement: .cancellationAction)
+                ToolbarItem(id: "View", placement: compact_primary_placement())
                 {
-                    Button
+                    Button(action: { is_pan.toggle() })
                     {
-                        pendant_controller.is_opened.toggle()
+                        Label("View", systemImage: is_pan ? "move.3d" : "rotate.3d")
+                            .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                            .animation(.easeInOut(duration: 0.3), value: is_pan)
                     }
-                    label:
-                    {
-                        if pendant_controller.is_opened
-                        {
-                            #if os(macOS)
-                            Label("Pendant", systemImage: "circlebadge")
-                            #else
-                            Image(systemName: "circlebadge")
-                            #endif
-                        }
-                        else
-                        {
-                            #if os(macOS)
-                            Label("Pendant", systemImage: "circlebadge.fill")
-                                .foregroundStyle(performing_state_color)
-                            #else
-                            Image(systemName: "circlebadge.fill")
-                                .foregroundStyle(performing_state_color)
-                            #endif
-                        }
-                    }
-                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    .animation(.easeInOut(duration: 0.3), value: pendant_controller.is_opened)
                 }
                 
-                ToolbarItem(id: "Add Object", placement: compact_placement())
+                ToolbarItem(id: "Grid", placement: compact_primary_placement())
+                {
+                    Button(action: { base_workspace.toggle_grid_visiblity() })
+                    {
+                        Label("Grid", systemImage: base_workspace.is_grid_visible ? "squareshape.split.2x2" : "squareshape.split.2x2.dotted.inside")
+                    }
+                }
+                
+                ToolbarItem(id: "Pendant", placement: .confirmationAction)
+                {
+                    ControlGroup
+                    {
+                        Button
+                        {
+                            pendant_controller.is_opened.toggle()
+                        }
+                        label:
+                        {
+                            if pendant_controller.is_opened
+                            {
+                                #if os(macOS)
+                                Label("Pendant", systemImage: "circlebadge")
+                                #else
+                                Image(systemName: "circlebadge")
+                                #endif
+                            }
+                            else
+                            {
+                                #if os(macOS)
+                                Label("Pendant", systemImage: "circlebadge.fill")
+                                    .foregroundStyle(performing_state_color)
+                                #else
+                                Image(systemName: "circlebadge.fill")
+                                    .foregroundStyle(performing_state_color)
+                                #endif
+                            }
+                        }
+                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                        .animation(.easeInOut(duration: 0.3), value: pendant_controller.is_opened)
+                    }
+                }
+                
+                ToolbarItem(id: "Add Object", placement: compact_primary_placement())
                 {
                     ControlGroup
                     {
@@ -137,18 +160,7 @@ struct WorkspaceView: View
                     }
                 }
                 
-                ToolbarItem(id: "Grid", placement: compact_placement(), showsByDefault: false)
-                {
-                    ControlGroup
-                    {
-                        Button(action: { base_workspace.toggle_grid_visiblity() })
-                        {
-                            Label("Grid", systemImage: base_workspace.is_grid_visible ? "squareshape.split.2x2" : "squareshape.split.2x2.dotted.inside")
-                        }
-                    }
-                }
-                
-                ToolbarItem(id: "Inspector", placement: compact_placement())
+                ToolbarItem(id: "Inspector", placement: compact_confirmation_placement())
                 {
                     ControlGroup
                     {
@@ -157,7 +169,7 @@ struct WorkspaceView: View
                             #if os(macOS)
                             Label("Inspector", systemImage: "sidebar.right")
                             #else
-                            Label("Inspector", systemImage: horizontal_size_class != .compact ? "sidebar.right" : "inset.filled.bottomthird.rectangle.portrait")
+                            Image(systemName: horizontal_size_class != .compact ? "sidebar.right" : "inset.filled.bottomthird.rectangle.portrait")
                             #endif
                         }
                     }
@@ -189,15 +201,6 @@ struct WorkspaceView: View
                 .frame(width: 600, height: 600)
             #endif
         }
-        .task
-        {
-            //while !app_state.modules_loaded { }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-            {
-                pendant_controller.is_opened = true
-            }
-        }
     }
     
     private var performing_state_color: Color
@@ -211,7 +214,7 @@ struct WorkspaceView: View
         }
     }
     
-    private func compact_placement() -> ToolbarItemPlacement
+    private func compact_primary_placement() -> ToolbarItemPlacement
     {
         #if os(macOS)
         return .primaryAction
@@ -222,10 +225,28 @@ struct WorkspaceView: View
         }
         else
         {
-            return .topBarTrailing
+            return .automatic
         }
         #else
-        return .topBarTrailing
+        return .automatic
+        #endif
+    }
+    
+    private func compact_confirmation_placement() -> ToolbarItemPlacement
+    {
+        #if os(macOS)
+        return .confirmationAction
+        #elseif os(iOS)
+        if horizontal_size_class == .compact
+        {
+            return .bottomBar
+        }
+        else
+        {
+            return .confirmationAction
+        }
+        #else
+        return .confirmationAction
         #endif
     }
 }

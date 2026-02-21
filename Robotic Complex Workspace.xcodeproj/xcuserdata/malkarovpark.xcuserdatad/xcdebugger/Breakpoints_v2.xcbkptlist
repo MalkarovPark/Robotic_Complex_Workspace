@@ -526,8 +526,8 @@
             filePath = "Robotic Complex Workspace/Views/WorkspaceDesigner/WorkspaceViews/VisualWorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
             landmarkName = "VisualWorkspaceView"
             landmarkType = "14">
          </BreakpointContent>
@@ -624,8 +624,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1830"
             endingLineNumber = "1830"
-            landmarkName = "create_grid_async(center_x:center_z:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -640,8 +640,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1828"
             endingLineNumber = "1828"
-            landmarkName = "create_grid_async(center_x:center_z:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -656,7 +656,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2077"
             endingLineNumber = "2077"
-            landmarkName = "select_object_by_entity_identifier(_:)"
+            landmarkName = "process_empty_tap()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -672,7 +672,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2075"
             endingLineNumber = "2075"
-            landmarkName = "select_object_by_entity_identifier(_:)"
+            landmarkName = "process_empty_tap()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -688,7 +688,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2073"
             endingLineNumber = "2073"
-            landmarkName = "select_object_by_entity_identifier(_:)"
+            landmarkName = "process_empty_tap()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -720,7 +720,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2427"
             endingLineNumber = "2427"
-            landmarkName = "comfort_placement(for:)"
+            landmarkName = "make_wire_bounding_box(line_width:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -736,7 +736,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2433"
             endingLineNumber = "2433"
-            landmarkName = "comfort_placement(for:)"
+            landmarkName = "make_wire_bounding_box(line_width:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -752,7 +752,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2422"
             endingLineNumber = "2422"
-            landmarkName = "comfort_placement(for:)"
+            landmarkName = "make_wire_bounding_box(line_width:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -768,7 +768,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2420"
             endingLineNumber = "2420"
-            landmarkName = "comfort_placement(for:)"
+            landmarkName = "make_wire_bounding_box(line_width:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -800,8 +800,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1540"
             endingLineNumber = "1540"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "place_entity(to:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -848,8 +848,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1553"
             endingLineNumber = "1553"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "place_entity(to:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -864,8 +864,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1686"
             endingLineNumber = "1686"
-            landmarkName = "focus(on:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -880,8 +880,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1554"
             endingLineNumber = "1554"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "place_entity(to:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -960,8 +960,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "175"
             endingLineNumber = "175"
-            landmarkName = "update_model_physics()"
-            landmarkType = "7">
+            landmarkName = "Part"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1040,8 +1040,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "234"
             endingLineNumber = "234"
-            landmarkName = "apply_color(_:to:)"
-            landmarkType = "9">
+            landmarkName = "update_model_color()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1056,8 +1056,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "236"
             endingLineNumber = "236"
-            landmarkName = "apply_color(_:to:)"
-            landmarkType = "9">
+            landmarkName = "update_model_color()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1248,8 +1248,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2733"
             endingLineNumber = "2733"
-            landmarkName = "update_tool_attachments()"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1264,8 +1264,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2738"
             endingLineNumber = "2738"
-            landmarkName = "update_tool_attachments()"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1280,8 +1280,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2736"
             endingLineNumber = "2736"
-            landmarkName = "update_tool_attachments()"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1296,7 +1296,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1714"
             endingLineNumber = "1714"
-            landmarkName = "capture_initial_camera_target_offset()"
+            landmarkName = "focus(on:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1312,7 +1312,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1720"
             endingLineNumber = "1720"
-            landmarkName = "capture_initial_camera_target_offset()"
+            landmarkName = "focus(on:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

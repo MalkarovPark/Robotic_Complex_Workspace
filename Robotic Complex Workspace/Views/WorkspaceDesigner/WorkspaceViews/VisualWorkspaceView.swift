@@ -23,10 +23,12 @@ struct VisualWorkspaceView: View
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     #endif
     
-    @State private var is_spatial = false
-    @State var is_pan = false
+    @Binding var is_pan: Bool
+    
+    @ObservedObject var pendant_controller: PendantController = PendantController()
     
     @State private var scene_content: RealityViewCameraContent?
+    @State private var is_spatial = false
     
     var body: some View
     {
@@ -42,6 +44,9 @@ struct VisualWorkspaceView: View
                 #endif
                 
                 base_workspace.place_entity(to: content)
+                {
+                    pendant_controller.is_opened = true
+                }
             }
             /*update:
             { content in
@@ -65,25 +70,6 @@ struct VisualWorkspaceView: View
             )
             //.backgroundStyle(.gray.opacity(0.25))
             .ignoresSafeArea(.container, edges: [.top, .bottom])
-        }
-        .overlay(alignment: .bottomLeading)
-        {
-            HStack(spacing: 0)
-            {
-                Button(action: { is_pan.toggle() })
-                {
-                    Image(systemName: is_pan ? "move.3d" : "rotate.3d")
-                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                        .animation(.easeInOut(duration: 0.3), value: is_pan)
-                        .modifier(CircleButtonImageFramer())
-                }
-                .modifier(CircleButtonGlassBorderer())
-                #if os(macOS) || os(iOS)
-                .padding(10)
-                #else
-                .padding(16)
-                #endif
-            }
         }
         .overlay(alignment: .topLeading)
         {
@@ -118,29 +104,11 @@ struct VisualWorkspaceView: View
         
         document_handler.document_update_programs()
     }
-    
-    private func compact_placement() -> ToolbarItemPlacement
-    {
-        #if os(macOS)
-        return .primaryAction
-        #elseif os(iOS)
-        if horizontal_size_class == .compact
-        {
-            return .bottomBar
-        }
-        else
-        {
-            return .topBarTrailing
-        }
-        #else
-        return .topBarTrailing
-        #endif
-    }
 }
 
 #Preview
 {
-    VisualWorkspaceView()
+    VisualWorkspaceView(is_pan: .constant(false))
         .environmentObject(Workspace())
         .environmentObject(AppState())
         .environmentObject(DocumentUpdateHandler())
