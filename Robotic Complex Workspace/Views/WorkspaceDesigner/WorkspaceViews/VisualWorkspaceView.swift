@@ -30,12 +30,16 @@ struct VisualWorkspaceView: View
     @State private var scene_content: RealityViewCameraContent?
     @State private var is_spatial = false
     
+    @State private var assets_loading = false
+    
     var body: some View
     {
         ZStack
         {
             RealityView
             { content in
+                assets_loading = true
+                
                 scene_content = content
                 #if os(macOS)
                 scene_content?.camera = .virtual
@@ -46,12 +50,15 @@ struct VisualWorkspaceView: View
                 base_workspace.place_entity(to: content)
                 {
                     pendant_controller.is_opened = true
+                    
+                    assets_loading = false
                 }
             }
             /*update:
             { content in
                 
             }*/
+            .disabled(assets_loading)
             .realityViewCameraControls(is_pan ? .pan : .orbit)
             .highPriorityGesture(
                 TapGesture()
@@ -70,6 +77,28 @@ struct VisualWorkspaceView: View
             )
             //.backgroundStyle(.gray.opacity(0.25))
             .ignoresSafeArea(.container, edges: [.top, .bottom])
+            
+            ZStack
+            {
+                if assets_loading
+                {
+                    ProgressView(
+                        label: {
+                            Text("Loading Assets...")
+                                .font(.caption)
+                                .foregroundStyle(Color.secondary)
+                        }
+                    )
+                    .progressViewStyle(.circular)
+                    .padding()
+                    .background
+                    {
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(.thinMaterial)
+                    }
+                }
+            }
+            .animation(.easeInOut(duration: 0.3), value: assets_loading)
         }
         .overlay(alignment: .topLeading)
         {
