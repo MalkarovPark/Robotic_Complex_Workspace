@@ -96,14 +96,14 @@ class Gripper_Connector: ToolConnector
     }
     
     // MARK: - Statistics
-    override func initial_charts_data() -> [WorkspaceObjectChart]
+    override func initial_charts_data() -> [StateChart]
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateChart]()@*/return [StateChart]()/*@END_MENU_TOKEN@*/
     }
     
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    override func updated_charts_data() -> [StateChart]?
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateChart]()@*/return [StateChart]()/*@END_MENU_TOKEN@*/
     }
     
     override func initial_states_data() -> [StateItem]

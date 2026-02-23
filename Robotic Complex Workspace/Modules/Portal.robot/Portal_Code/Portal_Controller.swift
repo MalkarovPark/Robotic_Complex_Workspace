@@ -93,16 +93,16 @@ class Portal_Controller: RobotModelController
     }
     
     // MARK: - Statistics
-    private var charts = [WorkspaceObjectChart]()
+    private var charts = [StateChart]()
     private var chart_ik_values = [Float](repeating: 0, count: 3)
     private var domain_index: Float = 0
     
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    var current_charts: [StateChart]
     {
         if charts.count == 0
         {
-            charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
-            charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+            charts.append(StateChart(name: "Tool Location", style: .line))
+            charts.append(StateChart(name: "Tool Rotation", style: .line))
         }
         
         // Update tool location chart
@@ -128,40 +128,58 @@ class Portal_Controller: RobotModelController
         return charts
     }
     
-    override func initial_charts_data() -> [WorkspaceObjectChart]?
+    var current_items: [StateItem]
+    {
+        var states = [StateItem]()
+        states.append(StateItem(name: "Temperature", value: "+10º", symbol_name: "thermometer"))
+        states[0].children = [StateItem(name: "Еngine", value: "+50º", symbol_name: "thermometer.transmission"),
+                             StateItem(name: "Fridge", value: "-40º", symbol_name: "thermometer.snowflake.circle")]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
+        
+        return states
+    }
+    
+    override var current_device_state: DeviceState
+    {
+        // Prepare controller output
+        return DeviceState(
+            items: current_items,
+            charts: current_charts
+        )
+    }
+    
+    var initial_charts: [StateChart]
     {
         domain_index = 0
         chart_ik_values = [Float](repeating: 0, count: 3)
-        charts = [WorkspaceObjectChart]()
+        charts = [StateChart]()
         
-        charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
-        charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+        charts.append(StateChart(name: "Tool Location", style: .line))
+        charts.append(StateChart(name: "Tool Rotation", style: .line))
         
         return charts
     }
     
-    override func updated_states_data() -> [StateItem]?
+    var initial_items: [StateItem]
     {
         var states = [StateItem]()
-        states.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-        states[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
-                             StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
         
-        states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+        states.append(StateItem(name: "Temperature", value: "0º", symbol_name: "thermometer"))
+        states[0].children = [StateItem(name: "Еngine", value: "0º", symbol_name: "thermometer.transmission"),
+                             StateItem(name: "Fridge", value: "0º", symbol_name: "thermometer.snowflake.circle")]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
         
         return states
     }
     
-    override func initial_states_data() -> [StateItem]?
+    override var initial_device_state: DeviceState?
     {
-        var states = [StateItem]()
-        
-        states.append(StateItem(name: "Temperature", value: "0º", image: "thermometer"))
-        states[0].children = [StateItem(name: "Еngine", value: "0º", image: "thermometer.transmission"),
-                             StateItem(name: "Fridge", value: "0º", image: "thermometer.snowflake.circle")]
-        
-        states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
-        
-        return states
+        // Reset contolleroutput
+        return DeviceState(
+            items: initial_items,
+            charts: initial_charts
+        )
     }
 }

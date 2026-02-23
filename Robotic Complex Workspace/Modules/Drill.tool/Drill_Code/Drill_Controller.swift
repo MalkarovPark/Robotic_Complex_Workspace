@@ -68,10 +68,10 @@ class Drill_Controller: ToolModelController
     }
     
     // MARK: - Statistics
-    private var charts = [WorkspaceObjectChart]()
+    private var charts = [StateChart]()
     private var domain_index: Float = 0
     
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    override func updated_charts_data() -> [StateChart]?
     {
         guard nodes.count == 1 else
         {
@@ -83,7 +83,7 @@ class Drill_Controller: ToolModelController
         
         if charts.count == 0
         {
-            charts.append(WorkspaceObjectChart(name: "Rotation", style: .line))
+            charts.append(StateChart(name: "Rotation", style: .line))
         }
         
         sleep(1)
@@ -134,10 +134,10 @@ class Drill_Controller: ToolModelController
         return (acceleration_values, velocity_values)
     }
     
-    override func initial_charts_data() -> [WorkspaceObjectChart]
+    override func initial_charts_data() -> [StateChart]
     {
         domain_index = 0
-        return [WorkspaceObjectChart]()
+        return [StateChart]()
     }
     
     override func updated_states_data() -> [StateItem]?

@@ -96,6 +96,7 @@ struct VisualWorkspaceView: View
                         RoundedRectangle(cornerRadius: 8, style: .continuous)
                             .fill(.thinMaterial)
                     }
+                    .offset(y: -32)
                 }
             }
             .animation(.easeInOut(duration: 0.3), value: assets_loading)

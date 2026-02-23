@@ -13,7 +13,6 @@
 		6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F93C2AD3439C008FA7C4 /* Assets.xcassets */; };
 		6236F9422AD3439C008FA7C4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */; };
 		6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94F2AD345C4008FA7C4 /* SettingsView.swift */; };
-		6236F95A2AD345C4008FA7C4 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9502AD345C4008FA7C4 /* StatisticsView.swift */; };
 		6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */; };
 		6236F95E2AD345C4008FA7C4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9542AD345C4008FA7C4 /* ContentView.swift */; };
 		6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9602AD345FC008FA7C4 /* DynamicStack.swift */; };
@@ -48,7 +47,6 @@
 		6236F9412AD3439C008FA7C4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6236F9482AD34591008FA7C4 /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		6236F94F2AD345C4008FA7C4 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		6236F9502AD345C4008FA7C4 /* StatisticsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
 		6236F9542AD345C4008FA7C4 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6236F9602AD345FC008FA7C4 /* DynamicStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicStack.swift; sourceTree = "<group>"; };
@@ -127,7 +125,6 @@
 				6236F9542AD345C4008FA7C4 /* ContentView.swift */,
 				6236F94F2AD345C4008FA7C4 /* SettingsView.swift */,
 				622EE4F72E030D32002EB2C5 /* ProgramComponentsManagerView.swift */,
-				6236F9502AD345C4008FA7C4 /* StatisticsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -297,7 +294,6 @@
 				62A2C0B52F40F1D700648E81 /* ToolInspectorItems.swift in Sources */,
 				6236F95E2AD345C4008FA7C4 /* ContentView.swift in Sources */,
 				62E165E72B20C692005E318A /* GalleryWorkspaceView.swift in Sources */,
-				6236F95A2AD345C4008FA7C4 /* StatisticsView.swift in Sources */,
 				62BC10AD2F20EEF70057304D /* InspectorView.swift in Sources */,
 				627002F32E57A43B001D48C5 /* BackgroundExtensionModifier.swift in Sources */,
 				6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */,

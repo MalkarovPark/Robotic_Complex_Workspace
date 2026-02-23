@@ -71,20 +71,20 @@ class Gripper_Controller: ToolModelController
     }
     
     // MARK: - Statistics
-    private var charts = [WorkspaceObjectChart]()
+    private var charts = [StateChart]()
     private var domain_index: Float = 0
     
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    var current_charts: [StateChart]
     {
         guard entities.count == 2
         else
         {
-            return nil
+            return []
         }
         
         if charts.count == 0
         {
-            charts.append(WorkspaceObjectChart(name: "Jaws Positions", style: .line))
+            charts.append(StateChart(name: "Fingers Positions", style: .line))
         }
         
         charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw", default: SCNNode()].position.z)))
@@ -97,15 +97,7 @@ class Gripper_Controller: ToolModelController
         return charts
     }
     
-    override func initial_charts_data() -> [WorkspaceObjectChart]?
-    {
-        domain_index = 0
-        charts = [WorkspaceObjectChart]()
-        
-        return charts
-    }
-    
-    override func updated_states_data() -> [StateItem]?
+    var current_items: [StateItem]
     {
         var state = [StateItem]()
         
@@ -113,25 +105,59 @@ class Gripper_Controller: ToolModelController
         {
             if closed
             {
-                state.append(StateItem(name: "Closed", value: "", image: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left"))
+                state.append(StateItem(name: "Closed", value: "", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left"))
             }
             else
             {
-                state.append(StateItem(name: "Opened", value: "", image: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right"))
+                state.append(StateItem(name: "Opened", value: "", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right"))
             }
         }
         else
         {
             if closed
             {
-                state.append(StateItem(name: "Opening", value: "", image: "arrow.left.and.line.vertical.and.arrow.right"))
+                state.append(StateItem(name: "Opening", value: "", symbol_name: "arrow.left.and.line.vertical.and.arrow.right"))
             }
             else
             {
-                state.append(StateItem(name: "Closing", value: "", image: "arrow.right.and.line.vertical.and.arrow.left"))
+                state.append(StateItem(name: "Closing", value: "", symbol_name: "arrow.right.and.line.vertical.and.arrow.left"))
             }
         }
         
         return state
+    }
+    
+    override var current_device_state: DeviceState
+    {
+        // Prepare controller output
+        return DeviceState(
+            items: current_items,
+            charts: current_charts
+        )
+    }
+    
+    var initial_charts: [StateChart]
+    {
+        domain_index = 0
+        charts = [StateChart]()
+        
+        return charts
+    }
+    
+    var initial_items: [StateItem]
+    {
+        domain_index = 0
+        charts = [StateChart]()
+        
+        return [StateItem(name: "Closed", value: "", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left")]
+    }
+    
+    override var initial_device_state: DeviceState?
+    {
+        // Reset contolleroutput
+        return DeviceState(
+            items: initial_items,
+            charts: initial_charts
+        )
     }
 }

@@ -81,23 +81,5 @@ class Portal_Connector: RobotConnector
     }
     
     // MARK: - Statistics
-    override func initial_charts_data() -> [WorkspaceObjectChart]
-    {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
-    }
-    
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
-    {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
-    }
-    
-    override func initial_states_data() -> [StateItem]
-    {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
-    }
-    
-    override func updated_states_data() -> [StateItem]?
-    {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
-    }
+    // ...
 }
