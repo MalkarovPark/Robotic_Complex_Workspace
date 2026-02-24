@@ -62,14 +62,6 @@ class Gripper_Controller: ToolModelController
         return entities_animations
     }
     
-    // MARK: - Info
-    var info = [Float]()
-    
-    override var info_output: [Float]?
-    {
-        return info
-    }
-    
     // MARK: - Statistics
     private var charts = [StateChart]()
     private var domain_index: Float = 0

@@ -117,6 +117,33 @@ struct WorkspaceView: View
                     }
                 }
                 
+                ToolbarItem(id: "State", placement: compact_primary_placement())
+                {
+                    ControlGroup
+                    {
+                        Button(action: { device_state_presented.toggle() })
+                        {
+                            Label("State", systemImage: "chart.pie")
+                        }
+                        .sheet(isPresented: $device_state_presented)
+                        {
+                            if let selected_object = base_workspace.selected_object
+                            {
+                                DeviceStateView(is_presented: $device_state_presented, device: selected_object)
+                                {
+                                    switch base_workspace.selected_object
+                                    {
+                                    case is Robot: document_handler.document_update_robots()
+                                    case is Tool: document_handler.document_update_tools()
+                                    default: break
+                                    }
+                                }
+                            }
+                        }
+                        .disabled(!(base_workspace.selected_object is any StateOutputCapable))
+                    }
+                }
+                
                 ToolbarItem(id: "Pendant", placement: .confirmationAction)
                 {
                     ControlGroup
@@ -159,25 +186,6 @@ struct WorkspaceView: View
                         {
                             Label("Add Object", systemImage: "plus")
                         }
-                    }
-                }
-                
-                ToolbarItem(id: "State", placement: compact_confirmation_placement())
-                {
-                    ControlGroup
-                    {
-                        Button(action: { device_state_presented.toggle() })
-                        {
-                            Label("State", systemImage: "chart.pie")
-                        }
-                        .sheet(isPresented: $device_state_presented)
-                        {
-                            if let selected_object = base_workspace.selected_object
-                            {
-                                DeviceStateView(is_presented: $device_state_presented, device: selected_object)
-                            }
-                        }
-                        .disabled(!(base_workspace.selected_object is any StateOutputCapable))
                     }
                 }
                 
