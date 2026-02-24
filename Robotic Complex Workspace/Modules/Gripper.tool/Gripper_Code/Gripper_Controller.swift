@@ -55,8 +55,6 @@ class Gripper_Controller: ToolModelController
             ]
         default:
             break
-            //closed = false
-            //moved = false
         }
         
         return entities_animations

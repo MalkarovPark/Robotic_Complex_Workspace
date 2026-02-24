@@ -66,12 +66,31 @@ struct WorkspaceView: View
             {
                 if base_workspace.selected_object != nil
                 {
+                    #if os(macOS) || os(visionOS)
                     InspectorView(object: base_workspace.selected_object ?? WorkspaceObject())
+                    #else
+                    if horizontal_size_class != .compact
+                    {
+                        InspectorView(object: base_workspace.selected_object ?? WorkspaceObject())
+                    }
+                    else
+                    {
+                        InspectorView(object: base_workspace.selected_object ?? WorkspaceObject())
+                            .presentationDetents([.medium, .large])
+                            .presentationDragIndicator(.visible)
+                            .modifier(SheetCaption(is_presented: $inspector_presented, label: object_type_name))
+                    }
+                    #endif
                 }
                 else
                 {
-                    Text("Nothing selected")
-                        .foregroundStyle(.secondary)
+                    ContentUnavailableView
+                    {
+                        Text("Nothing selected")
+                    }
+                    #if os(iOS)
+                    .presentationDetents([.height(160)])
+                    #endif
                 }
             }
             #endif
@@ -278,6 +297,23 @@ struct WorkspaceView: View
         return .confirmationAction
         #endif
     }
+    
+    #if os(iOS)
+    private var object_type_name: String
+    {
+        switch base_workspace.selected_object
+        {
+        case is Robot:
+            return "Robot"
+        case is Tool:
+            return "Tool"
+        case is Part:
+            return "Part"
+        default:
+            return "None"
+        }
+    }
+    #endif
 }
 
 // MARK: - Previews
@@ -301,3 +337,4 @@ struct WorkspaceView_Previews: PreviewProvider
         }
     }
 }
+

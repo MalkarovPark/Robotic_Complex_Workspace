@@ -141,7 +141,7 @@ struct InspectorView: View
         }
     }
     
-    private var object_type_name: String
+    /*private var object_type_name: String
     {
         switch object
         {
@@ -154,7 +154,7 @@ struct InspectorView: View
         default:
             return "None"
         }
-    }
+    }*/
     
     private func remove_object()
     {

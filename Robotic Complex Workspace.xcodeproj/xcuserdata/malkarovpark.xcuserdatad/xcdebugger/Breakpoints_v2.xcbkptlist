@@ -558,8 +558,8 @@
             filePath = "Robotic Complex Workspace/Modules/Gripper.tool/Gripper_Code/Gripper_Controller.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
             landmarkName = "entity_animations(code:)"
             landmarkType = "7">
          </BreakpointContent>

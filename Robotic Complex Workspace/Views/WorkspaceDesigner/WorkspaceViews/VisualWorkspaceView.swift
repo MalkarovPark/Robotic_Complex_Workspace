@@ -19,7 +19,7 @@ struct VisualWorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if !os(macOS)
+    #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     #endif
     
