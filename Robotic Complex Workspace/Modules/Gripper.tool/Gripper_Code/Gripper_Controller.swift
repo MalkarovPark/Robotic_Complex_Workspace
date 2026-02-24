@@ -82,8 +82,6 @@ class Gripper_Controller: ToolModelController
         charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw", default: SCNNode()].position.z)))
         charts[0].data.append(ChartDataItem(name: "Right (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw2", default: SCNNode()].position.z)))
         
-        usleep(100000)
-        
         domain_index += 1
         
         return charts
