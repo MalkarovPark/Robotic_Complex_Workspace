@@ -9,7 +9,7 @@ import SceneKit
 class Drill_Connector: ToolConnector
 {
     /*// MARK: - Connection
-    override var parameters: [ConnectionParameter]
+    override var default_parameters: [ConnectionParameter]
     {
         [
             .init(name: "String", value: "Text"),

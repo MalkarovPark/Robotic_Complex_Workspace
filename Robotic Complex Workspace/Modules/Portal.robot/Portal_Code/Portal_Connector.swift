@@ -8,7 +8,7 @@ import IndustrialKit
 class Portal_Connector: RobotConnector
 {
     // MARK: - Connection
-    override var parameters: [ConnectionParameter]
+    override var default_parameters: [ConnectionParameter]
     {
         [
             .init(name: "String", value: "Text"),

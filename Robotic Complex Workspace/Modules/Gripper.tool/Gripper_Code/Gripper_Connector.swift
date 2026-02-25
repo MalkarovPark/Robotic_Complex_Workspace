@@ -8,8 +8,8 @@ import SceneKit
 
 class Gripper_Connector: ToolConnector
 {
-    /*// MARK: - Connection
-    override var parameters: [ConnectionParameter]
+    // MARK: - Connection
+    override var default_parameters: [ConnectionParameter]
     {
         [
             .init(name: "String", value: "Text"),
@@ -68,7 +68,7 @@ class Gripper_Connector: ToolConnector
     
     private var local_state: PerformingState = .completed
     
-    // MARK: - Performing
+    /*// MARK: - Performing
     override func perform(code: Int)
     {
         //local_state = .processing

@@ -27,7 +27,8 @@ struct WorkspaceView: View
     
     @State private var device_state_presented = false
     
-    @State private var statistics_view_presented = false
+    @State private var device_connector_presented = false
+    
     @State private var performing_state_view_presented = false
     
     #if !os(macOS)
@@ -86,7 +87,7 @@ struct WorkspaceView: View
                 {
                     ContentUnavailableView
                     {
-                        Text("Nothing selected")
+                        Text("Nothing Selected")
                     }
                     #if os(iOS)
                     .presentationDetents([.height(160)])
@@ -148,7 +149,7 @@ struct WorkspaceView: View
                         {
                             if let selected_object = base_workspace.selected_object
                             {
-                                DeviceStateView(is_presented: $device_state_presented, device: selected_object)
+                                DeviceStateView(object: selected_object)
                                 {
                                     switch base_workspace.selected_object
                                     {
@@ -157,9 +158,44 @@ struct WorkspaceView: View
                                     default: break
                                     }
                                 }
+                                .modifier(SheetCaption(is_presented: $device_state_presented, label: "Device State", plain: false, clear_background: true))
                             }
                         }
                         .disabled(!(base_workspace.selected_object is any StateOutputCapable))
+                    }
+                }
+                
+                ToolbarItem(id: "Connector", placement: compact_primary_placement())
+                {
+                    ControlGroup
+                    {
+                        Button(action: { device_connector_presented.toggle() })
+                        {
+                            Label("Connector", systemImage: "link")
+                        }
+                        .sheet(isPresented: $device_connector_presented)
+                        {
+                            if let selected_object = base_workspace.selected_object
+                            {
+                                ConnectorView(object: selected_object)
+                                {
+                                    switch base_workspace.selected_object
+                                    {
+                                    case is Robot: document_handler.document_update_robots()
+                                    case is Tool: document_handler.document_update_tools()
+                                    default: break
+                                    }
+                                }
+                                .padding(.top, -16)
+                                .modifier(SheetCaption(is_presented: $device_connector_presented, label: "Connect"))
+                                #if os(macOS)
+                                .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
+                                #elseif os(visionOS)
+                                .frame(width: 512, height: 512)
+                                #endif
+                            }
+                        }
+                        .disabled(!(base_workspace.selected_object is any DeviceTwin))
                     }
                 }
                 
