@@ -9,7 +9,7 @@ import IndustrialKit
 class Gripper_Controller: ToolModelController
 {
     // MARK: - Parameters
-    override var entities_names: [String]
+    override var entity_names: [String]
     {
         [
             "jaw",

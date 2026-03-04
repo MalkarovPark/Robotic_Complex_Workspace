@@ -34,7 +34,7 @@ struct InspectorView: View
                 
                 HStack
                 {
-                    let name_binding = Binding(
+                    let name = Binding(
                         get: { object.name },
                         set:
                             { new_value in
@@ -44,7 +44,7 @@ struct InspectorView: View
                             }
                     )
                     
-                    TextField("None", text: name_binding)
+                    TextField("None", text: name)
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding(10)
@@ -100,9 +100,9 @@ struct InspectorView: View
                     )
                     
                     #if os(macOS)
-                    PositionView(position: position_binding)
+                    PositionView(position: position_binding, with_steppers: true)
                     #else
-                    PositionView(position: position_binding, with_steppers: false)
+                    PositionView(position: position_binding)
                     #endif
                 }
                 label:
@@ -177,6 +177,43 @@ struct InspectorView: View
         default:
             break
         }
+    }
+}
+
+public struct InspectorItem<Content: View>: View
+{
+    let label: String
+    let content: Content
+    
+    @State var is_expanded: Bool
+    
+    public init(
+        label: String,
+        is_expanded: Bool = true,
+        
+        @ViewBuilder content: () -> Content
+    )
+    {
+        self.is_expanded = is_expanded
+        self.label = label
+        
+        self.content = content()
+    }
+    
+    public var body: some View
+    {
+        DisclosureGroup(isExpanded: $is_expanded)
+        {
+            content
+        }
+        label:
+        {
+            Text(label)
+                .font(.system(size: 13, weight: .bold))
+        }
+        .padding(10)
+        
+        Divider()
     }
 }
 

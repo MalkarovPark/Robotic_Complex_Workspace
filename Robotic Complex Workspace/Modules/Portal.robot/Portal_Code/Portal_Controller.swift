@@ -5,7 +5,7 @@ import RealityKit
 class Portal_Controller: RobotModelController
 {
     // MARK: - Parameters
-    override var entities_names: [String]
+    override var entity_names: [String]
     {
         [
             "base",

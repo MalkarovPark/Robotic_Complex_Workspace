@@ -15,9 +15,6 @@ struct RobotInspectorItems: View
     
     public let on_update: () -> ()
     
-    @State private var origin_is_expanded: Bool = false
-    @State private var space_is_expanded: Bool = false
-    
     var body: some View
     {
         let origin_binding = Binding(
@@ -30,35 +27,19 @@ struct RobotInspectorItems: View
                 }
         )
         
-        DisclosureGroup(isExpanded: $origin_is_expanded)
+        InspectorItem(label: "Origin", is_expanded: false)
         {
             #if os(macOS)
-            PositionView(position: origin_binding)
+            PositionView(position: origin_binding, with_steppers: true)
             #else
-            PositionView(position: origin_binding, with_steppers: false)
+            PositionView(position: origin_binding)
             #endif
         }
-        label:
-        {
-            Text("Origin")
-                .font(.system(size: 13, weight: .bold))
-        }
-        .padding(10)
         
-        Divider()
-        
-        DisclosureGroup(isExpanded: $space_is_expanded)
+        InspectorItem(label: "Working Area", is_expanded: false)
         {
             OriginScaleView(robot: robot, on_update: on_update)
         }
-        label:
-        {
-            Text("Working Area")
-                .font(.system(size: 13, weight: .bold))
-        }
-        .padding(10)
-        
-        Divider()
     }
 }
 
@@ -91,13 +72,6 @@ private struct OriginScaleView: View
                         {
                             TextField("0", value: binding(for: component), format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            #if os(iOS)
-                                .frame(minWidth: 60)
-                                .keyboardType(.decimalPad)
-                            #elseif os(visionOS)
-                                .frame(minWidth: 80)
-                                .keyboardType(.decimalPad)
-                            #endif
                             Stepper("Scale",
                                     value: binding(for: component),
                                     in: (0)...(Float.infinity))

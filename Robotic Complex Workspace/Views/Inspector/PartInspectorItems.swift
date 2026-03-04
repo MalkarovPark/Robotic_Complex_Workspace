@@ -16,12 +16,9 @@ struct PartInspectorItems: View
     
     public let on_update: () -> ()
     
-    @State private var apperance_is_expanded: Bool = true
-    @State private var physics_is_expanded: Bool = false
-    
     var body: some View
     {
-        DisclosureGroup(isExpanded: $apperance_is_expanded)
+        InspectorItem(label: "Apperance", is_expanded: true)
         {
             let is_custom_color = Binding(
                 get: { part.is_custom_color },
@@ -81,16 +78,8 @@ struct PartInspectorItems: View
             }
             .padding(.vertical, 10)
         }
-        label:
-        {
-            Text("Apperance")
-                .font(.system(size: 13, weight: .bold))
-        }
-        .padding(10)
         
-        Divider()
-        
-        DisclosureGroup(isExpanded: $physics_is_expanded)
+        InspectorItem(label: "Physics", is_expanded: false)
         {
             VStack(spacing: 20)
             {
@@ -289,14 +278,6 @@ struct PartInspectorItems: View
             }
             .padding(.vertical, 10)
         }
-        label:
-        {
-            Text("Physics")
-                .font(.system(size: 13, weight: .bold))
-        }
-        .padding(10)
-        
-        Divider()
     }
     
     private var physics_body_data: PhysicsBodyComponentFileData?

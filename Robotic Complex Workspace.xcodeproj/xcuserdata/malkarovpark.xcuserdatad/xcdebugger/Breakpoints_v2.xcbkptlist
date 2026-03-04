@@ -16,7 +16,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "906"
             endingLineNumber = "906"
-            landmarkName = "select_next_element()"
+            landmarkName = "reset_performing()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -80,8 +80,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "912"
             endingLineNumber = "912"
-            landmarkName = "select_next_element()"
-            landmarkType = "7">
+            landmarkName = "reset_handler(_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -96,8 +96,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "910"
             endingLineNumber = "910"
-            landmarkName = "select_next_element()"
-            landmarkType = "7">
+            landmarkName = "reset_handler(_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -112,7 +112,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "891"
             endingLineNumber = "891"
-            landmarkName = "select_next_element()"
+            landmarkName = "reset_performing()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -416,8 +416,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1370"
             endingLineNumber = "1370"
-            landmarkName = "eval_rpn(_:)"
-            landmarkType = "9">
+            landmarkName = "observe(by:completion:error_handler:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -432,8 +432,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1375"
             endingLineNumber = "1375"
-            landmarkName = "eval_rpn(_:)"
-            landmarkType = "9">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -448,7 +448,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1366"
             endingLineNumber = "1366"
-            landmarkName = "eval_rpn(_:)"
+            landmarkName = "items_to_array(from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -464,7 +464,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1364"
             endingLineNumber = "1364"
-            landmarkName = "eval_rpn(_:)"
+            landmarkName = "items_to_array(from:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -480,7 +480,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1211"
             endingLineNumber = "1211"
-            landmarkName = "perform_robot(by:completion:error_handler:)"
+            landmarkName = "move(by:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -496,8 +496,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1219"
             endingLineNumber = "1219"
-            landmarkName = "perform_robot(by:completion:error_handler:)"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -512,7 +512,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1207"
             endingLineNumber = "1207"
-            landmarkName = "perform_robot(by:completion:error_handler:)"
+            landmarkName = "move(by:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -608,8 +608,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1830"
             endingLineNumber = "1830"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "add_line(index:axis:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -624,8 +624,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1828"
             endingLineNumber = "1828"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "add_line(index:axis:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -640,8 +640,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2077"
             endingLineNumber = "2077"
-            landmarkName = "process_empty_tap()"
-            landmarkType = "7">
+            landmarkName = "pointer_entity_group"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -656,8 +656,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2075"
             endingLineNumber = "2075"
-            landmarkName = "process_empty_tap()"
-            landmarkType = "7">
+            landmarkName = "pointer_entity_group"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -672,8 +672,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2073"
             endingLineNumber = "2073"
-            landmarkName = "process_empty_tap()"
-            landmarkType = "7">
+            landmarkName = "pointer_entity_group"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -704,7 +704,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2427"
             endingLineNumber = "2427"
-            landmarkName = "make_wire_bounding_box(line_width:)"
+            landmarkName = "comfort_placement(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -720,7 +720,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2433"
             endingLineNumber = "2433"
-            landmarkName = "make_wire_bounding_box(line_width:)"
+            landmarkName = "comfort_placement(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -736,7 +736,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2422"
             endingLineNumber = "2422"
-            landmarkName = "make_wire_bounding_box(line_width:)"
+            landmarkName = "update_wire_bounding_box(by:color:line_width:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -752,7 +752,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2420"
             endingLineNumber = "2420"
-            landmarkName = "make_wire_bounding_box(line_width:)"
+            landmarkName = "update_wire_bounding_box(by:color:line_width:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -784,8 +784,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1540"
             endingLineNumber = "1540"
-            landmarkName = "place_entity(to:)"
-            landmarkType = "7">
+            landmarkName = "load_all_internal_modules_entities(_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -816,7 +816,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1700"
             endingLineNumber = "1700"
-            landmarkName = "focus(on:)"
+            landmarkName = "move_camera_target()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -832,8 +832,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1553"
             endingLineNumber = "1553"
-            landmarkName = "place_entity(to:)"
-            landmarkType = "7">
+            landmarkName = "load_all_external_modules_entities(_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -848,8 +848,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1686"
             endingLineNumber = "1686"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "capture_initial_camera_target_offset()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -864,8 +864,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1554"
             endingLineNumber = "1554"
-            landmarkName = "place_entity(to:)"
-            landmarkType = "7">
+            landmarkName = "load_all_external_modules_entities(_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1070,8 +1070,8 @@
             filePath = "Robotic Complex Workspace/Views/Inspector/PartInspectorItems.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "133"
-            endingLineNumber = "133"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
             landmarkName = "PartInspectorItems"
             landmarkType = "14">
          </BreakpointContent>
@@ -1086,8 +1086,8 @@
             filePath = "Robotic Complex Workspace/Views/Inspector/PartInspectorItems.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
             landmarkName = "PartInspectorItems"
             landmarkType = "14">
          </BreakpointContent>
@@ -1232,8 +1232,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2733"
             endingLineNumber = "2733"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "duplicate_tool(index:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1248,8 +1248,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2738"
             endingLineNumber = "2738"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "duplicate_tool(index:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1264,8 +1264,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2736"
             endingLineNumber = "2736"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "duplicate_tool(index:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1280,7 +1280,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1714"
             endingLineNumber = "1714"
-            landmarkName = "focus(on:)"
+            landmarkName = "move_camera_target()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1296,8 +1296,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1720"
             endingLineNumber = "1720"
-            landmarkName = "focus(on:)"
-            landmarkType = "7">
+            landmarkName = "update_target_tile_scale(_:_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

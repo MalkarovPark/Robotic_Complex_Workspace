@@ -224,7 +224,7 @@ class AppState: ObservableObject
     {
         Robot.external_modules_servers_stop()
         Tool.external_modules_servers_stop()
-        Changer.external_modules_servers_stop()
+        //Changer.external_modules_servers_stop()
     }
     
     private func start_external_modules_servers()
@@ -235,7 +235,7 @@ class AppState: ObservableObject
         {
             Robot.external_modules_servers_start()
             Tool.external_modules_servers_start()
-            Changer.external_modules_servers_start()
+            //Changer.external_modules_servers_start()
         }
     }
     #endif

@@ -39,10 +39,10 @@ struct ProgramComponentsManagerView: View
             stop_all = {}
         case .changer:
             restart_all = {
-                Changer.external_modules_servers_stop()
-                Changer.external_modules_servers_start()
+                //Changer.external_modules_servers_stop()
+                //Changer.external_modules_servers_start()
             }
-            stop_all = Changer.external_modules_servers_stop
+            stop_all = {}//Changer.external_modules_servers_stop
         }
     }
     

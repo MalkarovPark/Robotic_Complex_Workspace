@@ -5,7 +5,7 @@ import RealityKit
 nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
 {
     // MARK: - Parameters
-    override var entities_names: [String]
+    override var entity_names: [String]
     {
         [
             "base",
@@ -21,7 +21,26 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
     }
     
     // MARK: - Performing
-    override open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
+    override open func update_entities_positions(
+        pointer_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        ),
+        origin_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    ) throws
     {
         /*if pointer_position.x > 100
         {
