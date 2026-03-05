@@ -18,9 +18,64 @@ class Portal_Controller: RobotModelController
     }
     
     // MARK: - Performing
-    override open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    override open func entity_positions(
+        pointer_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        ),
+        origin_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    ) throws -> [(
+        name: String,
+        position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    )]
     {
-        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
+        //apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
+        
+        let values = inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position)
+        
+        let entity_positions: [(
+            name: String,
+            position: (
+                x: Float,
+                y: Float,
+                z: Float,
+                
+                r: Float,
+                p: Float,
+                w: Float
+            )
+        )] = [
+            (name: "d0", position: (x: values[1], y: 0, z: 0, r: 0, p: 0, w: 0)),
+            (name: "d2", position: (x: 0, y: 0, z: values[2], r: 0, p: 0, w: 0)),
+            (name: "d1", position: (x: 0, y: values[0], z: 0, r: 0, p: 0, w: 0))
+        ]
+        
+        entities[safe: "d0", default: Entity()].position.x = Float(values[1])
+        entities[safe: "d2", default: Entity()].position.y = Float(values[2])
+        entities[safe: "d1", default: Entity()].position.z = Float(values[0])
+        
+        return entity_positions
     }
     
     let lengths: [Float] = [
@@ -83,13 +138,6 @@ class Portal_Controller: RobotModelController
         }
 
         return [px, py, pz]
-    }
-    
-    public func apply_nodes_positions(values: [Float])
-    {
-        entities[safe: "d0", default: Entity()].position.x = Float(values[1])
-        entities[safe: "d2", default: Entity()].position.y = Float(values[2])
-        entities[safe: "d1", default: Entity()].position.z = Float(values[0])
     }
     
     // MARK: - Statistics

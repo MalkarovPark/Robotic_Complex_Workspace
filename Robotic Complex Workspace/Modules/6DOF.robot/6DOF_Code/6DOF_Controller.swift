@@ -21,50 +21,42 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
     }
     
     // MARK: - Performing
-    override open func update_entities_positions(
+    override open func entity_positions(
         pointer_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         ),
         origin_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
-    ) throws
+    ) throws -> [(
+        name: String,
+        position: (
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
+        )
+    )]
     {
-        /*if pointer_position.x > 100
-        {
-            throw NSError(
-                domain: "Performing Error",
-                code: 1,
-                userInfo: [
-                    NSLocalizedDescriptionKey: "Out of the workspace"
-                ]
-            )
-        }*/
+        let values = inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position)
         
-        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
+        let entity_positions: [(
+            name: String,
+            position: (
+                x: Float, y: Float, z: Float,
+                r: Float, p: Float, w: Float
+            )
+        )] = [
+            (name: "d0", position: (x: 0, y: 0, z: 0, r: 0, p: 0, w: values[0].to_deg)),
+            (name: "d1", position: (x: 0, y: 0, z: 160, r: 0, p: values[1].to_deg, w: 0)),
+            (name: "d2", position: (x: 0, y: 0, z: 160, r: 0, p: values[2].to_deg, w: 0)),
+            (name: "d3", position: (x: 0, y: 0, z: 80, r: 0, p: 0, w: values[3].to_deg)),
+            (name: "d4", position: (x: 0, y: 0, z: 160, r: 0, p: values[4].to_deg, w: 0)),
+            (name: "d5", position: (x: 0, y: 0, z: 50, r: 0, p: 0, w: values[5].to_deg))
+        ]
+        
+        return entity_positions
     }
-    
-    let lengths: [Float] = [
-        160.0,
-        160.0,
-        80.0,
-        160.0,
-        50.0,
-        20.0,
-        160.0
-    ]
     
     private func inverse_kinematic_calculation(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) -> [Float]
     {
@@ -145,34 +137,15 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
         return angles
     }
     
-    private func apply_nodes_positions(values: [Float])
-    {
-        let axes: [SIMD3<Float>] = [
-            SIMD3(0,1,0),
-            SIMD3(0,0,1),
-            SIMD3(0,0,1),
-            SIMD3(0,1,0),
-            SIMD3(0,0,1),
-            SIMD3(0,1,0)
-        ]
-        
-        for i in 0..<6
-        {
-            let node_key = "d\(i)"
-            let entity = entities[safe: node_key, default: Entity()]
-            
-            var target = simd_quatf(angle: values[i], axis: axes[i])
-            let current = entity.transform.rotation
-            
-            // Hemisphere correction
-            if simd_dot(current.vector, target.vector) < 0
-            {
-                target = simd_quatf(vector: -target.vector)
-            }
-            
-            entity.transform.rotation = target
-        }
-    }
+    let lengths: [Float] = [
+        160.0,
+        160.0,
+        80.0,
+        160.0,
+        50.0,
+        20.0,
+        160.0
+    ]
     
     // MARK: - Statistics
     private var charts = [StateChart]()

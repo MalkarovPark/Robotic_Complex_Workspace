@@ -5,7 +5,7 @@
 import Foundation
 import IndustrialKit
 
-class _6DOF_Connector: RobotConnector
+class _6DOF_Connector: RobotConnector, @unchecked Sendable
 {
     // MARK: - Connection
     override var default_parameters: [ConnectionParameter]
