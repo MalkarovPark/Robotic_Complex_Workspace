@@ -20,50 +20,28 @@ class Portal_Controller: RobotModelController
     // MARK: - Performing
     override open func entity_positions(
         pointer_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         ),
         origin_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     ) throws -> [(
         name: String,
         position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     )]
     {
-        //apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
-        
         let values = inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position)
         
         let entity_positions: [(
             name: String,
             position: (
-                x: Float,
-                y: Float,
-                z: Float,
-                
-                r: Float,
-                p: Float,
-                w: Float
+                x: Float, y: Float, z: Float,
+                r: Float, p: Float, w: Float
             )
         )] = [
             (name: "d0", position: (x: values[1], y: 0, z: 0, r: 0, p: 0, w: 0)),
@@ -77,18 +55,6 @@ class Portal_Controller: RobotModelController
         
         return entity_positions
     }
-    
-    let lengths: [Float] = [
-        440.0,
-        80.0,
-        160.0,
-        40.0,
-        20.0,
-        320.0,
-        320.0,
-        320.0,
-        160.0
-    ]
     
     private func inverse_kinematic_calculation(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) -> [Float]
     {
@@ -139,6 +105,18 @@ class Portal_Controller: RobotModelController
 
         return [px, py, pz]
     }
+    
+    let lengths: [Float] = [
+        440.0,
+        80.0,
+        160.0,
+        40.0,
+        20.0,
+        320.0,
+        320.0,
+        320.0,
+        160.0
+    ]
     
     // MARK: - Statistics
     private var charts = [StateChart]()

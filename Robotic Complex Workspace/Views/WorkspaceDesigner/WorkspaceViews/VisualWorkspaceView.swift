@@ -58,6 +58,7 @@ struct VisualWorkspaceView: View
             { content in
                 
             }*/
+            .ignoresSafeArea(.container, edges: .all)
             .disabled(assets_loading)
             .realityViewCameraControls(is_pan ? .pan : .orbit)
             .highPriorityGesture(
@@ -76,7 +77,7 @@ struct VisualWorkspaceView: View
                     }
             )
             //.backgroundStyle(.gray.opacity(0.25))
-            .ignoresSafeArea(.container, edges: [.top, .bottom])
+            //.ignoresSafeArea(.container, edges: [.top, .bottom])
             
             ZStack
             {

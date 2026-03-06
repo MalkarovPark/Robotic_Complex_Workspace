@@ -58,7 +58,7 @@ struct WorkspaceView: View
                 }
                 
                 SpatialPendantView(controller: pendant_controller, workspace: base_workspace)
-                    .ignoresSafeArea(.container, edges: [.bottom])
+                    //.ignoresSafeArea(.container, edges: [.bottom])
                     .padding(10)
                     //.padding([.horizontal, .bottom], 10)
             }
@@ -85,12 +85,11 @@ struct WorkspaceView: View
                 }
                 else
                 {
-                    ContentUnavailableView
-                    {
-                        Text("Nothing Selected")
-                    }
+                    Text("Nothing Selected")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
                     #if os(iOS)
-                    .presentationDetents([.height(160)])
+                        .presentationDetents([.height(160)])
                     #endif
                 }
             }
