@@ -57,10 +57,17 @@ struct WorkspaceView: View
                     EmptyView()
                 }
                 
-                SpatialPendantView(controller: pendant_controller, workspace: base_workspace)
-                    //.ignoresSafeArea(.container, edges: [.bottom])
-                    .padding(10)
-                    //.padding([.horizontal, .bottom], 10)
+                SpatialPendantView(
+                    controller: pendant_controller,
+                    workspace: base_workspace,
+                    
+                    on_update_workspace: { document_handler.document_update_programs() },
+                    on_update_robot: { document_handler.document_update_robots() },
+                    on_update_tool: { document_handler.document_update_tools() }
+                )
+                //.ignoresSafeArea(.container, edges: [.bottom])
+                .padding(10)
+                //.padding([.horizontal, .bottom], 10)
             }
             #if !os(visionOS)
             .inspector(isPresented: $inspector_presented)
@@ -140,7 +147,7 @@ struct WorkspaceView: View
                 {
                     ControlGroup
                     {
-                        Button(action: { device_state_presented.toggle() })
+                        Button(action: { device_state_presented = true })
                         {
                             Label("State", systemImage: "chart.pie")
                         }

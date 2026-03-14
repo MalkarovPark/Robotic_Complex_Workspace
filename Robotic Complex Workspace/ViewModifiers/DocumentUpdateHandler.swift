@@ -13,14 +13,14 @@ class DocumentUpdateHandler: ObservableObject
 {
     // MARK: - Document handling
     @Published var update_programs_document_notify = true
-    @Published var update_registers_document_notify = true
+    //@Published var update_registers_document_notify = true
     
     @Published var update_robots_document_notify = true
     @Published var update_tools_document_notify = true
     @Published var update_parts_document_notify = true
     
     public func document_update_programs() { update_programs_document_notify.toggle() }
-    public func document_update_registers() { update_registers_document_notify.toggle() }
+    //public func document_update_registers() { update_registers_document_notify.toggle() }
     
     public func document_update_robots() { update_robots_document_notify.toggle() }
     public func document_update_tools() { update_tools_document_notify.toggle() }
@@ -53,10 +53,11 @@ struct DocumentUpdateModifier: ViewModifier
             .onChange(of: document_handler.update_programs_document_notify)
             { _, _ in
                 document.preset.programs = base_workspace.file_data().programs
-            }
-            .onChange(of: document_handler.update_registers_document_notify)
-            { _, _ in
                 document.preset.registers = base_workspace.file_data().registers
             }
+            /*.onChange(of: document_handler.update_registers_document_notify)
+            { _, _ in
+                document.preset.registers = base_workspace.file_data().registers
+            }*/
     }
 }

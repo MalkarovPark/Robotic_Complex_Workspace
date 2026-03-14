@@ -102,7 +102,7 @@ struct VisualWorkspaceView: View
             }
             .animation(.easeInOut(duration: 0.3), value: assets_loading)
         }
-        .overlay(alignment: .topLeading)
+        /*.overlay(alignment: .topLeading)
         {
             HStack(spacing: 0)
             {
@@ -120,7 +120,7 @@ struct VisualWorkspaceView: View
                 .padding([.horizontal, .top], 16)
                 #endif
             }
-        }
+        }*/
     }
     
     @EnvironmentObject var document_handler: DocumentUpdateHandler
