@@ -20,36 +20,26 @@ class _6DOF_Connector: RobotConnector, @unchecked Sendable
     
     override func connection_process() async -> Bool
     {
-        new_line_check()
-        output += "Connecting..."
+        sleep(1)
         
-        new_line_check()
+        let result = parameters[safe: 3]?.value as? Bool ?? false
         
-        output += "\n \(parameters.count) parameters used:\n"
-        for parameter in parameters
+        if result
         {
-            output += " • \(parameter.value)\n"
-        }
-        output += "\n"
-        
-        sleep(2)
-        
-        if parameters[3].value as! Bool
-        {
-            output += "Connected"
-            return true
+            connection_output_string = "Connected"
         }
         else
         {
-            output += "Connection failed"
-            return false
+            connection_output_string = "Failed"
+            connection_error = NSError(domain: "Connection failed", code: 0, userInfo: nil)
         }
+        
+        return result
     }
     
     override func disconnection_process()
     {
-        new_line_check()
-        output += "Disconnected"
+        
     }
     
     override var performing_state: (output: PerformingState, log: String)
@@ -58,14 +48,6 @@ class _6DOF_Connector: RobotConnector, @unchecked Sendable
     }
     
     private var local_state: PerformingState = .completed
-    
-    private func new_line_check()
-    {
-        if output != String()
-        {
-            output += "\n"
-        }
-    }
     
     // MARK: - Performing
     override func move_to(point: PositionPoint)

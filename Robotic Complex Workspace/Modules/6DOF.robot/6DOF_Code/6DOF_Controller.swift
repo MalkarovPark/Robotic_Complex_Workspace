@@ -30,29 +30,17 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
             x: Float, y: Float, z: Float,
             r: Float, p: Float, w: Float
         )
-    ) throws -> [(
-        name: String,
-        position: (
-            x: Float, y: Float, z: Float,
-            r: Float, p: Float, w: Float
-        )
-    )]
+    ) throws -> [EntityPositionData]
     {
         let values = inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position)
         
-        let entity_positions: [(
-            name: String,
-            position: (
-                x: Float, y: Float, z: Float,
-                r: Float, p: Float, w: Float
-            )
-        )] = [
-            (name: "d0", position: (x: 0, y: 0, z: 0, r: 0, p: 0, w: values[0].to_deg)),
-            (name: "d1", position: (x: 0, y: 0, z: 160, r: 0, p: values[1].to_deg, w: 0)),
-            (name: "d2", position: (x: 0, y: 0, z: 160, r: 0, p: values[2].to_deg, w: 0)),
-            (name: "d3", position: (x: 0, y: 0, z: 80, r: 0, p: 0, w: values[3].to_deg)),
-            (name: "d4", position: (x: 0, y: 0, z: 160, r: 0, p: values[4].to_deg, w: 0)),
-            (name: "d5", position: (x: 0, y: 0, z: 50, r: 0, p: 0, w: values[5].to_deg))
+        let entity_positions: [EntityPositionData] = [
+            .init(name: "d0", position: (x: 0, y: 0, z: 0, r: 0, p: 0, w: values[0].to_deg)),
+            .init(name: "d1", position: (x: 0, y: 0, z: 160, r: 0, p: values[1].to_deg, w: 0)),
+            .init(name: "d2", position: (x: 0, y: 0, z: 160, r: 0, p: values[2].to_deg, w: 0)),
+            .init(name: "d3", position: (x: 0, y: 0, z: 80, r: 0, p: 0, w: values[3].to_deg)),
+            .init(name: "d4", position: (x: 0, y: 0, z: 160, r: 0, p: values[4].to_deg, w: 0)),
+            .init(name: "d5", position: (x: 0, y: 0, z: 50, r: 0, p: 0, w: values[5].to_deg))
         ]
         
         return entity_positions

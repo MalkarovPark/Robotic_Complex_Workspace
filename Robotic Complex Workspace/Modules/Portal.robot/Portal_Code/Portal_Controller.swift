@@ -27,26 +27,14 @@ class Portal_Controller: RobotModelController
             x: Float, y: Float, z: Float,
             r: Float, p: Float, w: Float
         )
-    ) throws -> [(
-        name: String,
-        position: (
-            x: Float, y: Float, z: Float,
-            r: Float, p: Float, w: Float
-        )
-    )]
+    ) throws -> [EntityPositionData]
     {
         let values = inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position)
         
-        let entity_positions: [(
-            name: String,
-            position: (
-                x: Float, y: Float, z: Float,
-                r: Float, p: Float, w: Float
-            )
-        )] = [
-            (name: "d0", position: (x: values[1], y: 0, z: 0, r: 0, p: 0, w: 0)),
-            (name: "d2", position: (x: 0, y: 0, z: values[2], r: 0, p: 0, w: 0)),
-            (name: "d1", position: (x: 0, y: values[0], z: 0, r: 0, p: 0, w: 0))
+        let entity_positions: [EntityPositionData] = [
+            .init(name: "d0", position: (x: values[1], y: 0, z: 0, r: 0, p: 0, w: 0)),
+            .init(name: "d2", position: (x: 0, y: 0, z: values[2], r: 0, p: 0, w: 0)),
+            .init(name: "d1", position: (x: 0, y: values[0], z: 0, r: 0, p: 0, w: 0))
         ]
         
         entities[safe: "d0", default: Entity()].position.x = Float(values[1])
