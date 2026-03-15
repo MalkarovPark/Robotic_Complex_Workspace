@@ -24,25 +24,25 @@ struct ProgramComponentsManagerView: View
         {
         case .robot:
             restart_all = {
-                Robot.external_modules_servers_stop()
-                Robot.external_modules_servers_start()
+                Robot.external_module_servers_stop()
+                Robot.external_module_servers_start()
             }
-            stop_all = Robot.external_modules_servers_stop
+            stop_all = Robot.external_module_servers_stop
         case .tool:
             restart_all = {
-                Tool.external_modules_servers_stop()
-                Tool.external_modules_servers_start()
+                Tool.external_module_servers_stop()
+                Tool.external_module_servers_start()
             }
-            stop_all = Tool.external_modules_servers_stop
+            stop_all = Tool.external_module_servers_stop
         case .part:
             restart_all = {}
             stop_all = {}
         case .changer:
             restart_all = {
-                //Changer.external_modules_servers_stop()
-                //Changer.external_modules_servers_start()
+                //Changer.external_module_servers_stop()
+                //Changer.external_module_servers_start()
             }
-            stop_all = {}//Changer.external_modules_servers_stop
+            stop_all = {}//Changer.external_module_servers_stop
         }
     }
     
