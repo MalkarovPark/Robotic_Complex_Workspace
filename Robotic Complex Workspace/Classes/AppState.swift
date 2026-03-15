@@ -141,10 +141,10 @@ class AppState: ObservableObject
             
             WorkspaceObject.modules_folder_bookmark = bookmark
             
-            Robot.external_modules_import(by: external_modules_list.robot)
-            Tool.external_modules_import(by: external_modules_list.tool)
-            Part.external_modules_import(by: external_modules_list.part)
-            Changer.external_modules_import(by: external_modules_list.changer)
+            Robot.import_external_modules(by: external_modules_list.robot)
+            Tool.import_external_modules(by: external_modules_list.tool)
+            Part.import_external_modules(by: external_modules_list.part)
+            Changer.import_external_modules(by: external_modules_list.changer)
         }
         catch
         {
