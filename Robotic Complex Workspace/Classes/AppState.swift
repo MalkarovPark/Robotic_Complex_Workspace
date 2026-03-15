@@ -222,9 +222,9 @@ class AppState: ObservableObject
     
     private func stop_external_module_servers()
     {
-        Robot.external_module_servers_stop()
-        Tool.external_module_servers_stop()
-        //Changer.external_module_servers_stop()
+        Robot.stop_external_module_servers()
+        Tool.stop_external_module_servers()
+        //Changer.stop_external_module_servers()
     }
     
     private func start_external_module_servers()
@@ -233,8 +233,8 @@ class AppState: ObservableObject
         
         if opened_documents_count == 1
         {
-            Robot.external_module_servers_start()
-            Tool.external_module_servers_start()
+            Robot.start_external_module_servers()
+            Tool.start_external_module_servers()
         }
     }
     #endif
