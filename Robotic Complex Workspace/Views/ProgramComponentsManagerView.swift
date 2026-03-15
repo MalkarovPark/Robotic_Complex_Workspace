@@ -310,19 +310,19 @@ enum ModuleType: Hashable
         case .robot:
             for external_module in Robot.external_modules
             {
-                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_components_paths))
+                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_component_paths))
             }
         case .tool:
             for external_module in Tool.external_modules
             {
-                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_components_paths))
+                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_component_paths))
             }
         case .part:
             return modules
         case .changer:
             for external_module in Changer.external_modules
             {
-                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_components_paths))
+                modules.append((name: external_module.name, url: external_module.package_url, paths: external_module.program_component_paths))
             }
         }
         
