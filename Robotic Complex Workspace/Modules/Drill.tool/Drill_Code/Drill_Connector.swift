@@ -71,20 +71,20 @@ class Drill_Connector: ToolConnector
     // MARK: - Performing
     override func perform(code: Int)
     {
-        guard let nodes = model_controller?.nodes else { return }
+        guard let entities = model_controller?.entities else { return }
         
-        if nodes.count == 1 //Drill has one rotated node
+        if entities.count == 1 //Drill has one rotated entity
         {
-            nodes[safe_name: "drill"].removeAllActions()
+            entities[safe_name: "drill"].removeAllActions()
             
             switch code
             {
             case 0: // Strop rotation
                 break
             case 1: // Clockwise rotation
-                nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                entities[safe_name: "drill"].runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
             case 2: // Counter clockwise rotation
-                nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                entities[safe_name: "drill"].runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
             default:
                 model_controller?.remove_all_model_actions()
             }

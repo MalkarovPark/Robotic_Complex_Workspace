@@ -9,7 +9,7 @@ import IndustrialKit
 class Drill_Controller: ToolModelController
 {
     /*// MARK: - Parameters
-    override var nodes_names: [String]
+    override var entities_names: [String]
     {
         [
             "drill"
@@ -19,13 +19,13 @@ class Drill_Controller: ToolModelController
     // MARK: - Performing
     private var rotated = [false, false]
     
-    override func nodes_perform(code: Int)
+    override func entities_perform(code: Int)
     {
         info = [256, 256, 64, 64]
         
-        if nodes.count == 1 //Drill has one rotated node
+        if entities.count == 1 //Drill has one rotated entity
         {
-            nodes[safe_name: "drill"].removeAllActions()
+            entities[safe_name: "drill"].removeAllActions()
             
             switch code
             {
@@ -35,14 +35,14 @@ class Drill_Controller: ToolModelController
             case 1: // Clockwise rotation
                 if !rotated[0]
                 {
-                    nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                    entities[safe_name: "drill"].runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
                     rotated[0] = true
                     rotated[1] = false
                 }
             case 2: // Counter clockwise rotation
                 if !rotated[1]
                 {
-                    nodes[safe_name: "drill"].runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
+                    entities[safe_name: "drill"].runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
                     rotated[1] = true
                     rotated[0] = false
                 }
@@ -53,7 +53,7 @@ class Drill_Controller: ToolModelController
         }
     }
     
-    override func reset_nodes()
+    override func reset_entities()
     {
         rotated[0] = false
         rotated[1] = false
@@ -73,7 +73,7 @@ class Drill_Controller: ToolModelController
     
     override func updated_charts_data() -> [StateChart]?
     {
-        guard nodes.count == 1 else
+        guard entities.count == 1 else
         {
             return nil
         }

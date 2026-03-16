@@ -21,6 +21,16 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
     }
     
     // MARK: - Performing
+    let lengths: [Float] = [
+        160.0,
+        160.0,
+        80.0,
+        160.0,
+        50.0,
+        20.0,
+        160.0
+    ]
+    
     override open func entity_positions(
         pointer_position: (
             x: Float, y: Float, z: Float,
@@ -125,16 +135,6 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
         return angles
     }
     
-    let lengths: [Float] = [
-        160.0,
-        160.0,
-        80.0,
-        160.0,
-        50.0,
-        20.0,
-        160.0
-    ]
-    
     // MARK: - Statistics
     private var charts = [StateChart]()
     private var chart_ik_values = [Float](repeating: 0, count: 6)
@@ -156,10 +156,10 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
         }
         
         // Update tool location chart
-        let tool_node = pointer_entity
+        let tool_entity = pointer_entity
         
         var axis_names = ["X", "Y", "Z"]
-        var components = [tool_node?.position.x, tool_node?.position.z, tool_node?.position.y]
+        var components = [tool_entity?.position.x, tool_entity?.position.z, tool_entity?.position.y]
         for i in 0...axis_names.count - 1
         {
             charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0)))
@@ -167,7 +167,7 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
         
         // Update tool rotation chart
         axis_names = ["R", "P", "W"]
-        components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
+        components = [tool_entity?.eulerAngles.z, tool_entity?.eulerAngles.x, tool_entity?.eulerAngles.y]
         for i in 0...axis_names.count - 1
         {
             charts[2].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0).to_deg))
@@ -182,8 +182,10 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
     {
         var states = [StateItem]()
         states.append(StateItem(name: "Temperature", value: "+10º", symbol_name: "thermometer"))
-        states[0].children = [StateItem(name: "Еngine", value: "+50º", symbol_name: "thermometer.transmission"),
-                             StateItem(name: "Fridge", value: "-40º", symbol_name: "thermometer.snowflake.circle")]
+        states[0].children = [
+            StateItem(name: "Еngine", value: "+50º", symbol_name: "thermometer.transmission"),
+            StateItem(name: "Fridge", value: "-40º", symbol_name: "thermometer.snowflake.circle")
+        ]
         
         states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
         
