@@ -45,10 +45,45 @@ class Gripper_Connector: ToolConnector
     }
     
     // MARK: - Performing
+    private var performing_task: Task<Void, Never>?
+    private var current_performing_state: PerformingState = .none
+    
     private var closed = false
     private var moved = false
     
-    open override func perform(code: Int) throws
+    open override func start_process(code: Int)
+    {
+        performing_task = Task
+        {
+            print("Perform code \(code)")
+            moved = true
+            current_performing_state = .processing
+            new_animation_avaliable = true
+            
+            sleep(2)
+            
+            moved = false
+            current_performing_state = .completed
+            
+            closed = code == 0
+            print("Finished")
+        }
+    }
+    
+    open override func reset_device()
+    {
+        //
+    }
+    
+    open override var current_tool_state: ToolState?
+    {
+        return ToolState(
+            performing_state: current_performing_state,
+            entity_animations: current_entity_animations
+        )
+    }
+    
+    /*open override func perform(code: Int) throws
     {
         print("Perform code \(code)")
         moved = true
@@ -60,12 +95,12 @@ class Gripper_Connector: ToolConnector
         
         closed = code == 0
         print("Finished")
-    }
+    }*/
     
     // MARK: - Modeling
     private var new_animation_avaliable = false
     
-    open override var current_entity_animations: [EntityAnimationData]?
+    private var current_entity_animations: [EntityAnimationData]?
     {
         guard new_animation_avaliable else { return nil }
         

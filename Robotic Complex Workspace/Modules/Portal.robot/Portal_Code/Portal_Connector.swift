@@ -44,7 +44,7 @@ class Portal_Connector: RobotConnector
     }
     
     // MARK: - Performing
-    // ...
+    //...
     
     // MARK: - Statistics
     private var charts = [StateChart]()
