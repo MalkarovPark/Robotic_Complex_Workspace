@@ -100,11 +100,11 @@ struct PlacedRobotsGallery: View
     {
         VStack(spacing: 0)
         {
-            if base_workspace.placed_robots_names.count > 0
+            if base_workspace.placed_robot_names.count > 0
             {
                 LazyVGrid(columns: columns, spacing: object_card_spacing)
                 {
-                    ForEach(base_workspace.placed_robots_names, id: \.self)
+                    ForEach(base_workspace.placed_robot_names, id: \.self)
                     { name in
                         /*ObjectCard(name: name, entity: base_workspace.robot_by_name(name).entity)
                             {
@@ -147,11 +147,11 @@ struct PlacedToolsGallery: View
     {
         VStack(spacing: 0)
         {
-            if base_workspace.placed_tools_names.count > 0
+            if base_workspace.placed_tool_names.count > 0
             {
                 LazyVGrid(columns: columns, spacing: object_card_spacing)
                 {
-                    ForEach(base_workspace.placed_tools_names, id: \.self)
+                    ForEach(base_workspace.placed_tool_names, id: \.self)
                     { name in
                         /*ObjectCard(name: name, entity: base_workspace.tool_by_name(name).entity, overlay: {
                             VStack
@@ -242,11 +242,11 @@ struct PlacedPartsGallery: View
     {
         VStack(spacing: 0)
         {
-            if base_workspace.placed_parts_names.count > 0
+            if base_workspace.placed_part_names.count > 0
             {
                 LazyVGrid(columns: columns, spacing: object_card_spacing)
                 {
-                    ForEach(base_workspace.placed_parts_names, id: \.self)
+                    ForEach(base_workspace.placed_part_names, id: \.self)
                     { name in
                         /*ObjectCard(name: name, entity: base_workspace.part_by_name(name).entity)
                             {
@@ -389,11 +389,11 @@ struct GalleryInfoView: View
                     {
                         HStack(spacing: 0)
                         {
-                            if base_workspace.placed_robots_names.count > 0
+                            if base_workspace.placed_robot_names.count > 0
                             {
                                 Picker("Attached to", selection: $attach_robot_name) // Select object name for place in workspace
                                 {
-                                    ForEach(base_workspace.placed_robots_names, id: \.self)
+                                    ForEach(base_workspace.placed_robot_names, id: \.self)
                                     { name in
                                         Text(name)
                                     }
@@ -415,7 +415,7 @@ struct GalleryInfoView: View
                         {
                             if base_workspace.selected_tool.attached_to == nil
                             {
-                                attach_robot_name = base_workspace.placed_robots_names.first ?? "??"
+                                attach_robot_name = base_workspace.placed_robot_names.first ?? "??"
                                 base_workspace.attach_tool_to(robot_name: attach_robot_name)
                             }
                             else

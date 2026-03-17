@@ -37,7 +37,7 @@ struct ToolInspectorItems: View
             get: { tool.attached_to != nil },
             set:
                 { new_value in
-                    tool.attached_to = new_value ? workspace.placed_robots_names.first : nil
+                    tool.attached_to = new_value ? workspace.attachment_supporting_robot_names.first : nil
                     
                     workspace.update_tool_attachments()
                     
@@ -49,9 +49,9 @@ struct ToolInspectorItems: View
         {
             Picker("Attached to", selection: attached_to)
             {
-                if workspace.placed_robots_names.count > 0
+                if workspace.placed_robot_names.count > 0
                 {
-                    ForEach(workspace.placed_robots_names, id: \.self)
+                    ForEach(workspace.attachment_supporting_robot_names, id: \.self)
                     { name in
                         Text(name)
                     }
@@ -75,7 +75,7 @@ struct ToolInspectorItems: View
             .buttonBorderShape(.roundedRectangle)
         }
         .padding(10)
-        .disabled(workspace.placed_robots_names.count == 0)
+        .disabled(workspace.attachment_supporting_robot_names.count == 0)
         
         Divider()
     }

@@ -274,7 +274,7 @@ struct CardMenu: ViewModifier
 
 /*func tool_unplace(workspace: Workspace, from_robot_name: String)
 {
-    for placed_tools_name in workspace.placed_tools_names
+    for placed_tools_name in workspace.placed_tool_names
     {
         let viewed_tool = workspace.tool_by_name(placed_tools_name)
         if viewed_tool.is_placed && viewed_tool.is_attached && viewed_tool.attached_to == from_robot_name
