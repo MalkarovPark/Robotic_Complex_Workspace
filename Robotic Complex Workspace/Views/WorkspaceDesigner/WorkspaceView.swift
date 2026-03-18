@@ -25,7 +25,7 @@ struct WorkspaceView: View
     @State private var add_object_view_presented = false
     @State private var inspector_presented = false
     
-    @State private var device_state_presented = false
+    @State private var device_output_presented = false
     
     @State private var device_connector_presented = false
     
@@ -147,15 +147,15 @@ struct WorkspaceView: View
                 {
                     ControlGroup
                     {
-                        Button(action: { device_state_presented = true })
+                        Button(action: { device_output_presented = true })
                         {
                             Label("State", systemImage: "chart.pie")
                         }
-                        .sheet(isPresented: $device_state_presented)
+                        .sheet(isPresented: $device_output_presented)
                         {
                             if let selected_object = base_workspace.selected_object
                             {
-                                DeviceStateView(object: selected_object)
+                                DeviceOutputView(object: selected_object)
                                 {
                                     switch base_workspace.selected_object
                                     {
@@ -164,7 +164,7 @@ struct WorkspaceView: View
                                     default: break
                                     }
                                 }
-                                .modifier(SheetCaption(is_presented: $device_state_presented, label: "Device State", plain: false, clear_background: true))
+                                .modifier(SheetCaption(is_presented: $device_output_presented, label: "Device State", plain: false, clear_background: true))
                             }
                         }
                         .disabled(!(base_workspace.selected_object is any StateOutputCapable))
