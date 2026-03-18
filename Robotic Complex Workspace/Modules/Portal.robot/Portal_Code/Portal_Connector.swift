@@ -44,7 +44,47 @@ class Portal_Connector: RobotConnector
     }
     
     // MARK: - Performing
-    //...
+    private var performing_task: Task<Void, Never>?
+    private var current_performing_state: PerformingState = .none
+    
+    private var current_pointer_position = EntityPositionData()
+    
+    open override func start_process(point: PositionPoint)
+    {
+        performing_task = Task
+        {
+            current_performing_state = .processing
+            
+            sleep(1)
+            
+            current_performing_state = .completed
+            
+            current_pointer_position = EntityPositionData(
+                position: (
+                    x: point.x,
+                    y: point.y,
+                    z: point.z,
+                    
+                    r: point.r,
+                    p: point.p,
+                    w: point.w
+                )
+            )
+        }
+    }
+    
+    open override func reset_device()
+    {
+        performing_task?.cancel()
+    }
+    
+    open override var current_device_state: RobotState?
+    {
+        return RobotState(
+            performing_state: current_performing_state,
+            pointer_position: current_pointer_position
+        )
+    }
     
     // MARK: - Statistics
     private var charts = [StateChart]()
@@ -114,7 +154,7 @@ class Portal_Connector: RobotConnector
         return states
     }
     
-    override var current_device_state: DeviceState
+    /*override var current_device_output: DeviceState
     {
         // Prepare controller output
         return DeviceState(
@@ -148,12 +188,12 @@ class Portal_Connector: RobotConnector
         return states
     }
     
-    override var initial_device_state: DeviceState?
+    override var initial_device_output: DeviceState?
     {
         // Reset contolleroutput
         return DeviceState(
             items: initial_items,
             charts: initial_charts
         )
-    }
+    }*/
 }

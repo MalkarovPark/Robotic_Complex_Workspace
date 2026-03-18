@@ -193,7 +193,7 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
     }
     
     /// Updates device state data.
-    override var current_device_state: DeviceState
+    override var current_device_output: DeviceState
     {
         // Prepare controller output
         return DeviceState(
@@ -228,7 +228,7 @@ nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
         return states
     }
     
-    override var initial_device_state: DeviceState?
+    override var initial_device_output: DeviceState?
     {
         // Reset contolleroutput
         return DeviceState(

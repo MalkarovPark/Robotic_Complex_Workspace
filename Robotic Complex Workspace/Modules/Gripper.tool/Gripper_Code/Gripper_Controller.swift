@@ -115,7 +115,7 @@ class Gripper_Controller: ToolModelController
         return state
     }
     
-    override var current_device_state: DeviceState
+    override var current_device_output: DeviceState
     {
         // Prepare controller output
         return DeviceState(
@@ -140,7 +140,7 @@ class Gripper_Controller: ToolModelController
         return [StateItem(name: "Closed", value: "", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left")]
     }
     
-    override var initial_device_state: DeviceState?
+    override var initial_device_output: DeviceState?
     {
         // Reset contolleroutput
         return DeviceState(

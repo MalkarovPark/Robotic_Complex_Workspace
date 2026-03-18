@@ -156,7 +156,7 @@ class Portal_Controller: RobotModelController
         return states
     }
     
-    override var current_device_state: DeviceState
+    override var current_device_output: DeviceState
     {
         // Prepare controller output
         return DeviceState(
@@ -190,7 +190,7 @@ class Portal_Controller: RobotModelController
         return states
     }
     
-    override var initial_device_state: DeviceState?
+    override var initial_device_output: DeviceState?
     {
         // Reset contolleroutput
         return DeviceState(

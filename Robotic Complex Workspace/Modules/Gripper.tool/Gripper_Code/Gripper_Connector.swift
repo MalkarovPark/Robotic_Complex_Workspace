@@ -55,7 +55,6 @@ class Gripper_Connector: ToolConnector
     {
         performing_task = Task
         {
-            print("Perform code \(code)")
             moved = true
             current_performing_state = .processing
             new_animation_avaliable = true
@@ -66,36 +65,26 @@ class Gripper_Connector: ToolConnector
             current_performing_state = .completed
             
             closed = code == 0
-            print("Finished")
         }
     }
     
     open override func reset_device()
     {
-        //
+        model_controller?.reset_entities()
+        
+        closed = false
+        moved = false
+        
+        performing_task?.cancel()
     }
     
-    open override var current_tool_state: ToolState?
+    open override var current_device_state: ToolState?
     {
         return ToolState(
             performing_state: current_performing_state,
             entity_animations: current_entity_animations
         )
     }
-    
-    /*open override func perform(code: Int) throws
-    {
-        print("Perform code \(code)")
-        moved = true
-        new_animation_avaliable = true
-        
-        sleep(2)
-        
-        moved = false
-        
-        closed = code == 0
-        print("Finished")
-    }*/
     
     // MARK: - Modeling
     private var new_animation_avaliable = false
@@ -207,7 +196,7 @@ class Gripper_Connector: ToolConnector
         return state
     }
     
-    override var current_device_state: DeviceState
+    /*override var current_device_state: DeviceState
     {
         // Prepare controller output
         return DeviceState(
@@ -232,12 +221,12 @@ class Gripper_Connector: ToolConnector
         return [StateItem(name: "Closed", value: "", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left")]
     }
     
-    override var initial_device_state: DeviceState?
+    override var initial_device_output: DeviceState?
     {
         // Reset contolleroutput
         return DeviceState(
             items: initial_items,
             charts: initial_charts
         )
-    }
+    }*/
 }
