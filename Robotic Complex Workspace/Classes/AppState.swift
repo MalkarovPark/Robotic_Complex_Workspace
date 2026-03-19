@@ -205,7 +205,7 @@ class AppState: ObservableObject
     {
         opened_documents_count += 1
         
-        start_external_module_servers()
+        //start_external_module_servers()
     }
     
     public func dec_documents_count()
@@ -214,17 +214,16 @@ class AppState: ObservableObject
         
         //print(opened_documents_count)
         
-        if opened_documents_count == 0
+        /*if opened_documents_count == 0
         {
             stop_external_module_servers()
-        }
+        }*/
     }
     
     private func stop_external_module_servers()
     {
         Robot.stop_external_module_servers()
         Tool.stop_external_module_servers()
-        //Changer.stop_external_module_servers()
     }
     
     private func start_external_module_servers()

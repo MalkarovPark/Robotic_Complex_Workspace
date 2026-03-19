@@ -95,6 +95,8 @@ struct ContentView: View
         #if os(macOS)
             .onDisappear
             {
+                base_workspace.stop_robot_external_connectors()
+                base_workspace.stop_tool_external_connectors()
                 app_state.dec_documents_count()
             }
         #endif
