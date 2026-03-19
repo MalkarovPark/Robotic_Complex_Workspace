@@ -101,9 +101,6 @@ class AppState: ObservableObject
             modules_folder_bookmark = try url!.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
             
             import_external_modules(bookmark: modules_folder_bookmark)
-            #if os(macOS)
-            start_external_module_servers()
-            #endif
         }
         catch
         {
@@ -170,10 +167,6 @@ class AppState: ObservableObject
         modules_folder_bookmark = nil
         external_modules_list = (robot: [], tool: [], part: [], changer: [])
         
-        #if os(macOS)
-        stop_external_module_servers()
-        #endif
-        
         Robot.external_modules.removeAll()
         Tool.external_modules.removeAll()
         Part.external_modules.removeAll()
@@ -213,28 +206,6 @@ class AppState: ObservableObject
         opened_documents_count -= 1
         
         //print(opened_documents_count)
-        
-        /*if opened_documents_count == 0
-        {
-            stop_external_module_servers()
-        }*/
-    }
-    
-    private func stop_external_module_servers()
-    {
-        Robot.stop_external_module_servers()
-        Tool.stop_external_module_servers()
-    }
-    
-    private func start_external_module_servers()
-    {
-        //print(opened_documents_count)
-        
-        if opened_documents_count == 1
-        {
-            Robot.start_external_module_servers()
-            Tool.start_external_module_servers()
-        }
     }
     #endif
     

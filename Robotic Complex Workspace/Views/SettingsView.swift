@@ -186,12 +186,6 @@ struct ModulesSettingsView: View
     
     @State private var folder_picker_is_presented: Bool = false
     
-    #if os(macOS)
-    @State private var pcm_view_presented: [Bool] = [false, false, false, false]
-    
-    @State private var pcm_view_hovered: [Bool] = [false, false, false, false]
-    #endif
-    
     var body: some View
     {
         Form
@@ -206,76 +200,25 @@ struct ModulesSettingsView: View
                     {
                         HStack
                         {
-                            Button(action: { pcm_view_presented[0] = true })
+                            VStack
                             {
-                                VStack
-                                {
-                                    Text("\(app_state.external_modules_list.robot.count)")
-                                        .foregroundColor(.secondary)
-                                    Text("Robot")
-                                        .foregroundColor(.secondary)
-                                }
-                                .overlay(alignment: .topTrailing)
-                                {
-                                    if pcm_view_hovered[0]
-                                    {
-                                        Image(systemName: "chevron.forward")
-                                            .imageScale(.small)
-                                            .foregroundStyle(.tertiary)
-                                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                                    }
-                                }
+                                Text("\(app_state.external_modules_list.robot.count)")
+                                    .foregroundColor(.secondary)
+                                Text("Robot")
+                                    .foregroundColor(.secondary)
                             }
-                            .buttonStyle(.plain)
                             .frame(width: 64)
-                            .onHover
-                            { hovered in
-                                withAnimation
-                                {
-                                    pcm_view_hovered[0] = hovered
-                                }
-                            }
-                            .popover(isPresented: $pcm_view_presented[0], arrowEdge: .trailing)
-                            {
-                                ProgramComponentsManagerView(module_type: .robot)
-                                    .frame(width: 256, height: 384)
-                            }
                             .help(app_state.external_robot_modules_names)
                             
-                            Button(action: { pcm_view_presented[1] = true })
+                            VStack
                             {
-                                VStack
-                                {
-                                    Text("\(app_state.external_modules_list.tool.count)")
-                                        .foregroundColor(.secondary)
-                                    Text("Tool")
-                                        .foregroundColor(.secondary)
-                                }
-                                .overlay(alignment: .topTrailing)
-                                {
-                                    if pcm_view_hovered[1]
-                                    {
-                                        Image(systemName: "chevron.forward")
-                                            .imageScale(.small)
-                                            .foregroundStyle(.tertiary)
-                                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                                    }
-                                }
+                                Text("\(app_state.external_modules_list.tool.count)")
+                                    .foregroundColor(.secondary)
+                                Text("Tool")
+                                    .foregroundColor(.secondary)
                             }
                             .buttonStyle(.plain)
                             .frame(width: 64)
-                            .onHover
-                            { hovered in
-                                withAnimation
-                                {
-                                    pcm_view_hovered[1] = hovered
-                                }
-                            }
-                            .popover(isPresented: $pcm_view_presented[1], arrowEdge: .trailing)
-                            {
-                                ProgramComponentsManagerView(module_type: .tool)
-                                    .frame(width: 256, height: 384)
-                            }
                             .help(app_state.external_tool_modules_names)
                             
                             VStack
@@ -288,40 +231,14 @@ struct ModulesSettingsView: View
                             .frame(width: 64)
                             .help(app_state.external_part_modules_names)
                             
-                            Button(action: { pcm_view_presented[3] = true })
+                            VStack
                             {
-                                VStack
-                                {
-                                    Text("\(app_state.external_modules_list.changer.count)")
-                                        .foregroundColor(.secondary)
-                                    Text("Changer")
-                                        .foregroundColor(.secondary)
-                                }
-                                .overlay(alignment: .topTrailing)
-                                {
-                                    if pcm_view_hovered[3]
-                                    {
-                                        Image(systemName: "chevron.forward")
-                                            .imageScale(.small)
-                                            .foregroundStyle(.tertiary)
-                                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                                    }
-                                }
+                                Text("\(app_state.external_modules_list.changer.count)")
+                                    .foregroundColor(.secondary)
+                                Text("Changer")
+                                    .foregroundColor(.secondary)
                             }
-                            .buttonStyle(.plain)
                             .frame(width: 64)
-                            .onHover
-                            { hovered in
-                                withAnimation
-                                {
-                                    pcm_view_hovered[3] = hovered
-                                }
-                            }
-                            .popover(isPresented: $pcm_view_presented[3], arrowEdge: .trailing)
-                            {
-                                ProgramComponentsManagerView(module_type: .changer)
-                                    .frame(width: 256, height: 384)
-                            }
                             .help(app_state.external_changer_modules_names)
                         }
                         .padding(4)
@@ -782,9 +699,6 @@ struct SettingsView_Previews: PreviewProvider
         {
             #if os(macOS)
             SettingsView()
-                .environmentObject(AppState())
-            
-            ProgramComponentsManagerView(module_type: .robot)
                 .environmentObject(AppState())
             #else
             SettingsView(setting_view_presented: .constant(true))
