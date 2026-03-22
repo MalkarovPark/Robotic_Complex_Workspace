@@ -15,7 +15,7 @@ struct CardMenu: ViewModifier
     
     @ObservedObject var object: WorkspaceObject
     
-    @Binding var to_rename: Bool
+    @Binding var is_renaming: Bool
     
     @State private var is_selected = false
     @State var name = String()
@@ -35,7 +35,7 @@ struct CardMenu: ViewModifier
     
     // Full
     public init(object: WorkspaceObject,
-                to_rename: Binding<Bool>, name: String = String(),
+                is_renaming: Binding<Bool>, name: String = String(),
                 delete_alert_presented: Bool = false,
                 duplicate_object: @escaping () -> Void,
                 delete_object: @escaping () -> Void,
@@ -47,7 +47,7 @@ struct CardMenu: ViewModifier
                 pass_programs: @escaping () -> Void)
     {
         self.object = object
-        self._to_rename = to_rename
+        self._is_renaming = is_renaming
         self.name = name
         self.delete_alert_presented = delete_alert_presented
         self.duplicate_object = duplicate_object
@@ -61,10 +61,10 @@ struct CardMenu: ViewModifier
     }
     
     // Tool & Part
-    public init(object: WorkspaceObject, to_rename: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void)
+    public init(object: WorkspaceObject, is_renaming: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void)
     {
         self.object = object
-        self._to_rename = to_rename
+        self._is_renaming = is_renaming
         self.name = name
         self.delete_alert_presented = delete_alert_presented
         self.duplicate_object = duplicate_object
@@ -140,7 +140,7 @@ struct CardMenu: ViewModifier
                 {
                     withAnimation
                     {
-                        to_rename.toggle()
+                        is_renaming.toggle()
                     }
                 }
                 
