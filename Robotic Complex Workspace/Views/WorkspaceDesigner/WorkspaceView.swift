@@ -157,7 +157,7 @@ struct WorkspaceView: View
                         {
                             if let selected_object = base_workspace.selected_object
                             {
-                                DeviceOutputView(object: selected_object)
+                                DeviceOutputView(object: selected_object, shows_output_indices: true)
                                 {
                                     switch base_workspace.selected_object
                                     {
