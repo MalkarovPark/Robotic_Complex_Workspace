@@ -40,10 +40,12 @@
 			<string>Data set of robotic complex</string>
 			<key>UTTypeIcons</key>
 			<dict>
-				<key>UTTypeIconBadgeName</key>
+				<key>UTTypeIconBackgroundName</key>
 				<string>preset_icon</string>
+				<key>UTTypeIconBadgeName</key>
+				<string></string>
 				<key>UTTypeIconText</key>
-				<string>preset</string>
+				<string></string>
 			</dict>
 			<key>UTTypeIdentifier</key>
 			<string>celadon.RoboticComplexWorkspace.preset</string>
