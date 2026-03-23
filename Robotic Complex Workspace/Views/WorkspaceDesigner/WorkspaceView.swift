@@ -61,6 +61,8 @@ struct WorkspaceView: View
                     controller: pendant_controller,
                     workspace: base_workspace,
                     
+                    shows_program_indices: true,
+                    
                     on_update_workspace: { document_handler.document_update_programs() },
                     on_update_robot: { document_handler.document_update_robots() },
                     on_update_tool: { document_handler.document_update_tools() }
