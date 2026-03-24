@@ -13,22 +13,6 @@ import IndustrialKitUI
 
 struct ContentView: View
 {
-    // Default robot origin location properties from user defaults
-    @AppStorage("DefaultLocation_X") private var location_x: Double = 200
-    @AppStorage("DefaultLocation_Y") private var location_y: Double = 0
-    @AppStorage("DefaultLocation_Z") private var location_z: Double = 0
-    
-    // Default robot origin rotation properties from user defaults
-    @AppStorage("DefaultScale_X") private var scale_x: Double = 200
-    @AppStorage("DefaultScale_Y") private var scale_y: Double = 200
-    @AppStorage("DefaultScale_Z") private var scale_z: Double = 200
-    
-    // Default components resouces bookmarks
-    @AppStorage("RobotsBookmark") private var robots_bookmark: Data?
-    
-    // If resources not defined
-    @AppStorage("RobotsEmpty") private var robots_empty: Bool?
-    
     // Default count of new registers
     @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
     

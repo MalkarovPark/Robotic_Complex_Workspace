@@ -156,6 +156,16 @@ public enum RepresentationType: String, Equatable, CaseIterable
     case visual = "Visual"
     case gallery = "Gallery"
     case spatial = "Spatial"
+    
+    var symbol_name: String
+    {
+        switch self
+        {
+        case .visual: "view.3d"
+        case .gallery: "view.2d"
+        case .spatial: "cube"
+        }
+    }
 }
 
 // MARK: – Scene transparency parameter

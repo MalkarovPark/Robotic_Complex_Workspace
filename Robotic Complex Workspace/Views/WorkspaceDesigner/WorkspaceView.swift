@@ -109,7 +109,7 @@ struct WorkspaceView: View
             #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
-            .toolbar(id: "workspace")
+            .toolbar(id: "Workspace")
             {
                 #if !os(macOS)
                 ToolbarItem(id: "Settings", placement: .cancellationAction)
@@ -129,141 +129,184 @@ struct WorkspaceView: View
                 
                 ToolbarItem(id: "View", placement: compact_primary_placement())
                 {
+                    Menu
+                    {
+                        Section("Visibility")
+                        {
+                            Toggle(isOn: $base_workspace.shows_grid)
+                            {
+                                Text("Grid")
+                                //Label("Toggle Grid", systemImage: base_workspace.is_grid_visible ? "squareshape.split.2x2" : "squareshape.split.2x2.dotted.inside")
+                            }
+                        }
+                        
+                        Divider()
+                        
+                        Button(action: { is_pan = false })
+                        {
+                            Label("Oribit Mode", systemImage: "rotate.3d")
+                        }
+                        
+                        Button(action: { is_pan = true })
+                        {
+                            Label("Pan Mode", systemImage: "move.3d")
+                        }
+                        
+                        Divider()
+                        
+                        ForEach(RepresentationType.allCases, id: \.self)
+                        { representation in
+                            if representation != .spatial
+                            {
+                                Button(action: { representation_type = representation })
+                                {
+                                    Label(representation.rawValue, systemImage: representation.symbol_name)
+                                }
+                            }
+                        }
+                    }
+                    label:
+                    {
+                        Label("View", systemImage: "camera")
+                            .animation(.easeInOut(duration: 0.3), value: is_pan)
+                    }
+                }
+                
+                /*ToolbarItem(id: "Camera", placement: compact_primary_placement())
+                {
                     Button(action: { is_pan.toggle() })
                     {
                         Label("View", systemImage: is_pan ? "move.3d" : "rotate.3d")
                             .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                             .animation(.easeInOut(duration: 0.3), value: is_pan)
                     }
-                }
+                }*/
                 
-                ToolbarItem(id: "Grid", placement: compact_primary_placement())
+                /*ToolbarItem(id: "Grid", placement: compact_primary_placement())
                 {
                     Button(action: { base_workspace.toggle_grid_visiblity() })
                     {
                         Label("Grid", systemImage: base_workspace.is_grid_visible ? "squareshape.split.2x2" : "squareshape.split.2x2.dotted.inside")
                     }
-                }
+                }*/
+                
+                #if os(macOS)
+                ToolbarSpacer()
+                #endif
                 
                 ToolbarItem(id: "State", placement: compact_primary_placement())
                 {
-                    ControlGroup
+                    Button(action: { device_output_presented = true })
                     {
-                        Button(action: { device_output_presented = true })
-                        {
-                            Label("State", systemImage: "chart.pie")
-                        }
-                        .sheet(isPresented: $device_output_presented)
-                        {
-                            if let selected_object = base_workspace.selected_object
-                            {
-                                DeviceOutputView(object: selected_object, shows_output_indices: true)
-                                {
-                                    switch base_workspace.selected_object
-                                    {
-                                    case is Robot: document_handler.document_update_robots()
-                                    case is Tool: document_handler.document_update_tools()
-                                    default: break
-                                    }
-                                }
-                                .modifier(SheetCaption(is_presented: $device_output_presented, label: "Device State", plain: false, clear_background: true))
-                            }
-                        }
-                        .disabled(!(base_workspace.selected_object is any StateOutputCapable))
+                        Label("Device State", systemImage: "chart.pie")
                     }
+                    .sheet(isPresented: $device_output_presented)
+                    {
+                        if let selected_object = base_workspace.selected_object
+                        {
+                            DeviceOutputView(object: selected_object, shows_output_indices: true)
+                            {
+                                switch base_workspace.selected_object
+                                {
+                                case is Robot: document_handler.document_update_robots()
+                                case is Tool: document_handler.document_update_tools()
+                                default: break
+                                }
+                            }
+                            .modifier(SheetCaption(is_presented: $device_output_presented, label: "Device State", plain: false, clear_background: true))
+                        }
+                    }
+                    .disabled(!(base_workspace.selected_object is any StateOutputCapable))
                 }
                 
                 ToolbarItem(id: "Connector", placement: compact_primary_placement())
                 {
-                    ControlGroup
+                    Button(action: { device_connector_presented.toggle() })
                     {
-                        Button(action: { device_connector_presented.toggle() })
-                        {
-                            Label("Connector", systemImage: "link")
-                        }
-                        .sheet(isPresented: $device_connector_presented)
-                        {
-                            if let selected_object = base_workspace.selected_object
-                            {
-                                ConnectorView(object: selected_object)
-                                {
-                                    switch base_workspace.selected_object
-                                    {
-                                    case is Robot: document_handler.document_update_robots()
-                                    case is Tool: document_handler.document_update_tools()
-                                    default: break
-                                    }
-                                }
-                                .padding(.top, -16)
-                                .modifier(SheetCaption(is_presented: $device_connector_presented, label: "Connect"))
-                                #if os(macOS)
-                                .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
-                                #elseif os(visionOS)
-                                .frame(width: 512, height: 512)
-                                #endif
-                            }
-                        }
-                        .disabled(!(base_workspace.selected_object is any DeviceTwin))
+                        Label("Connector", systemImage: "link")
                     }
+                    .sheet(isPresented: $device_connector_presented)
+                    {
+                        if let selected_object = base_workspace.selected_object
+                        {
+                            ConnectorView(object: selected_object)
+                            {
+                                switch base_workspace.selected_object
+                                {
+                                case is Robot: document_handler.document_update_robots()
+                                case is Tool: document_handler.document_update_tools()
+                                default: break
+                                }
+                            }
+                            .padding(.top, -16)
+                            .modifier(SheetCaption(is_presented: $device_connector_presented, label: "Connect"))
+                            #if os(macOS)
+                            .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
+                            #elseif os(visionOS)
+                            .frame(width: 512, height: 512)
+                            #endif
+                        }
+                    }
+                    .disabled(!(base_workspace.selected_object is any DeviceTwin))
                 }
                 
-                ToolbarItem(id: "Pendant", placement: .confirmationAction)
-                {
-                    ControlGroup
-                    {
-                        Button
-                        {
-                            pendant_controller.is_opened.toggle()
-                        }
-                        label:
-                        {
-                            if pendant_controller.is_opened
-                            {
-                                #if os(macOS)
-                                Label("Pendant", systemImage: "circlebadge")
-                                #else
-                                Image(systemName: "circlebadge")
-                                #endif
-                            }
-                            else
-                            {
-                                #if os(macOS)
-                                Label("Pendant", systemImage: "circlebadge.fill")
-                                    .foregroundStyle(performing_state_color)
-                                #else
-                                Image(systemName: "circlebadge.fill")
-                                    .foregroundStyle(performing_state_color)
-                                #endif
-                            }
-                        }
-                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                        .animation(.easeInOut(duration: 0.3), value: pendant_controller.is_opened)
-                    }
-                }
+                #if os(macOS)
+                ToolbarSpacer()
+                #endif
                 
                 ToolbarItem(id: "Add Object", placement: compact_primary_placement())
                 {
-                    ControlGroup
-                    {
+                    //ControlGroup
+                    //{
                         Button(action: { add_object_view_presented = true })
                         {
                             Label("Add Object", systemImage: "plus")
                         }
+                    //}
+                }
+                
+                ToolbarSpacer()
+                
+                ToolbarItem(id: "Pendant", placement: .confirmationAction)
+                {
+                    Button
+                    {
+                        pendant_controller.is_opened.toggle()
                     }
+                    label:
+                    {
+                        if pendant_controller.is_opened
+                        {
+                            #if os(macOS)
+                            Label("Pendant", systemImage: "circlebadge")
+                            #else
+                            Image(systemName: "circlebadge")
+                            #endif
+                        }
+                        else
+                        {
+                            #if os(macOS)
+                            Label("Pendant", systemImage: "circlebadge.fill")
+                                .foregroundStyle(performing_state_color)
+                            #else
+                            Image(systemName: "circlebadge.fill")
+                                .foregroundStyle(performing_state_color)
+                            #endif
+                        }
+                    }
+                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    .animation(.easeInOut(duration: 0.3), value: pendant_controller.is_opened)
                 }
                 
                 ToolbarItem(id: "Inspector", placement: compact_confirmation_placement())
                 {
-                    ControlGroup
+                    Button(action: { inspector_presented.toggle() })
                     {
-                        Button(action: { inspector_presented.toggle() })
-                        {
-                            #if os(macOS)
-                            Label("Inspector", systemImage: "sidebar.right")
-                            #else
-                            Image(systemName: horizontal_size_class != .compact ? "sidebar.right" : "inset.filled.bottomthird.rectangle.portrait")
-                            #endif
-                        }
+                        #if os(macOS)
+                        Label("Inspector", systemImage: "sidebar.right")
+                        #else
+                        Image(systemName: horizontal_size_class != .compact ? "sidebar.right" : "inset.filled.bottomthird.rectangle.portrait")
+                        #endif
                     }
                 }
             }
@@ -319,7 +362,7 @@ struct WorkspaceView: View
         {
             return .automatic
         }
-        #else
+        #elseif os(visionOS)
         return .automatic
         #endif
     }

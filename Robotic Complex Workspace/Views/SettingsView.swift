@@ -20,7 +20,7 @@ struct SettingsView: View
     
     private enum Tabs: Hashable
     {
-        case general, properties, cell // Settings view tab bar items
+        case general, properties//, cell // Settings view tab bar items
     }
     
     var body: some View
@@ -37,7 +37,7 @@ struct SettingsView: View
             }
             .tag(Tabs.general)
             
-            ModulesSettingsView()
+            ModuleSettingsView()
             #if os(iOS) || os(visionOS)
                 .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Modules", plain: true))
             #endif
@@ -46,7 +46,7 @@ struct SettingsView: View
                 Label("Modules", systemImage: "puzzlepiece.extension")
             }
             
-            CellSettingsView()
+            /*CellSettingsView()
             #if os(iOS) || os(visionOS)
                 .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Cell", plain: true))
             #endif
@@ -54,7 +54,7 @@ struct SettingsView: View
             {
                 Label("Cell", systemImage: "cube.transparent")
             }
-            .tag(Tabs.cell)
+            .tag(Tabs.cell)*/
         }
         #if os(macOS)
         .padding(20)
@@ -80,7 +80,7 @@ struct GeneralSettingsView: View
             #if os(macOS)
             VStack(alignment: .leading, spacing: 0)
             {
-                GroupBox(label: Text("View").font(.headline))
+                /*GroupBox(label: Text("View").font(.headline))
                 {
                     VStack(spacing: 4)
                     {
@@ -107,7 +107,7 @@ struct GeneralSettingsView: View
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
                 }
-                .padding(.bottom)
+                .padding(.bottom)*/
                 
                 GroupBox(label: Text("Workspace").font(.headline))
                 {
@@ -134,7 +134,7 @@ struct GeneralSettingsView: View
                 }
             }
             #else
-            Section("View")
+            /*Section("View")
             {
                 Picker(selection: $representation_type, label: Text("Representation"))
                 {
@@ -151,7 +151,7 @@ struct GeneralSettingsView: View
                     }
                 }
                 .tint(.accentColor)
-            }
+            }*/
             
             Section("Workspace")
             {
@@ -180,7 +180,7 @@ struct GeneralSettingsView: View
 }
 
 // MARK: - Modules settings view
-struct ModulesSettingsView: View
+struct ModuleSettingsView: View
 {
     @EnvironmentObject var app_state: AppState
     
@@ -467,7 +467,7 @@ struct ModulesSettingsView: View
 }
 
 // MARK: - Advanced settings view
-struct CellSettingsView: View
+/*struct CellSettingsView: View
 {
     // Default robot origin location properties from user defaults
     @AppStorage("DefaultLocation_X") private var location_x: Double = 200
@@ -688,7 +688,7 @@ struct CellSettingsView: View
             }
         }
     }
-}
+}*/
 
 // MARK: - Previews
 struct SettingsView_Previews: PreviewProvider
@@ -706,10 +706,10 @@ struct SettingsView_Previews: PreviewProvider
             #endif
             GeneralSettingsView()
                 .padding()
-            ModulesSettingsView()
+            ModuleSettingsView()
                 .environmentObject(AppState())
                 .padding()
-            CellSettingsView()
+            //CellSettingsView()
         }
     }
 }

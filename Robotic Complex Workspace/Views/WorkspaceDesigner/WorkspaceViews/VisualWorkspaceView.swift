@@ -7,9 +7,10 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import RealityKit
+
 import IndustrialKit
 import IndustrialKitUI
-import RealityKit
 
 struct VisualWorkspaceView: View
 {
