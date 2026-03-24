@@ -91,6 +91,7 @@ struct VisualWorkspaceView: View
                     GalleryWorkspaceView()
                         .frame(maxWidth: .infinity)
                         .opacity(representation_type != .visual ? 1 : 0)
+                        .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
                 }
                 
                 SpatialPendantView(

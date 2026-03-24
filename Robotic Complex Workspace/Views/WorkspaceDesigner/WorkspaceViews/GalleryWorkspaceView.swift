@@ -73,16 +73,8 @@ struct PlacedRobotsGallery: View
         {
             ForEach(base_workspace.robots)
             { robot in
-                GlassBoxCard(
-                    title: robot.name,
-                    entity: robot.entity,
-                    vertical_repostion: true,
-                )
-                .frame(height: card_height)
-                .onTapGesture
-                {
-                    //add_object(module, is_internal: false)
-                }
+                WorkspaceObjectCard(object: robot, workspace: base_workspace)
+                    .frame(height: card_height)
             }
         }
         .padding()
@@ -106,16 +98,8 @@ struct PlacedToolsGallery: View
         {
             ForEach(base_workspace.tools)
             { tool in
-                GlassBoxCard(
-                    title: tool.name,
-                    entity: tool.entity,
-                    vertical_repostion: true,
-                )
-                .frame(height: card_height)
-                .onTapGesture
-                {
-                    //add_object(module, is_internal: false)
-                }
+                WorkspaceObjectCard(object: tool, workspace: base_workspace)
+                    .frame(height: card_height)
             }
         }
         .padding()
@@ -139,19 +123,217 @@ struct PlacedPartsGallery: View
         {
             ForEach(base_workspace.parts)
             { part in
-                GlassBoxCard(
-                    title: part.name,
-                    entity: part.entity,
-                    vertical_repostion: true,
-                )
-                .frame(height: card_height)
-                .onTapGesture
-                {
-                    //add_object(module, is_internal: false)
-                }
+                WorkspaceObjectCard(object: part, workspace: base_workspace)
+                    .frame(height: card_height)
             }
         }
         .padding()
+    }
+}
+
+private struct WorkspaceObjectCard: View
+{
+    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var workspace: Workspace
+    
+    @State private var is_renaming = false
+    @State private var preview_entity: Entity?
+    
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    
+    @State private var view_id = UUID()
+    
+    var body: some View
+    {
+        Button
+        {
+            tap_object()
+        }
+        label:
+        {
+            if preview_entity != nil
+            {
+                GlassBoxCard(
+                    title: object.name,
+                    entity: preview_entity,
+                    vertical_repostion: true,
+                    is_renaming: $is_renaming,
+                    /*on_rename:
+                        { new_name in
+                            object.name = unique_name(for: new_name, in: object_names)
+                            document_update_objects()
+                            is_renaming = false
+                        }*/
+                )
+                {
+                    if object_selected
+                    {
+                        ZStack(alignment: .bottomTrailing)
+                        {
+                            Rectangle()
+                                .fill(.clear)
+                            
+                            ZStack
+                            {
+                                Image(systemName: "checkmark")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20, height: 20)
+                                    .foregroundStyle(.primary)
+                            }
+                            #if os(macOS)
+                            .frame(width: 40, height: 40)
+                            #else
+                            .frame(width: 48, height: 48)
+                            #endif
+                            .background(.ultraThinMaterial)
+                            .clipShape(Circle())
+                            .padding(6)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+            }
+            else
+            {
+                GlassBoxCard(
+                    title: object.name,
+                    symbol_name: symbol_name,
+                    symbol_size: 64,
+                    symbol_weight: .regular,
+                    is_renaming: $is_renaming,
+                    /*on_rename:
+                        { new_name in
+                            object.name = unique_name(for: new_name, in: object_names)
+                            document_update_objects()
+                            is_renaming = false
+                        }*/
+                )
+                {
+                    if object_selected
+                    {
+                        ZStack(alignment: .bottomTrailing)
+                        {
+                            Rectangle()
+                                .fill(.clear)
+                            
+                            ZStack
+                            {
+                                Image(systemName: "checkmark")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20, height: 20)
+                                    .foregroundStyle(.primary)
+                            }
+                            #if os(macOS)
+                            .frame(width: 40, height: 40)
+                            #else
+                            .frame(width: 48, height: 48)
+                            #endif
+                            .background(.ultraThinMaterial)
+                            .clipShape(Circle())
+                            .padding(6)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .id(view_id)
+        .onAppear
+        {
+            load_entity()
+        }
+        .onDisappear
+        {
+            preview_entity = nil
+        }
+    }
+    
+    private func load_entity()
+    {
+        /*if let entity_file_name = module.entity_file_name,
+           let entity_file_item = base_stc.entity_items.first(where: { $0.name == entity_file_name })
+        {
+            preview_entity = entity_file_item.entity.clone(recursive: true)
+        }
+        else
+        {
+            preview_entity = nil
+        }*/
+    }
+    
+    private func reset_card()
+    {
+        view_id = UUID()
+        load_entity()
+    }
+    
+    private var symbol_name: String
+    {
+        switch object
+        {
+        case is Robot: "r.square"
+        case is Tool: "hammer"
+        case is Part: "shippingbox"
+        default: String()
+        }
+    }
+    
+    /*private var object_names: [String]
+    {
+        switch object
+        {
+        case is Robot: workspace.robot_names
+        case is Tool: workspace.tool_names
+        case is Part: workspace.part_names
+        default: [String]()
+        }
+    }*/
+    
+    private func tap_object()
+    {
+        if !object_selected
+        {
+            workspace.select_object(object)
+        }
+        else
+        {
+            workspace.deselect_object()
+        }
+    }
+    
+    private var object_selected: Bool
+    {
+        switch object
+        {
+        case is Robot:
+            return workspace.selected_object is Robot
+            ? object.name == workspace.selected_object?.name
+            : false
+        case is Tool:
+            return workspace.selected_object is Tool
+            ? object.name == workspace.selected_object?.name
+            : false
+        case is Part:
+            return workspace.selected_object is Part
+            ? object.name == workspace.selected_object?.name
+            : false
+        default:
+            return false
+        }
+    }
+    
+    private var document_update_objects: () -> ()
+    {
+        switch object
+        {
+        case is Robot: { document_handler.document_update_robots() }
+        case is Tool: { document_handler.document_update_tools() }
+        case is Part: { document_handler.document_update_parts() }
+        default: {}
+        }
     }
 }
 
