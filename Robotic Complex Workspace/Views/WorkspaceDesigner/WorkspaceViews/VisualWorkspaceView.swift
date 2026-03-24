@@ -19,6 +19,9 @@ struct VisualWorkspaceView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
+    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    
+    @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
     
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
@@ -32,6 +35,7 @@ struct VisualWorkspaceView: View
     @State private var is_spatial = false
     
     @State private var assets_loading = false
+    @State private var assets_loaded = false
     
     var body: some View
     {
@@ -53,12 +57,12 @@ struct VisualWorkspaceView: View
                     pendant_controller.is_opened = true
                     
                     assets_loading = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                    {
+                        assets_loaded = true
+                    }
                 }
             }
-            /*update:
-            { content in
-                
-            }*/
             .ignoresSafeArea(.container, edges: .all)
             .disabled(assets_loading)
             .realityViewCameraControls(is_pan ? .pan : .orbit)
@@ -77,19 +81,45 @@ struct VisualWorkspaceView: View
                         base_workspace.process_empty_tap()
                     }
             )
-            //.backgroundStyle(.gray.opacity(0.25))
-            //.ignoresSafeArea(.container, edges: [.top, .bottom])
+            .opacity(representation_type == .visual ? 1 : 0)
+            .animation(.easeInOut(duration: 0.3), value: representation_type == .visual)
+            
+            HStack(spacing: 0)
+            {
+                if representation_type != .visual && assets_loaded
+                {
+                    GalleryWorkspaceView()
+                        .frame(maxWidth: .infinity)
+                        .opacity(representation_type != .visual ? 1 : 0)
+                }
+                
+                SpatialPendantView(
+                    controller: pendant_controller,
+                    workspace: base_workspace,
+                    
+                    shows_program_indices: true,
+                    
+                    on_update_workspace: { document_handler.document_update_programs() },
+                    on_update_robot: { document_handler.document_update_robots() },
+                    on_update_tool: { document_handler.document_update_tools() }
+                )
+                .frame(maxWidth: pendant_width)
+                .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
+                .padding([.horizontal, .bottom], 10)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             ZStack
             {
                 if assets_loading
                 {
                     ProgressView(
-                        label: {
-                            Text("Loading Assets...")
-                                .font(.caption)
-                                .foregroundStyle(Color.secondary)
-                        }
+                        label:
+                            {
+                                Text("Loading Assets...")
+                                    .font(.caption)
+                                    .foregroundStyle(Color.secondary)
+                            }
                     )
                     .progressViewStyle(.circular)
                     .padding()
@@ -103,38 +133,25 @@ struct VisualWorkspaceView: View
             }
             .animation(.easeInOut(duration: 0.3), value: assets_loading)
         }
-        /*.overlay(alignment: .topLeading)
-        {
-            HStack(spacing: 0)
-            {
-                Button(action: button_action)
-                {
-                    Image(systemName: "checkmark")
-                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                        .animation(.easeInOut(duration: 0.3), value: is_pan)
-                        .modifier(CircleButtonImageFramer())
-                }
-                .modifier(CircleButtonGlassBorderer())
-                #if os(macOS) || os(iOS)
-                .padding([.horizontal, .top], 10)
-                #else
-                .padding([.horizontal, .top], 16)
-                #endif
-            }
-        }*/
     }
     
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
-    
-    private func button_action()
+    private var pendant_width: CGFloat
     {
-        //base_workspace.toggle_grid_visiblity()
-        
-        document_handler.document_update_robots()
-        document_handler.document_update_tools()
-        document_handler.document_update_parts()
-        
-        document_handler.document_update_programs()
+        if (representation_type == .gallery || representation_type == .spatial) && assets_loaded
+        {
+            if pendant_controller.is_opened
+            {
+                return 216
+            }
+            else
+            {
+                return 0
+            }
+        }
+        else
+        {
+            return .infinity
+        }
     }
 }
 

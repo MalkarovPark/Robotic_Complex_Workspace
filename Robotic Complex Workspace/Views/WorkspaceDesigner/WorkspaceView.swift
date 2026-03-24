@@ -47,31 +47,8 @@ struct WorkspaceView: View
         {
             ZStack
             {
-                switch representation_type
-                {
-                case .visual:
-                    VisualWorkspaceView(is_pan: $is_pan, pendant_controller: pendant_controller)
-                case .gallery:
-                    GalleryWorkspaceView()
-                case .spatial:
-                    EmptyView()
-                }
-                
-                SpatialPendantView(
-                    controller: pendant_controller,
-                    workspace: base_workspace,
-                    
-                    shows_program_indices: true,
-                    
-                    on_update_workspace: { document_handler.document_update_programs() },
-                    on_update_robot: { document_handler.document_update_robots() },
-                    on_update_tool: { document_handler.document_update_tools() }
-                )
-                //.ignoresSafeArea(.container, edges: [.bottom])
-                .padding(10)
-                //.padding([.horizontal, .bottom], 10)
+                VisualWorkspaceView(is_pan: $is_pan, pendant_controller: pendant_controller)
             }
-            #if !os(visionOS)
             .inspector(isPresented: $inspector_presented)
             {
                 if base_workspace.selected_object != nil
@@ -102,7 +79,6 @@ struct WorkspaceView: View
                     #endif
                 }
             }
-            #endif
             #if os(macOS)
             .frame(minWidth: 800, idealWidth: 800, minHeight: 576, idealHeight: 600) // Window sizes for macOS
             #endif
@@ -415,12 +391,6 @@ struct WorkspaceView_Previews: PreviewProvider
             WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
-            /*AddInWorkspaceView(add_in_view_presented: .constant(true))
-                .environmentObject(Workspace())
-                .environmentObject(AppState())*/
-            /*VisualInfoView(info_view_presented: .constant(true))
-                .environmentObject(Workspace())
-                .environmentObject(AppState())*/
         }
     }
 }

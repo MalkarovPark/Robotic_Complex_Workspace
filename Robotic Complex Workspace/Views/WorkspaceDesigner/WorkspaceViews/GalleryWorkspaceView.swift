@@ -17,6 +17,10 @@ struct GalleryWorkspaceView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 128, maximum: .infinity), spacing: 24)]
+    private let card_spacing: CGFloat = 24
+    private let card_height: CGFloat = 128
+    
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
@@ -29,68 +33,129 @@ struct GalleryWorkspaceView: View
             {
                 VStack(spacing: 8)
                 {
-                    GroupBox("Robots")
+                    if base_workspace.robots.count > 0
                     {
-                        PlacedRobotsGallery()
+                        PlacedRobotsGallery(columns: columns, card_spacing: card_spacing, card_height: card_height)
                     }
                     
-                    GroupBox("Tools")
+                    if base_workspace.tools.count > 0
                     {
-                        PlacedToolsGallery()
+                        PlacedToolsGallery(columns: columns, card_spacing: card_spacing, card_height: card_height)
                     }
                     
-                    GroupBox("Parts")
+                    if base_workspace.parts.count > 0
                     {
-                        PlacedPartsGallery()
+                        PlacedPartsGallery(columns: columns, card_spacing: card_spacing, card_height: card_height)
                     }
                     
-                    Spacer(minLength: 56)
+                    //Spacer(minLength: 56)
                 }
                 .padding(8)
             }
-        }
-        .overlay(alignment: .bottomLeading)
-        {
-            Button(action: { add_in_view_presented.toggle() })
-            {
-                Image(systemName: "plus")
-                #if !os(visionOS)
-                    .modifier(CircleButtonImageFramer())
-                #endif
-            }
-            #if !os(visionOS)
-            .modifier(CircleButtonGlassBorderer())
-            #else
-            .controlSize(.large)
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            .glassBackgroundEffect()
-            .frame(depth: 24)
-            #endif
-            .popover(isPresented: $add_in_view_presented, arrowEdge: default_popover_edge)
-            {
-                /*#if os(macOS)
-                AddInWorkspaceView(add_in_view_presented: $add_in_view_presented)
-                    .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                #else
-                AddInWorkspaceView(add_in_view_presented: $add_in_view_presented, is_compact: horizontal_size_class == .compact)
-                    .frame(maxWidth: 1024)
-                #if !os(visionOS)
-                    .background(.ultraThinMaterial)
-                #endif
-                #endif*/
-            }
-            .disabled(base_workspace.performed)
-            #if !os(visionOS)
-            .padding()
-            #else
-            .padding(32)
-            #endif
         }
     }
 }
 
 struct PlacedRobotsGallery: View
+{
+    @EnvironmentObject var base_workspace: Workspace
+    
+    let columns: [GridItem]
+    let card_spacing: CGFloat
+    let card_height: CGFloat
+    
+    var body: some View
+    {
+        Text("Robots")
+            .font(.headline)
+        
+        LazyVGrid(columns: columns, spacing: card_spacing)
+        {
+            ForEach(base_workspace.robots)
+            { robot in
+                GlassBoxCard(
+                    title: robot.name,
+                    entity: robot.entity,
+                    vertical_repostion: true,
+                )
+                .frame(height: card_height)
+                .onTapGesture
+                {
+                    //add_object(module, is_internal: false)
+                }
+            }
+        }
+        .padding()
+    }
+}
+
+struct PlacedToolsGallery: View
+{
+    @EnvironmentObject var base_workspace: Workspace
+    
+    let columns: [GridItem]
+    let card_spacing: CGFloat
+    let card_height: CGFloat
+    
+    var body: some View
+    {
+        Text("Tools")
+            .font(.headline)
+        
+        LazyVGrid(columns: columns, spacing: card_spacing)
+        {
+            ForEach(base_workspace.tools)
+            { tool in
+                GlassBoxCard(
+                    title: tool.name,
+                    entity: tool.entity,
+                    vertical_repostion: true,
+                )
+                .frame(height: card_height)
+                .onTapGesture
+                {
+                    //add_object(module, is_internal: false)
+                }
+            }
+        }
+        .padding()
+    }
+}
+
+struct PlacedPartsGallery: View
+{
+    @EnvironmentObject var base_workspace: Workspace
+    
+    let columns: [GridItem]
+    let card_spacing: CGFloat
+    let card_height: CGFloat
+    
+    var body: some View
+    {
+        Text("Parts")
+            .font(.headline)
+        
+        LazyVGrid(columns: columns, spacing: card_spacing)
+        {
+            ForEach(base_workspace.parts)
+            { part in
+                GlassBoxCard(
+                    title: part.name,
+                    entity: part.entity,
+                    vertical_repostion: true,
+                )
+                .frame(height: card_height)
+                .onTapGesture
+                {
+                    //add_object(module, is_internal: false)
+                }
+            }
+        }
+        .padding()
+    }
+}
+
+/*struct PlacedRobotsGallery: View
 {
     @EnvironmentObject var base_workspace: Workspace
     
@@ -340,7 +405,7 @@ struct ObjectCard<Content: View>: View
             #endif
         }
     }
-}
+}*/
 
 struct GalleryInfoView: View
 {
@@ -535,8 +600,8 @@ let object_card_spacing: CGFloat = 32
         .environmentObject(AppState())
 }
 
-#Preview
+/*#Preview
 {
     ObjectCard(name: "Object", entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)]), on_select: {})
         .environmentObject(AppState())
-}
+}*/
