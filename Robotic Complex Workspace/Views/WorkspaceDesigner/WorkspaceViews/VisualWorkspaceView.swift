@@ -83,6 +83,9 @@ struct VisualWorkspaceView: View
             )
             .opacity(representation_type == .visual ? 1 : 0)
             .animation(.easeInOut(duration: 0.3), value: representation_type == .visual)
+            #if os(macOS)
+            .frame(minWidth: 640, idealWidth: 800, minHeight: 576, idealHeight: 600)
+            #endif
             
             HStack(spacing: 0)
             {
@@ -140,7 +143,7 @@ struct VisualWorkspaceView: View
     {
         if (representation_type == .gallery || representation_type == .spatial) && assets_loaded
         {
-            if pendant_controller.is_opened
+            if pendant_controller.is_opened && !(base_workspace.selected_object is Part)
             {
                 return 216
             }

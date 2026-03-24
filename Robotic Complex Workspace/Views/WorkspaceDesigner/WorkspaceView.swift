@@ -79,9 +79,6 @@ struct WorkspaceView: View
                     #endif
                 }
             }
-            #if os(macOS)
-            .frame(minWidth: 800, idealWidth: 800, minHeight: 576, idealHeight: 600) // Window sizes for macOS
-            #endif
             #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -147,24 +144,6 @@ struct WorkspaceView: View
                             .animation(.easeInOut(duration: 0.3), value: is_pan)
                     }
                 }
-                
-                /*ToolbarItem(id: "Camera", placement: compact_primary_placement())
-                {
-                    Button(action: { is_pan.toggle() })
-                    {
-                        Label("View", systemImage: is_pan ? "move.3d" : "rotate.3d")
-                            .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                            .animation(.easeInOut(duration: 0.3), value: is_pan)
-                    }
-                }*/
-                
-                /*ToolbarItem(id: "Grid", placement: compact_primary_placement())
-                {
-                    Button(action: { base_workspace.toggle_grid_visiblity() })
-                    {
-                        Label("Grid", systemImage: base_workspace.is_grid_visible ? "squareshape.split.2x2" : "squareshape.split.2x2.dotted.inside")
-                    }
-                }*/
                 
                 #if os(macOS)
                 ToolbarSpacer()

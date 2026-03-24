@@ -164,33 +164,12 @@ private struct WorkspaceObjectCard: View
                     is_renaming: $is_renaming,
                 )
                 {
-                    if object_selected
-                    {
-                        ZStack(alignment: .bottomTrailing)
-                        {
-                            Rectangle()
-                                .fill(.clear)
-                            
-                            ZStack
-                            {
-                                Image(systemName: "checkmark")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 20, height: 20)
-                                    .foregroundStyle(.primary)
-                            }
-                            #if os(macOS)
-                            .frame(width: 40, height: 40)
-                            #else
-                            .frame(width: 48, height: 48)
-                            #endif
-                            .background(.ultraThinMaterial)
-                            .clipShape(Circle())
-                            .padding(6)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
+                    ObjectCardOverlay(object: object, object_selected: object_selected)
                 }
+                .opacity(object.is_placed ? 1 : 0.5)
+                .animation(.easeInOut(duration: 0.2), value: object.is_placed)
+                .animation(.easeInOut(duration: 0.1), value: object_selected)
+                .animation(.easeInOut(duration: 0.1), value: (object as? Tool)?.attached_to != nil)
             }
             else
             {
@@ -202,61 +181,12 @@ private struct WorkspaceObjectCard: View
                     is_renaming: $is_renaming,
                 )
                 {
-                    if object_selected
-                    {
-                        ZStack(alignment: .bottomTrailing)
-                        {
-                            Rectangle()
-                                .fill(.clear)
-                            
-                            ZStack
-                            {
-                                Image(systemName: "checkmark")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 10, height: 10)
-                                    .foregroundStyle(.primary)
-                            }
-                            #if os(macOS)
-                            .frame(width: 20, height: 20)
-                            #else
-                            .frame(width: 24, height: 24)
-                            #endif
-                            .background(.ultraThinMaterial)
-                            .clipShape(Circle())
-                            .padding(6)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    
-                    if let tool = object as? Tool,
-                       tool.attached_to != nil
-                    {
-                        ZStack(alignment: .topTrailing)
-                        {
-                            Rectangle()
-                                .fill(.clear)
-                            
-                            ZStack
-                            {
-                                Image(systemName: "pin.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 10, height: 10)
-                                    .foregroundStyle(.primary)
-                            }
-                            #if os(macOS)
-                            .frame(width: 20, height: 20)
-                            #else
-                            .frame(width: 24, height: 24)
-                            #endif
-                            .background(.ultraThinMaterial)
-                            .clipShape(Circle())
-                            .padding(6)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
+                    ObjectCardOverlay(object: object, object_selected: object_selected)
                 }
+                .opacity(object.is_placed ? 1 : 0.5)
+                .animation(.easeInOut(duration: 0.2), value: object.is_placed)
+                .animation(.easeInOut(duration: 0.1), value: object_selected)
+                .animation(.easeInOut(duration: 0.1), value: (object as? Tool)?.attached_to != nil)
             }
         }
         .buttonStyle(.plain)
@@ -273,15 +203,38 @@ private struct WorkspaceObjectCard: View
     
     private func load_entity()
     {
-        /*if let entity_file_name = module.entity_file_name,
-           let entity_file_item = base_stc.entity_items.first(where: { $0.name == entity_file_name })
+        switch object
         {
-            preview_entity = entity_file_item.entity.clone(recursive: true)
+        case is Robot:
+            if object.is_internal_module
+            {
+                preview_entity = Robot.internal_modules.first { $0.name == object.module_name }?.entity?.clone(recursive: true)
+            }
+            else
+            {
+                preview_entity = Robot.external_modules.first { $0.name == object.module_name }?.entity?.clone(recursive: true)
+            }
+        case is Tool:
+            if object.is_internal_module
+            {
+                preview_entity = Tool.internal_modules.first { $0.name == object.module_name }?.entity?.clone(recursive: true)
+            }
+            else
+            {
+                preview_entity = Tool.external_modules.first { $0.name == object.module_name }?.entity?.clone(recursive: true)
+            }
+        case is Part:
+            if object.is_internal_module
+            {
+                preview_entity = Part.internal_modules.first { $0.name == object.module_name }?.entity?.clone(recursive: true)
+            }
+            else
+            {
+                preview_entity = Part.external_modules.first { $0.name == object.module_name }?.entity?.clone(recursive: true)
+            }
+        default:
+            break
         }
-        else
-        {
-            preview_entity = nil
-        }*/
     }
     
     private func reset_card()
@@ -354,6 +307,83 @@ private struct WorkspaceObjectCard: View
         case is Tool: { document_handler.document_update_tools() }
         case is Part: { document_handler.document_update_parts() }
         default: {}
+        }
+    }
+}
+
+private struct ObjectCardOverlay: View
+{
+    @StateObject var object: WorkspaceObject
+    let object_selected: Bool
+    
+    var body: some View
+    {
+        if !object.is_placed
+        {
+            ZStack(alignment: .topTrailing)
+            {
+                Image(systemName: "nosign")
+                    .font(.system(size: 80))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
+                    .opacity(0.1)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        
+        if object_selected
+        {
+            ZStack(alignment: .bottomTrailing)
+            {
+                Rectangle()
+                    .fill(.clear)
+                
+                ZStack
+                {
+                    Image(systemName: "checkmark")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 10, height: 10)
+                        .foregroundStyle(.primary)
+                }
+                #if os(macOS)
+                .frame(width: 20, height: 20)
+                #else
+                .frame(width: 24, height: 24)
+                #endif
+                .background(.ultraThinMaterial)
+                .clipShape(Circle())
+                .padding(8)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        
+        if let tool = object as? Tool,
+           tool.attached_to != nil
+        {
+            ZStack(alignment: .topTrailing)
+            {
+                Rectangle()
+                    .fill(.clear)
+                
+                ZStack
+                {
+                    Image(systemName: "pin.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 10, height: 10)
+                        .foregroundStyle(.primary)
+                }
+                #if os(macOS)
+                .frame(width: 20, height: 20)
+                #else
+                .frame(width: 24, height: 24)
+                #endif
+                .background(.ultraThinMaterial)
+                .clipShape(Circle())
+                .padding(8)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
