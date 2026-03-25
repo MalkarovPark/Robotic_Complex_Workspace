@@ -47,7 +47,7 @@ struct ToolInspectorItems: View
         
         HStack
         {
-            Picker("Attached to", selection: attached_to)
+            Picker("Attached To", selection: attached_to)
             {
                 if workspace.placed_robot_names.count > 0
                 {
@@ -78,6 +78,210 @@ struct ToolInspectorItems: View
         .disabled(workspace.attachment_supporting_robot_names.count == 0)
         
         Divider()
+        
+        InspectorItem(label: "Physics", is_expanded: false)
+        {
+            VStack(spacing: 20)
+            {
+                let physics_enabled = Binding(
+                    get: { tool.physics_enabled },
+                    set:
+                        { new_value in
+                            tool.physics_enabled = new_value
+                            
+                            on_update()
+                        }
+                )
+                
+                HStack
+                {
+                    Text("Physics Enabled")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    Toggle("Physics Enabled", isOn: physics_enabled)
+                        .labelsHidden()
+                    #if os(macOS)
+                        .toggleStyle(.checkbox)
+                    #else
+                        .toggleStyle(.switch)
+                        .padding(.trailing, 4)
+                    #endif
+                }
+                
+                /*HStack
+                {
+                    let physics_mode = Binding(
+                        get: { tool.physics_body_data.mode },
+                        set:
+                            { new_value in
+                                tool.physics_body_data.mode = new_value
+                                
+                                tool.update_model_physics()
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Mode")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    Picker("Mode", selection: physics_mode)
+                    {
+                        ForEach(PhysicsBodyModeFileData.allCases, id: \.self)
+                        { type in
+                            
+                            if type != ._dynamic
+                            {
+                                Text(type.rawValue)
+                            }
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                }*/
+                
+                /*HStack
+                {
+                    let mass = Binding(
+                        get: { tool.physics_body_data.mass },
+                        set:
+                            { new_value in
+                                tool.physics_body_data.mass = new_value
+                                
+                                tool.update_model_physics()
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Mass (kg)")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField("Mass", value: mass, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 64)
+                        .labelsHidden()
+                    
+                    Stepper("Enter", value: mass, in: 0...1000000)
+                        .labelsHidden()
+                    #if !os(macOS)
+                        .padding(.trailing, 4)
+                    #endif
+                }
+                
+                HStack
+                {
+                    let affected_by_gravity = Binding(
+                        get: { tool.physics_body_data.affected_by_gravity },
+                        set:
+                            { new_value in
+                                tool.physics_body_data.affected_by_gravity = new_value
+                                
+                                tool.update_model_physics()
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Affected by Gravity")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    Toggle("Affected by Gravity", isOn: affected_by_gravity)
+                        .labelsHidden()
+                    #if os(macOS)
+                        .toggleStyle(.checkbox)
+                    #else
+                        .toggleStyle(.switch)
+                        .padding(.trailing, 4)
+                    #endif
+                }*/
+                
+                HStack
+                {
+                    let static_friction = Binding(
+                        get: { tool.physics_body_data.static_friction },
+                        set:
+                            { new_value in
+                                tool.physics_body_data.static_friction = new_value
+                                
+                                tool.update_model_physics()
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Static Friction")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField("Static Friction", value: static_friction, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 64)
+                        .labelsHidden()
+                }
+                
+                HStack
+                {
+                    let dynamic_friction = Binding(
+                        get: { tool.physics_body_data.dynamic_friction },
+                        set:
+                            { new_value in
+                                tool.physics_body_data.dynamic_friction = new_value
+                                
+                                tool.update_model_physics()
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Dynamic Friction")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField("Dynamic Friction", value: dynamic_friction, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 64)
+                        .labelsHidden()
+                }
+                
+                HStack
+                {
+                    let restitution = Binding(
+                        get: { tool.physics_body_data.restitution },
+                        set:
+                            { new_value in
+                                tool.physics_body_data.restitution = new_value
+                                
+                                tool.update_model_physics()
+                                on_update()
+                            }
+                    )
+                    
+                    Text("Restitution")
+                        .fontWeight(.light)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField("Restitution", value: restitution, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 64)
+                        .labelsHidden()
+                }
+            }
+            .padding(.vertical, 10)
+        }
     }
 }
 

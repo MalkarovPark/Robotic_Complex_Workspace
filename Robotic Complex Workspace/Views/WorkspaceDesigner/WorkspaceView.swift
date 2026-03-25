@@ -153,7 +153,7 @@ struct WorkspaceView: View
                 {
                     Button(action: { device_output_presented = true })
                     {
-                        Label("Device State", systemImage: "chart.pie")
+                        Label("Device Output", systemImage: "chart.pie")
                     }
                     .sheet(isPresented: $device_output_presented)
                     {
@@ -168,7 +168,7 @@ struct WorkspaceView: View
                                 default: break
                                 }
                             }
-                            .modifier(SheetCaption(is_presented: $device_output_presented, label: "Device State", plain: false, clear_background: true))
+                            .modifier(SheetCaption(is_presented: $device_output_presented, label: "Device Output", plain: false, clear_background: true))
                         }
                     }
                     .disabled(!(base_workspace.selected_object is any StateOutputCapable))
