@@ -87,7 +87,7 @@ struct InspectorView: View
                 
                 Divider()
                 
-                DisclosureGroup(isExpanded: $position_is_expanded)
+                /*InspectorItem(label: "Position", is_expanded: false)
                 {
                     let position_binding = Binding(
                         get: { object.position },
@@ -104,27 +104,40 @@ struct InspectorView: View
                     #else
                     PositionView(position: position_binding)
                     #endif
-                }
-                label:
-                {
-                    Text("Position")
-                        .font(.system(size: 13, weight: .bold))
-                }
-                .padding(10)
-                
-                Divider()
-                
-                if let robot = object as? Robot
-                {
-                    RobotInspectorItems(robot: robot)
-                    {
-                        update_document(by: object)
-                    }
-                }
+                }*/
                 
                 if let tool = object as? Tool
                 {
                     ToolInspectorItems(tool: tool, workspace: base_workspace)
+                    {
+                        update_document(by: object)
+                    }
+                }
+                else
+                {
+                    InspectorItem(label: "Position", is_expanded: true)
+                    {
+                        let position_binding = Binding(
+                            get: { object.position },
+                            set:
+                                { new_value in
+                                    object.position = new_value
+                                    
+                                    update_document(by: object)
+                                }
+                        )
+                        
+                        #if os(macOS)
+                        PositionView(position: position_binding, with_steppers: true)
+                        #else
+                        PositionView(position: position_binding)
+                        #endif
+                    }
+                }
+                
+                if let robot = object as? Robot
+                {
+                    RobotInspectorItems(robot: robot)
                     {
                         update_document(by: object)
                     }

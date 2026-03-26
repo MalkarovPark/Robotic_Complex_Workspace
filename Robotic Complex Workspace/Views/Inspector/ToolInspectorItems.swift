@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+
 import IndustrialKit
+import IndustrialKitUI
 
 struct ToolInspectorItems: View
 {
@@ -44,6 +46,35 @@ struct ToolInspectorItems: View
                     on_update()
                 }
         )
+        
+        InspectorItem(label: tool.attached_to == nil ? "Position" : "Position (Local)", is_expanded: true)
+        {
+            let position_binding = Binding(
+                get: { tool.position },
+                set:
+                    { new_value in
+                        tool.position = new_value
+                        
+                        on_update()
+                    }
+            )
+            
+            let local_position_binding = Binding(
+                get: { tool.local_position },
+                set:
+                    { new_value in
+                        tool.local_position = new_value
+                        
+                        on_update()
+                    }
+            )
+            
+            #if os(macOS)
+            PositionView(position: tool.attached_to == nil ? position_binding : local_position_binding, with_steppers: true)
+            #else
+            PositionView(position: tool.attached_to != nil ? position_binding : local_position_binding)
+            #endif
+        }
         
         HStack
         {
