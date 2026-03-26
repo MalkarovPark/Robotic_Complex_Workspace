@@ -3,10 +3,10 @@
 //
 
 import Foundation
-import SceneKit
+import RealityKit
 import IndustrialKit
 
-class Gripper_Controller: ToolModelController
+class Gripper_Controller: ToolModelController, @unchecked Sendable
 {
     // MARK: - Parameters
     override var entity_names: [String]
@@ -77,8 +77,8 @@ class Gripper_Controller: ToolModelController
             charts.append(StateChart(name: "Fingers Positions", style: .line))
         }
         
-        charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw", default: SCNNode()].position.z)))
-        charts[0].data.append(ChartDataItem(name: "Right (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw2", default: SCNNode()].position.z)))
+        charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw", default: Entity()].position.z)))
+        charts[0].data.append(ChartDataItem(name: "Right (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw2", default: Entity()].position.z)))
         
         domain_index += 1
         
@@ -117,7 +117,6 @@ class Gripper_Controller: ToolModelController
     
     override var current_device_output: DeviceOutputData
     {
-        // Prepare controller output
         return DeviceOutputData(
             items: current_items,
             charts: current_charts
@@ -142,7 +141,6 @@ class Gripper_Controller: ToolModelController
     
     override var initial_device_output: DeviceOutputData?
     {
-        // Reset contolleroutput
         return DeviceOutputData(
             items: initial_items,
             charts: initial_charts

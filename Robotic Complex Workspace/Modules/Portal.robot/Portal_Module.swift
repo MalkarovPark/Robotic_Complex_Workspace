@@ -1,3 +1,8 @@
+//
+// Portal Robot
+// Internal Module Declaration
+//
+
 import Foundation
 import IndustrialKit
 

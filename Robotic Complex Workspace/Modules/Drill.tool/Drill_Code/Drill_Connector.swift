@@ -4,9 +4,8 @@
 
 import Foundation
 import IndustrialKit
-import SceneKit
 
-class Drill_Connector: ToolConnector
+class Drill_Connector: ToolConnector, @unchecked Sendable
 {
     /*// MARK: - Connection
     override var default_parameters: [ConnectionParameter]

@@ -6,7 +6,7 @@ import Foundation
 import IndustrialKit
 import RealityKit
 
-class Portal_Connector: RobotConnector
+class Portal_Connector: RobotConnector, @unchecked Sendable
 {
     // MARK: - Connection
     override var default_parameters: [ConnectionParameter]

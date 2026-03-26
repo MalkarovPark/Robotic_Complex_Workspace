@@ -3,8 +3,8 @@
 //
 
 import Foundation
-import IndustrialKit
 import RealityKit
+import IndustrialKit
 
 class _6DOF_Connector: RobotConnector, @unchecked Sendable
 {

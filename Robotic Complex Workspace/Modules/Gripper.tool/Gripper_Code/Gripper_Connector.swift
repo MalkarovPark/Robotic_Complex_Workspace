@@ -3,11 +3,10 @@
 //
 
 import Foundation
-import IndustrialKit
-import SceneKit
 import RealityKit
+import IndustrialKit
 
-class Gripper_Connector: ToolConnector
+class Gripper_Connector: ToolConnector, @unchecked Sendable
 {
     // MARK: - Connection
     override var default_parameters: [ConnectionParameter]
@@ -195,38 +194,4 @@ class Gripper_Connector: ToolConnector
         
         return state
     }
-    
-    /*override var current_device_state: DeviceState
-    {
-        // Prepare controller output
-        return DeviceState(
-            items: current_items,
-            charts: current_charts
-        )
-    }
-    
-    var initial_charts: [StateChart]
-    {
-        domain_index = 0
-        charts = [StateChart]()
-        
-        return charts
-    }
-    
-    var initial_items: [StateItem]
-    {
-        domain_index = 0
-        charts = [StateChart]()
-        
-        return [StateItem(name: "Closed", value: "", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left")]
-    }
-    
-    override var initial_device_output: DeviceState?
-    {
-        // Reset contolleroutput
-        return DeviceState(
-            items: initial_items,
-            charts: initial_charts
-        )
-    }*/
 }

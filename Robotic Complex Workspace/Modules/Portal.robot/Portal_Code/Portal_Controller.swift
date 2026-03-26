@@ -1,8 +1,12 @@
+//
+// Robot Model Controller
+//
+
 import Foundation
 import IndustrialKit
 import RealityKit
 
-class Portal_Controller: RobotModelController
+class Portal_Controller: RobotModelController, @unchecked Sendable
 {
     // MARK: - Parameters
     override var entity_names: [String]

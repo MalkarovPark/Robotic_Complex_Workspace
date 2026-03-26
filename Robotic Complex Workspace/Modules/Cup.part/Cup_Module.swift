@@ -1,3 +1,8 @@
+//
+// Cup Part
+// Internal Module Declaration
+//
+
 import Foundation
 import IndustrialKit
 

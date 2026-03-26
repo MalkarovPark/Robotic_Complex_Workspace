@@ -1,20 +1,7 @@
-/*import Foundation
-import IndustrialKit
-
-public let Random_Module = ChangerModule(
-    name: "Random",
-    
-    changer_function: change
-)
-
-private func change(registers: inout [Float])
-{
-    for i in 0..<registers.count
-    {
-        registers[i] = Float(Int.random(in: 0...200))
-    }
-}
-*/
+//
+// Random Changer
+// Internal Module Declaration
+//
 
 import Foundation
 import IndustrialKit
@@ -34,3 +21,21 @@ for (let i = 0; i < registers.length; i++)
 
 registers
 """
+
+/*import Foundation
+import IndustrialKit
+
+public let Random_Module = ChangerModule(
+    name: "Random",
+    
+    changer_function: change
+)
+
+private func change(registers: inout [Float])
+{
+    for i in 0..<registers.count
+    {
+        registers[i] = Float(Int.random(in: 0...200))
+    }
+}
+*/

@@ -3,10 +3,10 @@
 //
 
 import Foundation
-import SceneKit
+import RealityKit
 import IndustrialKit
 
-class Drill_Controller: ToolModelController
+class Drill_Controller: ToolModelController, @unchecked Sendable
 {
     /*// MARK: - Parameters
     override var entities_names: [String]

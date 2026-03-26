@@ -1,6 +1,10 @@
+//
+// Robot Model Controller
+//
+
 import Foundation
-import IndustrialKit
 import RealityKit
+import IndustrialKit
 
 nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
 {
