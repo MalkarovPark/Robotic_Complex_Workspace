@@ -109,8 +109,8 @@ struct WorkspaceView: View
                             Toggle(isOn: $base_workspace.shows_grid)
                             {
                                 Text("Grid")
-                                //Label("Toggle Grid", systemImage: base_workspace.is_grid_visible ? "squareshape.split.2x2" : "squareshape.split.2x2.dotted.inside")
                             }
+                            .disabled(representation_type == .gallery)
                         }
                         
                         Divider()
@@ -119,11 +119,13 @@ struct WorkspaceView: View
                         {
                             Label("Oribit Mode", systemImage: "rotate.3d")
                         }
+                        .disabled(representation_type == .gallery)
                         
                         Button(action: { is_pan = true })
                         {
                             Label("Pan Mode", systemImage: "move.3d")
                         }
+                        .disabled(representation_type == .gallery)
                         
                         Divider()
                         
@@ -141,7 +143,6 @@ struct WorkspaceView: View
                     label:
                     {
                         Label("View", systemImage: "camera")
-                            .animation(.easeInOut(duration: 0.3), value: is_pan)
                     }
                 }
                 

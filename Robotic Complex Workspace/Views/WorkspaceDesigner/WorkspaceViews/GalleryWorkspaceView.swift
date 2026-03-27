@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import RealityKit
+
 import IndustrialKit
 import IndustrialKitUI
-import RealityKit
 
 struct GalleryWorkspaceView: View
 {
@@ -164,12 +165,8 @@ private struct WorkspaceObjectCard: View
                     is_renaming: $is_renaming,
                 )
                 {
-                    ObjectCardOverlay(object: object, object_selected: object_selected)
+                    ObjectCardOverlay(object: object)
                 }
-                .opacity(object.is_placed ? 1 : 0.5)
-                .animation(.easeInOut(duration: 0.2), value: object.is_placed)
-                .animation(.easeInOut(duration: 0.1), value: object_selected)
-                .animation(.easeInOut(duration: 0.1), value: (object as? Tool)?.attached_to != nil)
             }
             else
             {
@@ -181,14 +178,13 @@ private struct WorkspaceObjectCard: View
                     is_renaming: $is_renaming,
                 )
                 {
-                    ObjectCardOverlay(object: object, object_selected: object_selected)
+                    ObjectCardOverlay(object: object)
                 }
-                .opacity(object.is_placed ? 1 : 0.5)
-                .animation(.easeInOut(duration: 0.2), value: object.is_placed)
-                .animation(.easeInOut(duration: 0.1), value: object_selected)
-                .animation(.easeInOut(duration: 0.1), value: (object as? Tool)?.attached_to != nil)
             }
         }
+        .opacity(object.is_placed ? 1 : 0.75)
+        .animation(.easeInOut(duration: 0.2), value: object.is_placed)
+        .animation(.easeInOut(duration: 0.1), value: (object as? Tool)?.attached_to != nil)
         .buttonStyle(.plain)
         .id(view_id)
         .onAppear
@@ -198,6 +194,15 @@ private struct WorkspaceObjectCard: View
         .onDisappear
         {
             preview_entity = nil
+        }
+        .background
+        {
+            if object_selected
+            {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(.gray, lineWidth: 2)
+                    .opacity(0.5)
+            }
         }
     }
     
@@ -314,7 +319,7 @@ private struct WorkspaceObjectCard: View
 private struct ObjectCardOverlay: View
 {
     @StateObject var object: WorkspaceObject
-    let object_selected: Bool
+    //let object_selected: Bool
     
     var body: some View
     {
@@ -331,7 +336,7 @@ private struct ObjectCardOverlay: View
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         
-        if object_selected
+        /*if object_selected
         {
             ZStack(alignment: .bottomTrailing)
             {
@@ -356,7 +361,7 @@ private struct ObjectCardOverlay: View
                 .padding(8)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
+        }*/
         
         if let tool = object as? Tool,
            tool.attached_to != nil
