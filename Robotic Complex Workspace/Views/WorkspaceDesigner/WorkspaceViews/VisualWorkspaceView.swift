@@ -52,7 +52,7 @@ struct VisualWorkspaceView: View
                 scene_content?.camera = is_spatial ? .spatialTracking : .virtual
                 #endif
                 
-                base_workspace.place_entity(to: content)
+                base_workspace.place_entity(in: content)
                 {
                     pendant_controller.is_opened = true
                     
