@@ -161,7 +161,7 @@ struct CardMenu: ViewModifier
                         {
                             Label("Clear", systemImage: "xmark")
                         }
-                        .disabled(!(base_workspace.robot_by_name(name).has_default_position))
+                        .disabled(!(base_workspace.robot(named: name).has_default_position))
                         
                         #if os(macOS)
                         Divider()
@@ -171,7 +171,7 @@ struct CardMenu: ViewModifier
                         {
                             Label("Reset to it", systemImage: "arrow.counterclockwise")
                         }
-                        .disabled(!(base_workspace.robot_by_name(name).has_default_position))
+                        .disabled(!(base_workspace.robot(named: name).has_default_position))
                     }
                     
                     #if os(macOS)
@@ -271,19 +271,6 @@ struct CardMenu: ViewModifier
         }
     }
 }
-
-/*func tool_unplace(workspace: Workspace, from_robot_name: String)
-{
-    for placed_tools_name in workspace.placed_tool_names
-    {
-        let viewed_tool = workspace.tool_by_name(placed_tools_name)
-        if viewed_tool.is_placed && viewed_tool.is_attached && viewed_tool.attached_to == from_robot_name
-        {
-            viewed_tool.attached_to = nil
-            viewed_tool.is_attached = false
-        }
-    }
-}*/
 
 struct WorkspaceMenu: ViewModifier
 {
