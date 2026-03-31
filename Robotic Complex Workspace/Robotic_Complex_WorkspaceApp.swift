@@ -151,19 +151,19 @@ let default_popover_edge_inv: Edge = .top
 #endif
 
 // MARK: - Representation enum
-public enum RepresentationType: String, Equatable, CaseIterable
+public enum ViewMode: String, Equatable, CaseIterable
 {
-    case visual = "Visual"
+    case scene = "Scene"
     case gallery = "Gallery"
-    case spatial = "Spatial"
+    case immersive = "Immersive"
     
     var symbol_name: String
     {
         switch self
         {
-        case .visual: "view.3d"
-        case .gallery: "view.2d"
-        case .spatial: "cube"
+        case .scene: "view.3d"
+        case .gallery: "square.grid.2x2"
+        case .immersive: "visionpro"
         }
     }
 }

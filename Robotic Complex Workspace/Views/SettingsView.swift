@@ -65,7 +65,7 @@ struct SettingsView: View
 // MARK: - Settings view with tab bar
 struct GeneralSettingsView: View
 {
-    @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
+    @AppStorage("ViewMode") private var view_mode: ViewMode = .scene
     
     @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
     
@@ -90,9 +90,9 @@ struct GeneralSettingsView: View
                             
                             Spacer()
                             
-                            Picker(selection: $representation_type, label: Text("Representation"))
+                            Picker(selection: $view_mode, label: Text("Representation"))
                             {
-                                ForEach(RepresentationType.allCases, id: \.self)
+                                ForEach(ViewMode.allCases, id: \.self)
                                 { representation in
                                     if representation != .spatial
                                     {
@@ -136,9 +136,9 @@ struct GeneralSettingsView: View
             #else
             /*Section("View")
             {
-                Picker(selection: $representation_type, label: Text("Representation"))
+                Picker(selection: $view_mode, label: Text("Representation"))
                 {
-                    ForEach(RepresentationType.allCases, id: \.self)
+                    ForEach(ViewMode.allCases, id: \.self)
                     { representation in
                         #if !os(visionOS)
                         if representation != .spatial

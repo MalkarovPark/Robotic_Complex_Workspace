@@ -18,7 +18,7 @@ struct WorkspaceView: View
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
+    @AppStorage("ViewMode") private var view_mode: ViewMode = .scene
     
     @State private var worked = false
     @State private var registers_view_presented = false
@@ -110,7 +110,7 @@ struct WorkspaceView: View
                             {
                                 Text("Grid")
                             }
-                            .disabled(representation_type == .gallery)
+                            .disabled(view_mode == .gallery)
                         }
                         
                         Divider()
@@ -119,21 +119,21 @@ struct WorkspaceView: View
                         {
                             Label("Oribit Mode", systemImage: "rotate.3d")
                         }
-                        .disabled(representation_type == .gallery)
+                        .disabled(view_mode == .gallery)
                         
                         Button(action: { is_pan = true })
                         {
                             Label("Pan Mode", systemImage: "move.3d")
                         }
-                        .disabled(representation_type == .gallery)
+                        .disabled(view_mode == .gallery)
                         
                         Divider()
                         
-                        ForEach(RepresentationType.allCases, id: \.self)
+                        ForEach(ViewMode.allCases, id: \.self)
                         { representation in
-                            if representation != .spatial
+                            if representation != .immersive
                             {
-                                Button(action: { representation_type = representation })
+                                Button(action: { view_mode = representation })
                                 {
                                     Label(representation.rawValue, systemImage: representation.symbol_name)
                                 }

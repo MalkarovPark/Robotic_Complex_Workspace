@@ -21,7 +21,7 @@ struct VisualWorkspaceView: View
     @EnvironmentObject var app_state: AppState
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    @AppStorage("RepresentationType") private var representation_type: RepresentationType = .visual
+    @AppStorage("ViewMode") private var view_mode: ViewMode = .scene
     
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
@@ -81,19 +81,19 @@ struct VisualWorkspaceView: View
                         base_workspace.process_empty_tap()
                     }
             )
-            .opacity(representation_type == .visual ? 1 : 0)
-            .animation(.easeInOut(duration: 0.3), value: representation_type == .visual)
+            .opacity(view_mode == .scene ? 1 : 0)
+            .animation(.easeInOut(duration: 0.3), value: view_mode == .scene)
             #if os(macOS)
             .frame(minWidth: 640, idealWidth: 800, minHeight: 576, idealHeight: 600)
             #endif
             
             HStack(spacing: 0)
             {
-                if representation_type != .visual && assets_loaded
+                if view_mode != .scene && assets_loaded
                 {
                     GalleryWorkspaceView()
                         .frame(maxWidth: .infinity)
-                        .opacity(representation_type != .visual ? 1 : 0)
+                        .opacity(view_mode != .scene ? 1 : 0)
                         .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
                 }
                 
@@ -141,7 +141,7 @@ struct VisualWorkspaceView: View
     
     private var pendant_width: CGFloat
     {
-        if (representation_type == .gallery || representation_type == .spatial) && assets_loaded
+        if (view_mode == .gallery || view_mode == .immersive) && assets_loaded
         {
             if pendant_controller.is_opened && !(base_workspace.selected_object is Part)
             {

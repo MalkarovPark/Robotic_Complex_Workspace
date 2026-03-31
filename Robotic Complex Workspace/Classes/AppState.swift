@@ -215,13 +215,13 @@ class AppState: ObservableObject
         return get_relative_path(from: modules_folder_url) ?? "No folder selected"
     }
     
-    private func get_relative_path(from urlString: URL?) -> String?
+    private func get_relative_path(from url_string: URL?) -> String?
     {
-        if let fileURL = URL(string: urlString?.absoluteString ?? "")
+        if let file_url = URL(string: url_string?.absoluteString ?? "")
         {
-            let pathComponents = fileURL.pathComponents
-            let filteredComponents = pathComponents.dropFirst(2)
-            return filteredComponents.joined(separator: "/")
+            let path_components = file_url.pathComponents
+            let filtered_components = path_components.dropFirst(2)
+            return filtered_components.joined(separator: "/")
         }
         return nil
     }
