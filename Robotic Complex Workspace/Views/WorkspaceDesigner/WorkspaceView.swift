@@ -195,7 +195,7 @@ struct WorkspaceView: View
                                 }
                             }
                             .padding(.top, -16)
-                            .modifier(SheetCaption(is_presented: $device_connector_presented, label: "Connect"))
+                            .modifier(SheetCaption(is_presented: $device_connector_presented, label: "Real Device Connection"))
                             #if os(macOS)
                             .frame(minWidth: 320, idealWidth: 320, maxWidth: 400, minHeight: 448, idealHeight: 480, maxHeight: 512)
                             #elseif os(visionOS)
