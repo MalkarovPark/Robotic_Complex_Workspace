@@ -1,5 +1,5 @@
 //
-//  GalleryWorkspaceView.swift
+//  WorkspaceGalleryView.swift
 //  Robotic Complex Workspace
 //
 //  Created by Artem on 06.12.2023.
@@ -11,7 +11,7 @@ import RealityKit
 import IndustrialKit
 import IndustrialKitUI
 
-struct GalleryWorkspaceView: View
+struct WorkspaceGalleryView: View
 {
     @State private var add_in_view_presented = false
     
@@ -403,7 +403,7 @@ let object_card_spacing: CGFloat = 32
 
 #Preview
 {
-    GalleryWorkspaceView()
+    WorkspaceGalleryView()
         .environmentObject(Workspace())
         .environmentObject(AppState())
 }

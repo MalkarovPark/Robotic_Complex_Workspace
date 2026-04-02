@@ -1,5 +1,5 @@
 //
-//  VisualWorkspaceView.swift
+//  WorkspaceSpatialView.swift
 //  Robotic Complex Workspace
 //
 //  Created by Artem on 06.12.2023.
@@ -12,7 +12,7 @@ import RealityKit
 import IndustrialKit
 import IndustrialKitUI
 
-struct VisualWorkspaceView: View
+struct WorkspaceSpatialView: View
 {
     @State private var add_in_view_presented = false
     @State private var info_view_presented = false
@@ -45,11 +45,13 @@ struct VisualWorkspaceView: View
             { content in
                 assets_loading = true
                 
+                #if !os(visionOS)
                 scene_content = content
                 #if os(macOS)
                 scene_content?.camera = .virtual
                 #else
                 scene_content?.camera = is_spatial ? .spatialTracking : .virtual
+                #endif
                 #endif
                 
                 base_workspace.place_entity(in: content)
@@ -65,7 +67,9 @@ struct VisualWorkspaceView: View
             }
             .ignoresSafeArea(.container, edges: .all)
             .disabled(assets_loading)
+            #if !os(visionOS)
             .realityViewCameraControls(is_pan ? .pan : .orbit)
+            #endif
             .highPriorityGesture(
                 TapGesture()
                     .targetedToAnyEntity()
@@ -91,12 +95,13 @@ struct VisualWorkspaceView: View
             {
                 if view_mode != .scene && assets_loaded
                 {
-                    GalleryWorkspaceView()
+                    WorkspaceGalleryView()
                         .frame(maxWidth: .infinity)
                         .opacity(view_mode != .scene ? 1 : 0)
                         .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
                 }
                 
+                #if os(macOS) || os(iOS)
                 SpatialPendantView(
                     controller: pendant_controller,
                     workspace: base_workspace,
@@ -110,6 +115,7 @@ struct VisualWorkspaceView: View
                 .frame(maxWidth: pendant_width)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
                 .padding([.horizontal, .bottom], 10)
+                #endif
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
@@ -161,7 +167,7 @@ struct VisualWorkspaceView: View
 
 #Preview
 {
-    VisualWorkspaceView(is_pan: .constant(false))
+    WorkspaceSpatialView(is_pan: .constant(false))
         .environmentObject(Workspace())
         .environmentObject(AppState())
         .environmentObject(DocumentUpdateHandler())

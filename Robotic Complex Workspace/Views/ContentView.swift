@@ -44,9 +44,12 @@ struct ContentView: View
         #if os(iOS) || os(visionOS)
             .navigationBarHidden(true)
         #endif
-        #if !os(visionOS)
+        //#if !os(visionOS)
             .environmentObject(base_workspace)
-        #else
+        #if os(visionOS)
+            .modifier(ViewPendantButton())
+        #endif
+        /*#else
             .modifier(ViewPendantButton())
             .onChange(of: pendant_controller.elements_document_data_update)
             { _, _ in
@@ -64,7 +67,7 @@ struct ContentView: View
             { _, _ in
                 document.preset.tools = base_workspace.file_data().tools
             }
-        #endif
+        #endif*/
             .modifier(DocumentUpdateModifier(document: $document, base_workspace: base_workspace))
             .environmentObject(document_handler)
             .task//.onAppear

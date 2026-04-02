@@ -47,7 +47,7 @@ struct WorkspaceView: View
         {
             ZStack
             {
-                VisualWorkspaceView(is_pan: $is_pan, pendant_controller: pendant_controller)
+                WorkspaceSpatialView(is_pan: $is_pan, pendant_controller: pendant_controller)
             }
             .inspector(isPresented: $inspector_presented)
             {
@@ -115,6 +115,7 @@ struct WorkspaceView: View
                         
                         Divider()
                         
+                        #if os(macOS) || os(iOS)
                         Button(action: { is_pan = false })
                         {
                             Label("Oribit Mode", systemImage: "rotate.3d")
@@ -128,6 +129,7 @@ struct WorkspaceView: View
                         .disabled(view_mode == .gallery)
                         
                         Divider()
+                        #endif
                         
                         ForEach(ViewMode.allCases, id: \.self)
                         { representation in
@@ -221,7 +223,9 @@ struct WorkspaceView: View
                     //}
                 }
                 
+                #if !os(visionOS)
                 ToolbarSpacer()
+                #endif
                 
                 ToolbarItem(id: "Pendant", placement: .confirmationAction)
                 {
@@ -359,6 +363,14 @@ struct WorkspaceView: View
     #endif
 }
 
+/*struct OutputGroupView: View
+{
+    var body: some View
+    {
+        
+    }
+}*/
+
 // MARK: - Previews
 struct WorkspaceView_Previews: PreviewProvider
 {
@@ -374,4 +386,3 @@ struct WorkspaceView_Previews: PreviewProvider
         }
     }
 }
-

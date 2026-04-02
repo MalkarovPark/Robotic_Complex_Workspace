@@ -20,7 +20,7 @@ struct ViewPendantButton: ViewModifier
         content
             .overlay(alignment: .bottomTrailing)
             {
-                Button(action: pendant_controller.toggle_pendant)
+                Button(action: { pendant_controller.is_opened.toggle() })
                 {
                     Image(systemName: "slider.horizontal.2.square")
                 }

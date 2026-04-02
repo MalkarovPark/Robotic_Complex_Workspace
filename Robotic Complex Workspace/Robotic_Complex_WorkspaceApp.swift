@@ -48,8 +48,6 @@ struct Robotic_Complex_WorkspaceApp: App
                     {
                         dismissWindow(id: SPendantDefaultID)
                     }
-                    
-                    pendant_controller.workspace = base_workspace
                     #endif
                 }
             #endif
@@ -84,6 +82,9 @@ struct Robotic_Complex_WorkspaceApp: App
                 .keyboardShortcut(".", modifiers: .command)
             }
         }
+        #if os(visionOS)
+        .windowStyle(.volumetric)
+        #endif
         
         #if !os(macOS)
         DocumentGroupLaunchScene("Robotic Complex Workspace")
@@ -117,7 +118,7 @@ struct Robotic_Complex_WorkspaceApp: App
         #endif
         
         #if os(visionOS)
-        SpatialPendant(controller: pendant_controller, workspace: base_workspace)
+        SpatialPendantScene(controller: pendant_controller, workspace: base_workspace)
         #endif
         
         /*WindowGroup("UwU", id: "StatisticsWindow")
