@@ -152,6 +152,9 @@ struct InspectorView: View
                 }
             }
         }
+        #if os(visionOS)
+        .frame(width: 300)
+        #endif
     }
     
     /*private var object_type_name: String

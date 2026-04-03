@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import RealityKit
+
 import IndustrialKit
 import IndustrialKitUI
 
+#if os(visionOS)
 struct WorkspaceSceneView: View
 {
     @ObservedObject var controller: WorkspaceSceneController
@@ -16,6 +19,11 @@ struct WorkspaceSceneView: View
     let on_update_workspace: () -> ()
     let on_update_robot: () -> ()
     let on_update_tool: () -> ()
+    
+    @State private var scene_content: RealityViewContent?
+    
+    @State private var assets_loading = false
+    @State private var assets_loaded = false
     
     public init(
         controller: WorkspaceSceneController,
@@ -34,14 +42,49 @@ struct WorkspaceSceneView: View
     
     var body: some View
     {
-        VStack(spacing: 8)
+        ZStack
         {
-            Text("Workspace")
-            Text("Robots – \(controller.workspace.robots.count)")
-            Text("Tools – \(controller.workspace.tools.count)")
-            Text("Parts – \(controller.workspace.parts.count)")
+            VStack(spacing: 8)
+            {
+                Text("Workspace")
+                Text("Robots – \(controller.workspace.robots.count)")
+                Text("Tools – \(controller.workspace.tools.count)")
+                Text("Parts – \(controller.workspace.parts.count)")
+            }
+            .padding(16)
+            .glassBackgroundEffect()
+            
+            RealityView
+            { content in
+                /*let cube = ModelEntity(
+                    mesh: .generateBox(size: Float(0.1), cornerRadius: Float(0.01)),
+                    materials: [SimpleMaterial(color: .white, isMetallic: false)]
+                )
+                content.add(cube)*/
+                
+                assets_loading = true
+                
+                scene_content = content
+                
+                controller.workspace.place_entity(in: content)
+                {
+                    //pendant_controller.is_opened = true
+                    
+                    assets_loading = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                    {
+                        assets_loaded = true
+                    }
+                }
+            }
+            placeholder:
+            {
+                AssetsLoadingPane(assets_loading: assets_loading)
+            }
+            .ignoresSafeArea(.container, edges: .all)
+            .disabled(assets_loading)
         }
-        .padding(16)
+        .border(.accent)
     }
 }
 
@@ -66,7 +109,7 @@ public struct WorkspaceScene: SwiftUI.Scene
             WorkspaceSceneView(controller: controller)
                 .padding([.horizontal, .top], 16)
         }
-        .windowResizability(.contentSize)
+        .windowStyle(.volumetric)
     }
 }
 
@@ -114,3 +157,4 @@ public let WorkspaceSceneDefaultID = "workspace"
 {
     WorkspaceSceneView(controller: WorkspaceSceneController())
 }
+#endif

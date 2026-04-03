@@ -57,17 +57,16 @@ struct WorkspaceView: View
             ZStack
             {
                 WorkspaceSpatialView(is_pan: $is_pan, pendant_controller: pendant_controller)
-                #if os(visionOS)
+                /*#if os(visionOS)
                     .frame(depth: 0)
                     .overlay(alignment: .bottomLeading)
                     {
                         Button("Workspace") { workspace_controller.is_opened.toggle() }
                             .padding()
                     }
-                #endif
+                #endif*/
                 .onAppear
                 {
-                    // Link
                     pendant_controller.workspace = base_workspace
                     #if os(visionOS)
                     workspace_controller.workspace = base_workspace
@@ -107,6 +106,8 @@ struct WorkspaceView: View
                         .foregroundStyle(.secondary)
                     #if os(iOS)
                         .presentationDetents([.height(160)])
+                    #elseif os(visionOS)
+                        .frame(minWidth: 300, maxHeight: .infinity)
                     #endif
                 }
             }
@@ -148,7 +149,9 @@ struct WorkspaceView: View
                             {
                                 Text("Grid")
                             }
+                            #if !os(visionOS)
                             .disabled(view_mode == .gallery)
+                            #endif
                         }
                         
                         Divider()
@@ -167,18 +170,23 @@ struct WorkspaceView: View
                         .disabled(view_mode == .gallery)
                         
                         Divider()
-                        #endif
                         
                         ForEach(ViewMode.allCases, id: \.self)
-                        { representation in
-                            if representation != .immersive
+                        { mode in
+                            if mode != .immersive
                             {
-                                Button(action: { view_mode = representation })
+                                Button(action: { view_mode = mode })
                                 {
-                                    Label(representation.rawValue, systemImage: representation.symbol_name)
+                                    Label(mode.rawValue, systemImage: mode.symbol_name)
                                 }
                             }
                         }
+                        #else
+                        Button(action: { workspace_controller.is_opened.toggle() })
+                        {
+                            Label(ViewMode.immersive.rawValue, systemImage: ViewMode.immersive.symbol_name)
+                        }
+                        #endif
                     }
                     label:
                     {

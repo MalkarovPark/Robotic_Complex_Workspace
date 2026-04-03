@@ -30,9 +30,12 @@ struct WorkspaceSpatialView: View
     @Binding var is_pan: Bool
     
     @ObservedObject var pendant_controller: PendantController
-    //@EnvironmentObject var pendant_controller: PendantController// = PendantController()
     
+    #if os(macOS) || os(iOS)
     @State private var scene_content: RealityViewCameraContent?
+    #else
+    @State private var scene_content: RealityViewContent?
+    #endif
     @State private var is_spatial = false
     
     @State private var assets_loading = false
@@ -51,17 +54,16 @@ struct WorkspaceSpatialView: View
             AssetsLoadingPane(assets_loading: assets_loading)
             #endif
             
+            #if os(macOS) || os(iOS)
             RealityView
             { content in
                 assets_loading = true
                 
-                #if !os(visionOS)
                 scene_content = content
                 #if os(macOS)
                 scene_content?.camera = .virtual
-                #else
+                #elseif os(iOS)
                 scene_content?.camera = is_spatial ? .spatialTracking : .virtual
-                #endif
                 #endif
                 
                 base_workspace.place_entity(in: content)
@@ -77,9 +79,7 @@ struct WorkspaceSpatialView: View
             }
             .ignoresSafeArea(.container, edges: .all)
             .disabled(assets_loading)
-            #if !os(visionOS)
             .realityViewCameraControls(is_pan ? .pan : .orbit)
-            #endif
             .highPriorityGesture(
                 TapGesture()
                     .targetedToAnyEntity()
@@ -101,7 +101,7 @@ struct WorkspaceSpatialView: View
             .frame(minWidth: 640, idealWidth: 800, minHeight: 576, idealHeight: 600)
             #endif
             
-            #if os(macOS) || os(iOS)
+            //#if os(macOS) || os(iOS)
             HStack(spacing: 0)
             {
                 if view_mode != .scene && assets_loaded
@@ -153,7 +153,7 @@ struct WorkspaceSpatialView: View
     }
 }
 
-private struct AssetsLoadingPane: View
+struct AssetsLoadingPane: View
 {
     let assets_loading: Bool
     var body: some View
