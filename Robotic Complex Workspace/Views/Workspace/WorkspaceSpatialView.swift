@@ -41,6 +41,15 @@ struct WorkspaceSpatialView: View
     {
         ZStack
         {
+            #if os(visionOS)
+            WorkspaceGalleryView()
+                .frame(maxWidth: .infinity)
+                .opacity(view_mode != .scene ? 1 : 0)
+                .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
+            
+            AssetsLoadingPane(assets_loading: assets_loading)
+            #endif
+            
             RealityView
             { content in
                 assets_loading = true
@@ -91,6 +100,7 @@ struct WorkspaceSpatialView: View
             .frame(minWidth: 640, idealWidth: 800, minHeight: 576, idealHeight: 600)
             #endif
             
+            #if os(macOS) || os(iOS)
             HStack(spacing: 0)
             {
                 if view_mode != .scene && assets_loaded
@@ -101,7 +111,6 @@ struct WorkspaceSpatialView: View
                         .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
                 }
                 
-                #if os(macOS) || os(iOS)
                 SpatialPendantView(
                     controller: pendant_controller,
                     workspace: base_workspace,
@@ -115,33 +124,11 @@ struct WorkspaceSpatialView: View
                 .frame(maxWidth: pendant_width)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
                 .padding([.horizontal, .bottom], 10)
-                #endif
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            ZStack
-            {
-                if assets_loading
-                {
-                    ProgressView(
-                        label:
-                            {
-                                Text("Loading Assets...")
-                                    .font(.caption)
-                                    .foregroundStyle(Color.secondary)
-                            }
-                    )
-                    .progressViewStyle(.circular)
-                    .padding()
-                    .background
-                    {
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .fill(.thinMaterial)
-                    }
-                    .offset(y: -32)
-                }
-            }
-            .animation(.easeInOut(duration: 0.3), value: assets_loading)
+            AssetsLoadingPane(assets_loading: assets_loading)
+            #endif
         }
     }
     
@@ -162,6 +149,37 @@ struct WorkspaceSpatialView: View
         {
             return .infinity
         }
+    }
+}
+
+private struct AssetsLoadingPane: View
+{
+    let assets_loading: Bool
+    var body: some View
+    {
+        ZStack
+        {
+            if assets_loading
+            {
+                ProgressView(
+                    label:
+                        {
+                            Text("Loading Assets...")
+                                .font(.caption)
+                                .foregroundStyle(Color.secondary)
+                        }
+                )
+                .progressViewStyle(.circular)
+                .padding()
+                .background
+                {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(.thinMaterial)
+                }
+                .offset(y: -32)
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: assets_loading)
     }
 }
 

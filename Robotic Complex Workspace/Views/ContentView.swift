@@ -44,30 +44,7 @@ struct ContentView: View
         #if os(iOS) || os(visionOS)
             .navigationBarHidden(true)
         #endif
-        //#if !os(visionOS)
             .environmentObject(base_workspace)
-        #if os(visionOS)
-            .modifier(ViewPendantButton())
-        #endif
-        /*#else
-            .modifier(ViewPendantButton())
-            .onChange(of: pendant_controller.elements_document_data_update)
-            { _, _ in
-                document.preset.elements = base_workspace.file_data().elements
-            }
-            .onChange(of: pendant_controller.registers_document_data_update)
-            { _, _ in
-                document.preset.registers = base_workspace.file_data().registers
-            }
-            .onChange(of: pendant_controller.robots_document_data_update)
-            { _, _ in
-                document.preset.robots = base_workspace.file_data().robots
-            }
-            .onChange(of: pendant_controller.tools_document_data_update)
-            { _, _ in
-                document.preset.tools = base_workspace.file_data().tools
-            }
-        #endif*/
             .modifier(DocumentUpdateModifier(document: $document, base_workspace: base_workspace))
             .environmentObject(document_handler)
             .task//.onAppear

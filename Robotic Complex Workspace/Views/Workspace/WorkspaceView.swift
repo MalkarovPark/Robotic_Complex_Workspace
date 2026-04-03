@@ -37,7 +37,15 @@ struct WorkspaceView: View
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     #endif
     
-    @StateObject var pendant_controller = PendantController()
+    #if os(visionOS)
+    @Environment(\.dismiss) private var dismiss
+    #endif
+    
+    #if os(macOS) || os(iOS)
+    @ObservedObject var pendant_controller = PendantController()
+    #else
+    @EnvironmentObject var pendant_controller: PendantController
+    #endif
     
     @State private var is_pan = false
     
@@ -48,6 +56,9 @@ struct WorkspaceView: View
             ZStack
             {
                 WorkspaceSpatialView(is_pan: $is_pan, pendant_controller: pendant_controller)
+                #if os(visionOS)
+                    .frame(depth: 0)
+                #endif
             }
             .inspector(isPresented: $inspector_presented)
             {
@@ -84,19 +95,26 @@ struct WorkspaceView: View
             #endif
             .toolbar(id: "Workspace")
             {
+                #if os(visionOS)
+                ToolbarItem(id: "Documents", placement: .cancellationAction)
+                {
+                    Button(action: { dismiss(); pendant_controller.is_opened = false })
+                    {
+                        Label("Documents", systemImage: "chevron.left")
+                    }
+                    .buttonBorderShape(.circle)
+                }
+                #endif
                 #if !os(macOS)
                 ToolbarItem(id: "Settings", placement: .cancellationAction)
                 {
-                    HStack(alignment: .center)
+                    Button (action: { app_state.settings_view_presented = true })
                     {
-                        Button (action: { app_state.settings_view_presented = true })
-                        {
-                            Label("Settings", systemImage: "gear")
-                        }
-                        #if os(visionOS)
-                        .buttonBorderShape(.circle)
-                        #endif
+                        Label("Settings", systemImage: "gear")
                     }
+                    #if os(visionOS)
+                    .buttonBorderShape(.circle)
+                    #endif
                 }
                 #endif
                 
@@ -254,6 +272,9 @@ struct WorkspaceView: View
                             #endif
                         }
                     }
+                    #if os(visionOS)
+                    .buttonBorderShape(.circle)
+                    #endif
                     .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                     .animation(.easeInOut(duration: 0.3), value: pendant_controller.is_opened)
                 }
@@ -268,6 +289,9 @@ struct WorkspaceView: View
                         Image(systemName: horizontal_size_class != .compact ? "sidebar.right" : "inset.filled.bottomthird.rectangle.portrait")
                         #endif
                     }
+                    #if os(visionOS)
+                    .buttonBorderShape(.circle)
+                    #endif
                 }
             }
             .toolbarRole(.editor)
