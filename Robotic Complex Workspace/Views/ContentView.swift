@@ -20,12 +20,7 @@ struct ContentView: View
     
     @State var first_loaded = true // Fade in workspace scene property
     
-    #if !os(visionOS)
     @StateObject private var base_workspace = Workspace() // Workspace object for opened file
-    #else
-    @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var pendant_controller: PendantController
-    #endif
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
@@ -67,7 +62,6 @@ struct ContentView: View
             .onHover
             { hovered in
                 hover_state = hovered
-                //app_state.apply_command_functions(by: base_workspace)
             }
             .onChange(of: hover_state)
             { _, new_value in

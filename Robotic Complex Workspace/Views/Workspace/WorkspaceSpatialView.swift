@@ -29,7 +29,8 @@ struct WorkspaceSpatialView: View
     
     @Binding var is_pan: Bool
     
-    @ObservedObject var pendant_controller: PendantController = PendantController()
+    @ObservedObject var pendant_controller: PendantController
+    //@EnvironmentObject var pendant_controller: PendantController// = PendantController()
     
     @State private var scene_content: RealityViewCameraContent?
     @State private var is_spatial = false
@@ -113,7 +114,7 @@ struct WorkspaceSpatialView: View
                 
                 SpatialPendantView(
                     controller: pendant_controller,
-                    workspace: base_workspace,
+                    //workspace: base_workspace,
                     
                     shows_program_indices: true,
                     
@@ -185,7 +186,7 @@ private struct AssetsLoadingPane: View
 
 #Preview
 {
-    WorkspaceSpatialView(is_pan: .constant(false))
+    WorkspaceSpatialView(is_pan: .constant(false), pendant_controller: PendantController())
         .environmentObject(Workspace())
         .environmentObject(AppState())
         .environmentObject(DocumentUpdateHandler())

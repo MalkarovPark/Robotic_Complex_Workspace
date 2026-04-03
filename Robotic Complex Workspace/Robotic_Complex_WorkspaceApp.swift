@@ -21,8 +21,12 @@ struct Robotic_Complex_WorkspaceApp: App
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
     
-    @StateObject var base_workspace = Workspace() // Workspace object for opened file
     @StateObject var pendant_controller = PendantController()
+    //#endif
+    //@Environment(\.openWindow) var openWindow
+    //@Environment(\.dismissWindow) var dismissWindow
+    
+    @StateObject var workspace_controller = WorkspaceSceneController()
     #endif
     
     var body: some Scene
@@ -35,11 +39,10 @@ struct Robotic_Complex_WorkspaceApp: App
                 .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
             #endif
             #if os(visionOS)
-                .environmentObject(base_workspace)
                 .environmentObject(pendant_controller)
+                .environmentObject(workspace_controller)
                 .onAppear
                 {
-                    #if os(visionOS)
                     pendant_controller.set_windows_functions
                     {
                         openWindow(id: SPendantDefaultID)
@@ -48,7 +51,15 @@ struct Robotic_Complex_WorkspaceApp: App
                     {
                         dismissWindow(id: SPendantDefaultID)
                     }
-                    #endif
+                    
+                    workspace_controller.set_windows_functions
+                    {
+                        openWindow(id: WorkspaceSceneDefaultID)
+                    }
+                    _:
+                    {
+                        dismissWindow(id: WorkspaceSceneDefaultID)
+                    }
                 }
             #endif
         }
@@ -118,16 +129,9 @@ struct Robotic_Complex_WorkspaceApp: App
         #endif
         
         #if os(visionOS)
-        SpatialPendantScene(controller: pendant_controller, workspace: base_workspace)
+        SpatialPendantScene(controller: pendant_controller)
+        WorkspaceScene(controller: workspace_controller)
         #endif
-        
-        /*WindowGroup("UwU", id: "StatisticsWindow")
-        {
-            EmptyView()
-                .frame(maxWidth: 400, maxHeight: 300)
-        }
-        .windowResizability(.contentSize)
-        .windowStyle(.hiddenTitleBar)*/
     }
 }
 

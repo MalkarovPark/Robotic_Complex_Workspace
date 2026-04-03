@@ -42,9 +42,10 @@ struct WorkspaceView: View
     #endif
     
     #if os(macOS) || os(iOS)
-    @ObservedObject var pendant_controller = PendantController()
+    @StateObject var pendant_controller = PendantController()
     #else
     @EnvironmentObject var pendant_controller: PendantController
+    @EnvironmentObject var workspace_controller: WorkspaceSceneController
     #endif
     
     @State private var is_pan = false
@@ -58,6 +59,25 @@ struct WorkspaceView: View
                 WorkspaceSpatialView(is_pan: $is_pan, pendant_controller: pendant_controller)
                 #if os(visionOS)
                     .frame(depth: 0)
+                    .overlay(alignment: .bottomLeading)
+                    {
+                        Button("Workspace") { workspace_controller.is_opened.toggle() }
+                            .padding()
+                    }
+                #endif
+                .onAppear
+                {
+                    // Link
+                    pendant_controller.workspace = base_workspace
+                    #if os(visionOS)
+                    workspace_controller.workspace = base_workspace
+                    #endif
+                }
+                #if os(visionOS)
+                .onDisappear
+                {
+                    workspace_controller.workspace = Workspace()
+                }
                 #endif
             }
             .inspector(isPresented: $inspector_presented)
