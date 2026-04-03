@@ -26,23 +26,4 @@ struct SafeAreaToggler: ViewModifier
         }
     }
 }
-
-struct PickerNamer: ViewModifier
-{
-    var name: String
-    
-    public func body(content: Content) -> some View
-    {
-        HStack(spacing: 0)
-        {
-            Text(name)
-                .font(.subheadline)
-                .padding(.trailing)
-            content
-            #if os(iOS)
-                .modifier(PickerBorderer())
-            #endif
-        }
-    }
-}
 #endif
