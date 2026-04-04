@@ -13,7 +13,7 @@ struct CardMenu: ViewModifier
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var object: ProductionObject
     
     @Binding var is_renaming: Bool
     
@@ -34,7 +34,7 @@ struct CardMenu: ViewModifier
     let pass_programs: () -> ()
     
     // Full
-    public init(object: WorkspaceObject,
+    public init(object: ProductionObject,
                 is_renaming: Binding<Bool>, name: String = String(),
                 delete_alert_presented: Bool = false,
                 duplicate_object: @escaping () -> Void,
@@ -61,7 +61,7 @@ struct CardMenu: ViewModifier
     }
     
     // Tool & Part
-    public init(object: WorkspaceObject, is_renaming: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void)
+    public init(object: ProductionObject, is_renaming: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void)
     {
         self.object = object
         self._is_renaming = is_renaming
@@ -320,7 +320,7 @@ struct ModuleViewer: View
     
     @EnvironmentObject var app_state: AppState
     
-    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var object: ProductionObject
     
     let update_file: () -> ()
     

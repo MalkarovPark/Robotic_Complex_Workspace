@@ -84,15 +84,15 @@ struct WorkspaceView: View
                 if base_workspace.selected_object != nil
                 {
                     #if os(macOS) || os(visionOS)
-                    InspectorView(object: base_workspace.selected_object ?? WorkspaceObject())
+                    InspectorView(object: base_workspace.selected_object ?? ProductionObject())
                     #else
                     if horizontal_size_class != .compact
                     {
-                        InspectorView(object: base_workspace.selected_object ?? WorkspaceObject())
+                        InspectorView(object: base_workspace.selected_object ?? ProductionObject())
                     }
                     else
                     {
-                        InspectorView(object: base_workspace.selected_object ?? WorkspaceObject())
+                        InspectorView(object: base_workspace.selected_object ?? ProductionObject())
                             .presentationDetents([.medium, .large])
                             .presentationDragIndicator(.visible)
                             .modifier(SheetCaption(is_presented: $inspector_presented, label: object_type_name))

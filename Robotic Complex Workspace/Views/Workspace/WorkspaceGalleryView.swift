@@ -78,7 +78,7 @@ struct PlacedRobotsGallery: View
         {
             ForEach(base_workspace.robots)
             { robot in
-                WorkspaceObjectCard(object: robot, workspace: base_workspace)
+                ProductionObjectCard(object: robot, workspace: base_workspace)
                     .frame(height: card_height)
             }
         }
@@ -103,7 +103,7 @@ struct PlacedToolsGallery: View
         {
             ForEach(base_workspace.tools)
             { tool in
-                WorkspaceObjectCard(object: tool, workspace: base_workspace)
+                ProductionObjectCard(object: tool, workspace: base_workspace)
                     .frame(height: card_height)
             }
         }
@@ -128,7 +128,7 @@ struct PlacedPartsGallery: View
         {
             ForEach(base_workspace.parts)
             { part in
-                WorkspaceObjectCard(object: part, workspace: base_workspace)
+                ProductionObjectCard(object: part, workspace: base_workspace)
                     .frame(height: card_height)
             }
         }
@@ -136,9 +136,9 @@ struct PlacedPartsGallery: View
     }
 }
 
-private struct WorkspaceObjectCard: View
+private struct ProductionObjectCard: View
 {
-    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var object: ProductionObject
     @ObservedObject var workspace: Workspace
     
     @State private var is_renaming = false
@@ -318,7 +318,7 @@ private struct WorkspaceObjectCard: View
 
 private struct ObjectCardOverlay: View
 {
-    @StateObject var object: WorkspaceObject
+    @StateObject var object: ProductionObject
     //let object_selected: Bool
     
     var body: some View

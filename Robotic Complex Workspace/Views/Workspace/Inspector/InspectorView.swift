@@ -11,12 +11,12 @@ import IndustrialKitUI
 
 struct InspectorView: View
 {
-    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var object: ProductionObject
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var document_handler: DocumentUpdateHandler
     
-    @State private var last_object: WorkspaceObject?
+    @State private var last_object: ProductionObject?
     
     @State private var position_is_expanded: Bool = true
     
@@ -180,7 +180,7 @@ struct InspectorView: View
         update_document(by: stored_object)
     }
     
-    private func update_document(by object: WorkspaceObject)
+    private func update_document(by object: ProductionObject)
     {
         switch object
         {

@@ -28,7 +28,7 @@ class AppState: ObservableObject
     public var origin_rotation_flag = false
     public var space_scale_flag = false
     
-    public var passed_programs_names_list = [String]()
+    public var passed_program_names_list = [String]()
     
     public func clear_pass()
     {
@@ -41,7 +41,7 @@ class AppState: ObservableObject
             origin_rotation_flag = false
             space_scale_flag = false
             
-            passed_programs_names_list = [String]()
+            passed_program_names_list = [String]()
         }
     }
     
@@ -136,7 +136,7 @@ class AppState: ObservableObject
             
             Changer.external_modules_list = external_modules_list.changer
             
-            WorkspaceObject.modules_folder_bookmark = bookmark
+            ProductionObject.modules_folder_bookmark = bookmark
             
             Robot.import_external_modules(by: external_modules_list.robot)
             Tool.import_external_modules(by: external_modules_list.tool)
@@ -175,7 +175,7 @@ class AppState: ObservableObject
         modules_folder_url = nil
     }
     
-    /*public func is_module_avalibale(for workspace_object: WorkspaceObject) -> Bool
+    /*public func is_module_avalibale(for workspace_object: ProductionObject) -> Bool
     {
         switch workspace_object
         {
