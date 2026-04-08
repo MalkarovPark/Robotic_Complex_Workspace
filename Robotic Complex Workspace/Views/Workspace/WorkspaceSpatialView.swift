@@ -118,9 +118,9 @@ struct WorkspaceSpatialView: View
                     
                     shows_program_indices: true,
                     
-                    on_update_workspace: { document_handler.document_update_programs() },
-                    on_update_robot: { document_handler.document_update_robots() },
-                    on_update_tool: { document_handler.document_update_tools() }
+                    on_update_workspace: { document_handler.update_programs() },
+                    on_update_robot: { document_handler.update_robots() },
+                    on_update_tool: { document_handler.update_tools() }
                 )
                 .frame(maxWidth: pendant_width)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)

@@ -221,7 +221,7 @@ struct AddRobotView: View
     private func add_object(_ module: RobotModule, is_internal: Bool)
     {
         base_workspace.add_robot(Robot(name: "None", module: module, is_internal: is_internal))
-        document_handler.document_update_robots()
+        document_handler.update_robots()
         
         is_presented = false
     }
@@ -302,7 +302,7 @@ struct AddToolView: View
     private func add_object(_ module: ToolModule, is_internal: Bool)
     {
         base_workspace.add_tool(Tool(name: "None", module: module, is_internal: is_internal))
-        document_handler.document_update_tools()
+        document_handler.update_tools()
         
         is_presented = false
     }
@@ -383,7 +383,7 @@ struct AddPartView: View
     private func add_object(_ module: PartModule, is_internal: Bool)
     {
         base_workspace.add_part(Part(name: "None", module: module, is_internal: is_internal))
-        document_handler.document_update_parts()
+        document_handler.update_parts()
         
         is_presented = false
     }

@@ -308,9 +308,9 @@ private struct ProductionObjectCard: View
     {
         switch object
         {
-        case is Robot: { document_handler.document_update_robots() }
-        case is Tool: { document_handler.document_update_tools() }
-        case is Part: { document_handler.document_update_parts() }
+        case is Robot: { document_handler.update_robots() }
+        case is Tool: { document_handler.update_tools() }
+        case is Part: { document_handler.update_parts() }
         default: {}
         }
     }

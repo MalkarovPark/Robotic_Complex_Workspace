@@ -212,8 +212,8 @@ struct WorkspaceView: View
                             {
                                 switch base_workspace.selected_object
                                 {
-                                case is Robot: document_handler.document_update_robots()
-                                case is Tool: document_handler.document_update_tools()
+                                case is Robot: document_handler.update_robots()
+                                case is Tool: document_handler.update_tools()
                                 default: break
                                 }
                             }
@@ -237,8 +237,8 @@ struct WorkspaceView: View
                             {
                                 switch base_workspace.selected_object
                                 {
-                                case is Robot: document_handler.document_update_robots()
-                                case is Tool: document_handler.document_update_tools()
+                                case is Robot: document_handler.update_robots()
+                                case is Tool: document_handler.update_tools()
                                 default: break
                                 }
                             }

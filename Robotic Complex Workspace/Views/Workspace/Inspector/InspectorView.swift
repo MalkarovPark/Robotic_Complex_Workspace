@@ -185,11 +185,11 @@ struct InspectorView: View
         switch object
         {
         case is Robot:
-            document_handler.document_update_robots()
+            document_handler.update_robots()
         case is Tool:
-            document_handler.document_update_tools()
+            document_handler.update_tools()
         case is Part:
-            document_handler.document_update_parts()
+            document_handler.update_parts()
         default:
             break
         }

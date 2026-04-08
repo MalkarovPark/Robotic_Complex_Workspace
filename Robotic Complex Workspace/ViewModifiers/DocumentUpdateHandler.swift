@@ -7,24 +7,32 @@
 
 import Foundation
 import SwiftUI
+
 import IndustrialKit
 
-class DocumentUpdateHandler: ObservableObject
+final class DocumentUpdateHandler: ObservableObject
 {
-    // MARK: - Document handling
-    @Published var update_programs_document_notify = true
-    //@Published var update_registers_document_notify = true
+    enum Event: Hashable
+    {
+        case robots
+        case tools
+        case parts
+        case programs
+        case registers
+    }
     
-    @Published var update_robots_document_notify = true
-    @Published var update_tools_document_notify = true
-    @Published var update_parts_document_notify = true
+    @Published var event: Event?
     
-    public func document_update_programs() { update_programs_document_notify.toggle() }
-    //public func document_update_registers() { update_registers_document_notify.toggle() }
+    public func update_robots() { fire(.robots) }
+    public func update_tools() { fire(.tools) }
+    public func update_parts() { fire(.parts) }
+    public func update_programs() { fire(.programs) }
+    public func update_registers() { fire(.registers) }
     
-    public func document_update_robots() { update_robots_document_notify.toggle() }
-    public func document_update_tools() { update_tools_document_notify.toggle() }
-    public func document_update_parts() { update_parts_document_notify.toggle() }
+    private func fire(_ event: Event)
+    {
+        self.event = event
+    }
 }
 
 struct DocumentUpdateModifier: ViewModifier
@@ -38,26 +46,26 @@ struct DocumentUpdateModifier: ViewModifier
     public func body(content: Content) -> some View
     {
         content
-            .onChange(of: document_handler.update_robots_document_notify)
-            { _, _ in
-                document.preset.robots = base_workspace.file_data().robots
+            .task(id: document_handler.event)
+            {
+                guard let event = document_handler.event else { return }
+                
+                let data = base_workspace.file_data()
+                
+                switch event
+                {
+                case .robots:
+                    document.preset.robots = data.robots
+                case .tools:
+                    document.preset.tools = data.tools
+                case .parts:
+                    document.preset.parts = data.parts
+                case .programs:
+                    document.preset.programs = data.programs
+                    document.preset.registers = data.registers
+                case .registers:
+                    break//document.preset.registers = data.registers
             }
-            .onChange(of: document_handler.update_tools_document_notify)
-            { _, _ in
-                document.preset.tools = base_workspace.file_data().tools
-            }
-            .onChange(of: document_handler.update_parts_document_notify)
-            { _, _ in
-                document.preset.parts = base_workspace.file_data().parts
-            }
-            .onChange(of: document_handler.update_programs_document_notify)
-            { _, _ in
-                document.preset.programs = base_workspace.file_data().programs
-                document.preset.registers = base_workspace.file_data().registers
-            }
-            /*.onChange(of: document_handler.update_registers_document_notify)
-            { _, _ in
-                document.preset.registers = base_workspace.file_data().registers
-            }*/
+        }
     }
 }
