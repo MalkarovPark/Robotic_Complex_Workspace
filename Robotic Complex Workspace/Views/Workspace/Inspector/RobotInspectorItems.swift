@@ -40,6 +40,76 @@ struct RobotInspectorItems: View
         {
             OriginScaleView(robot: robot, on_update: on_update)
         }
+        
+        InspectorItem(label: "Default Pointer Position", is_expanded: false)
+        {
+            VStack(spacing: 10)
+            {
+                GroupBox
+                {
+                    if let default_pointer_position = robot.default_pointer_position
+                    {
+                        HStack
+                        {
+                            Text("X \(String(format: "%.0f", default_pointer_position.x)) Y \(String(format: "%.0f", default_pointer_position.y)) Z \(String(format: "%.0f", default_pointer_position.z))")
+                                .font(.system(size: 10))
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                
+                                Divider()
+                            
+                            Text("R \(String(format: "%.0f", default_pointer_position.r)) P \(String(format: "%.0f", default_pointer_position.p)) W \(String(format: "%.0f", default_pointer_position.w))")
+                                .font(.system(size: 10))
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
+                        .padding(4)
+                    }
+                    else
+                    {
+                        Text("None")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity)
+                            .padding(4)
+                    }
+                }
+                .padding(.top, 4)
+                
+                HStack
+                {
+                    Button
+                    {
+                        robot.set_default_pointer_position()
+                        on_update()
+                    }
+                    label:
+                    {
+                        Text("Set")
+                            .frame(maxWidth: .infinity)
+                    }
+                    
+                    Button
+                    {
+                        robot.clear_default_pointer_position()
+                        on_update()
+                    }
+                    label:
+                    {
+                        Text("Clear")
+                            .frame(maxWidth: .infinity)
+                    }
+                    
+                    Button
+                    {
+                        robot.restore_default_pointer_position()
+                    }
+                    label:
+                    {
+                        Text("Restore")
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+            }
+        }
     }
 }
 
