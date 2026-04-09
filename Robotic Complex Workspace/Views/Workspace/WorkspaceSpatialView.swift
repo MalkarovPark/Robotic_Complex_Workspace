@@ -135,7 +135,8 @@ struct WorkspaceSpatialView: View
                 )
                 .frame(maxWidth: pendant_width)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
-                .padding([.horizontal, .bottom], 10)
+                .padding([.horizontal, .bottom], 7.8)
+                .ignoresSafeArea(edges: .bottom)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
