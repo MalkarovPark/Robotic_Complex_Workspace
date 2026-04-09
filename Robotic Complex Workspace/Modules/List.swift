@@ -5,7 +5,7 @@
 import Foundation
 import IndustrialKit
 
-public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [PartModule], changer: [ChangerModule]) = (
+public let internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [PartModule], changer: [ChangerModule]) = (
     [
         _6DOF_Module,
         Portal_Module
