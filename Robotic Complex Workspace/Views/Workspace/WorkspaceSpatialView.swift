@@ -19,7 +19,8 @@ struct WorkspaceSpatialView: View
     
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
+    
+    @Binding var document: Robotic_Complex_WorkspaceDocument
     
     @AppStorage("ViewMode") private var view_mode: ViewMode = .scene
     
@@ -106,7 +107,7 @@ struct WorkspaceSpatialView: View
             {
                 if view_mode != .scene && assets_loaded
                 {
-                    WorkspaceGalleryView()
+                    WorkspaceGalleryView(document: $document)
                         .frame(maxWidth: .infinity)
                         .opacity(view_mode != .scene ? 1 : 0)
                         .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
@@ -118,9 +119,19 @@ struct WorkspaceSpatialView: View
                     
                     shows_program_indices: true,
                     
-                    on_update_workspace: { document_handler.update_programs() },
-                    on_update_robot: { document_handler.update_robots() },
-                    on_update_tool: { document_handler.update_tools() }
+                    on_update_workspace:
+                        {
+                            document.preset.programs = base_workspace.file_data().programs
+                            document.preset.registers = base_workspace.file_data().registers
+                        },
+                    on_update_robot:
+                        {
+                            document.preset.robots = base_workspace.file_data().robots
+                        },
+                    on_update_tool:
+                        {
+                            document.preset.tools = base_workspace.file_data().tools
+                        }
                 )
                 .frame(maxWidth: pendant_width)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
@@ -186,8 +197,11 @@ struct AssetsLoadingPane: View
 
 #Preview
 {
-    WorkspaceSpatialView(is_pan: .constant(false), pendant_controller: PendantController())
-        .environmentObject(Workspace())
-        .environmentObject(AppState())
-        .environmentObject(DocumentUpdateHandler())
+    WorkspaceSpatialView(
+        document: .constant(Robotic_Complex_WorkspaceDocument()),
+        is_pan: .constant(false),
+        pendant_controller: PendantController()
+    )
+    .environmentObject(Workspace())
+    .environmentObject(AppState())
 }

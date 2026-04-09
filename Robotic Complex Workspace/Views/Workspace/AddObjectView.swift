@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
+import RealityKit
+
 import IndustrialKit
 import IndustrialKitUI
-import RealityKit
 
 struct AddObjectView: View
 {
     @Binding var is_presented: Bool
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
+    @EnvironmentObject var base_workspace: Workspace
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: 128, maximum: .infinity), spacing: 24)]
     private let card_spacing: CGFloat = 24
@@ -38,28 +42,82 @@ struct AddObjectView: View
             switch tab_selection
             {
             case .robots:
-                AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
+                AddRobotView(
+                    columns: columns,
+                    card_spacing: card_spacing,
+                    card_height: card_height,
+                    top_spacing: top_spacing,
+                    bottom_spacing: bottom_spacing,
+                    
+                    is_presented: $is_presented,
+                    on_add_object: { document.preset.robots = base_workspace.file_data().robots }
+                )
             case .tools:
-                AddToolView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
+                AddToolView(
+                    columns: columns,
+                    card_spacing: card_spacing,
+                    card_height: card_height,
+                    top_spacing: top_spacing,
+                    bottom_spacing: bottom_spacing,
+                    
+                    is_presented: $is_presented,
+                    on_add_object: { document.preset.tools = base_workspace.file_data().tools }
+                )
             case .parts:
-                AddPartView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
+                AddPartView(
+                    columns: columns,
+                    card_spacing: card_spacing,
+                    card_height: card_height,
+                    top_spacing: top_spacing,
+                    bottom_spacing: bottom_spacing,
+                    
+                    is_presented: $is_presented,
+                    on_add_object: { document.preset.tools = base_workspace.file_data().tools }
+                )
             }
             #else
             TabView
             {
                 Tab("Robots", systemImage: "r.square")
                 {
-                    AddRobotView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
+                    AddRobotView(
+                        columns: columns,
+                        card_spacing: card_spacing,
+                        card_height: card_height,
+                        top_spacing: top_spacing,
+                        bottom_spacing: bottom_spacing,
+                        
+                        is_presented: $is_presented,
+                        on_add_object: { document.preset.robots = base_workspace.file_data().robots }
+                    )
                 }
                 
                 Tab("Tools", systemImage: "hammer")
                 {
-                    AddToolView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
+                    AddToolView(
+                        columns: columns,
+                        card_spacing: card_spacing,
+                        card_height: card_height,
+                        top_spacing: top_spacing,
+                        bottom_spacing: bottom_spacing,
+                        
+                        is_presented: $is_presented,
+                        on_add_object: { document.preset.tools = base_workspace.file_data().tools }
+                    )
                 }
                 
                 Tab("Parts", systemImage: "shippingbox")
                 {
-                    AddPartView(columns: columns, card_spacing: card_spacing, card_height: card_height, top_spacing: top_spacing, bottom_spacing: bottom_spacing, is_presented: $is_presented)
+                    AddPartView(
+                        columns: columns,
+                        card_spacing: card_spacing,
+                        card_height: card_height,
+                        top_spacing: top_spacing,
+                        bottom_spacing: bottom_spacing,
+                        
+                        is_presented: $is_presented,
+                        on_add_object: { document.preset.tools = base_workspace.file_data().tools }
+                    )
                 }
             }
             .tabViewStyle(.tabBarOnly)
@@ -81,14 +139,12 @@ struct AddObjectView: View
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                //.padding(10)
             }
             .glassEffect()
             .padding(14)
             .controlSize(.large)
         }
         #endif
-        //.modifier(SheetCaption(is_presented: $is_presented, label: "Library", plain: false))
     }
 }
 
@@ -114,11 +170,6 @@ enum ObjectItem: String, Codable, Equatable, CaseIterable
 }
 #endif
 
-/*#Preview
-{
-    AddObjectView(is_presented: .constant(true))
-}*/
-
 struct AddObjectView_PreviewsContainer: PreviewProvider
 {
     struct Container: View
@@ -130,12 +181,15 @@ struct AddObjectView_PreviewsContainer: PreviewProvider
                 Rectangle()
                     .foregroundStyle(.white)
                 
-                AddObjectView(is_presented: .constant(true))
-                    .frame(width: 420, height: 480)
-                    .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                    .shadow(color: .black.opacity(0.25), radius: 16)
-                    .padding(48)
+                AddObjectView(
+                    is_presented: .constant(true),
+                    document: .constant(Robotic_Complex_WorkspaceDocument())
+                )
+                .frame(width: 420, height: 480)
+                .background(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .shadow(color: .black.opacity(0.25), radius: 16)
+                .padding(48)
             }
         }
     }
@@ -149,7 +203,6 @@ struct AddObjectView_PreviewsContainer: PreviewProvider
 struct AddRobotView: View
 {
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     let columns: [GridItem]
     let card_spacing: CGFloat
@@ -159,6 +212,8 @@ struct AddRobotView: View
     let bottom_spacing: CGFloat
     
     @Binding var is_presented: Bool
+    
+    let on_add_object: () -> ()
     
     var body: some View
     {
@@ -221,7 +276,7 @@ struct AddRobotView: View
     private func add_object(_ module: RobotModule, is_internal: Bool)
     {
         base_workspace.add_robot(Robot(name: "None", module: module, is_internal: is_internal))
-        document_handler.update_robots()
+        on_add_object()
         
         is_presented = false
     }
@@ -230,7 +285,6 @@ struct AddRobotView: View
 struct AddToolView: View
 {
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     let columns: [GridItem]
     let card_spacing: CGFloat
@@ -240,6 +294,8 @@ struct AddToolView: View
     let bottom_spacing: CGFloat
     
     @Binding var is_presented: Bool
+    
+    let on_add_object: () -> ()
     
     var body: some View
     {
@@ -302,7 +358,7 @@ struct AddToolView: View
     private func add_object(_ module: ToolModule, is_internal: Bool)
     {
         base_workspace.add_tool(Tool(name: "None", module: module, is_internal: is_internal))
-        document_handler.update_tools()
+        on_add_object()
         
         is_presented = false
     }
@@ -311,7 +367,6 @@ struct AddToolView: View
 struct AddPartView: View
 {
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     let columns: [GridItem]
     let card_spacing: CGFloat
@@ -321,6 +376,8 @@ struct AddPartView: View
     let bottom_spacing: CGFloat
     
     @Binding var is_presented: Bool
+    
+    let on_add_object: () -> ()
     
     var body: some View
     {
@@ -383,7 +440,7 @@ struct AddPartView: View
     private func add_object(_ module: PartModule, is_internal: Bool)
     {
         base_workspace.add_part(Part(name: "None", module: module, is_internal: is_internal))
-        document_handler.update_parts()
+        on_add_object()
         
         is_presented = false
     }

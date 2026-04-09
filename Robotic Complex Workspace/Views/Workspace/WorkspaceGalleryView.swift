@@ -13,6 +13,8 @@ import IndustrialKitUI
 
 struct WorkspaceGalleryView: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @State private var add_in_view_presented = false
     
     @EnvironmentObject var base_workspace: Workspace
@@ -36,20 +38,33 @@ struct WorkspaceGalleryView: View
                 {
                     if base_workspace.robots.count > 0
                     {
-                        PlacedRobotsGallery(columns: columns, card_spacing: card_spacing, card_height: card_height)
+                        PlacedRobotsGallery(
+                            document: $document,
+                            columns: columns,
+                            card_spacing: card_spacing,
+                            card_height: card_height
+                        )
                     }
                     
                     if base_workspace.tools.count > 0
                     {
-                        PlacedToolsGallery(columns: columns, card_spacing: card_spacing, card_height: card_height)
+                        PlacedToolsGallery(
+                            document: $document,
+                            columns: columns,
+                            card_spacing: card_spacing,
+                            card_height: card_height
+                        )
                     }
                     
                     if base_workspace.parts.count > 0
                     {
-                        PlacedPartsGallery(columns: columns, card_spacing: card_spacing, card_height: card_height)
+                        PlacedPartsGallery(
+                            document: $document,
+                            columns: columns,
+                            card_spacing: card_spacing,
+                            card_height: card_height
+                        )
                     }
-                    
-                    //Spacer(minLength: 56)
                 }
                 .padding(8)
             }
@@ -63,6 +78,8 @@ struct WorkspaceGalleryView: View
 
 struct PlacedRobotsGallery: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @EnvironmentObject var base_workspace: Workspace
     
     let columns: [GridItem]
@@ -78,8 +95,12 @@ struct PlacedRobotsGallery: View
         {
             ForEach(base_workspace.robots)
             { robot in
-                ProductionObjectCard(object: robot, workspace: base_workspace)
-                    .frame(height: card_height)
+                ProductionObjectCard(
+                    document: $document,
+                    object: robot,
+                    workspace: base_workspace
+                )
+                .frame(height: card_height)
             }
         }
         .padding()
@@ -88,6 +109,8 @@ struct PlacedRobotsGallery: View
 
 struct PlacedToolsGallery: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @EnvironmentObject var base_workspace: Workspace
     
     let columns: [GridItem]
@@ -103,8 +126,12 @@ struct PlacedToolsGallery: View
         {
             ForEach(base_workspace.tools)
             { tool in
-                ProductionObjectCard(object: tool, workspace: base_workspace)
-                    .frame(height: card_height)
+                ProductionObjectCard(
+                    document: $document,
+                    object: tool,
+                    workspace: base_workspace
+                )
+                .frame(height: card_height)
             }
         }
         .padding()
@@ -113,6 +140,8 @@ struct PlacedToolsGallery: View
 
 struct PlacedPartsGallery: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @EnvironmentObject var base_workspace: Workspace
     
     let columns: [GridItem]
@@ -128,8 +157,12 @@ struct PlacedPartsGallery: View
         {
             ForEach(base_workspace.parts)
             { part in
-                ProductionObjectCard(object: part, workspace: base_workspace)
-                    .frame(height: card_height)
+                ProductionObjectCard(
+                    document: $document,
+                    object: part,
+                    workspace: base_workspace
+                )
+                .frame(height: card_height)
             }
         }
         .padding()
@@ -138,13 +171,13 @@ struct PlacedPartsGallery: View
 
 private struct ProductionObjectCard: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @ObservedObject var object: ProductionObject
     @ObservedObject var workspace: Workspace
     
     @State private var is_renaming = false
     @State private var preview_entity: Entity?
-    
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
     
     @State private var view_id = UUID()
     
@@ -306,12 +339,14 @@ private struct ProductionObjectCard: View
     
     private var document_update_objects: () -> ()
     {
+        let file_data = workspace.file_data()
+        
         switch object
         {
-        case is Robot: { document_handler.update_robots() }
-        case is Tool: { document_handler.update_tools() }
-        case is Part: { document_handler.update_parts() }
-        default: {}
+        case is Robot: return { document.preset.robots = file_data.robots }
+        case is Tool: return { document.preset.tools = file_data.tools }
+        case is Part: return { document.preset.parts = file_data.parts }
+        default: return {}
         }
     }
 }
@@ -319,7 +354,6 @@ private struct ProductionObjectCard: View
 private struct ObjectCardOverlay: View
 {
     @StateObject var object: ProductionObject
-    //let object_selected: Bool
     
     var body: some View
     {
@@ -335,33 +369,6 @@ private struct ObjectCardOverlay: View
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        
-        /*if object_selected
-        {
-            ZStack(alignment: .bottomTrailing)
-            {
-                Rectangle()
-                    .fill(.clear)
-                
-                ZStack
-                {
-                    Image(systemName: "checkmark")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 10, height: 10)
-                        .foregroundStyle(.primary)
-                }
-                #if os(macOS)
-                .frame(width: 20, height: 20)
-                #else
-                .frame(width: 24, height: 24)
-                #endif
-                .background(.ultraThinMaterial)
-                .clipShape(Circle())
-                .padding(8)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }*/
         
         if let tool = object as? Tool,
            tool.attached_to != nil
@@ -403,7 +410,7 @@ let object_card_spacing: CGFloat = 32
 
 #Preview
 {
-    WorkspaceGalleryView()
+    WorkspaceGalleryView(document: .constant(Robotic_Complex_WorkspaceDocument()))
         .environmentObject(Workspace())
         .environmentObject(AppState())
 }

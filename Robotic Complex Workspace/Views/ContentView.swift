@@ -28,11 +28,9 @@ struct ContentView: View
     
     @EnvironmentObject var app_state: AppState
     
-    @StateObject private var document_handler = DocumentUpdateHandler()
-    
     @State private var hover_state = false
     
-    // MARK: Main view
+    // MARK: Main View
     var body: some View
     {
         WorkspaceView(document: $document)
@@ -40,8 +38,6 @@ struct ContentView: View
             .navigationBarHidden(true)
         #endif
             .environmentObject(base_workspace)
-            .modifier(DocumentUpdateModifier(document: $document, base_workspace: base_workspace))
-            .environmentObject(document_handler)
             .task//.onAppear
             {
                 #if os(macOS)

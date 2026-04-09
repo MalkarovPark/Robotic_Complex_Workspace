@@ -18,7 +18,6 @@
 		6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9602AD345FC008FA7C4 /* DynamicStack.swift */; };
 		6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9612AD345FC008FA7C4 /* ContextMenus.swift */; };
 		6236F9652AD345FC008FA7C4 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */; };
-		6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */; };
 		626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 626EF85D2AD3493900F2A361 /* IndustrialKit */; };
 		627002F32E57A43B001D48C5 /* BackgroundExtensionModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */; };
 		627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627D3E9A2AD34A7600D5988D /* AppState.swift */; };
@@ -49,7 +48,6 @@
 		6236F9602AD345FC008FA7C4 /* DynamicStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicStack.swift; sourceTree = "<group>"; };
 		6236F9612AD345FC008FA7C4 /* ContextMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextMenus.swift; sourceTree = "<group>"; };
 		6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
-		6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentUpdateHandler.swift; sourceTree = "<group>"; };
 		627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundExtensionModifier.swift; sourceTree = "<group>"; };
 		627C254F2C9DA7660087D777 /* AddObjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddObjectView.swift; sourceTree = "<group>"; };
 		627D3E9A2AD34A7600D5988D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 				6236F9612AD345FC008FA7C4 /* ContextMenus.swift */,
 				6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */,
 				6236F9602AD345FC008FA7C4 /* DynamicStack.swift */,
-				6255B91C2B9B9CF3002B575C /* DocumentUpdateHandler.swift */,
 				627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */,
 			);
 			path = ViewModifiers;
@@ -270,7 +267,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */,
-				6255B91D2B9B9CF3002B575C /* DocumentUpdateHandler.swift in Sources */,
 				62DA4D2D2F1F97160052D115 /* AddObjectView.swift in Sources */,
 				6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */,
 				62A2C0B52F40F1D700648E81 /* ToolInspectorItems.swift in Sources */,

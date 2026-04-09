@@ -11,12 +11,11 @@ import IndustrialKitUI
 
 struct InspectorView: View
 {
+    @Binding var document: Robotic_Complex_WorkspaceDocument
+    
     @ObservedObject var object: ProductionObject
     
     @EnvironmentObject var base_workspace: Workspace
-    @EnvironmentObject var document_handler: DocumentUpdateHandler
-    
-    @State private var last_object: ProductionObject?
     
     @State private var position_is_expanded: Bool = true
     
@@ -182,14 +181,16 @@ struct InspectorView: View
     
     private func update_document(by object: ProductionObject)
     {
+        let file_data = base_workspace.file_data()
+        
         switch object
         {
         case is Robot:
-            document_handler.update_robots()
+            document.preset.robots = file_data.robots
         case is Tool:
-            document_handler.update_tools()
+            document.preset.tools = file_data.tools
         case is Part:
-            document_handler.update_parts()
+            document.preset.parts = file_data.parts
         default:
             break
         }
@@ -241,11 +242,10 @@ public struct InspectorItem<Content: View>: View
     }
     .inspector(isPresented: .constant(true))
     {
-        InspectorView(object: Robot(name: "Robot"))
+        InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), object: Robot(name: "Robot"))
     }
     .frame(width: 400, height: 600)
     .environmentObject(Workspace())
-    .environmentObject(DocumentUpdateHandler())
 }
 
 #Preview
@@ -256,11 +256,10 @@ public struct InspectorItem<Content: View>: View
     }
     .inspector(isPresented: .constant(true))
     {
-        InspectorView(object: Tool(name: "Tool"))
+        InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), object: Tool(name: "Tool"))
     }
     .frame(width: 400, height: 600)
     .environmentObject(Workspace())
-    .environmentObject(DocumentUpdateHandler())
 }
 
 #Preview
@@ -271,9 +270,8 @@ public struct InspectorItem<Content: View>: View
     }
     .inspector(isPresented: .constant(true))
     {
-        InspectorView(object: Part(name: "Part"))
+        InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), object: Part(name: "Part"))
     }
     .frame(width: 400, height: 600)
     .environmentObject(Workspace())
-    .environmentObject(DocumentUpdateHandler())
 }
