@@ -113,7 +113,7 @@ struct WorkspaceSpatialView: View
                         .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
                 }
                 
-                SpatialPendantView(
+                SpatialPendant(
                     controller: pendant_controller,
                     //workspace: base_workspace,
                     
