@@ -28,6 +28,8 @@ struct WorkspaceGalleryView: View
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
+    @State private var search_text: String = String()
+    
     var body: some View
     {
         VStack(spacing: 0)
@@ -42,6 +44,7 @@ struct WorkspaceGalleryView: View
                 }
                 .padding(8)
             }
+            .searchable(text: $search_text)
         }
         .onTapGesture
         {
@@ -51,14 +54,20 @@ struct WorkspaceGalleryView: View
     
     @ViewBuilder private func section(_ title: String, _ items: [ProductionObject]) -> some View
     {
-        if !items.isEmpty
+        let filtered_items = items.filter
+        {
+            $0.name.localizedCaseInsensitiveContains(search_text)
+            || search_text.isEmpty
+        }
+        
+        if !filtered_items.isEmpty //!items.isEmpty
         {
             Text(title)
                 .font(.system(size: 16, weight: .light))
             
             LazyVGrid(columns: columns, spacing: card_spacing)
             {
-                ForEach(items)
+                ForEach(filtered_items) //(items)
                 { item in
                     ProductionObjectCard(
                         document: $document,
@@ -69,6 +78,7 @@ struct WorkspaceGalleryView: View
                 }
             }
             .padding()
+            .animation(.spring(), value: filtered_items)
         }
     }
 }
