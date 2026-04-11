@@ -13,11 +13,22 @@ struct InspectorView: View
 {
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @ObservedObject var object: ProductionObject
+    @ObservedObject var workspace: Workspace
     
-    @EnvironmentObject var base_workspace: Workspace
+    @State private var new_name: String
     
-    @State private var position_is_expanded: Bool = true
+    private var object: ProductionObject { workspace.selected_object ?? ProductionObject() }
+    
+    public init(
+        document: Binding<Robotic_Complex_WorkspaceDocument>,
+        workspace: Workspace
+    )
+    {
+        self._document = document
+        self.workspace = workspace
+        
+        self.new_name = workspace.selected_object?.name ?? String()
+    }
     
     var body: some View
     {
@@ -33,20 +44,21 @@ struct InspectorView: View
                 
                 HStack
                 {
-                    let name = Binding(
-                        get: { object.name },
-                        set:
-                            { new_value in
-                                object.name = new_value
-                                
-                                update_document(by: object)
-                            }
-                    )
-                    
-                    TextField("None", text: name)
+                    TextField("None", text: $new_name)
+                        .onSubmit
+                        {
+                            if object is Robot { update_tool_attachments(old_name: object.name, new_name: new_name) }
+                            object.name = new_name
+                            
+                            update_document(by: object)
+                        }
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding(10)
+                .onChange(of: workspace.selected_object ?? ProductionObject())
+                { _, new_value in
+                    new_name = new_value.name
+                }
                 
                 HStack
                 {
@@ -86,28 +98,9 @@ struct InspectorView: View
                 
                 Divider()
                 
-                /*InspectorItem(label: "Position", is_expanded: false)
-                {
-                    let position_binding = Binding(
-                        get: { object.position },
-                        set:
-                            { new_value in
-                                object.position = new_value
-                                
-                                update_document(by: object)
-                            }
-                    )
-                    
-                    #if os(macOS)
-                    PositionView(position: position_binding, with_steppers: true)
-                    #else
-                    PositionView(position: position_binding)
-                    #endif
-                }*/
-                
                 if let tool = object as? Tool
                 {
-                    ToolInspectorItems(tool: tool, workspace: base_workspace)
+                    ToolInspectorItems(tool: tool, workspace: workspace)
                     {
                         update_document(by: object)
                     }
@@ -174,14 +167,14 @@ struct InspectorView: View
     private func remove_object()
     {
         let stored_object = object
-        base_workspace.delete_object(object)
-        base_workspace.deselect_object()
+        workspace.delete_object(object)
+        workspace.deselect_object()
         update_document(by: stored_object)
     }
     
     private func update_document(by object: ProductionObject)
     {
-        let file_data = base_workspace.file_data()
+        let file_data = workspace.file_data()
         
         switch object
         {
@@ -193,6 +186,24 @@ struct InspectorView: View
             document.preset.parts = file_data.parts
         default:
             break
+        }
+    }
+    
+    private func update_tool_attachments(old_name: String, new_name: String)
+    {
+        for tool in workspace.tools where tool.attached_to == old_name
+        {
+            tool.attached_to = nil
+            
+            workspace.update_tool_attachments()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+            {
+                tool.attached_to = new_name
+                workspace.update_tool_attachments()
+                
+                document.preset.tools = workspace.file_data().tools
+            }
         }
     }
 }
@@ -242,35 +253,7 @@ public struct InspectorItem<Content: View>: View
     }
     .inspector(isPresented: .constant(true))
     {
-        InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), object: Robot(name: "Robot"))
-    }
-    .frame(width: 400, height: 600)
-    .environmentObject(Workspace())
-}
-
-#Preview
-{
-    ZStack
-    {
-        
-    }
-    .inspector(isPresented: .constant(true))
-    {
-        InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), object: Tool(name: "Tool"))
-    }
-    .frame(width: 400, height: 600)
-    .environmentObject(Workspace())
-}
-
-#Preview
-{
-    ZStack
-    {
-        
-    }
-    .inspector(isPresented: .constant(true))
-    {
-        InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), object: Part(name: "Part"))
+        InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), workspace: Workspace())
     }
     .frame(width: 400, height: 600)
     .environmentObject(Workspace())

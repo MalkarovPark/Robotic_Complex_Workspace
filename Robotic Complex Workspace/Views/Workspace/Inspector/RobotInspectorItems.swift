@@ -106,6 +106,7 @@ struct RobotInspectorItems: View
                     {
                         Text("Restore")
                             .frame(maxWidth: .infinity)
+                            .disabled(robot.default_pointer_position == nil)
                     }
                 }
             }
