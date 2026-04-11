@@ -104,7 +104,7 @@ struct WorkspaceView: View
                 }
                 else
                 {
-                    Text("Nothing Selected")
+                    Text("Nothing selected")
                         .font(.title3)
                         .foregroundStyle(.secondary)
                     #if os(iOS)

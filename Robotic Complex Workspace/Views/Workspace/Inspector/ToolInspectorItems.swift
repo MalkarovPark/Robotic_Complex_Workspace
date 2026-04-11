@@ -78,7 +78,7 @@ struct ToolInspectorItems: View
         
         HStack
         {
-            Picker("Attached To", selection: attached_to)
+            Picker("Attached to", selection: attached_to)
             {
                 if workspace.placed_robot_names.count > 0
                 {

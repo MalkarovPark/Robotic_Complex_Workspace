@@ -36,35 +36,9 @@ struct WorkspaceGalleryView: View
             {
                 VStack(spacing: 8)
                 {
-                    if base_workspace.robots.count > 0
-                    {
-                        PlacedRobotsGallery(
-                            document: $document,
-                            columns: columns,
-                            card_spacing: card_spacing,
-                            card_height: card_height
-                        )
-                    }
-                    
-                    if base_workspace.tools.count > 0
-                    {
-                        PlacedToolsGallery(
-                            document: $document,
-                            columns: columns,
-                            card_spacing: card_spacing,
-                            card_height: card_height
-                        )
-                    }
-                    
-                    if base_workspace.parts.count > 0
-                    {
-                        PlacedPartsGallery(
-                            document: $document,
-                            columns: columns,
-                            card_spacing: card_spacing,
-                            card_height: card_height
-                        )
-                    }
+                    section("Robots", base_workspace.robots)
+                    section("Tools", base_workspace.tools)
+                    section("Parts", base_workspace.parts)
                 }
                 .padding(8)
             }
@@ -74,98 +48,28 @@ struct WorkspaceGalleryView: View
             base_workspace.process_empty_tap()
         }
     }
-}
-
-struct PlacedRobotsGallery: View
-{
-    @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    @EnvironmentObject var base_workspace: Workspace
-    
-    let columns: [GridItem]
-    let card_spacing: CGFloat
-    let card_height: CGFloat
-    
-    var body: some View
+    @ViewBuilder private func section(_ title: String, _ items: [ProductionObject]) -> some View
     {
-        Text("Robots")
-            .font(.headline)
-        
-        LazyVGrid(columns: columns, spacing: card_spacing)
+        if !items.isEmpty
         {
-            ForEach(base_workspace.robots)
-            { robot in
-                ProductionObjectCard(
-                    document: $document,
-                    object: robot,
-                    workspace: base_workspace
-                )
-                .frame(height: card_height)
+            Text(title)
+                .font(.system(size: 16, weight: .light))
+            
+            LazyVGrid(columns: columns, spacing: card_spacing)
+            {
+                ForEach(items)
+                { item in
+                    ProductionObjectCard(
+                        document: $document,
+                        object: item,
+                        workspace: base_workspace
+                    )
+                    .frame(height: card_height)
+                }
             }
+            .padding()
         }
-        .padding()
-    }
-}
-
-struct PlacedToolsGallery: View
-{
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    let columns: [GridItem]
-    let card_spacing: CGFloat
-    let card_height: CGFloat
-    
-    var body: some View
-    {
-        Text("Tools")
-            .font(.headline)
-        
-        LazyVGrid(columns: columns, spacing: card_spacing)
-        {
-            ForEach(base_workspace.tools)
-            { tool in
-                ProductionObjectCard(
-                    document: $document,
-                    object: tool,
-                    workspace: base_workspace
-                )
-                .frame(height: card_height)
-            }
-        }
-        .padding()
-    }
-}
-
-struct PlacedPartsGallery: View
-{
-    @Binding var document: Robotic_Complex_WorkspaceDocument
-    
-    @EnvironmentObject var base_workspace: Workspace
-    
-    let columns: [GridItem]
-    let card_spacing: CGFloat
-    let card_height: CGFloat
-    
-    var body: some View
-    {
-        Text("Parts")
-            .font(.headline)
-        
-        LazyVGrid(columns: columns, spacing: card_spacing)
-        {
-            ForEach(base_workspace.parts)
-            { part in
-                ProductionObjectCard(
-                    document: $document,
-                    object: part,
-                    workspace: base_workspace
-                )
-                .frame(height: card_height)
-            }
-        }
-        .padding()
     }
 }
 
