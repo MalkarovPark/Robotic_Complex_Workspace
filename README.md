@@ -52,7 +52,7 @@ Connect the necessary property list files in the application settings for robots
 
 *iOS & iPadOS*
 
-You may install application package by your own developer profile and special installers. Also possible to use the app in application playground format by the [Swift Playgrounds](https://apps.apple.com/us/app/swift-playgrounds/id908519492) (iPadOS only).
+You can install application package by your own developer profile and special installers. Also possible to use the app in application playground format by the [Swift Playgrounds](https://apps.apple.com/us/app/swift-playgrounds/id908519492) (iPadOS only).
 
 ### Make Robotic Complex <a name="make-robotic-complex"></a>
 
