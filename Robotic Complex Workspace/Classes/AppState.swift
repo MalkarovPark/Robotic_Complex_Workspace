@@ -104,7 +104,7 @@ class AppState: ObservableObject
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
         }
         
         do { url?.stopAccessingSecurityScopedResource() }
@@ -145,7 +145,7 @@ class AppState: ObservableObject
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
         }
     }
     
@@ -157,7 +157,7 @@ class AppState: ObservableObject
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
             return []
         }
     }
@@ -191,7 +191,7 @@ class AppState: ObservableObject
     }*/
     
     // Documents count handling for external modules servers
-    #if os(macOS)
+    /*#if os(macOS)
     private var opened_documents_count = 0
     
     public func inc_documents_count()
@@ -207,7 +207,7 @@ class AppState: ObservableObject
         
         //print(opened_documents_count)
     }
-    #endif
+    #endif*/
     
     // MARK: - UI Output
     public var modules_folder_name: String

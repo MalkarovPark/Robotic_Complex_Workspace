@@ -40,9 +40,9 @@ struct ContentView: View
             .environmentObject(base_workspace)
             .task//.onAppear
             {
-                #if os(macOS)
+                /*#if os(macOS)
                 app_state.inc_documents_count()
-                #endif
+                #endif*/
                 update_preferences()
                 
                 base_workspace.file_view(preset: document.preset)
@@ -52,7 +52,7 @@ struct ContentView: View
             {
                 base_workspace.stop_robot_external_connectors()
                 base_workspace.stop_tool_external_connectors()
-                app_state.dec_documents_count()
+                //app_state.dec_documents_count()
             }
         #endif
             .onHover

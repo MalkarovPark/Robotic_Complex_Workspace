@@ -459,7 +459,7 @@ struct ModuleSettingsView: View
                     app_state.update_external_modules_bookmark(url: url)
                 }
             case .failure(let error):
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
                 break
             }
         }

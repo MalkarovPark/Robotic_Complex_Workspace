@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SceneKit
 import IndustrialKit
 #if os(visionOS)
 import IndustrialKitUI
