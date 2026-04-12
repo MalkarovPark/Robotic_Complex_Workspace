@@ -1,5 +1,4 @@
 ![rcw_caption](https://github.com/user-attachments/assets/97b7a09b-1ecc-4511-9143-4cd89357d24e)
-<!-- <img width="3400" height="1850" alt="RCWorkspace_caption" src="https://github.com/user-attachments/assets/97b7a09b-1ecc-4511-9143-4cd89357d24e" /> -->
 
 # Robotic Complex Workspace
 
@@ -16,14 +15,11 @@ Robotic Complex Workspace is an open source application for designing and contro
 * [Getting Started](#getting-started)
     * [Application Installation](#application-installation)
     * [Project Edititing](#project-editing)
-* [Working With Document](#working-with-document)
-    * [Robots](#robots)
-    * [Tools](#tools)
-    * [Parts](#parts)
-* [Visual Modeling](#visual-modeling)
-* [Handling Statistics](#handling-statistics)
-* [Connecting Objects](#connecting-objects)
-* [Extensibility](#extensibility)
+* [Make Robotic Complex](#make-robotic-complex)
+* [Device Handling](#device-handling)
+* [Device Output](#device-output)
+* [Twin Sync](#twin-sync)
+* [Modules](#modules)
 * [Getting Help](#getting-help)
 * [License](#license)
 
@@ -35,6 +31,14 @@ The application codebase supports macOS, iOS/iPadOS, visionOS and requires Xcode
 
 * [Website](https://celadon-production-systems.carrd.co/)
 * [Documentation](https://celadon-industrial.github.io/IndustrialKit/documentation/rcworkspace/)
+
+### Project Editing <a name="project-editing"></a>
+
+You may view and edit this application project by two ways:
+* Clone this repository;
+* Download ZIP archive from this page.
+
+Open downloaded project in the Xcode and confirm trust.
 
 ### Application Installation <a name="application-installation"></a>
 
@@ -48,9 +52,45 @@ Connect the necessary property list files in the application settings for robots
 
 *iOS & iPadOS*
 
-Official installation method coming in the 17th versions of iOS and iPadOS. Or you may install application package by your own developer profile and special installers. Also possible to use the app in application playground format by the [Swift Playgrounds](https://apps.apple.com/us/app/swift-playgrounds/id908519492) (iPadOS only).
+You may install application package by your own developer profile and special installers. Also possible to use the app in application playground format by the [Swift Playgrounds](https://apps.apple.com/us/app/swift-playgrounds/id908519492) (iPadOS only).
 
-### Project Editing <a name="project-editing"></a>
+### Make Robotic Complex <a name="make-robotic-complex"></a>
+
+**Robotic Complex Workspace** is a document-based app, where each document represents a preset from which a robotic complex (RTC) is deployed. You can create a new document or open an existing one with the *preset* extension.
+
+A virtual workspace, whose floor is marked with a dimensional grid, is presented in the main application window. The workspace can be orbited and panned; tapping an individual production object selects it and shifts focus to it, while tapping an empty area selects and returns focus back to the workspace.
+
+Editing of the selected **robot**, **tool**, and **part** is available through the Inspector. For all individual production objects, a name and position in the workspace can be defined, while other parameters depend on the type of the selected object.
+
+A palette, opened via the “<img width="12" alt="plus@4x" src="https://github.com/user-attachments/assets/75f1f053-3484-432e-8efa-2930c575f67f" />” button, allows adding new objects to the workspace. These objects are placed so as to occupy the nearest available free space.
+
+### Device Handling <a name="device-handling"></a>
+
+The **Spatial Pendant** allows control of both individual robotic devices and the complete production unit — the workspace. The content of the pendant changes depending on what is currently selected.
+
+At the bottom of the pendant is a control element that allows direct device operation: setting the current end-effector position of a robot, executing an operation code for a tool, or executing a program element for the workspace.
+
+At the top of the pendant, an editable program list is available. Tapping a program reveals an editable list of its program items, where execution control is also available.
+
+### Device Output <a name="device-output"></a>
+
+Retrieving state data from robotic devices is available via the “<img width="12" alt="chart pie@4x" src="https://github.com/user-attachments/assets/a33837be-fa23-465d-b63d-e771177a3fe2" />” button. It is possible to define the scope type (operational or continuous) and the update interval for data retrieval.
+
+### Twin Sync <a name="twin-sync"></a>
+
+To connect to a real device, a **Connector** is used, whose interface is available via the “<img width="12" alt="link@4x" src="https://github.com/user-attachments/assets/985a25d6-7be9-471f-a3a5-48d7aeb88590" />” button. Here you can switch the mode from simulation to real and connect to a device, as well as allow the Connector to synchronize the state of the real device with the virtual model.
+
+### Modules <a name="modules"></a>
+
+Extensible support for various production devices is implemented through a system of pluggable modules. The selection of a folder with external modules is available in the corresponding section of the application settings.
+
+# Getting Help <a name="getting-help"></a>
+GitHub is our primary forum for RCWorkspace. Feel free to open up issues about questions, problems, or ideas.
+
+# License <a name="license"></a>
+This project is made available under the terms of a Apache 2.0 license. See the [LICENSE](LICENSE) file.
+
+<!-- ### Project Editing <a name="project-editing"></a>
 
 You may view and edit this application project by two ways:
 * Clone this repository;
@@ -129,10 +169,4 @@ The set of available modules is defined in the settings – here you can see the
    <img width="472" height="435" alt="modules" src="https://github.com/user-attachments/assets/0a842250-3615-431e-9033-70ed61faa017" />
 </p>
 
-The development and synthesis of new modules, including the ability to integrate their project into the RCWorkspace application, is available through the [Industrial Builder](https://github.com/MalkarovPark/Industrial_Builder/) environment.
-
-# Getting Help <a name="getting-help"></a>
-GitHub is our primary forum for RCWorkspace. Feel free to open up issues about questions, problems, or ideas.
-
-# License <a name="license"></a>
-This project is made available under the terms of a Apache 2.0 license. See the [LICENSE](LICENSE) file.
+The development and synthesis of new modules, including the ability to integrate their project into the RCWorkspace application, is available through the [Industrial Builder](https://github.com/MalkarovPark/Industrial_Builder/) environment. -->
