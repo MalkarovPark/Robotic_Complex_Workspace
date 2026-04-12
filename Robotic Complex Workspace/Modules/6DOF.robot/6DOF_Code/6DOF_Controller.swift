@@ -1,11 +1,15 @@
+//
+// Robot Model Controller
+//
+
 import Foundation
-import SceneKit
+import RealityKit
 import IndustrialKit
 
-class _6DOF_Controller: RobotModelController
+nonisolated class _6DOF_Controller: RobotModelController, @unchecked Sendable
 {
     // MARK: - Parameters
-    override var nodes_names: [String]
+    override var entity_names: [String]
     {
         [
             "base",
@@ -21,22 +25,6 @@ class _6DOF_Controller: RobotModelController
     }
     
     // MARK: - Performing
-    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
-    {
-        /*if pointer_position.z > 60
-        {
-            throw NSError(
-                domain: "Performing Error",
-                code: 1,
-                userInfo: [
-                    NSLocalizedDescriptionKey: "Z > 60"
-                ]
-            )
-        }*/
-        
-        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
-    }
-    
     let lengths: [Float] = [
         160.0,
         160.0,
@@ -46,6 +34,31 @@ class _6DOF_Controller: RobotModelController
         20.0,
         160.0
     ]
+    
+    override open func entity_positions(
+        pointer_position: (
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
+        ),
+        origin_position: (
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
+        )
+    ) throws -> [EntityPositionData]
+    {
+        let values = inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position)
+        
+        let entity_positions: [EntityPositionData] = [
+            .init(name: "d0", position: (x: 0, y: 0, z: 0, r: 0, p: 0, w: values[0].to_deg)),
+            .init(name: "d1", position: (x: 0, y: 0, z: 160, r: 0, p: values[1].to_deg, w: 0)),
+            .init(name: "d2", position: (x: 0, y: 0, z: 160, r: 0, p: values[2].to_deg, w: 0)),
+            .init(name: "d3", position: (x: 0, y: 0, z: 80, r: 0, p: 0, w: values[3].to_deg)),
+            .init(name: "d4", position: (x: 0, y: 0, z: 160, r: 0, p: values[4].to_deg, w: 0)),
+            .init(name: "d5", position: (x: 0, y: 0, z: 50, r: 0, p: 0, w: values[5].to_deg))
+        ]
+        
+        return entity_positions
+    }
     
     private func inverse_kinematic_calculation(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) -> [Float]
     {
@@ -126,42 +139,18 @@ class _6DOF_Controller: RobotModelController
         return angles
     }
     
-    private func apply_nodes_positions(values: [Float])
-    {
-        #if os(macOS)
-        nodes[safe: "d0", default: SCNNode()].eulerAngles.y = CGFloat(values[0])
-        nodes[safe: "d1", default: SCNNode()].eulerAngles.z = CGFloat(values[1])
-        nodes[safe: "d2", default: SCNNode()].eulerAngles.z = CGFloat(values[2])
-        nodes[safe: "d3", default: SCNNode()].eulerAngles.y = CGFloat(values[3])
-        nodes[safe: "d4", default: SCNNode()].eulerAngles.z = CGFloat(values[4])
-        nodes[safe: "d5", default: SCNNode()].eulerAngles.y = CGFloat(values[5])
-        #else
-        nodes[safe: "d0", default: SCNNode()].eulerAngles.y = Float(values[0])
-        nodes[safe: "d1", default: SCNNode()].eulerAngles.z = Float(values[1])
-        nodes[safe: "d2", default: SCNNode()].eulerAngles.z = Float(values[2])
-        nodes[safe: "d3", default: SCNNode()].eulerAngles.y = Float(values[3])
-        nodes[safe: "d4", default: SCNNode()].eulerAngles.z = Float(values[4])
-        nodes[safe: "d5", default: SCNNode()].eulerAngles.y = Float(values[5])
-        #endif
-        
-        if get_statistics
-        {
-            chart_ik_values = values // Store new parts angles array for chart
-        }
-    }
-    
     // MARK: - Statistics
-    private var charts = [WorkspaceObjectChart]()
+    private var charts = [StateChart]()
     private var chart_ik_values = [Float](repeating: 0, count: 6)
     private var domain_index: Float = 0
     
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    var current_charts: [StateChart]
     {
         if charts.count == 0
         {
-            charts.append(WorkspaceObjectChart(name: "Parts Rotation", style: .line))
-            charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
-            charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+            charts.append(StateChart(name: "Parts Rotation", style: .line))
+            charts.append(StateChart(name: "Tool Location", style: .line))
+            charts.append(StateChart(name: "Tool Rotation", style: .line))
         }
         
         // Update parts angles rotation chart
@@ -171,10 +160,10 @@ class _6DOF_Controller: RobotModelController
         }
         
         // Update tool location chart
-        let tool_node = pointer_node
+        let tool_entity = pointer_entity
         
         var axis_names = ["X", "Y", "Z"]
-        var components = [tool_node?.worldPosition.x, tool_node?.worldPosition.z, tool_node?.worldPosition.y]
+        var components = [tool_entity?.position.x, tool_entity?.position.z, tool_entity?.position.y]
         for i in 0...axis_names.count - 1
         {
             charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0)))
@@ -182,7 +171,7 @@ class _6DOF_Controller: RobotModelController
         
         // Update tool rotation chart
         axis_names = ["R", "P", "W"]
-        components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
+        components = [tool_entity?.euler_angles.z, tool_entity?.euler_angles.x, tool_entity?.euler_angles.y]
         for i in 0...axis_names.count - 1
         {
             charts[2].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0).to_deg))
@@ -193,41 +182,62 @@ class _6DOF_Controller: RobotModelController
         return charts
     }
     
-    override func initial_charts_data() -> [WorkspaceObjectChart]?
+    var current_items: [StateItem]
+    {
+        var states = [StateItem]()
+        states.append(StateItem(name: "Temperature", value: "+10º", symbol_name: "thermometer"))
+        states[0].children = [
+            StateItem(name: "Еngine", value: "+50º", symbol_name: "thermometer.transmission"),
+            StateItem(name: "Fridge", value: "-40º", symbol_name: "thermometer.snowflake.circle")
+        ]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
+        
+        return states
+    }
+    
+    /// Updates device state data.
+    override var current_device_output: DeviceOutputData
+    {
+        // Prepare controller output
+        return DeviceOutputData(
+            items: current_items,
+            charts: current_charts
+        )
+    }
+    
+    var initial_charts: [StateChart]
     {
         chart_ik_values = [Float](repeating: 0, count: 6)
         domain_index = 0
         charts.removeAll()
         
-        charts.append(WorkspaceObjectChart(name: "Parts Rotation", style: .line))
-        charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
-        charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+        charts.append(StateChart(name: "Parts Rotation", style: .line))
+        charts.append(StateChart(name: "Tool Location", style: .line))
+        charts.append(StateChart(name: "Tool Rotation", style: .line))
         
         return charts
     }
     
-    override func updated_states_data() -> [StateItem]?
+    var initial_items: [StateItem]
     {
         var states = [StateItem]()
-        states.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-        states[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
-                             StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
         
-        states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+        states.append(StateItem(name: "Temperature", value: "0º", symbol_name: "thermometer"))
+        states[0].children = [StateItem(name: "Еngine", value: "0º", symbol_name: "thermometer.transmission"),
+                             StateItem(name: "Fridge", value: "0º", symbol_name: "thermometer.snowflake.circle")]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
         
         return states
     }
     
-    override func initial_states_data() -> [StateItem]?
+    override var initial_device_output: DeviceOutputData?
     {
-        var states = [StateItem]()
-        
-        states.append(StateItem(name: "Temperature", value: "0º", image: "thermometer"))
-        states[0].children = [StateItem(name: "Еngine", value: "0º", image: "thermometer.transmission"),
-                             StateItem(name: "Fridge", value: "0º", image: "thermometer.snowflake.circle")]
-        
-        states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
-        
-        return states
+        // Reset contolleroutput
+        return DeviceOutputData(
+            items: initial_items,
+            charts: initial_charts
+        )
     }
 }

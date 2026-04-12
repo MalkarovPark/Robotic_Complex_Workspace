@@ -3,13 +3,13 @@
 //
 
 import Foundation
+import RealityKit
 import IndustrialKit
-import SceneKit
 
-class Gripper_Connector: ToolConnector
+class Gripper_Connector: ToolConnector, @unchecked Sendable
 {
     // MARK: - Connection
-    override var parameters: [ConnectionParameter]
+    override var default_parameters: [ConnectionParameter]
     {
         [
             .init(name: "String", value: "Text"),
@@ -19,100 +19,179 @@ class Gripper_Connector: ToolConnector
         ]
     }
     
-    override func connection_process() async -> Bool
+    override func perform_connection() async -> Bool
     {
-        new_line_check()
-        output += "Connecting..."
+        sleep(1)
         
-        new_line_check()
+        let result = parameters[safe: 3]?.value as? Bool ?? false
         
-        output += "\n \(parameters.count) parameters used:\n"
-        for parameter in parameters
+        if result
         {
-            output += " • \(parameter.value)\n"
-        }
-        output += "\n"
-        
-        sleep(2)
-        
-        if parameters[3].value as! Bool
-        {
-            output += "Connected"
-            return true
+            connection_output_string = "Connected"
         }
         else
         {
-            output += "Connection failed"
-            return false
+            connection_output_string = "Failed"
+            connection_error = NSError(domain: "Connection failed", code: 0, userInfo: nil)
         }
+        
+        return result
     }
     
-    override func disconnection_process()
+    override func perform_disconnection()
     {
-        new_line_check()
-        output += "Disconnected"
+        
     }
-    
-    private func new_line_check()
-    {
-        if output != String()
-        {
-            output += "\n"
-        }
-    }
-    
-    override var performing_state: (output: PerformingState, log: String)
-    {
-        return (output: local_state, log: String())
-    }
-    
-    private var local_state: PerformingState = .completed
     
     // MARK: - Performing
-    override func perform(code: Int)
+    private var performing_task: Task<Void, Never>?
+    private var current_performing_state: PerformingState = .none
+    
+    private var closed = false
+    private var moved = false
+    
+    open override func start_process(code: Int)
     {
-        //local_state = .processing
-        
-        guard let nodes = model_controller?.nodes else { return }
-        
-        if nodes.count == 2 // Gripper model has two nodes of jaws
+        performing_task = Task
         {
-            switch code
-            {
-            case 0: // Close
-                nodes[safe_name: "jaw"].runAction(.move(to: SCNVector3(0, 0, 20), duration: 1))
-                nodes[safe_name: "jaw2"].runAction(.move(to: SCNVector3(0, 0, -20), duration: 1))
-            case 1: // Open
-                nodes[safe_name: "jaw"].runAction(.move(to: SCNVector3(0, 0, 46), duration: 1))
-                nodes[safe_name: "jaw2"].runAction(.move(to: SCNVector3(0, 0, -46), duration: 1))
-            default:
-                break
-            }
+            moved = true
+            current_performing_state = .processing
+            new_animation_avaliable = true
+            
+            sleep(2)
+            
+            moved = false
+            current_performing_state = .completed
+            
+            closed = code == 0
+        }
+    }
+    
+    open override func reset_device()
+    {
+        model_controller?.reset_entities()
+        
+        closed = false
+        moved = false
+        
+        performing_task?.cancel()
+    }
+    
+    open override var current_device_state: ToolState?
+    {
+        return ToolState(
+            performing_state: current_performing_state,
+            entity_animations: current_entity_animations
+        )
+    }
+    
+    // MARK: - Modeling
+    private var new_animation_avaliable = false
+    
+    private var current_entity_animations: [EntityAnimationData]?
+    {
+        guard new_animation_avaliable else { return nil }
+        
+        var entities_animations: [EntityAnimationData] = []
+        
+        switch closed
+        {
+        case false: // Closed
+            entities_animations = [
+                EntityAnimationData(
+                    entity_name: "jaw",
+                    position: (x: 20000, y: 0, z: 0, r: 0, p: 0, w: 0),
+                    duration: 1
+                ),
+                EntityAnimationData(
+                    entity_name: "jaw2",
+                    position: (x: -20000, y: 0, z: 0, r: 0, p: 0, w: 0),
+                    duration: 1
+                )
+            ]
+        case true: // Opened
+            entities_animations = [
+                EntityAnimationData(
+                    entity_name: "jaw",
+                    position: (x: 46000, y: 0, z: 0, r: 0, p: 0, w: 0),
+                    duration: 1
+                ),
+                EntityAnimationData(
+                    entity_name: "jaw2",
+                    position: (x: -46000, y: 0, z: 0, r: 0, p: 0, w: 0),
+                    duration: 1
+                )
+            ]
         }
         
-        let seconds = 2
-        usleep(UInt32(seconds * 1_000_000))
-        self.local_state = .completed
+        new_animation_avaliable = false
+        return entities_animations
     }
     
     // MARK: - Statistics
-    override func initial_charts_data() -> [WorkspaceObjectChart]
+    private var charts = [StateChart]()
+    private var domain_index: Float = 0
+    
+    private var entities: [String : Entity]
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
+        if let model_controller = model_controller
+        {
+            return model_controller.entities
+        }
+        else
+        {
+            return [:]
+        }
     }
     
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    var current_charts: [StateChart]
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
+        guard entities.count == 2
+        else
+        {
+            return []
+        }
+        
+        if charts.count == 0
+        {
+            charts.append(StateChart(name: "Fingers Positions", style: .line))
+        }
+        
+        charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw", default: Entity()].position.z)))
+        charts[0].data.append(ChartDataItem(name: "Right (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw2", default: Entity()].position.z)))
+        
+        domain_index += 1
+        
+        return charts
     }
     
-    override func initial_states_data() -> [StateItem]
+    var current_items: [StateItem]
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
-    }
-    
-    override func updated_states_data() -> [StateItem]?
-    {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
+        var state = [StateItem]()
+        
+        if !moved
+        {
+            if closed
+            {
+                state.append(StateItem(name: "Closed", value: "", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left"))
+            }
+            else
+            {
+                state.append(StateItem(name: "Opened", value: "", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right"))
+            }
+        }
+        else
+        {
+            if closed
+            {
+                state.append(StateItem(name: "Opening", value: "", symbol_name: "arrow.left.and.line.vertical.and.arrow.right"))
+            }
+            else
+            {
+                state.append(StateItem(name: "Closing", value: "", symbol_name: "arrow.right.and.line.vertical.and.arrow.left"))
+            }
+        }
+        
+        return state
     }
 }

@@ -1,11 +1,15 @@
-import Foundation
-import SceneKit
-import IndustrialKit
+//
+// Robot Model Controller
+//
 
-class Portal_Controller: RobotModelController
+import Foundation
+import IndustrialKit
+import RealityKit
+
+class Portal_Controller: RobotModelController, @unchecked Sendable
 {
     // MARK: - Parameters
-    override var nodes_names: [String]
+    override var entity_names: [String]
     {
         [
             "base",
@@ -18,11 +22,6 @@ class Portal_Controller: RobotModelController
     }
     
     // MARK: - Performing
-    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
-    {
-        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position))
-    }
-    
     let lengths: [Float] = [
         440.0,
         80.0,
@@ -34,6 +33,32 @@ class Portal_Controller: RobotModelController
         320.0,
         160.0
     ]
+    
+    override open func entity_positions(
+        pointer_position: (
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
+        ),
+        origin_position: (
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
+        )
+    ) throws -> [EntityPositionData]
+    {
+        let values = inverse_kinematic_calculation(pointer_position: pointer_position, origin_position: origin_position)
+        
+        let entity_positions: [EntityPositionData] = [
+            .init(name: "d0", position: (x: values[1], y: 0, z: 0, r: 0, p: 0, w: 0)),
+            .init(name: "d2", position: (x: 0, y: 0, z: values[2], r: 0, p: 0, w: 0)),
+            .init(name: "d1", position: (x: 0, y: values[0], z: 0, r: 0, p: 0, w: 0))
+        ]
+        
+        entities[safe: "d0", default: Entity()].position.x = Float(values[1])
+        entities[safe: "d2", default: Entity()].position.y = Float(values[2])
+        entities[safe: "d1", default: Entity()].position.z = Float(values[0])
+        
+        return entity_positions
+    }
     
     private func inverse_kinematic_calculation(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float), origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) -> [Float]
     {
@@ -85,37 +110,24 @@ class Portal_Controller: RobotModelController
         return [px, py, pz]
     }
     
-    public func apply_nodes_positions(values: [Float])
-    {
-        #if os(macOS)
-        nodes[safe: "d0", default: SCNNode()].position.x = CGFloat(values[1])
-        nodes[safe: "d2", default: SCNNode()].position.y = CGFloat(values[2])
-        nodes[safe: "d1", default: SCNNode()].position.z = CGFloat(values[0])
-        #else
-        nodes[safe: "d0", default: SCNNode()].position.x = values[1]
-        nodes[safe: "d2", default: SCNNode()].position.y = values[2]
-        nodes[safe: "d1", default: SCNNode()].position.z = values[0]
-        #endif
-    }
-    
     // MARK: - Statistics
-    private var charts = [WorkspaceObjectChart]()
+    private var charts = [StateChart]()
     private var chart_ik_values = [Float](repeating: 0, count: 3)
     private var domain_index: Float = 0
     
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    var current_charts: [StateChart]
     {
         if charts.count == 0
         {
-            charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
-            charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+            charts.append(StateChart(name: "Tool Location", style: .line))
+            charts.append(StateChart(name: "Tool Rotation", style: .line))
         }
         
         // Update tool location chart
-        let tool_node = pointer_node
+        let tool_entity = pointer_entity
         
         var axis_names = ["X", "Y", "Z"]
-        var components = [tool_node?.worldPosition.x, tool_node?.worldPosition.z, tool_node?.worldPosition.y]
+        var components = [tool_entity?.position.x, tool_entity?.position.z, tool_entity?.position.y]
         for i in 0...axis_names.count - 1
         {
             charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0)))
@@ -123,7 +135,7 @@ class Portal_Controller: RobotModelController
         
         // Update tool rotation chart
         axis_names = ["R", "P", "W"]
-        components = [tool_node?.eulerAngles.z, tool_node?.eulerAngles.x, tool_node?.eulerAngles.y]
+        components = [tool_entity?.euler_angles.z, tool_entity?.euler_angles.x, tool_entity?.euler_angles.y]
         for i in 0...axis_names.count - 1
         {
             charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i] ?? 0).to_deg))
@@ -134,40 +146,60 @@ class Portal_Controller: RobotModelController
         return charts
     }
     
-    override func initial_charts_data() -> [WorkspaceObjectChart]?
+    var current_items: [StateItem]
+    {
+        var states = [StateItem]()
+        states.append(StateItem(name: "Temperature", value: "+10º", symbol_name: "thermometer"))
+        states[0].children = [
+            StateItem(name: "Еngine", value: "+50º", symbol_name: "thermometer.transmission"),
+            StateItem(name: "Fridge", value: "-40º", symbol_name: "thermometer.snowflake.circle")
+        ]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
+        
+        return states
+    }
+    
+    override var current_device_output: DeviceOutputData
+    {
+        // Prepare controller output
+        return DeviceOutputData(
+            items: current_items,
+            charts: current_charts
+        )
+    }
+    
+    var initial_charts: [StateChart]
     {
         domain_index = 0
         chart_ik_values = [Float](repeating: 0, count: 3)
-        charts = [WorkspaceObjectChart]()
+        charts = [StateChart]()
         
-        charts.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
-        charts.append(WorkspaceObjectChart(name: "Tool Rotation", style: .line))
+        charts.append(StateChart(name: "Tool Location", style: .line))
+        charts.append(StateChart(name: "Tool Rotation", style: .line))
         
         return charts
     }
     
-    override func updated_states_data() -> [StateItem]?
+    var initial_items: [StateItem]
     {
         var states = [StateItem]()
-        states.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-        states[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
-                             StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
         
-        states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+        states.append(StateItem(name: "Temperature", value: "0º", symbol_name: "thermometer"))
+        states[0].children = [StateItem(name: "Еngine", value: "0º", symbol_name: "thermometer.transmission"),
+                             StateItem(name: "Fridge", value: "0º", symbol_name: "thermometer.snowflake.circle")]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
         
         return states
     }
     
-    override func initial_states_data() -> [StateItem]?
+    override var initial_device_output: DeviceOutputData?
     {
-        var states = [StateItem]()
-        
-        states.append(StateItem(name: "Temperature", value: "0º", image: "thermometer"))
-        states[0].children = [StateItem(name: "Еngine", value: "0º", image: "thermometer.transmission"),
-                             StateItem(name: "Fridge", value: "0º", image: "thermometer.snowflake.circle")]
-        
-        states.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
-        
-        return states
+        // Reset contolleroutput
+        return DeviceOutputData(
+            items: initial_items,
+            charts: initial_charts
+        )
     }
 }

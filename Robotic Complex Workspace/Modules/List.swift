@@ -5,20 +5,21 @@
 import Foundation
 import IndustrialKit
 
-public var internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [PartModule], changer: [ChangerModule]) = (
+@MainActor public let internal_modules: (robot: [RobotModule], tool: [ToolModule], part: [PartModule], changer: [ChangerModule]) = (
     [
-        _6DOF_Module,
-        Portal_Module
+        _6DOF_RobotModule,
+        Portal_RobotModule
     ],
     [
-        Drill_Module,
-        Gripper_Module
+        Drill_ToolModule,
+        Gripper_ToolModule
     ],
     [
-        Cup_Module,
-        Books_Module
+        Cup_PartModule,
+        Books_PartModule,
+        Table_PartModule
     ],
     [
-        Random_Module
+        Random_ChangerModule
     ]
 )

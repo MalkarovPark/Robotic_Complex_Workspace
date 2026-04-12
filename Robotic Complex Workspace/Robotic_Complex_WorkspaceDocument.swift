@@ -39,7 +39,7 @@ struct Robotic_Complex_WorkspaceDocument: FileDocument
         preset = try JSONDecoder().decode(WorkspacePreset.self, from: data)
     }
     
-    // MARK: Write data from preset file
+    // MARK: Write data to preset file
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper
     {
         let data = try JSONEncoder().encode(preset)

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SceneKit
 import IndustrialKit
 #if os(visionOS)
 import IndustrialKitUI
@@ -21,23 +20,28 @@ struct Robotic_Complex_WorkspaceApp: App
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
     
-    @StateObject var base_workspace = Workspace() // Workspace object for opened file
     @StateObject var pendant_controller = PendantController()
-    @StateObject var sidebar_controller = SidebarController()
+    //#endif
+    //@Environment(\.openWindow) var openWindow
+    //@Environment(\.dismissWindow) var dismissWindow
+    
+    @StateObject var workspace_controller = WorkspaceSceneController()
     #endif
     
     var body: some Scene
     {
         DocumentGroup(newDocument: Robotic_Complex_WorkspaceDocument())
-        { file in ContentView(document: file.$document) // Pass document instance to main app view in closure
+        { file in
+            ContentView(document: file.$document) // Pass document instance to main app view in closure
                 .environmentObject(app_state)
+            #if os(macOS)
+                .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+            #endif
             #if os(visionOS)
-                .environmentObject(base_workspace)
                 .environmentObject(pendant_controller)
-                .environmentObject(sidebar_controller)
+                .environmentObject(workspace_controller)
                 .onAppear
                 {
-                    #if os(visionOS)
                     pendant_controller.set_windows_functions
                     {
                         openWindow(id: SPendantDefaultID)
@@ -47,17 +51,14 @@ struct Robotic_Complex_WorkspaceApp: App
                         dismissWindow(id: SPendantDefaultID)
                     }
                     
-                    pendant_controller.workspace = base_workspace
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                    workspace_controller.set_windows_functions
                     {
-                        sidebar_controller.flip_workspace_selection()
+                        openWindow(id: WorkspaceSceneDefaultID)
                     }
-                    #endif
-                }
-                .onDisappear
-                {
-                    sidebar_controller.sidebar_selection = .WorkspaceView
+                    _:
+                    {
+                        dismissWindow(id: WorkspaceSceneDefaultID)
+                    }
                 }
             #endif
         }
@@ -80,17 +81,20 @@ struct Robotic_Complex_WorkspaceApp: App
             {
                 Button("Run/Pause")
                 {
-                    app_state.run_command.toggle()
+                    app_state.start_pause_performing()
                 }
                 .keyboardShortcut("R", modifiers: .command)
                 
                 Button("Stop")
                 {
-                    app_state.stop_command.toggle()
+                    app_state.reset_performing()
                 }
                 .keyboardShortcut(".", modifiers: .command)
             }
         }
+        #if os(visionOS)
+        .windowStyle(.volumetric)
+        #endif
         
         #if !os(macOS)
         DocumentGroupLaunchScene("Robotic Complex Workspace")
@@ -124,16 +128,9 @@ struct Robotic_Complex_WorkspaceApp: App
         #endif
         
         #if os(visionOS)
-        SpatialPendant(controller: pendant_controller, workspace: base_workspace)
+        SpatialPendantScene(controller: pendant_controller)
+        WorkspaceScene(controller: workspace_controller)
         #endif
-        
-        /*WindowGroup("UwU", id: "StatisticsWindow")
-        {
-            EmptyView()
-                .frame(maxWidth: 400, maxHeight: 300)
-        }
-        .windowResizability(.contentSize)
-        .windowStyle(.hiddenTitleBar)*/
     }
 }
 
@@ -158,11 +155,21 @@ let default_popover_edge_inv: Edge = .top
 #endif
 
 // MARK: - Representation enum
-public enum RepresentationType: String, Equatable, CaseIterable
+public enum ViewMode: String, Equatable, CaseIterable
 {
-    case visual = "Visual"
+    case scene = "Scene"
     case gallery = "Gallery"
-    case spatial = "Spatial"
+    case immersive = "Immersive"
+    
+    var symbol_name: String
+    {
+        switch self
+        {
+        case .scene: "view.3d"
+        case .gallery: "square.grid.2x2"
+        case .immersive: "visionpro"
+        }
+    }
 }
 
 // MARK: – Scene transparency parameter

@@ -1,4 +1,5 @@
-![rcw_caption](https://github.com/user-attachments/assets/63669580-0188-489a-b658-cc7a17623fe9)
+![rcw_caption](https://github.com/user-attachments/assets/97b7a09b-1ecc-4511-9143-4cd89357d24e)
+<!-- <img width="3400" height="1850" alt="RCWorkspace_caption" src="https://github.com/user-attachments/assets/97b7a09b-1ecc-4511-9143-4cd89357d24e" /> -->
 
 # Robotic Complex Workspace
 

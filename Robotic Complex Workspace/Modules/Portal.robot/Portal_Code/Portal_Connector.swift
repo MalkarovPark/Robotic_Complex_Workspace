@@ -4,11 +4,12 @@
 
 import Foundation
 import IndustrialKit
+import RealityKit
 
-class Portal_Connector: RobotConnector
+class Portal_Connector: RobotConnector, @unchecked Sendable
 {
     // MARK: - Connection
-    override var parameters: [ConnectionParameter]
+    override var default_parameters: [ConnectionParameter]
     {
         [
             .init(name: "String", value: "Text"),
@@ -18,86 +19,181 @@ class Portal_Connector: RobotConnector
         ]
     }
     
-    override func connection_process() async -> Bool
+    override func perform_connection() async -> Bool
     {
-        new_line_check()
-        output += "Connecting..."
+        sleep(1)
         
-        new_line_check()
+        let result = parameters[safe: 3]?.value as? Bool ?? false
         
-        output += "\n \(parameters.count) parameters used:\n"
-        for parameter in parameters
+        if result
         {
-            output += " • \(parameter.value)\n"
-        }
-        output += "\n"
-        
-        sleep(2)
-        
-        if parameters[3].value as! Bool
-        {
-            output += "Connected"
-            return true
+            connection_output_string = "Connected"
         }
         else
         {
-            output += "Connection failed"
-            return false
+            connection_output_string = "Failed"
+            connection_error = NSError(domain: "Connection failed", code: 0, userInfo: nil)
         }
+        
+        return result
     }
     
-    override func disconnection_process()
+    override func perform_disconnection()
     {
-        new_line_check()
-        output += "Disconnected"
-    }
-    
-    override var performing_state: (output: PerformingState, log: String)
-    {
-        return (output: local_state, log: String())
-    }
-    
-    private var local_state: PerformingState = .completed
-    
-    private func new_line_check()
-    {
-        if output != String()
-        {
-            output += "\n"
-        }
+        
     }
     
     // MARK: - Performing
-    override func move_to(point: PositionPoint)
+    private var performing_task: Task<Void, Never>?
+    private var current_performing_state: PerformingState = .none
+    
+    private var current_pointer_position = EntityPositionData()
+    
+    open override func start_process(point: PositionPoint)
     {
-        let seconds = 2
-        usleep(UInt32(seconds * 1_000_000))
-        
-        local_state = .processing
-        
-        model_controller?.pointer_position = (x: point.x, y: point.y, z: point.z, r: point.r, p: point.p, w: point.w)
-        
-        local_state = .completed
+        performing_task = Task
+        {
+            current_performing_state = .processing
+            
+            sleep(1)
+            
+            current_performing_state = .completed
+            
+            current_pointer_position = EntityPositionData(
+                position: (
+                    x: point.x,
+                    y: point.y,
+                    z: point.z,
+                    
+                    r: point.r,
+                    p: point.p,
+                    w: point.w
+                )
+            )
+        }
+    }
+    
+    open override func reset_device()
+    {
+        performing_task?.cancel()
+    }
+    
+    open override var current_device_state: RobotState?
+    {
+        return RobotState(
+            performing_state: current_performing_state,
+            pointer_position: current_pointer_position
+        )
     }
     
     // MARK: - Statistics
-    override func initial_charts_data() -> [WorkspaceObjectChart]
+    private var charts = [StateChart]()
+    private var chart_ik_values = [Float](repeating: 0, count: 3)
+    private var domain_index: Float = 0
+    
+    private var pointer_entity: Entity
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
+        if let model_controller = model_controller,
+           let entity = model_controller.entities["tool"]
+        {
+            return entity
+        }
+        else
+        {
+            return Entity()
+        }
     }
     
-    override func updated_charts_data() -> [WorkspaceObjectChart]?
+    private var tool_entity: Entity?
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [WorkspaceObjectChart]()@*/return [WorkspaceObjectChart]()/*@END_MENU_TOKEN@*/
+        pointer_entity
     }
     
-    override func initial_states_data() -> [StateItem]
+    var current_charts: [StateChart]
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
+        if charts.count == 0
+        {
+            charts.append(StateChart(name: "Tool Location", style: .line))
+            charts.append(StateChart(name: "Tool Rotation", style: .line))
+        }
+        
+        // Update tool location chart
+        let tool_entity = pointer_entity
+        
+        var axis_names = ["X", "Y", "Z"]
+        var components = [tool_entity.position.x, tool_entity.position.z, tool_entity.position.y]
+        for i in 0...axis_names.count - 1
+        {
+            charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i])))
+        }
+        
+        // Update tool rotation chart
+        axis_names = ["R", "P", "W"]
+        components = [tool_entity.euler_angles.z, tool_entity.euler_angles.x, tool_entity.euler_angles.y]
+        for i in 0...axis_names.count - 1
+        {
+            charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": domain_index], codomain: Float(components[i]).to_deg))
+        }
+        
+        domain_index += 1
+        
+        return charts
     }
     
-    override func updated_states_data() -> [StateItem]?
+    var current_items: [StateItem]
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
+        var states = [StateItem]()
+        states.append(StateItem(name: "Temperature", value: "+10º", symbol_name: "thermometer"))
+        states[0].children = [
+            StateItem(name: "Еngine", value: "+50º", symbol_name: "thermometer.transmission"),
+            StateItem(name: "Fridge", value: "-40º", symbol_name: "thermometer.snowflake.circle")
+        ]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
+        
+        return states
     }
+    
+    /*override var current_device_output: DeviceState
+    {
+        // Prepare controller output
+        return DeviceState(
+            items: current_items,
+            charts: current_charts
+        )
+    }
+    
+    var initial_charts: [StateChart]
+    {
+        domain_index = 0
+        chart_ik_values = [Float](repeating: 0, count: 3)
+        charts = [StateChart]()
+        
+        charts.append(StateChart(name: "Tool Location", style: .line))
+        charts.append(StateChart(name: "Tool Rotation", style: .line))
+        
+        return charts
+    }
+    
+    var initial_items: [StateItem]
+    {
+        var states = [StateItem]()
+        
+        states.append(StateItem(name: "Temperature", value: "0º", symbol_name: "thermometer"))
+        states[0].children = [StateItem(name: "Еngine", value: "0º", symbol_name: "thermometer.transmission"),
+                             StateItem(name: "Fridge", value: "0º", symbol_name: "thermometer.snowflake.circle")]
+        
+        states.append(StateItem(name: "Speed", value: "10 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
+        
+        return states
+    }
+    
+    override var initial_device_output: DeviceState?
+    {
+        // Reset contolleroutput
+        return DeviceState(
+            items: initial_items,
+            charts: initial_charts
+        )
+    }*/
 }

@@ -13,9 +13,9 @@ struct CardMenu: ViewModifier
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var object: ProductionObject
     
-    @Binding var to_rename: Bool
+    @Binding var is_renaming: Bool
     
     @State private var is_selected = false
     @State var name = String()
@@ -34,8 +34,8 @@ struct CardMenu: ViewModifier
     let pass_programs: () -> ()
     
     // Full
-    public init(object: WorkspaceObject,
-                to_rename: Binding<Bool>, name: String = String(),
+    public init(object: ProductionObject,
+                is_renaming: Binding<Bool>, name: String = String(),
                 delete_alert_presented: Bool = false,
                 duplicate_object: @escaping () -> Void,
                 delete_object: @escaping () -> Void,
@@ -47,7 +47,7 @@ struct CardMenu: ViewModifier
                 pass_programs: @escaping () -> Void)
     {
         self.object = object
-        self._to_rename = to_rename
+        self._is_renaming = is_renaming
         self.name = name
         self.delete_alert_presented = delete_alert_presented
         self.duplicate_object = duplicate_object
@@ -61,10 +61,10 @@ struct CardMenu: ViewModifier
     }
     
     // Tool & Part
-    public init(object: WorkspaceObject, to_rename: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void)
+    public init(object: ProductionObject, is_renaming: Binding<Bool>, name: String = String(), delete_alert_presented: Bool = false, duplicate_object: @escaping () -> Void, delete_object: @escaping () -> Void, update_file: @escaping () -> Void)
     {
         self.object = object
-        self._to_rename = to_rename
+        self._is_renaming = is_renaming
         self.name = name
         self.delete_alert_presented = delete_alert_presented
         self.duplicate_object = duplicate_object
@@ -98,12 +98,12 @@ struct CardMenu: ViewModifier
                 {
                     if object is Robot
                     {
-                        tool_unplace(workspace: base_workspace, from_robot_name: object.name)
+                        //tool_unplace(workspace: base_workspace, from_robot_name: object.name)
                     }
                     else if object is Tool
                     {
                         (object as! Tool).attached_to = nil
-                        (object as! Tool).is_attached = false
+                        //(object as! Tool).is_attached = false
                     }
                 }
             }
@@ -140,7 +140,7 @@ struct CardMenu: ViewModifier
                 {
                     withAnimation
                     {
-                        to_rename.toggle()
+                        is_renaming.toggle()
                     }
                 }
                 
@@ -161,7 +161,7 @@ struct CardMenu: ViewModifier
                         {
                             Label("Clear", systemImage: "xmark")
                         }
-                        .disabled(!(base_workspace.robot_by_name(name).has_default_position))
+                        .disabled(!(base_workspace.robot(named: name).has_default_position))
                         
                         #if os(macOS)
                         Divider()
@@ -171,7 +171,7 @@ struct CardMenu: ViewModifier
                         {
                             Label("Reset to it", systemImage: "arrow.counterclockwise")
                         }
-                        .disabled(!(base_workspace.robot_by_name(name).has_default_position))
+                        .disabled(!(base_workspace.robot(named: name).has_default_position))
                     }
                     
                     #if os(macOS)
@@ -272,19 +272,6 @@ struct CardMenu: ViewModifier
     }
 }
 
-func tool_unplace(workspace: Workspace, from_robot_name: String)
-{
-    for placed_tools_name in workspace.placed_tools_names
-    {
-        let viewed_tool = workspace.tool_by_name(placed_tools_name)
-        if viewed_tool.is_placed && viewed_tool.is_attached && viewed_tool.attached_to == from_robot_name
-        {
-            viewed_tool.attached_to = nil
-            viewed_tool.is_attached = false
-        }
-    }
-}
-
 struct WorkspaceMenu: ViewModifier
 {
     @EnvironmentObject var base_workspace: Workspace
@@ -333,7 +320,7 @@ struct ModuleViewer: View
     
     @EnvironmentObject var app_state: AppState
     
-    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var object: ProductionObject
     
     let update_file: () -> ()
     
