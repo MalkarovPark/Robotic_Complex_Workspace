@@ -19,7 +19,7 @@ class Portal_Connector: RobotConnector, @unchecked Sendable
         ]
     }
     
-    override func connection_process() async -> Bool
+    override func perform_connection() async -> Bool
     {
         sleep(1)
         
@@ -38,7 +38,7 @@ class Portal_Connector: RobotConnector, @unchecked Sendable
         return result
     }
     
-    override func disconnection_process()
+    override func perform_disconnection()
     {
         
     }
