@@ -71,31 +71,8 @@ class Drill_Controller: ToolModelController, @unchecked Sendable
     private var charts = [StateChart]()
     private var domain_index: Float = 0
     
-    var current_charts: [StateChart]
-    {
-        guard entities.count == 2
-        else
-        {
-            return []
-        }
-        
-        if charts.count == 0
-        {
-            charts.append(StateChart(name: "Fingers Positions", style: .line))
-        }
-        
-        charts[0].data.append(ChartDataItem(name: "Left (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw", default: Entity()].position.z)))
-        charts[0].data.append(ChartDataItem(name: "Right (mm)", domain: ["": domain_index], codomain: Float(entities[safe: "jaw2", default: Entity()].position.z)))
-        
-        domain_index += 1
-        
-        return charts
-    }
-    
     var current_items: [StateItem]
     {
-        var state = [StateItem]()
-        
         if rotated[0]
         {
             return [StateItem(name: "Rotation", value: "Clockwise", symbol_name: "arrow.clockwise.circle")]

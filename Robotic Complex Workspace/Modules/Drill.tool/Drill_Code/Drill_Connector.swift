@@ -3,11 +3,12 @@
 //
 
 import Foundation
+import RealityKit
 import IndustrialKit
 
 class Drill_Connector: ToolConnector, @unchecked Sendable
 {
-    /*// MARK: - Connection
+    // MARK: - Connection
     override var default_parameters: [ConnectionParameter]
     {
         [
@@ -20,99 +21,135 @@ class Drill_Connector: ToolConnector, @unchecked Sendable
     
     override func connection_process() async -> Bool
     {
-        new_line_check()
-        output += "Connecting..."
+        sleep(1)
         
-        new_line_check()
+        let result = parameters[safe: 3]?.value as? Bool ?? false
         
-        output += "\n \(parameters.count) parameters used:\n"
-        for parameter in parameters
+        if result
         {
-            output += " • \(parameter.value)\n"
-        }
-        output += "\n"
-        
-        sleep(2)
-        
-        if parameters[3].value as! Bool
-        {
-            output += "Connected"
-            return true
+            connection_output_string = "Connected"
         }
         else
         {
-            output += "Connection failed"
-            return false
+            connection_output_string = "Failed"
+            connection_error = NSError(domain: "Connection failed", code: 0, userInfo: nil)
         }
+        
+        return result
     }
     
     override func disconnection_process()
     {
-        new_line_check()
-        output += "Disconnected"
+        
     }
-    
-    private func new_line_check()
-    {
-        if output != String()
-        {
-            output += "\n"
-        }
-    }
-    
-    override var performing_state: (output: PerformingState, log: String)
-    {
-        return (output: local_state, log: String())
-    }
-    
-    private var local_state: PerformingState = .completed
     
     // MARK: - Performing
-    override func perform(code: Int)
+    private var performing_task: Task<Void, Never>?
+    private var current_performing_state: PerformingState = .none
+    
+    private var current_code = 0
+    private var rotated = [false, false]
+    
+    open override func start_process(code: Int)
     {
-        guard let entities = model_controller?.entities else { return }
-        
-        if entities.count == 1 //Drill has one rotated entity
+        performing_task = Task
         {
-            entities[safe_name: "drill"].removeAllActions()
+            current_performing_state = .processing
+            new_animation_avaliable = true
             
-            switch code
-            {
-            case 0: // Strop rotation
-                break
-            case 1: // Clockwise rotation
-                entities[safe_name: "drill"].runAction(.repeatForever(.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
-            case 2: // Counter clockwise rotation
-                entities[safe_name: "drill"].runAction(.repeatForever(.rotate(by: -.pi, around: SCNVector3(0, 1, 0), duration: 0.1)))
-            default:
-                model_controller?.remove_all_model_actions()
-            }
+            sleep(1)
+            
+            current_performing_state = .completed
+            
+            current_code = code
+        }
+    }
+    
+    open override func reset_device()
+    {
+        model_controller?.reset_entities()
+        
+        rotated = [false, false]
+        
+        performing_task?.cancel()
+    }
+    
+    open override var current_device_state: ToolState?
+    {
+        return ToolState(
+            performing_state: current_performing_state,
+            entity_animations: current_entity_animations
+        )
+    }
+    
+    // MARK: - Modeling
+    private var new_animation_avaliable = false
+    
+    private var current_entity_animations: [EntityAnimationData]?
+    {
+        guard new_animation_avaliable else { return nil }
+        
+        var entities_animations: [EntityAnimationData] = []
+        
+        switch current_code
+        {
+        case 0: // Clockwise rotation
+            rotated[0] = true
+            rotated[1] = false
+            
+            entities_animations = [
+                EntityAnimationData(
+                    entity_name: "drill",
+                    position: (x: -325, y: -325, z: 0, r: 0, p: 0, w: -180),
+                    duration: 1,
+                    speed: 4
+                )
+            ]
+        case 1: // Counter clockwise rotation
+            rotated[0] = false
+            rotated[1] = true
+            
+            entities_animations = [
+                EntityAnimationData(
+                    entity_name: "drill",
+                    position: (x: -325, y: -325, z: 0, r: 0, p: 0, w: 180),
+                    duration: 1,
+                    speed: 4
+                )
+            ]
+        default: // Stop
+            rotated[0] = false
+            rotated[1] = false
+            
+            entities_animations = [
+                EntityAnimationData(
+                    entity_name: "drill",
+                    position: (x: -325, y: -325, z: 0, r: 0, p: 0, w: 0),
+                    duration: 0,
+                    speed: 1,
+                    repeat_count: 1
+                )
+            ]
         }
         
-        let seconds = 2
-        usleep(UInt32(seconds * 1_000_000))
-        
-        local_state = .completed
+        new_animation_avaliable = false
+        return entities_animations
     }
     
     // MARK: - Statistics
-    override func initial_charts_data() -> [StateChart]
+    var current_items: [StateItem]
     {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateChart]()@*/return [StateChart]()/*@END_MENU_TOKEN@*/
+        if rotated[0]
+        {
+            return [StateItem(name: "Rotation", value: "Clockwise", symbol_name: "arrow.clockwise.circle")]
+        }
+        else if rotated[1]
+        {
+            return [StateItem(name: "Rotation", value: "Counter clockwise", symbol_name: "arrow.counterclockwise.circle")]
+        }
+        else
+        {
+            return [StateItem(name: "Rotation", value: "Stopped", symbol_name: "nosign")]
+        }
     }
-    
-    override func updated_charts_data() -> [StateChart]?
-    {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateChart]()@*/return [StateChart]()/*@END_MENU_TOKEN@*/
-    }
-    
-    override func initial_states_data() -> [StateItem]
-    {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
-    }
-    
-    override func updated_states_data() -> [StateItem]?
-    {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=return [StateItem]()@*/return [StateItem]()/*@END_MENU_TOKEN@*/
-    }*/
 }
