@@ -28,6 +28,7 @@ class Drill_Controller: ToolModelController, @unchecked Sendable
         case 0: // Clockwise rotation
             rotated[0] = true
             rotated[1] = false
+            
             entities_animations = [
                 EntityAnimationData(
                     entity_name: "drill",
@@ -39,6 +40,7 @@ class Drill_Controller: ToolModelController, @unchecked Sendable
         case 1: // Counter clockwise rotation
             rotated[0] = false
             rotated[1] = true
+            
             entities_animations = [
                 EntityAnimationData(
                     entity_name: "drill",
