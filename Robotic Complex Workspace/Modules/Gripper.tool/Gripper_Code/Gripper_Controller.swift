@@ -32,12 +32,14 @@ class Gripper_Controller: ToolModelController, @unchecked Sendable
                 EntityAnimationData(
                     entity_name: "jaw",
                     position: (x: 20000, y: 0, z: 0, r: 0, p: 0, w: 0),
-                    duration: 1
+                    duration: 1,
+                    repeat_count: 1
                 ),
                 EntityAnimationData(
                     entity_name: "jaw2",
                     position: (x: -20000, y: 0, z: 0, r: 0, p: 0, w: 0),
-                    duration: 1
+                    duration: 1,
+                    repeat_count: 1
                 )
             ]
         case 1: // Open
@@ -45,12 +47,14 @@ class Gripper_Controller: ToolModelController, @unchecked Sendable
                 EntityAnimationData(
                     entity_name: "jaw",
                     position: (x: 46000, y: 0, z: 0, r: 0, p: 0, w: 0),
-                    duration: 1
+                    duration: 1,
+                    repeat_count: 1
                 ),
                 EntityAnimationData(
                     entity_name: "jaw2",
                     position: (x: -46000, y: 0, z: 0, r: 0, p: 0, w: 0),
-                    duration: 1
+                    duration: 1,
+                    repeat_count: 1
                 )
             ]
         default:
