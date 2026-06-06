@@ -43,6 +43,8 @@ struct ToolInspectorItems: View
                     
                     workspace.update_tool_attachments()
                     
+                    workspace.focus(on: tool.entity)
+                    
                     on_update()
                 }
         )

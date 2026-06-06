@@ -50,7 +50,21 @@ struct AddObjectView: View
                     bottom_spacing: bottom_spacing,
                     
                     is_presented: $is_presented,
-                    on_add_object: { document.preset.robots = base_workspace.file_data().robots }
+                    on_add_object: {
+                        document.preset.robots = base_workspace.file_data().robots
+                        
+                        if let robot = base_workspace.robots.last
+                        {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                base_workspace.select_object(robot)
+                            }
+                        }
+                        else
+                        {
+                            base_workspace.process_empty_tap()
+                        }
+                    }
                 )
             case .tools:
                 AddToolView(
@@ -61,7 +75,21 @@ struct AddObjectView: View
                     bottom_spacing: bottom_spacing,
                     
                     is_presented: $is_presented,
-                    on_add_object: { document.preset.tools = base_workspace.file_data().tools }
+                    on_add_object: {
+                        document.preset.tools = base_workspace.file_data().tools
+                        
+                        if let tool = base_workspace.tools.last
+                        {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                base_workspace.select_object(tool)
+                            }
+                        }
+                        else
+                        {
+                            base_workspace.process_empty_tap()
+                        }
+                    }
                 )
             case .parts:
                 AddPartView(
@@ -72,7 +100,21 @@ struct AddObjectView: View
                     bottom_spacing: bottom_spacing,
                     
                     is_presented: $is_presented,
-                    on_add_object: { document.preset.tools = base_workspace.file_data().tools }
+                    on_add_object: {
+                        document.preset.parts = base_workspace.file_data().parts
+                        
+                        if let part = base_workspace.parts.last
+                        {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                base_workspace.select_object(part)
+                            }
+                        }
+                        else
+                        {
+                            base_workspace.process_empty_tap()
+                        }
+                    }
                 )
             }
             #else
@@ -88,7 +130,21 @@ struct AddObjectView: View
                         bottom_spacing: bottom_spacing,
                         
                         is_presented: $is_presented,
-                        on_add_object: { document.preset.robots = base_workspace.file_data().robots }
+                        on_add_object: {
+                            document.preset.robots = base_workspace.file_data().robots
+                            
+                            if let robot = base_workspace.robots.last
+                            {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                {
+                                    base_workspace.select_object(robot)
+                                }
+                            }
+                            else
+                            {
+                                base_workspace.process_empty_tap()
+                            }
+                        }
                     )
                 }
                 
@@ -102,7 +158,21 @@ struct AddObjectView: View
                         bottom_spacing: bottom_spacing,
                         
                         is_presented: $is_presented,
-                        on_add_object: { document.preset.tools = base_workspace.file_data().tools }
+                        on_add_object: {
+                            document.preset.tools = base_workspace.file_data().tools
+                            
+                            if let tool = base_workspace.tools.last
+                            {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                {
+                                    base_workspace.select_object(tool)
+                                }
+                            }
+                            else
+                            {
+                                base_workspace.process_empty_tap()
+                            }
+                        }
                     )
                 }
                 
@@ -116,7 +186,21 @@ struct AddObjectView: View
                         bottom_spacing: bottom_spacing,
                         
                         is_presented: $is_presented,
-                        on_add_object: { document.preset.tools = base_workspace.file_data().tools }
+                        on_add_object: {
+                            document.preset.parts = base_workspace.file_data().parts
+                            
+                            if let part = base_workspace.parts.last
+                            {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                {
+                                    base_workspace.select_object(part)
+                                }
+                            }
+                            else
+                            {
+                                base_workspace.process_empty_tap()
+                            }
+                        }
                     )
                 }
             }
@@ -275,7 +359,7 @@ struct AddRobotView: View
     
     private func add_object(_ module: RobotModule, is_internal: Bool)
     {
-        base_workspace.add_robot(Robot(name: "None", module: module, is_internal: is_internal))
+        base_workspace.add_robot(Robot(module: module, is_internal: is_internal))
         on_add_object()
         
         is_presented = false
@@ -357,7 +441,7 @@ struct AddToolView: View
     
     private func add_object(_ module: ToolModule, is_internal: Bool)
     {
-        base_workspace.add_tool(Tool(name: "None", module: module, is_internal: is_internal))
+        base_workspace.add_tool(Tool(module: module, is_internal: is_internal))
         on_add_object()
         
         is_presented = false
@@ -439,7 +523,7 @@ struct AddPartView: View
     
     private func add_object(_ module: PartModule, is_internal: Bool)
     {
-        base_workspace.add_part(Part(name: "None", module: module, is_internal: is_internal))
+        base_workspace.add_part(Part(module: module, is_internal: is_internal))
         on_add_object()
         
         is_presented = false

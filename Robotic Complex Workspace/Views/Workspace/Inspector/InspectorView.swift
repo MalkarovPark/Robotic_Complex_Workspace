@@ -116,6 +116,8 @@ struct InspectorView: View
                                     object.position = new_value
                                     
                                     update_document(by: object)
+                                    
+                                    workspace.focus(on: object.model_entity, animated: false)
                                 }
                         )
                         
