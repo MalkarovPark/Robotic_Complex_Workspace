@@ -10,8 +10,8 @@ import IndustrialKit
     name: "Gripper",
     
     operation_codes: [
-        .init(value: 0, name: "Grab", symbol_name: "arrow.right.and.line.vertical.and.arrow.left", description: ""),
-        .init(value: 1, name: "Release", symbol_name: "arrow.left.and.line.vertical.and.arrow.right", description: "")
+        .init(value: 0, name: "Grab", symbol_name: "arrow.right.and.line.vertical.and.arrow.left", description: "Close the Tool"),
+        .init(value: 1, name: "Release", symbol_name: "arrow.left.and.line.vertical.and.arrow.right", description: "Open the Tool")
     ],
     
     model_controller: Gripper_Controller(),
