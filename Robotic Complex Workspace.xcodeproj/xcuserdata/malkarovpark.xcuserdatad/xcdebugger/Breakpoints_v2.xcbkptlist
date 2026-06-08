@@ -68,5 +68,259 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7BE469A0-2989-4C52-B098-1651397E35D5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Robotic Complex Workspace/Modules/Gripper.tool/Gripper_Code/Gripper_Controller.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "33"
+            endingLineNumber = "33"
+            landmarkName = "entity_animations(code:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B76237E7-C886-48C6-B5EA-546AD578D2AE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "perform(code:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B1CE5670-AF1A-4272-ABE6-0BFCC71981E2"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "perform(code:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B1CE5670-AF1A-4272-ABE6-0BFCC71981E2 - 6e16782d9716f316"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "IndustrialKit.ToolModelController.perform(code: Swift.Int) throws -&gt; ()"
+                  moduleName = "RCWorkspace.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/malkarovpark/Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "35"
+                  endingLineNumber = "35">
+               </Location>
+               <Location
+                  uuid = "B1CE5670-AF1A-4272-ABE6-0BFCC71981E2 - 6e16782d9716f316"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "IndustrialKit.ToolModelController.perform(code: Swift.Int) throws -&gt; ()"
+                  moduleName = "RCWorkspace.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/malkarovpark/Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "35"
+                  endingLineNumber = "35">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D2B4B5F2-0DAC-4E84-9742-85EA0AA7EED5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "450219D4-4301-42D0-9C52-1D1015B18172"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "06030FBC-65D9-4DEA-9237-CEA14A30421A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8EDDACFF-146E-4BFD-9D74-8080F86ACC65"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6AC7879A-7BC9-46C1-8978-B5D2DF1C31DA"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "58611DDF-93E7-4BD9-9732-79ECF32AEDBB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "559BCD32-A81E-4D81-8379-E3C45BCAED6D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1C7885D2-28F4-4695-96D0-8B5146BF4525"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6E5D7682-48C6-4511-B3DD-5C173E0064AF"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "143"
+            endingLineNumber = "143"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "430D8D83-E72F-4C35-97F8-D4CFE4E5865A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C20AB98C-EF53-41B5-AAD9-67F4BE172CD9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-ccutgystgpzzoubykbhpikeavjyv/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKit/ModelControllers/ToolModelController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
+            landmarkName = "process_animation(by:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

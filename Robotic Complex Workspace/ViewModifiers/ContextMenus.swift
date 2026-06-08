@@ -8,7 +8,7 @@
 import SwiftUI
 import IndustrialKit
 
-struct CardMenu: ViewModifier
+/*struct CardMenu: ViewModifier
 {
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
@@ -310,7 +310,7 @@ struct Squarer: ViewModifier
         content
             .frame(width: side, height: side)
     }
-}
+}*/
 
 struct ModuleViewer: View
 {
