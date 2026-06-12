@@ -21,10 +21,6 @@ struct Robotic_Complex_WorkspaceApp: App
     @Environment(\.dismissWindow) var dismissWindow
     
     @StateObject var pendant_controller = PendantController()
-    //#endif
-    //@Environment(\.openWindow) var openWindow
-    //@Environment(\.dismissWindow) var dismissWindow
-    
     @StateObject var workspace_controller = WorkspaceSceneController()
     #endif
     
