@@ -38,7 +38,7 @@ struct Robotic_Complex_WorkspaceApp: App
                 .environmentObject(workspace_controller)
                 .onAppear
                 {
-                    pendant_controller.set_windows_functions
+                    pendant_controller.set_window_functions
                     {
                         openWindow(id: SPendantDefaultID)
                     }

@@ -47,7 +47,7 @@ struct WorkspaceSpatialView: View
         ZStack
         {
             #if os(visionOS)
-            WorkspaceGalleryView()
+            WorkspaceGalleryView(document: $document)
                 .frame(maxWidth: .infinity)
                 .opacity(view_mode != .scene ? 1 : 0)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
