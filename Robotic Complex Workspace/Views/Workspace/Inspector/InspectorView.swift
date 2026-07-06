@@ -117,7 +117,9 @@ struct InspectorView: View
                                     
                                     update_document(by: object)
                                     
+                                    #if !os(visionOS)
                                     workspace.focus(on: object.model_entity, animated: false)
+                                    #endif
                                 }
                         )
                         

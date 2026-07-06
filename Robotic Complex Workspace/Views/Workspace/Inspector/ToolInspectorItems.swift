@@ -43,7 +43,9 @@ struct ToolInspectorItems: View
                     
                     workspace.update_tool_attachments()
                     
+                    #if !os(visionOS)
                     workspace.focus(on: tool.entity)
+                    #endif
                     
                     on_update()
                 }
