@@ -288,8 +288,20 @@ struct PartInspectorItems: View
 
 #Preview
 {
-    VStack(spacing: 0)
+    ZStack
     {
-        PartInspectorItems(part: Part(), on_update: {})
+        
     }
+    .inspector(isPresented: .constant(true))
+    {
+        ScrollView
+        {
+            VStack(spacing: 0)
+            {
+                PartInspectorItems(part: Part(), on_update: {})
+            }
+        }
+    }
+    .frame(width: 400, height: 600)
+    .environmentObject(Workspace())
 }

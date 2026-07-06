@@ -66,7 +66,9 @@ struct RobotInspectorItems: View
                     else
                     {
                         Text("None")
+                        #if os(macOS)
                             .font(.system(size: 10))
+                        #endif
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity)
                             .padding(4)
@@ -221,8 +223,19 @@ private struct OriginScaleView: View
 
 #Preview
 {
-    VStack(spacing: 0)
+    ZStack
     {
-        RobotInspectorItems(robot: Robot(), on_update: {})
+        
     }
+    .inspector(isPresented: .constant(true))
+    {
+        ScrollView
+        {
+            VStack(spacing: 0)
+            {
+                RobotInspectorItems(robot: Robot(), on_update: {})
+            }
+        }
+    }
+    .frame(width: 400, height: 600)
 }

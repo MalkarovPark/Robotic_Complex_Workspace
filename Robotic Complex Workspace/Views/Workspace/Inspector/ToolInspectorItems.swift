@@ -322,8 +322,19 @@ struct ToolInspectorItems: View
 
 #Preview
 {
-    VStack(spacing: 0)
+    ZStack
     {
-        ToolInspectorItems(tool: Tool(), workspace: Workspace(), on_update: {})
+        
     }
+    .inspector(isPresented: .constant(true))
+    {
+        ScrollView
+        {
+            VStack(spacing: 0)
+            {
+                ToolInspectorItems(tool: Tool(), workspace: Workspace(), on_update: {})
+            }
+        }
+    }
+    .frame(width: 400, height: 600)
 }
