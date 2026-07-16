@@ -102,7 +102,6 @@ struct WorkspaceSpatialView: View
             .frame(minWidth: 640, idealWidth: 800, minHeight: 576, idealHeight: 600)
             #endif
             
-            //#if os(macOS) || os(iOS)
             HStack(spacing: 0)
             {
                 if view_mode != .scene && assets_loaded
@@ -115,7 +114,6 @@ struct WorkspaceSpatialView: View
                 
                 SpatialPendant(
                     controller: pendant_controller,
-                    //workspace: base_workspace,
                     
                     shows_program_indices: true,
                     
