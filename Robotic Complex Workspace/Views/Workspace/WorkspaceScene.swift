@@ -62,6 +62,21 @@ struct WorkspaceSceneView: View
         {
             AssetsLoadingPane(assets_loading: assets_loading)
         }
+        .highPriorityGesture(
+            TapGesture()
+                .targetedToAnyEntity()
+                .onEnded
+                { value in
+                    controller.workspace.process_tap(value: value)
+                }
+        )
+        .gesture(
+            TapGesture()
+                .onEnded
+                {
+                    controller.workspace.process_empty_tap()
+                }
+        )
         .ignoresSafeArea(.container, edges: .all)
         .disabled(assets_loading)
     }
@@ -90,7 +105,7 @@ public struct WorkspaceScene: SwiftUI.Scene
     }
 }
 
-///The default widow id of Spatial Pendant.
+///The default window id of Spatial Pendant.
 public let WorkspaceSpaceDefaultID = "workspace"
 
 @MainActor public class WorkspaceSceneController: ObservableObject

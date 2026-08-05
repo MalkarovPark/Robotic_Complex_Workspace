@@ -17,7 +17,11 @@ struct WorkspaceView: View
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    #if os(macOS) || os(iOS)
     @AppStorage("ViewMode") private var view_mode: ViewMode = .scene
+    #else
+    @AppStorage("ViewMode") private var view_mode: ViewMode = .immersive
+    #endif
     
     @State private var worked = false
     @State private var registers_view_presented = false
@@ -65,6 +69,7 @@ struct WorkspaceView: View
                     pendant_controller.workspace = base_workspace
                     #if os(visionOS)
                     workspace_controller.workspace = base_workspace
+                    workspace_controller.is_opened = true
                     view_enabled = true
                     #endif
                 }
