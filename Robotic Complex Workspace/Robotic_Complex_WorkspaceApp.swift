@@ -17,8 +17,11 @@ struct Robotic_Complex_WorkspaceApp: App
     @StateObject var app_state = AppState() // Init application state
     
     #if os(visionOS)
-    @Environment(\.openWindow) var openWindow
-    @Environment(\.dismissWindow) var dismissWindow
+    @Environment(\.openWindow) var open_window
+    @Environment(\.dismissWindow) var dismiss_window
+    
+    @Environment(\.openImmersiveSpace) private var open_immersive_space
+    @Environment(\.dismissImmersiveSpace) private var dismiss_immersive_space
     
     @StateObject var pendant_controller = PendantController()
     @StateObject var workspace_controller = WorkspaceSceneController()
@@ -40,20 +43,20 @@ struct Robotic_Complex_WorkspaceApp: App
                 {
                     pendant_controller.set_window_functions
                     {
-                        openWindow(id: SPendantDefaultID)
+                        open_window(id: SPendantDefaultID)
                     }
                     _:
                     {
-                        dismissWindow(id: SPendantDefaultID)
+                        dismiss_window(id: SPendantDefaultID)
                     }
                     
-                    workspace_controller.set_windows_functions
+                    workspace_controller.set_space_functions
                     {
-                        openWindow(id: WorkspaceSceneDefaultID)
+                        Task { await open_immersive_space(id: WorkspaceSpaceDefaultID) }
                     }
                     _:
                     {
-                        dismissWindow(id: WorkspaceSceneDefaultID)
+                        Task { await dismiss_immersive_space() }
                     }
                 }
             #endif

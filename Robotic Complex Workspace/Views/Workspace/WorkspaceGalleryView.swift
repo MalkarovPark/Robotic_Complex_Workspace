@@ -78,7 +78,9 @@ struct WorkspaceGalleryView: View
                 }
             }
             .padding()
+            #if !os(visionOS) //?!
             .animation(.spring(), value: filtered_items)
+            #endif
         }
     }
 }

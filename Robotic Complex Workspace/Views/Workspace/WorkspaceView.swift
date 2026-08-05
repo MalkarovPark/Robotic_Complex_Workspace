@@ -25,19 +25,19 @@ struct WorkspaceView: View
     @State private var inspector_presented = false
     
     @State private var device_output_presented = false
-    
     @State private var device_connector_presented = false
-    
     @State private var performing_state_view_presented = false
     
     #if !os(macOS)
     @State var settings_view_presented = false
     
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class
     #endif
     
     #if os(visionOS)
     @Environment(\.dismiss) private var dismiss
+    
+    @State private var view_enabled = true
     #endif
     
     #if os(macOS) || os(iOS)
@@ -60,27 +60,14 @@ struct WorkspaceView: View
                     is_pan: $is_pan,
                     pendant_controller: pendant_controller
                 )
-                /*#if os(visionOS)
-                    .frame(depth: 0)
-                    .overlay(alignment: .bottomLeading)
-                    {
-                        Button("Workspace") { workspace_controller.is_opened.toggle() }
-                            .padding()
-                    }
-                #endif*/
                 .onAppear
                 {
                     pendant_controller.workspace = base_workspace
                     #if os(visionOS)
                     workspace_controller.workspace = base_workspace
+                    view_enabled = true
                     #endif
                 }
-                #if os(visionOS)
-                .onDisappear
-                {
-                    workspace_controller.workspace = Workspace()
-                }
-                #endif
             }
             .inspector(isPresented: $inspector_presented)
             {
@@ -122,7 +109,7 @@ struct WorkspaceView: View
                 #if os(visionOS)
                 ToolbarItem(id: "Documents", placement: .cancellationAction)
                 {
-                    Button(action: { dismiss(); pendant_controller.is_opened = false })
+                    Button(action: dismiss_view)
                     {
                         Label("Documents", systemImage: "chevron.left")
                     }
@@ -341,6 +328,9 @@ struct WorkspaceView: View
             }
             #endif
         }
+        #if os(visionOS)
+        .opacity(view_enabled ? 1 : 0)
+        #endif
         .sheet(isPresented: $add_object_view_presented)
         {
             AddObjectView(is_presented: $add_object_view_presented, document: $document)
@@ -414,6 +404,19 @@ struct WorkspaceView: View
         default:
             return "None"
         }
+    }
+    #endif
+    
+    #if os(visionOS)
+    private func dismiss_view()
+    {
+        workspace_controller.workspace = Workspace()
+        pendant_controller.is_opened = false
+        workspace_controller.is_opened = false
+        
+        dismiss()
+        
+        view_enabled = false
     }
     #endif
 }

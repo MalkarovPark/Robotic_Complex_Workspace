@@ -11,7 +11,6 @@ import RealityKit
 import IndustrialKit
 import IndustrialKitUI
 
-#if os(visionOS)
 struct WorkspaceSceneView: View
 {
     @ObservedObject var controller: WorkspaceSceneController
@@ -42,79 +41,57 @@ struct WorkspaceSceneView: View
     
     var body: some View
     {
-        ZStack
-        {
-            VStack(spacing: 8)
-            {
-                Text("Workspace")
-                Text("Robots – \(controller.workspace.robots.count)")
-                Text("Tools – \(controller.workspace.tools.count)")
-                Text("Parts – \(controller.workspace.parts.count)")
-            }
-            .padding(16)
-            .glassBackgroundEffect()
+        RealityView
+        { content in
+            assets_loading = true
             
-            RealityView
-            { content in
-                /*let cube = ModelEntity(
-                    mesh: .generateBox(size: Float(0.1), cornerRadius: Float(0.01)),
-                    materials: [SimpleMaterial(color: .white, isMetallic: false)]
-                )
-                content.add(cube)*/
+            scene_content = content
+            
+            controller.workspace.place_entity(in: content)
+            {
+                //pendant_controller.is_opened = true
                 
-                assets_loading = true
-                
-                scene_content = content
-                
-                controller.workspace.place_entity(in: content)
+                assets_loading = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
                 {
-                    //pendant_controller.is_opened = true
-                    
-                    assets_loading = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                    {
-                        assets_loaded = true
-                    }
+                    assets_loaded = true
                 }
             }
-            placeholder:
-            {
-                AssetsLoadingPane(assets_loading: assets_loading)
-            }
-            .ignoresSafeArea(.container, edges: .all)
-            .disabled(assets_loading)
         }
-        .border(.accent)
+        placeholder:
+        {
+            AssetsLoadingPane(assets_loading: assets_loading)
+        }
+        .ignoresSafeArea(.container, edges: .all)
+        .disabled(assets_loading)
     }
 }
 
 public struct WorkspaceScene: SwiftUI.Scene
 {
-    var window_id: String
+    var space_id: String
     let controller: WorkspaceSceneController
     
     public init(
-        window_id: String = WorkspaceSceneDefaultID,
+        window_id: String = WorkspaceSpaceDefaultID,
         controller: WorkspaceSceneController
     )
     {
-        self.window_id = window_id
+        self.space_id = window_id
         self.controller = controller
     }
     
     @SceneBuilder public var body: some SwiftUI.Scene
     {
-        WindowGroup(id: window_id)
+        ImmersiveSpace(id: space_id)
         {
             WorkspaceSceneView(controller: controller)
-                .padding([.horizontal, .top], 16)
         }
-        .windowStyle(.volumetric)
     }
 }
 
 ///The default widow id of Spatial Pendant.
-public let WorkspaceSceneDefaultID = "workspace"
+public let WorkspaceSpaceDefaultID = "workspace"
 
 @MainActor public class WorkspaceSceneController: ObservableObject
 {
@@ -128,7 +105,7 @@ public let WorkspaceSceneDefaultID = "workspace"
         self.workspace = workspace
     }
     
-    // MARK: - Windows management
+    // MARK: - Space management
     @Published public var is_opened = false
     {
         didSet
@@ -140,7 +117,7 @@ public let WorkspaceSceneDefaultID = "workspace"
     
     public func on_dismiss() { is_opened = false }
     
-    public func set_windows_functions(
+    public func set_space_functions(
         _ open: @escaping () -> (),
         _ dismiss: @escaping () -> ()
     )
@@ -157,4 +134,3 @@ public let WorkspaceSceneDefaultID = "workspace"
 {
     WorkspaceSceneView(controller: WorkspaceSceneController())
 }
-#endif

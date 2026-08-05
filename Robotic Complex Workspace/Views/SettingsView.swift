@@ -65,8 +65,6 @@ struct SettingsView: View
 // MARK: - Settings view with tab bar
 struct GeneralSettingsView: View
 {
-    @AppStorage("ViewMode") private var view_mode: ViewMode = .scene
-    
     @AppStorage("WorkspaceRegistersCount") private var workspace_registers_count: Int = 256
     
     #if os(visionOS)
@@ -80,35 +78,6 @@ struct GeneralSettingsView: View
             #if os(macOS)
             VStack(alignment: .leading, spacing: 0)
             {
-                /*GroupBox(label: Text("View").font(.headline))
-                {
-                    VStack(spacing: 4)
-                    {
-                        HStack
-                        {
-                            Text("Representation")
-                            
-                            Spacer()
-                            
-                            Picker(selection: $view_mode, label: Text("Representation"))
-                            {
-                                ForEach(ViewMode.allCases, id: \.self)
-                                { representation in
-                                    if representation != .spatial
-                                    {
-                                        Text(representation.rawValue).tag(representation)
-                                    }
-                                }
-                            }
-                            .labelsHidden()
-                            .frame(width: 80)
-                        }
-                        .padding(4)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                }
-                .padding(.bottom)*/
-                
                 GroupBox(label: Text("Workspace").font(.headline))
                 {
                     VStack(spacing: 4)
@@ -134,24 +103,6 @@ struct GeneralSettingsView: View
                 }
             }
             #else
-            /*Section("View")
-            {
-                Picker(selection: $view_mode, label: Text("Representation"))
-                {
-                    ForEach(ViewMode.allCases, id: \.self)
-                    { representation in
-                        #if !os(visionOS)
-                        if representation != .spatial
-                        {
-                            Text(representation.rawValue).tag(representation)
-                        }
-                        #else
-                        Text(representation.rawValue).tag(representation)
-                        #endif
-                    }
-                }
-                .tint(.accentColor)
-            }*/
             
             Section("Workspace")
             {
@@ -174,7 +125,7 @@ struct GeneralSettingsView: View
             #endif
         }
         #if os(macOS)
-        .frame(width: 300)//, height: 256)
+        .frame(width: 300)
         #endif
     }
 }

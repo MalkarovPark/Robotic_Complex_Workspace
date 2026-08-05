@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		621F91402F7FB95B00641082 /* WorkspaceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621F913F2F7FB95B00641082 /* WorkspaceScene.swift */; };
+		621F91402F7FB95B00641082 /* WorkspaceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621F913F2F7FB95B00641082 /* WorkspaceScene.swift */; platformFilters = (xros, ); };
 		6236F9372AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9362AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift */; };
 		6236F9392AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9382AD3439B008FA7C4 /* Robotic_Complex_WorkspaceDocument.swift */; };
 		6236F93D2AD3439C008FA7C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6236F93C2AD3439C008FA7C4 /* Assets.xcassets */; };
