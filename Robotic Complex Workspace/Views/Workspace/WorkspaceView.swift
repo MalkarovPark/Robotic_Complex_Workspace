@@ -49,6 +49,7 @@ struct WorkspaceView: View
     #else
     @EnvironmentObject var pendant_controller: PendantController
     @EnvironmentObject var workspace_controller: WorkspaceSceneController
+    @EnvironmentObject var inspector_controller: ObjectInspectorController
     #endif
     
     @State private var is_pan = false
@@ -64,21 +65,14 @@ struct WorkspaceView: View
                     is_pan: $is_pan,
                     pendant_controller: pendant_controller
                 )
-                .onAppear
-                {
-                    pendant_controller.workspace = base_workspace
-                    #if os(visionOS)
-                    workspace_controller.workspace = base_workspace
-                    workspace_controller.is_opened = true
-                    view_enabled = true
-                    #endif
-                }
+                .onAppear { open_view() }
             }
+            #if os(macOS) || os(iOS)
             .inspector(isPresented: $inspector_presented)
             {
                 if base_workspace.selected_object != nil
                 {
-                    #if os(macOS) || os(visionOS)
+                    #if os(macOS)
                     InspectorView(document: $document, workspace: base_workspace)
                     #else
                     if horizontal_size_class != .compact
@@ -106,6 +100,7 @@ struct WorkspaceView: View
                     #endif
                 }
             }
+            #endif
             #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -140,18 +135,34 @@ struct WorkspaceView: View
                     {
                         Section("Visibility")
                         {
+                            #if os(visionOS)
+                            let shows_scene = Binding(
+                                get: { view_mode == .immersive },
+                                set:
+                                    {
+                                        new_value in view_mode = new_value ? .immersive : .gallery
+                                        workspace_controller.is_opened.toggle()
+                                    }
+                            )
+                            
+                            Toggle(isOn: shows_scene)
+                            {
+                                Text("Scene")
+                            }
+                            #endif
+                            
                             Toggle(isOn: $base_workspace.shows_grid)
                             {
                                 Text("Grid")
                             }
                             #if !os(visionOS)
-                            .disabled(view_mode == .gallery)
+                            .disabled(view_mode != .immersive)
                             #endif
                         }
                         
+                        #if os(macOS) || os(iOS)
                         Divider()
                         
-                        #if os(macOS) || os(iOS)
                         Button(action: { is_pan = false })
                         {
                             Label("Oribit Mode", systemImage: "rotate.3d")
@@ -176,11 +187,6 @@ struct WorkspaceView: View
                                 }
                             }
                         }
-                        #else
-                        Button(action: { workspace_controller.is_opened.toggle() })
-                        {
-                            Label(ViewMode.immersive.rawValue, systemImage: ViewMode.immersive.symbol_name)
-                        }
                         #endif
                     }
                     label:
@@ -193,6 +199,7 @@ struct WorkspaceView: View
                 ToolbarSpacer()
                 #endif
                 
+                #if os(macOS) || os(iOS)
                 ToolbarItem(id: "State", placement: compact_primary_placement())
                 {
                     Button(action: { device_output_presented = true })
@@ -248,6 +255,7 @@ struct WorkspaceView: View
                     }
                     .disabled(!(base_workspace.selected_object is any DeviceTwin))
                 }
+                #endif
                 
                 #if os(macOS)
                 ToolbarSpacer()
@@ -273,6 +281,13 @@ struct WorkspaceView: View
                     Button
                     {
                         pendant_controller.is_opened.toggle()
+                        
+                        /*#if os(visionOS)
+                        if pendant_controller.is_opened
+                        {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { set_document_functions() }
+                        }
+                        #endif*/
                     }
                     label:
                     {
@@ -302,6 +317,7 @@ struct WorkspaceView: View
                     .animation(.easeInOut(duration: 0.3), value: pendant_controller.is_opened)
                 }
                 
+                #if os(macOS) || os(iOS)
                 ToolbarItem(id: "Inspector", placement: compact_confirmation_placement())
                 {
                     Button(action: { inspector_presented.toggle() })
@@ -316,6 +332,41 @@ struct WorkspaceView: View
                     .buttonBorderShape(.circle)
                     #endif
                 }
+                /*#else
+                ToolbarItem(id: "Inspector", placement: .confirmationAction)
+                {
+                    Button
+                    {
+                        inspector_controller.is_opened.toggle()
+                        if inspector_controller.is_opened
+                        {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                            {
+                                inspector_controller.set_document_functions(
+                                    document: $document,
+                                    {
+                                        document.preset.programs = base_workspace.file_data().programs
+                                        document.preset.registers = base_workspace.file_data().registers
+                                    },
+                                    {
+                                        document.preset.robots = base_workspace.file_data().robots
+                                    },
+                                    {
+                                        document.preset.tools = base_workspace.file_data().tools
+                                    },
+                                    {
+                                        document.preset.parts = base_workspace.file_data().parts
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    label:
+                    {
+                        Image(systemName: "info")
+                    }
+                }*/
+                #endif
             }
             .toolbarRole(.editor)
             #if !os(macOS)
@@ -333,9 +384,6 @@ struct WorkspaceView: View
             }
             #endif
         }
-        #if os(visionOS)
-        .opacity(view_enabled ? 1 : 0)
-        #endif
         .sheet(isPresented: $add_object_view_presented)
         {
             AddObjectView(is_presented: $add_object_view_presented, document: $document)
@@ -346,6 +394,9 @@ struct WorkspaceView: View
                 .frame(width: 600, height: 600)
             #endif
         }
+        #if os(visionOS)
+        .opacity(view_enabled ? 1 : 0)
+        #endif
     }
     
     private var performing_state_color: Color
@@ -412,12 +463,63 @@ struct WorkspaceView: View
     }
     #endif
     
+    private func open_view()
+    {
+        pendant_controller.workspace = base_workspace
+        #if os(visionOS)
+        workspace_controller.workspace = base_workspace
+        workspace_controller.is_opened = view_mode == .immersive //true
+        
+        inspector_controller.workspace = base_workspace
+        
+        //Set documen functions
+        set_document_functions()
+        
+        inspector_controller.set_document_functions(
+            document: $document,
+            {
+                document.preset.programs = base_workspace.file_data().programs
+                document.preset.registers = base_workspace.file_data().registers
+            },
+            {
+                document.preset.robots = base_workspace.file_data().robots
+            },
+            {
+                document.preset.tools = base_workspace.file_data().tools
+            },
+            {
+                document.preset.parts = base_workspace.file_data().parts
+            }
+        )
+        
+        view_enabled = true // Show view
+        #endif
+    }
+    
     #if os(visionOS)
+    private func set_document_functions()
+    {
+        pendant_controller.set_document_functions
+        {
+            document.preset.programs = base_workspace.file_data().programs
+            document.preset.registers = base_workspace.file_data().registers
+        }
+        _:
+        {
+            document.preset.robots = base_workspace.file_data().robots
+        }
+        _:
+        {
+            document.preset.tools = base_workspace.file_data().tools
+        }
+    }
+    
     private func dismiss_view()
     {
         workspace_controller.workspace = Workspace()
         pendant_controller.is_opened = false
-        workspace_controller.is_opened = false
+        inspector_controller.is_opened = false
+        if view_mode == .immersive { workspace_controller.is_opened = false }
         
         dismiss()
         

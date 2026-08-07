@@ -97,6 +97,10 @@ private struct ProductionObjectCard: View
     
     @State private var view_id = UUID()
     
+    #if os(visionOS)
+    @EnvironmentObject var inspector_controller: ObjectInspectorController
+    #endif
+    
     var body: some View
     {
         Button
@@ -224,11 +228,17 @@ private struct ProductionObjectCard: View
         if !object_selected
         {
             workspace.select_object(object)
+            #if os(visionOS)
+            if !inspector_controller.is_opened { inspector_controller.is_opened = true }
+            #endif
         }
         else
         {
             workspace.process_empty_tap()
             //workspace.deselect_object()
+            #if os(visionOS)
+            inspector_controller.is_opened = false
+            #endif
         }
     }
     

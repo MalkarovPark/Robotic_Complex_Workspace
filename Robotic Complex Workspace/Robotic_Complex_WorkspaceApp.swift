@@ -25,6 +25,7 @@ struct Robotic_Complex_WorkspaceApp: App
     
     @StateObject var pendant_controller = PendantController()
     @StateObject var workspace_controller = WorkspaceSceneController()
+    @StateObject var inspector_controller = ObjectInspectorController(workspace: Workspace(), document: .constant(Robotic_Complex_WorkspaceDocument()))
     #endif
     
     var body: some Scene
@@ -39,6 +40,7 @@ struct Robotic_Complex_WorkspaceApp: App
             #if os(visionOS)
                 .environmentObject(pendant_controller)
                 .environmentObject(workspace_controller)
+                .environmentObject(inspector_controller)
                 .onAppear
                 {
                     pendant_controller.set_window_functions
@@ -57,6 +59,15 @@ struct Robotic_Complex_WorkspaceApp: App
                     _:
                     {
                         Task { await dismiss_immersive_space() }
+                    }
+                    
+                    inspector_controller.set_window_functions
+                    {
+                        open_window(id: ObjectInspectorDefaultID)
+                    }
+                    _:
+                    {
+                        dismiss_window(id: ObjectInspectorDefaultID)
                     }
                 }
             #endif
@@ -128,7 +139,8 @@ struct Robotic_Complex_WorkspaceApp: App
         
         #if os(visionOS)
         SpatialPendantScene(controller: pendant_controller)
-        WorkspaceScene(controller: workspace_controller)
+        WorkspaceScene(controller: workspace_controller, inspector_controller: inspector_controller)
+        ObjectInspector(controller: inspector_controller)
         #endif
     }
 }

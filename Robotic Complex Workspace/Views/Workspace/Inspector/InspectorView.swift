@@ -34,6 +34,10 @@ struct InspectorView: View
     {
         ScrollView
         {
+            #if os(visionOS)
+            Spacer(minLength: 40)
+            #endif
+            
             VStack(spacing: 0)
             {
                 /*Text(object_type_name)
@@ -149,7 +153,7 @@ struct InspectorView: View
             }
         }
         #if os(visionOS)
-        .frame(width: 300)
+        .frame(width: 400)
         #endif
     }
     

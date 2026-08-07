@@ -14,8 +14,8 @@
             filePath = "Robotic Complex Workspace/Views/Workspace/Inspector/InspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "200"
-            endingLineNumber = "200"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
             landmarkName = "update_tool_attachments(old_name:new_name:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "Robotic Complex Workspace/Views/Workspace/Inspector/InspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "207"
-            endingLineNumber = "207"
+            startingLineNumber = "211"
+            endingLineNumber = "211"
             landmarkName = "update_tool_attachments(old_name:new_name:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "Robotic Complex Workspace/Views/Workspace/Inspector/InspectorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
             landmarkName = "update_tool_attachments(old_name:new_name:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -305,6 +305,38 @@
             startingLineNumber = "101"
             endingLineNumber = "101"
             landmarkName = "init(element:workspace:program:on_update:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A5C24C38-B044-4F9A-A98F-79162D3A84E8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../Library/Developer/Xcode/DerivedData/Robotic_Complex_Workspace-dsujgkixrlcnyrfccpcssqoifsbw/SourcePackages/checkouts/IndustrialKit/Sources/IndustrialKitUI/SpatialPendant/PendantController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
+            landmarkName = "set_document_functions(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "91163183-6DC7-4FDC-8391-8532400D6CC7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Robotic Complex Workspace/Views/Workspace/WorkspaceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "502"
+            endingLineNumber = "502"
+            landmarkName = "set_document_functions()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
