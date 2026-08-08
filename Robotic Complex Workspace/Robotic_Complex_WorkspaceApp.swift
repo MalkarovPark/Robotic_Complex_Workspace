@@ -23,6 +23,8 @@ struct Robotic_Complex_WorkspaceApp: App
     @Environment(\.openImmersiveSpace) private var open_immersive_space
     @Environment(\.dismissImmersiveSpace) private var dismiss_immersive_space
     
+    @Environment(\.scenePhase) private var scene_phase
+    
     @StateObject var pendant_controller = PendantController()
     @StateObject var workspace_controller = WorkspaceSceneController()
     @StateObject var inspector_controller = ObjectInspectorController(workspace: Workspace(), document: .constant(Robotic_Complex_WorkspaceDocument()))
@@ -41,6 +43,20 @@ struct Robotic_Complex_WorkspaceApp: App
                 .environmentObject(pendant_controller)
                 .environmentObject(workspace_controller)
                 .environmentObject(inspector_controller)
+                .onDisappear
+                    {
+                        dismiss_window(id: SPendantDefaultID)
+                        dismiss_window(id: ObjectInspectorDefaultID)
+
+                        Task { await dismiss_immersive_space() }
+                    }
+                .onChange(of: scene_phase)
+                {
+                    if scene_phase == .active && !document_is_open()
+                    {
+                        reopen_document_picker()
+                    }
+                }
                 .onAppear
                 {
                     pendant_controller.set_window_functions
@@ -70,6 +86,7 @@ struct Robotic_Complex_WorkspaceApp: App
                         dismiss_window(id: ObjectInspectorDefaultID)
                     }
                 }
+                //.onDisappear { exit(0) }
             #endif
         }
         .commands
@@ -143,6 +160,19 @@ struct Robotic_Complex_WorkspaceApp: App
         ObjectInspector(controller: inspector_controller)
         #endif
     }
+    
+    #if os(visionOS)
+    private func document_is_open() -> Bool
+    {
+        UIApplication.shared.connectedScenes.contains
+        {
+            ($0 as? UIWindowScene)?.windows.contains
+            {
+                $0.rootViewController is UINavigationController
+            } ?? false
+        }
+    }
+    #endif
 }
 
 // MARK: - View element propeties
@@ -188,4 +218,32 @@ public enum ViewMode: String, Equatable, CaseIterable
 let is_scene_transparent = false
 #else
 let is_scene_transparent = true
+#endif
+
+// MARK: - Document Reopener
+#if os(visionOS)
+import UIKit
+
+private func reopen_document_picker()
+{
+    guard let scene = UIApplication.shared.connectedScenes.first(where:
+    {
+        $0.session.role == .windowApplication
+    })
+    else { return }
+
+    UIApplication.shared.requestSceneSessionDestruction(
+        scene.session,
+        options: nil
+    )
+
+    DispatchQueue.main.async
+    {
+        UIApplication.shared.requestSceneSessionActivation(
+            nil,
+            userActivity: nil,
+            options: nil
+        )
+    }
+}
 #endif
