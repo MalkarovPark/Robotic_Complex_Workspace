@@ -20,9 +20,15 @@ struct WorkspaceGalleryView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
+    #if os(macOS) || os(iOS)
     private let columns: [GridItem] = [.init(.adaptive(minimum: 128, maximum: .infinity), spacing: 24)]
     private let card_spacing: CGFloat = 24
     private let card_height: CGFloat = 128
+    #else
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 36)]
+    private let card_spacing: CGFloat = 36
+    private let card_height: CGFloat = 192
+    #endif
     
     #if os(iOS) || os(visionOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
@@ -63,7 +69,11 @@ struct WorkspaceGalleryView: View
         if !filtered_items.isEmpty //!items.isEmpty
         {
             Text(title)
+            #if os(macOS) || os(iOS)
                 .font(.system(size: 16, weight: .light))
+            #else
+                .font(.system(size: 24, weight: .light))
+            #endif
             
             LazyVGrid(columns: columns, spacing: card_spacing)
             {
@@ -114,7 +124,7 @@ private struct ProductionObjectCard: View
                 GlassBoxCard(
                     title: object.name,
                     entity: preview_entity,
-                    vertical_repostion: true,
+                    center_entity: true,
                     is_renaming: $is_renaming,
                 )
                 {

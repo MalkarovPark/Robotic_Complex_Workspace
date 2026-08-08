@@ -315,7 +315,7 @@ struct AddRobotView: View
                     GlassBoxCard(
                         title: module.name,
                         entity: module.entity,
-                        vertical_repostion: true,
+                        center_entity: true,
                     )
                     .frame(height: card_height)
                     .onTapGesture
@@ -338,7 +338,7 @@ struct AddRobotView: View
                         GlassBoxCard(
                             title: module.name,
                             entity: module.entity,
-                            vertical_repostion: true,
+                            center_entity: true,
                         )
                         .frame(height: card_height)
                         .onTapGesture
@@ -397,7 +397,7 @@ struct AddToolView: View
                     GlassBoxCard(
                         title: module.name,
                         entity: module.entity,
-                        vertical_repostion: true,
+                        center_entity: true,
                     )
                     .frame(height: card_height)
                     .onTapGesture
@@ -420,7 +420,7 @@ struct AddToolView: View
                         GlassBoxCard(
                             title: module.name,
                             entity: module.entity,
-                            vertical_repostion: true,
+                            center_entity: true,
                         )
                         .frame(height: card_height)
                         .onTapGesture
@@ -479,7 +479,7 @@ struct AddPartView: View
                     GlassBoxCard(
                         title: module.name,
                         entity: module.entity,
-                        vertical_repostion: true,
+                        center_entity: true,
                     )
                     .frame(height: card_height)
                     .onTapGesture
@@ -502,7 +502,7 @@ struct AddPartView: View
                         GlassBoxCard(
                             title: module.name,
                             entity: module.entity,
-                            vertical_repostion: true,
+                            center_entity: true,
                         )
                         .frame(height: card_height)
                         .onTapGesture
