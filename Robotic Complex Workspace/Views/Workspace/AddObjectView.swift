@@ -18,9 +18,15 @@ struct AddObjectView: View
     
     @EnvironmentObject var base_workspace: Workspace
     
+    #if os(macOS) || os(iOS)
     private let columns: [GridItem] = [.init(.adaptive(minimum: 128, maximum: .infinity), spacing: 24)]
     private let card_spacing: CGFloat = 24
     private let card_height: CGFloat = 128
+    #else
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 36)]
+    private let card_spacing: CGFloat = 36
+    private let card_height: CGFloat = 192
+    #endif
     
     #if !os(visionOS)
     private let top_spacing: CGFloat = 48

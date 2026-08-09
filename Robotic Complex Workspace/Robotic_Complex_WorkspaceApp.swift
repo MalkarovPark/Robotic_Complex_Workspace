@@ -200,7 +200,9 @@ public enum ViewMode: String, Equatable, CaseIterable
 {
     case scene = "Scene"
     case gallery = "Gallery"
+    #if os(iOS) || os(visionOS)
     case immersive = "Immersive"
+    #endif
     
     var symbol_name: String
     {
@@ -208,7 +210,9 @@ public enum ViewMode: String, Equatable, CaseIterable
         {
         case .scene: "view.3d"
         case .gallery: "square.grid.2x2"
+            #if os(iOS) || os(visionOS)
         case .immersive: "visionpro"
+            #endif
         }
     }
 }

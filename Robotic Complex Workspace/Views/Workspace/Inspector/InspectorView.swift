@@ -35,7 +35,7 @@ struct InspectorView: View
         ScrollView
         {
             #if os(visionOS)
-            Spacer(minLength: 40)
+            Spacer(minLength: 72)
             #endif
             
             VStack(spacing: 0)

@@ -66,6 +66,10 @@ struct WorkspaceView: View
                     pendant_controller: pendant_controller
                 )
                 .onAppear { open_view() }
+                #if os(visionOS)
+                .opacity(add_object_view_presented ? 0 : 1)
+                .animation(.easeInOut(duration: 0.2), value: add_object_view_presented)
+                #endif
             }
             #if os(macOS) || os(iOS)
             .inspector(isPresented: $inspector_presented)
@@ -135,7 +139,7 @@ struct WorkspaceView: View
                     {
                         Section("Visibility")
                         {
-                            #if os(visionOS)
+                            /*#if os(visionOS)
                             let shows_scene = Binding(
                                 get: { view_mode == .immersive },
                                 set:
@@ -149,20 +153,21 @@ struct WorkspaceView: View
                             {
                                 Text("Scene")
                             }
-                            #endif
+                            #endif*/
                             
                             Toggle(isOn: $base_workspace.shows_grid)
                             {
                                 Text("Grid")
                             }
-                            #if !os(visionOS)
-                            .disabled(view_mode != .immersive)
-                            #endif
+                            //#if !os(visionOS)
+                            .disabled(view_mode == .gallery)
+                            //#endif
                         }
                         
-                        #if os(macOS) || os(iOS)
+                        //#if os(macOS) || os(iOS)
                         Divider()
                         
+                        #if os(macOS) || os(iOS)
                         Button(action: { is_pan = false })
                         {
                             Label("Oribit Mode", systemImage: "rotate.3d")
@@ -174,20 +179,31 @@ struct WorkspaceView: View
                             Label("Pan Mode", systemImage: "move.3d")
                         }
                         .disabled(view_mode == .gallery)
+                        #else
+                        Button(action: reset_immersive_view)
+                        {
+                            Label("Reset View to User", systemImage: "arrow.counterclockwise")
+                        }
+                        .disabled(view_mode == .gallery)
+                        #endif
                         
                         Divider()
                         
                         ForEach(ViewMode.allCases, id: \.self)
                         { mode in
-                            if mode != .immersive
+                            #if os(macOS) || os(iOS)
+                            Button(action: { view_mode = mode })
                             {
-                                Button(action: { view_mode = mode })
-                                {
-                                    Label(mode.rawValue, systemImage: mode.symbol_name)
-                                }
+                                Label(mode.rawValue, systemImage: mode.symbol_name)
                             }
+                            #else
+                            Button(action: { set_view_mode(mode) })
+                            {
+                                Label(mode.rawValue, systemImage: mode.symbol_name)
+                            }
+                            #endif
                         }
-                        #endif
+                        //#endif
                     }
                     label:
                     {
@@ -332,40 +348,19 @@ struct WorkspaceView: View
                     .buttonBorderShape(.circle)
                     #endif
                 }
-                /*#else
+                #else
                 ToolbarItem(id: "Inspector", placement: .confirmationAction)
                 {
                     Button
                     {
                         inspector_controller.is_opened.toggle()
-                        if inspector_controller.is_opened
-                        {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                            {
-                                inspector_controller.set_document_functions(
-                                    document: $document,
-                                    {
-                                        document.preset.programs = base_workspace.file_data().programs
-                                        document.preset.registers = base_workspace.file_data().registers
-                                    },
-                                    {
-                                        document.preset.robots = base_workspace.file_data().robots
-                                    },
-                                    {
-                                        document.preset.tools = base_workspace.file_data().tools
-                                    },
-                                    {
-                                        document.preset.parts = base_workspace.file_data().parts
-                                    }
-                                )
-                            }
-                        }
                     }
                     label:
                     {
                         Image(systemName: "info")
                     }
-                }*/
+                    .buttonBorderShape(.circle)
+                }
                 #endif
             }
             .toolbarRole(.editor)
@@ -524,6 +519,31 @@ struct WorkspaceView: View
         dismiss()
         
         view_enabled = false
+    }
+    
+    private func set_view_mode(_ mode: ViewMode)
+    {
+        view_mode = mode
+        
+        switch mode
+        {
+        case .scene:
+            workspace_controller.is_opened = false
+        case .gallery:
+            workspace_controller.is_opened = false
+        case .immersive:
+            workspace_controller.is_opened = true
+        }
+    }
+    
+    private func reset_immersive_view()
+    {
+        workspace_controller.is_opened = false
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1)
+        {
+            workspace_controller.is_opened = true
+        }
     }
     #endif
 }

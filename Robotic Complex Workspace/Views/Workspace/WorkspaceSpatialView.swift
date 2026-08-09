@@ -22,7 +22,9 @@ struct WorkspaceSpatialView: View
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
+    #if os(macOS) || os(iOS)
     @AppStorage("ViewMode") private var view_mode: ViewMode = .scene
+    #endif
     
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
@@ -141,9 +143,10 @@ struct WorkspaceSpatialView: View
         }
     }
     
+    #if os(macOS) || os(iOS)
     private var pendant_width: CGFloat
     {
-        if (view_mode == .gallery || view_mode == .immersive) && assets_loaded
+        if view_mode != .scene && assets_loaded
         {
             if pendant_controller.is_opened && !(base_workspace.selected_object is Part)
             {
@@ -159,6 +162,7 @@ struct WorkspaceSpatialView: View
             return .infinity
         }
     }
+    #endif
 }
 
 struct AssetsLoadingPane: View

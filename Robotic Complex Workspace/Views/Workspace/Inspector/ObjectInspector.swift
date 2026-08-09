@@ -32,21 +32,6 @@ struct ObjectInspectorView: View
         
         //self.controller.set_document_functions(on_update_workspace, on_update_robot, on_update_tool, on_update_part)
     }
-    
-    private var tab_size: CGSize
-    {
-        switch selected_tab
-        {
-        case 0:
-            return .init(width: 400, height: 800)
-        case 1:
-            return .init(width: 448, height: 448)
-        case 2:
-            return .init(width: 512, height: 512)
-        default:
-            return .init(width: 400, height: 640)
-        }
-    }
 
     var body: some View
     {
@@ -59,6 +44,7 @@ struct ObjectInspectorView: View
                     Tab("Model", systemImage: symbol_name, value: 0)
                     {
                         InspectorView(document: $controller.document, workspace: workspace)
+                            .modifier(SimpleCaption(label: "Model", plain: false, clear_background: true))
                     }
                     
                     if workspace.selected_object is any StateOutputCapable
@@ -76,6 +62,7 @@ struct ObjectInspectorView: View
                                     default: break
                                     }
                                 }
+                                .modifier(SimpleCaption(label: "Device Output", plain: false, clear_background: true))
                             }
                         }
                     }
@@ -95,6 +82,8 @@ struct ObjectInspectorView: View
                                     default: break
                                     }
                                 }
+                                .padding(.top, -20)
+                                .modifier(SimpleCaption(label: "Connector"))
                             }
                         }
                     }
@@ -118,6 +107,32 @@ struct ObjectInspectorView: View
         default: String()
         }
     }
+    
+    private var tab_size: CGSize
+    {
+        switch selected_tab
+        {
+        case 0:
+            return .init(width: 400, height: 800)
+        case 1:
+            return .init(width: 448, height: 448)
+        case 2:
+            return .init(width: 512, height: 512)
+        default:
+            return .init(width: 400, height: 640)
+        }
+    }
+    
+    /*private var label: String
+    {
+        switch workspace.selected_object
+        {
+        case is Robot: "Robot"
+        case is Tool: "Tool"
+        case is Part: "Part"
+        default: "Object"
+        }
+    }*/
 }
 
 public struct ObjectInspector: SwiftUI.Scene
