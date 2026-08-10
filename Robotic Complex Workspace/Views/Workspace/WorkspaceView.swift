@@ -102,8 +102,6 @@ struct WorkspaceView: View
                         .foregroundStyle(.secondary)
                     #if os(iOS)
                         .presentationDetents([.height(160)])
-                    #elseif os(visionOS)
-                        .frame(minWidth: 300, maxHeight: .infinity)
                     #endif
                 }
             }
