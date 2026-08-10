@@ -33,8 +33,6 @@ struct WorkspaceView: View
     @State private var performing_state_view_presented = false
     
     #if !os(macOS)
-    @State var settings_view_presented = false
-    
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     #endif
     
@@ -67,9 +65,14 @@ struct WorkspaceView: View
                 )
                 .onAppear { open_view() }
                 #if os(visionOS)
-                .opacity(add_object_view_presented ? 0 : 1)
-                .animation(.easeInOut(duration: 0.2), value: add_object_view_presented)
+                .opacity(add_object_view_presented || app_state.settings_view_presented ? 0 : 1)
+                .animation(.easeInOut(duration: 0.2), value: add_object_view_presented || app_state.settings_view_presented)
                 #endif
+                
+                /*Rectangle()
+                    .fill(.bar)
+                    .frame(width: 100, height: 100)
+                    .onHover { hover in toolbar_hover = hover }*/
             }
             #if os(macOS) || os(iOS)
             .inspector(isPresented: $inspector_presented)

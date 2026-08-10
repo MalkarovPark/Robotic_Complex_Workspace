@@ -85,6 +85,7 @@ private struct SimpleCaptionView: View
                     .padding(0)
                     .font(.title2)
                     .padding(.vertical)
+                    .frame(maxWidth: .infinity)
             }
             .padding(.horizontal, 10)
             .padding(12)
@@ -93,12 +94,8 @@ private struct SimpleCaptionView: View
         {
             if !plain && !clear_background
             {
-                HStack
-                {
-                    
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(.thinMaterial)
+                Rectangle()
+                    .fill(.thinMaterial)
             }
         }
     }

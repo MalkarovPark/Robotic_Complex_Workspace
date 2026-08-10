@@ -36,8 +36,12 @@ struct AddObjectView: View
     private let bottom_spacing: CGFloat = 44
     #endif
     
-    #if os(macOS)
+    #if os(macOS) || os(visionOS)
     @State var tab_selection: ObjectItem = .robots
+    #endif
+    
+    #if os(iOS) || os(visionOS)
+    @State private var selected_tab = 0
     #endif
     
     var body: some View
@@ -124,9 +128,9 @@ struct AddObjectView: View
                 )
             }
             #else
-            TabView
+            TabView(selection: $selected_tab)
             {
-                Tab("Robots", systemImage: "r.square")
+                Tab("Robots", systemImage: "r.square", value: 0)
                 {
                     AddRobotView(
                         columns: columns,
@@ -136,25 +140,26 @@ struct AddObjectView: View
                         bottom_spacing: bottom_spacing,
                         
                         is_presented: $is_presented,
-                        on_add_object: {
-                            document.preset.robots = base_workspace.file_data().robots
-                            
-                            if let robot = base_workspace.robots.last
+                        on_add_object:
                             {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                document.preset.robots = base_workspace.file_data().robots
+                                
+                                if let robot = base_workspace.robots.last
                                 {
-                                    base_workspace.select_object(robot)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                    {
+                                        base_workspace.select_object(robot)
+                                    }
+                                }
+                                else
+                                {
+                                    base_workspace.process_empty_tap()
                                 }
                             }
-                            else
-                            {
-                                base_workspace.process_empty_tap()
-                            }
-                        }
                     )
                 }
                 
-                Tab("Tools", systemImage: "hammer")
+                Tab("Tools", systemImage: "hammer", value: 1)
                 {
                     AddToolView(
                         columns: columns,
@@ -164,25 +169,26 @@ struct AddObjectView: View
                         bottom_spacing: bottom_spacing,
                         
                         is_presented: $is_presented,
-                        on_add_object: {
-                            document.preset.tools = base_workspace.file_data().tools
-                            
-                            if let tool = base_workspace.tools.last
+                        on_add_object:
                             {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                document.preset.tools = base_workspace.file_data().tools
+                                
+                                if let tool = base_workspace.tools.last
                                 {
-                                    base_workspace.select_object(tool)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                    {
+                                        base_workspace.select_object(tool)
+                                    }
+                                }
+                                else
+                                {
+                                    base_workspace.process_empty_tap()
                                 }
                             }
-                            else
-                            {
-                                base_workspace.process_empty_tap()
-                            }
-                        }
                     )
                 }
                 
-                Tab("Parts", systemImage: "shippingbox")
+                Tab("Parts", systemImage: "shippingbox", value: 2)
                 {
                     AddPartView(
                         columns: columns,
@@ -192,28 +198,33 @@ struct AddObjectView: View
                         bottom_spacing: bottom_spacing,
                         
                         is_presented: $is_presented,
-                        on_add_object: {
-                            document.preset.parts = base_workspace.file_data().parts
-                            
-                            if let part = base_workspace.parts.last
+                        on_add_object:
                             {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                document.preset.parts = base_workspace.file_data().parts
+                                
+                                if let part = base_workspace.parts.last
                                 {
-                                    base_workspace.select_object(part)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                                    {
+                                        base_workspace.select_object(part)
+                                    }
+                                }
+                                else
+                                {
+                                    base_workspace.process_empty_tap()
                                 }
                             }
-                            else
-                            {
-                                base_workspace.process_empty_tap()
-                            }
-                        }
                     )
                 }
             }
             .tabViewStyle(.tabBarOnly)
             #endif
         }
+        #if !os(visionOS)
         .modifier(ViewCloseButton(is_presented: $is_presented))
+        #else
+        .modifier(SheetCaption(is_presented: $is_presented, label: tab_selection.rawValue, plain: false, clear_background: true))
+        #endif
         #if os(macOS)
         .overlay(alignment: .top)
         {
@@ -236,9 +247,21 @@ struct AddObjectView: View
         }
         #endif
     }
+    
+    #if os(visionOS)
+    private var label: String
+    {
+        switch tab_selection
+        {
+        case .robots: "Robots"
+        case .tools: "Tools"
+        case .parts: "Parts"
+        }
+    }
+    #endif
 }
 
-#if os(macOS)
+#if os(macOS) || os(visionOS)
 enum ObjectItem: String, Codable, Equatable, CaseIterable
 {
     case robots = "Robots"

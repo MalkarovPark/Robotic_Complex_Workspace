@@ -62,8 +62,7 @@ struct WorkspaceGalleryView: View
     {
         let filtered_items = items.filter
         {
-            $0.name.localizedCaseInsensitiveContains(search_text)
-            || search_text.isEmpty
+            $0.name.localizedCaseInsensitiveContains(search_text) || search_text.isEmpty
         }
         
         if !filtered_items.isEmpty //!items.isEmpty
