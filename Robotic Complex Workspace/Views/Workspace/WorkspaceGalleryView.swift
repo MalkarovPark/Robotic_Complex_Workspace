@@ -237,17 +237,17 @@ private struct ProductionObjectCard: View
         if !object_selected
         {
             workspace.select_object(object)
-            #if os(visionOS)
+            /*#if os(visionOS)
             if !inspector_controller.is_opened { inspector_controller.is_opened = true }
-            #endif
+            #endif*/
         }
         else
         {
             workspace.process_empty_tap()
             //workspace.deselect_object()
-            #if os(visionOS)
+            /*#if os(visionOS)
             inspector_controller.is_opened = false
-            #endif
+            #endif*/
         }
     }
     
@@ -318,13 +318,19 @@ private struct ObjectCardOverlay: View
                     Image(systemName: "pin.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                    #if os(macOS) || os(iOS)
                         .frame(width: 10, height: 10)
+                    #else
+                        .frame(width: 15, height: 15)
+                    #endif
                         .foregroundStyle(.primary)
                 }
                 #if os(macOS)
                 .frame(width: 20, height: 20)
-                #else
+                #elseif os(iOS)
                 .frame(width: 24, height: 24)
+                #elseif os(visionOS)
+                .frame(width: 28, height: 28)
                 #endif
                 .background(.ultraThinMaterial)
                 .clipShape(Circle())

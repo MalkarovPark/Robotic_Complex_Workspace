@@ -107,6 +107,12 @@ struct WorkspaceView: View
                     #endif
                 }
             }
+            #else
+            .overlay(alignment: .bottomTrailing)
+            {
+                SpatialToolbar()
+                    .padding(28)
+            }
             #endif
             #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -136,41 +142,22 @@ struct WorkspaceView: View
                 }
                 #endif
                 
+                #if os(macOS) || os(iOS)
                 ToolbarItem(id: "View", placement: compact_primary_placement())
                 {
                     Menu
                     {
                         Section("Visibility")
                         {
-                            /*#if os(visionOS)
-                            let shows_scene = Binding(
-                                get: { view_mode == .immersive },
-                                set:
-                                    {
-                                        new_value in view_mode = new_value ? .immersive : .gallery
-                                        workspace_controller.is_opened.toggle()
-                                    }
-                            )
-                            
-                            Toggle(isOn: shows_scene)
-                            {
-                                Text("Scene")
-                            }
-                            #endif*/
-                            
                             Toggle(isOn: $base_workspace.shows_grid)
                             {
                                 Text("Grid")
                             }
-                            //#if !os(visionOS)
                             .disabled(view_mode == .gallery)
-                            //#endif
                         }
                         
-                        //#if os(macOS) || os(iOS)
                         Divider()
                         
-                        #if os(macOS) || os(iOS)
                         Button(action: { is_pan = false })
                         {
                             Label("Oribit Mode", systemImage: "rotate.3d")
@@ -182,37 +169,23 @@ struct WorkspaceView: View
                             Label("Pan Mode", systemImage: "move.3d")
                         }
                         .disabled(view_mode == .gallery)
-                        #else
-                        Button(action: reset_immersive_view)
-                        {
-                            Label("Reset View to User", systemImage: "arrow.counterclockwise")
-                        }
-                        .disabled(view_mode == .gallery)
-                        #endif
                         
                         Divider()
                         
                         ForEach(ViewMode.allCases, id: \.self)
                         { mode in
-                            #if os(macOS) || os(iOS)
                             Button(action: { view_mode = mode })
                             {
                                 Label(mode.rawValue, systemImage: mode.symbol_name)
                             }
-                            #else
-                            Button(action: { set_view_mode(mode) })
-                            {
-                                Label(mode.rawValue, systemImage: mode.symbol_name)
-                            }
-                            #endif
                         }
-                        //#endif
                     }
                     label:
                     {
                         Label("View", systemImage: "camera")
                     }
                 }
+                #endif
                 
                 #if os(macOS)
                 ToolbarSpacer()
@@ -280,33 +253,22 @@ struct WorkspaceView: View
                 ToolbarSpacer()
                 #endif
                 
+                #if os(macOS) || os(iOS)
                 ToolbarItem(id: "Add Object", placement: compact_primary_placement())
                 {
-                    //ControlGroup
-                    //{
-                        Button(action: { add_object_view_presented = true })
-                        {
-                            Label("Add Object", systemImage: "plus")
-                        }
-                    //}
+                    Button(action: { add_object_view_presented = true })
+                    {
+                        Label("Add Object", systemImage: "plus")
+                    }
                 }
                 
-                #if !os(visionOS)
                 ToolbarSpacer()
-                #endif
                 
                 ToolbarItem(id: "Pendant", placement: .confirmationAction)
                 {
                     Button
                     {
                         pendant_controller.is_opened.toggle()
-                        
-                        /*#if os(visionOS)
-                        if pendant_controller.is_opened
-                        {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { set_document_functions() }
-                        }
-                        #endif*/
                     }
                     label:
                     {
@@ -329,14 +291,10 @@ struct WorkspaceView: View
                             #endif
                         }
                     }
-                    #if os(visionOS)
-                    .buttonBorderShape(.circle)
-                    #endif
                     .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                     .animation(.easeInOut(duration: 0.3), value: pendant_controller.is_opened)
                 }
                 
-                #if os(macOS) || os(iOS)
                 ToolbarItem(id: "Inspector", placement: compact_confirmation_placement())
                 {
                     Button(action: { inspector_presented.toggle() })
@@ -347,22 +305,14 @@ struct WorkspaceView: View
                         Image(systemName: horizontal_size_class != .compact ? "sidebar.right" : "inset.filled.bottomthird.rectangle.portrait")
                         #endif
                     }
-                    #if os(visionOS)
-                    .buttonBorderShape(.circle)
-                    #endif
                 }
                 #else
-                ToolbarItem(id: "Inspector", placement: .confirmationAction)
+                ToolbarItem(id: "Add Object", placement: .confirmationAction)
                 {
-                    Button
+                    Button(action: { add_object_view_presented = true })
                     {
-                        inspector_controller.is_opened.toggle()
+                        Label("Add Object", systemImage: "plus")
                     }
-                    label:
-                    {
-                        Image(systemName: "info")
-                    }
-                    .buttonBorderShape(.circle)
                 }
                 #endif
             }
@@ -523,6 +473,131 @@ struct WorkspaceView: View
         
         view_enabled = false
     }
+    #endif
+}
+
+#if os(visionOS)
+struct SpatialToolbar: View
+{
+    @AppStorage("ViewMode") private var view_mode: ViewMode = .immersive
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    @EnvironmentObject var pendant_controller: PendantController
+    @EnvironmentObject var workspace_controller: WorkspaceSceneController
+    @EnvironmentObject var inspector_controller: ObjectInspectorController
+    
+    @State private var is_expanded = false
+    
+    @Namespace private var pane_glass
+    
+    var body: some View
+    {
+        VStack(spacing: 16)
+        {
+            let view_mode_selection = Binding(
+                get: { view_mode },
+                set:
+                    { new_value in
+                        view_mode = new_value
+                        set_view_mode(new_value)
+                    }
+            )
+            
+            let is_selected_mode = Binding(
+                get: { view_mode },
+                set:
+                    { new_value in
+                        view_mode = new_value
+                        set_view_mode(new_value)
+                    }
+            )
+            
+            if is_expanded
+            {
+                VStack(spacing: 10)
+                {
+                    HStack
+                    {
+                        ForEach(ViewMode.allCases, id: \.self)
+                        { mode in
+                            ViewModeButton(
+                                name: mode.rawValue,
+                                symbol_name: mode.symbol_name,
+                                bordered: view_mode == mode,
+                                action: { set_view_mode(mode) }
+                            )
+                        }
+                    }
+                    .padding(.top, 10)
+                    
+                    HStack(spacing: 10)
+                    {
+                        Toggle(isOn: $base_workspace.shows_grid)
+                        {
+                            Text("Grid")
+                        }
+                        .disabled(view_mode == .gallery)
+                        .toggleStyle(.button)
+                        
+                        Button(action: reset_immersive_view)
+                        {
+                            Text("Recenter Immersion")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .disabled(view_mode != .immersive)
+                    }
+                    .padding(.horizontal, 8)
+                }
+                .frame(width: 320)//, height: 240)
+            }
+            
+            HStack
+            {
+                Toggle(isOn: Binding(
+                    get: { is_expanded },
+                    set: { newValue in withAnimation { is_expanded = newValue } }
+                ))
+                {
+                    Image(systemName: "camera") //Image(systemName: is_expanded ? "chevron.down" : "camera")
+                }
+                .toggleStyle(.button)
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.roundedRectangle(radius: 16))
+                .help("View")
+                
+                Toggle(isOn: $pendant_controller.is_opened)
+                {
+                    if pendant_controller.is_opened
+                    {
+                        Image(systemName: "circlebadge")
+                    }
+                    else
+                    {
+                        Image(systemName: "circlebadge.fill")
+                            .foregroundStyle(performing_state_color)
+                    }
+                }
+                .toggleStyle(.button)
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+                .help("Pendant")
+                
+                Toggle(isOn: $inspector_controller.is_opened)
+                {
+                    Image(systemName: "info")
+                }
+                .toggleStyle(.button)
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.roundedRectangle(radius: 16))
+                .help("Inspector")
+            }
+        }
+        .padding(8)
+        .glassBackgroundEffect()
+    }
     
     private func set_view_mode(_ mode: ViewMode)
     {
@@ -548,16 +623,69 @@ struct WorkspaceView: View
             workspace_controller.is_opened = true
         }
     }
-    #endif
+    
+    private var performing_state_color: Color
+    {
+        switch base_workspace.selected_object
+        {
+        case let robot as Robot: return robot.performing_state.color
+        case let tool as Tool: return tool.performing_state.color
+        case let part as Part: return .black
+        default: return base_workspace.performing_state.color
+        }
+    }
 }
 
-/*struct OutputGroupView: View
+struct ViewModeButton: View
 {
+    let name: String
+    let symbol_name: String
+    
+    let bordered: Bool
+    
+    let action: () -> ()
+    
     var body: some View
     {
-        
+        if bordered
+        {
+            Button { action() }
+            label:
+            {
+                VStack(spacing: 16)
+                {
+                    Image(systemName: symbol_name)
+                    
+                    Text(name)
+                        .font(.system(size: 16, weight: .light))
+                }
+                .frame(width: 96, height: 96)
+            }
+            .frame(width: 96, height: 96)
+            .buttonBorderShape(.roundedRectangle(radius: 24))
+            .buttonStyle(.bordered)
+        }
+        else
+        {
+            Button { action() }
+            label:
+            {
+                VStack(spacing: 16)
+                {
+                    Image(systemName: symbol_name)
+                    
+                    Text(name)
+                        .font(.system(size: 16, weight: .light))
+                }
+                .frame(width: 96, height: 96)
+            }
+            .frame(width: 96, height: 96)
+            .buttonBorderShape(.roundedRectangle(radius: 24))
+            .buttonStyle(.borderless)
+        }
     }
-}*/
+}
+#endif
 
 // MARK: - Previews
 struct WorkspaceView_Previews: PreviewProvider

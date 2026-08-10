@@ -91,7 +91,7 @@ struct ObjectInspectorView: View
             }
             else
             {
-                ZStack{}.onAppear { controller.is_opened = false }
+                EmptyView()//ZStack{}.onAppear { controller.is_opened = false }
             }
         }
         .frame(width: tab_size.width, height: tab_size.height)
@@ -155,8 +155,6 @@ public struct ObjectInspector: SwiftUI.Scene
         {
             ObjectInspectorView(controller: controller)//, workspace: controller.workspace)
                 .onDisappear(perform: controller.on_dismiss)
-                //.glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
-                //.frame(minHeight: 640, idealHeight: 640, maxHeight: 800)
         }
         //.windowStyle(.plain)
         .windowResizability(.contentSize)
