@@ -91,7 +91,10 @@ struct ObjectInspectorView: View
             }
             else
             {
-                EmptyView()//ZStack{}.onAppear { controller.is_opened = false }
+                ContentUnavailableView
+                {
+                    Text("Nothing selected")
+                }
             }
         }
         .frame(width: tab_size.width, height: tab_size.height)

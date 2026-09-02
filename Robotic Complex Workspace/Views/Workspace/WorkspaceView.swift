@@ -465,6 +465,7 @@ struct WorkspaceView: View
         workspace_controller.workspace = Workspace()
         pendant_controller.is_opened = false
         inspector_controller.is_opened = false
+        
         if view_mode == .immersive { workspace_controller.is_opened = false }
         
         dismiss()

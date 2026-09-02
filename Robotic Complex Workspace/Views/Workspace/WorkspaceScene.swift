@@ -11,6 +11,8 @@ import RealityKit
 import IndustrialKit
 import IndustrialKitUI
 
+import ARKit
+
 struct WorkspaceSceneView: View
 {
     @ObservedObject var controller: WorkspaceSceneController
@@ -20,6 +22,11 @@ struct WorkspaceSceneView: View
     
     @State private var assets_loading = false
     @State private var assets_loaded = false
+    
+    @State private var world_tracking_provider = WorldTrackingProvider()
+    @State private var arkit_session = ARKitSession()
+    
+    @State private var device_camera_position: simd_float3 = .zero
     
     public init(
         controller: WorkspaceSceneController,
@@ -40,7 +47,7 @@ struct WorkspaceSceneView: View
     var body: some View
     {
         RealityView
-        { content in //content, attachments in
+        { content in
             assets_loading = true
             
             scene_content = content
@@ -52,39 +59,18 @@ struct WorkspaceSceneView: View
                 {
                     assets_loaded = true
                 }
-                
-                /*if let entity_attachment = attachments.entity(for: "Label")
-                {
-                    entity_attachment.position = [0, -0.1, 0]
-                    controller.workspace.robot(named: "6DOF").entity.addChild(entity_attachment)
-                }*/
             }
         }
         placeholder:
         {
             AssetsLoadingPane(assets_loading: assets_loading)
         }
-        /*attachments:
-        {
-            Attachment(id: "Label")
-            {
-                HStack
-                {
-                    Text("Info")
-                        .font(.extraLargeTitle)
-                        .padding()
-                }
-                .glassBackgroundEffect()
-            }
-        }*/
         .highPriorityGesture(
             TapGesture()
                 .targetedToAnyEntity()
                 .onEnded
                 { value in
                     controller.workspace.process_tap(value: value)
-                    
-                    inspector_controller.is_opened = controller.workspace.selected_object != nil
                 }
         )
         .gesture(
@@ -92,12 +78,36 @@ struct WorkspaceSceneView: View
                 .onEnded
                 {
                     controller.workspace.process_empty_tap()
-                    
-                    inspector_controller.is_opened = false
                 }
         )
         .ignoresSafeArea(.container, edges: .all)
         .disabled(assets_loading)
+        .task
+        {
+            do
+            {
+                try await arkit_session.run([world_tracking_provider])
+            }
+            catch
+            {
+                print("\(error)")
+                return
+            }
+            
+            while true
+            {
+                let device_anchor = world_tracking_provider.queryDeviceAnchor(
+                    atTimestamp: CACurrentMediaTime()
+                )
+                
+                if let device_anchor = device_anchor
+                {
+                    controller.workspace.device_camera_position = Transform(matrix: device_anchor.originFromAnchorTransform).translation
+                }
+                
+                try? await Task.sleep(nanoseconds: 16_666_667) // ~60 FPS
+            }
+        }
     }
 }
 
