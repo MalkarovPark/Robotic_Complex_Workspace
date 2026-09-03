@@ -59,32 +59,7 @@ struct Robotic_Complex_WorkspaceApp: App
                 }
                 .onAppear
                 {
-                    pendant_controller.set_window_functions
-                    {
-                        open_window(id: SPendantDefaultID)
-                    }
-                    _:
-                    {
-                        dismiss_window(id: SPendantDefaultID)
-                    }
-                    
-                    workspace_controller.set_space_functions
-                    {
-                        Task { await open_immersive_space(id: WorkspaceSpaceDefaultID) }
-                    }
-                    _:
-                    {
-                        Task { await dismiss_immersive_space() }
-                    }
-                    
-                    inspector_controller.set_window_functions
-                    {
-                        open_window(id: ObjectInspectorDefaultID)
-                    }
-                    _:
-                    {
-                        dismiss_window(id: ObjectInspectorDefaultID)
-                    }
+                    set_window_functions()
                 }
                 //.onDisappear { exit(0) }
             #endif
@@ -156,12 +131,52 @@ struct Robotic_Complex_WorkspaceApp: App
         
         #if os(visionOS)
         SpatialPendantScene(controller: pendant_controller)
-        WorkspaceScene(controller: workspace_controller, inspector_controller: inspector_controller)
+        WorkspaceImmersiveSpace(controller: workspace_controller, inspector_controller: inspector_controller)
+        WorkspaceVolumetricWindow(controller: workspace_controller, inspector_controller: inspector_controller)
         ObjectInspector(controller: inspector_controller)
         #endif
     }
     
     #if os(visionOS)
+    private func set_window_functions()
+    {
+        pendant_controller.set_window_functions
+        {
+            open_window(id: SPendantDefaultID)
+        }
+        _:
+        {
+            dismiss_window(id: SPendantDefaultID)
+        }
+        
+        workspace_controller.set_space_functions
+        {
+            Task { await open_immersive_space(id: WorkspaceImmersiveSpaceDefaultID) }
+        }
+        _:
+        {
+            Task { await dismiss_immersive_space() }
+        }
+        
+        workspace_controller.set_window_functions
+        {
+            open_window(id: WorkspaceVolumetricWindowDefaultID)
+        }
+        _:
+        {
+            dismiss_window(id: WorkspaceVolumetricWindowDefaultID)
+        }
+        
+        inspector_controller.set_window_functions
+        {
+            open_window(id: ObjectInspectorDefaultID)
+        }
+        _:
+        {
+            dismiss_window(id: ObjectInspectorDefaultID)
+        }
+    }
+    
     private func document_is_open() -> Bool
     {
         UIApplication.shared.connectedScenes.contains

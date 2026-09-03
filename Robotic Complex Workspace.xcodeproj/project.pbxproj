@@ -19,7 +19,6 @@
 		6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9612AD345FC008FA7C4 /* ContextMenus.swift */; };
 		6236F9652AD345FC008FA7C4 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */; };
 		626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 626EF85D2AD3493900F2A361 /* IndustrialKit */; };
-		627002F32E57A43B001D48C5 /* BackgroundExtensionModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */; };
 		627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627D3E9A2AD34A7600D5988D /* AppState.swift */; };
 		629DF71F2E180C41008DE761 /* RCWorkspace.icon in Resources */ = {isa = PBXBuildFile; fileRef = 629DF71E2E180C41008DE761 /* RCWorkspace.icon */; };
 		629DF7212E181C5A008DE761 /* IndustrialKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 629DF7202E181C5A008DE761 /* IndustrialKitUI */; };
@@ -49,7 +48,6 @@
 		6236F9602AD345FC008FA7C4 /* DynamicStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicStack.swift; sourceTree = "<group>"; };
 		6236F9612AD345FC008FA7C4 /* ContextMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextMenus.swift; sourceTree = "<group>"; };
 		6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
-		627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundExtensionModifier.swift; sourceTree = "<group>"; };
 		627C254F2C9DA7660087D777 /* AddObjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddObjectView.swift; sourceTree = "<group>"; };
 		627D3E9A2AD34A7600D5988D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		629DF71E2E180C41008DE761 /* RCWorkspace.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RCWorkspace.icon; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 				6236F9612AD345FC008FA7C4 /* ContextMenus.swift */,
 				6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */,
 				6236F9602AD345FC008FA7C4 /* DynamicStack.swift */,
-				627002F22E57A43B001D48C5 /* BackgroundExtensionModifier.swift */,
 			);
 			path = ViewModifiers;
 			sourceTree = "<group>";
@@ -277,7 +274,6 @@
 				6236F95E2AD345C4008FA7C4 /* ContentView.swift in Sources */,
 				62E165E72B20C692005E318A /* WorkspaceGalleryView.swift in Sources */,
 				62BC10AD2F20EEF70057304D /* InspectorView.swift in Sources */,
-				627002F32E57A43B001D48C5 /* BackgroundExtensionModifier.swift in Sources */,
 				6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */,
 				62E165E52B20C422005E318A /* WorkspaceSpatialView.swift in Sources */,
 				62A2C0B32F40F1C200648E81 /* RobotInspectorItems.swift in Sources */,

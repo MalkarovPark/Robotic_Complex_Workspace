@@ -157,9 +157,8 @@ public struct ObjectInspector: SwiftUI.Scene
         WindowGroup(id: window_id)
         {
             ObjectInspectorView(controller: controller)//, workspace: controller.workspace)
-                .onDisappear(perform: controller.on_dismiss)
+                .onDisappear(perform: controller.dismiss)
         }
-        //.windowStyle(.plain)
         .windowResizability(.contentSize)
     }
 }
@@ -190,8 +189,6 @@ public let ObjectInspectorDefaultID = "object_inspector"
         }
     }
     
-    public func on_dismiss() { is_opened = false }
-    
     public func set_window_functions(
         _ open: @escaping () -> (),
         _ dismiss: @escaping () -> ()
@@ -201,8 +198,8 @@ public let ObjectInspectorDefaultID = "object_inspector"
         self.dismiss = dismiss
     }
     
-    private var open = {}
-    private var dismiss = {}
+    public var open = {}
+    public var dismiss = {}
     
     // MARK: - Document management
     public var on_update_workspace = {}

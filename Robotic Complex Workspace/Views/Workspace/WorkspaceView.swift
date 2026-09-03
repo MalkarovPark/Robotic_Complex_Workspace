@@ -414,7 +414,7 @@ struct WorkspaceView: View
         pendant_controller.workspace = base_workspace
         #if os(visionOS)
         workspace_controller.workspace = base_workspace
-        workspace_controller.is_opened = view_mode == .immersive //true
+        workspace_controller.set_view_mode(view_mode) //workspace_controller.is_opened = view_mode == .immersive //true
         
         inspector_controller.workspace = base_workspace
         
@@ -465,8 +465,8 @@ struct WorkspaceView: View
         workspace_controller.workspace = Workspace()
         pendant_controller.is_opened = false
         inspector_controller.is_opened = false
-        
-        if view_mode == .immersive { workspace_controller.is_opened = false }
+        workspace_controller.dismiss_view()
+        //if view_mode == .immersive { workspace_controller.is_opened = false }
         
         dismiss()
         
@@ -494,7 +494,7 @@ struct SpatialToolbar: View
     {
         VStack(spacing: 16)
         {
-            let view_mode_selection = Binding(
+            /*let view_mode_selection = Binding(
                 get: { view_mode },
                 set:
                     { new_value in
@@ -510,7 +510,7 @@ struct SpatialToolbar: View
                         view_mode = new_value
                         set_view_mode(new_value)
                     }
-            )
+            )*/
             
             if is_expanded
             {
@@ -524,7 +524,7 @@ struct SpatialToolbar: View
                                 name: mode.rawValue,
                                 symbol_name: mode.symbol_name,
                                 bordered: view_mode == mode,
-                                action: { set_view_mode(mode) }
+                                action: { view_mode = mode; workspace_controller.set_view_mode(mode) }
                             )
                         }
                     }
@@ -539,7 +539,7 @@ struct SpatialToolbar: View
                         .disabled(view_mode == .gallery)
                         .toggleStyle(.button)
                         
-                        Button(action: reset_immersive_view)
+                        Button(action: { workspace_controller.reset_immersive_space() })
                         {
                             Text("Recenter Immersion")
                                 .frame(maxWidth: .infinity)
@@ -596,31 +596,6 @@ struct SpatialToolbar: View
         }
         .padding(8)
         .glassBackgroundEffect()
-    }
-    
-    private func set_view_mode(_ mode: ViewMode)
-    {
-        view_mode = mode
-        
-        switch mode
-        {
-        case .scene:
-            workspace_controller.is_opened = false
-        case .gallery:
-            workspace_controller.is_opened = false
-        case .immersive:
-            workspace_controller.is_opened = true
-        }
-    }
-    
-    private func reset_immersive_view()
-    {
-        workspace_controller.is_opened = false
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1)
-        {
-            workspace_controller.is_opened = true
-        }
     }
     
     private var performing_state_color: Color

@@ -111,7 +111,7 @@ struct WorkspaceSceneView: View
     }
 }
 
-public struct WorkspaceScene: SwiftUI.Scene
+public struct WorkspaceImmersiveSpace: SwiftUI.Scene
 {
     var space_id: String
     
@@ -119,7 +119,7 @@ public struct WorkspaceScene: SwiftUI.Scene
     let inspector_controller: ObjectInspectorController
     
     public init(
-        space_id: String = WorkspaceSpaceDefaultID,
+        space_id: String = WorkspaceImmersiveSpaceDefaultID,
         
         controller: WorkspaceSceneController,
         inspector_controller: ObjectInspectorController
@@ -139,8 +139,39 @@ public struct WorkspaceScene: SwiftUI.Scene
     }
 }
 
-///The default window id of Spatial Pendant.
-public let WorkspaceSpaceDefaultID = "workspace"
+public let WorkspaceImmersiveSpaceDefaultID = "workspace_immersive"
+
+public struct WorkspaceVolumetricWindow: SwiftUI.Scene
+{
+    var window_id: String
+    
+    let controller: WorkspaceSceneController
+    let inspector_controller: ObjectInspectorController
+    
+    public init(
+        window_id: String = WorkspaceVolumetricWindowDefaultID,
+        
+        controller: WorkspaceSceneController,
+        inspector_controller: ObjectInspectorController
+    )
+    {
+        self.window_id = window_id
+        self.controller = controller
+        self.inspector_controller = inspector_controller
+    }
+    
+    @SceneBuilder public var body: some SwiftUI.Scene
+    {
+        WindowGroup(id: window_id)
+        {
+            WorkspaceSceneView(controller: controller, inspector_controller: inspector_controller)
+        }
+        .windowStyle(.volumetric)
+        .windowResizability(.contentSize)
+    }
+}
+
+public let WorkspaceVolumetricWindowDefaultID = "workspace_volumetric"
 
 @MainActor public class WorkspaceSceneController: ObservableObject
 {
@@ -154,29 +185,68 @@ public let WorkspaceSpaceDefaultID = "workspace"
         self.workspace = workspace
     }
     
-    // MARK: - Space management
-    @Published public var is_opened = false
+    public func set_view_mode(_ mode: ViewMode)
     {
-        didSet
+        switch mode
         {
-            if is_opened { open() }
-            else { dismiss() }
+        case .scene:
+            dismiss_space()
+            open_window()
+        case .gallery:
+            dismiss_window()
+            dismiss_space()
+        case .immersive:
+            dismiss_window()
+            open_space()
         }
+        
+        view_mode = mode
     }
     
-    public func on_dismiss() { is_opened = false }
+    private var view_mode: ViewMode = .scene
     
+    public func dismiss_view()
+    {
+        if view_mode == .scene { dismiss_window() }
+        else if view_mode == .immersive { dismiss_space() }
+    }
+    
+    // MARK: - Space management
     public func set_space_functions(
         _ open: @escaping () -> (),
         _ dismiss: @escaping () -> ()
     )
     {
-        self.open = open
-        self.dismiss = dismiss
+        self.open_space = open
+        self.dismiss_space = dismiss
     }
     
-    private var open = {}
-    private var dismiss = {}
+    public func reset_immersive_space()
+    {
+        dismiss_space()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1)
+        {
+            if self.view_mode != .immersive { return }
+            self.open_space()
+        }
+    }
+    
+    private var open_space = {}
+    private var dismiss_space = {}
+    
+    // MARK: - Window management
+    public func set_window_functions(
+        _ open: @escaping () -> (),
+        _ dismiss: @escaping () -> ()
+    )
+    {
+        self.open_window = open
+        self.dismiss_window = dismiss
+    }
+    
+    private var open_window = {}
+    private var dismiss_window = {}
     
     // MARK: - Document management
     public var on_update_workspace = {}
