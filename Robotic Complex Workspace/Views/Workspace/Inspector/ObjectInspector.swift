@@ -98,6 +98,7 @@ struct ObjectInspectorView: View
             }
         }
         .frame(width: tab_size.width, height: tab_size.height)
+        .onDisappear { controller.is_opened = false }
     }
     
     private var symbol_name: String

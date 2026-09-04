@@ -44,19 +44,21 @@ struct Robotic_Complex_WorkspaceApp: App
                 .environmentObject(workspace_controller)
                 .environmentObject(inspector_controller)
                 .onDisappear
-                    {
-                        dismiss_window(id: SPendantDefaultID)
-                        dismiss_window(id: ObjectInspectorDefaultID)
-
-                        Task { await dismiss_immersive_space() }
-                    }
-                .onChange(of: scene_phase)
+                {
+                    dismiss_window(id: SPendantDefaultID)
+                    dismiss_window(id: ObjectInspectorDefaultID)
+                    
+                    //dismiss_window(id: WorkspaceImmersiveSpaceDefaultID)
+                    dismiss_window(id: WorkspaceVolumetricWindowDefaultID)
+                    Task { await dismiss_immersive_space() }
+                }
+                /*.onChange(of: scene_phase)
                 {
                     if scene_phase == .active && !document_is_open()
                     {
                         reopen_document_picker()
                     }
-                }
+                }*/
                 .onAppear
                 {
                     set_window_functions()
@@ -243,7 +245,7 @@ let is_scene_transparent = true
 #if os(visionOS)
 import UIKit
 
-private func reopen_document_picker()
+public func reopen_document_picker()
 {
     guard let scene = UIApplication.shared.connectedScenes.first(where:
     {

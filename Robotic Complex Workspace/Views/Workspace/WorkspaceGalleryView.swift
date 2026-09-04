@@ -28,6 +28,8 @@ struct WorkspaceGalleryView: View
     private let columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 36)]
     private let card_spacing: CGFloat = 36
     private let card_height: CGFloat = 192
+    
+    //@EnvironmentObject var workspace_controller: WorkspaceSceneController
     #endif
     
     #if os(iOS) || os(visionOS)
@@ -56,6 +58,13 @@ struct WorkspaceGalleryView: View
         {
             base_workspace.process_empty_tap()
         }
+        /*.overlay(alignment: .bottomTrailing)
+        {
+            Rectangle()
+                .fill(.clear)
+                .border(.green)
+                .frame(width: workspace_controller.is_toolbar_expanded ? 365 : 195, height: workspace_controller.is_toolbar_expanded ? 265 : 90)
+        }*/
     }
     
     @ViewBuilder private func section(_ title: String, _ items: [ProductionObject]) -> some View

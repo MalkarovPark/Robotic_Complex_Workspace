@@ -411,6 +411,14 @@ struct WorkspaceView: View
     
     private func open_view()
     {
+        #if os(visionOS)
+        if !document_is_open()
+        {
+            reopen_document_picker()
+            exit(0)
+        }
+        #endif
+        
         pendant_controller.workspace = base_workspace
         #if os(visionOS)
         workspace_controller.workspace = base_workspace
@@ -472,6 +480,17 @@ struct WorkspaceView: View
         
         view_enabled = false
     }
+    
+    private func document_is_open() -> Bool
+    {
+        UIApplication.shared.connectedScenes.contains
+        {
+            ($0 as? UIWindowScene)?.windows.contains
+            {
+                $0.rootViewController is UINavigationController
+            } ?? false
+        }
+    }
     #endif
 }
 
@@ -494,24 +513,6 @@ struct SpatialToolbar: View
     {
         VStack(spacing: 16)
         {
-            /*let view_mode_selection = Binding(
-                get: { view_mode },
-                set:
-                    { new_value in
-                        view_mode = new_value
-                        set_view_mode(new_value)
-                    }
-            )
-            
-            let is_selected_mode = Binding(
-                get: { view_mode },
-                set:
-                    { new_value in
-                        view_mode = new_value
-                        set_view_mode(new_value)
-                    }
-            )*/
-            
             if is_expanded
             {
                 VStack(spacing: 10)
@@ -555,7 +556,7 @@ struct SpatialToolbar: View
             {
                 Toggle(isOn: Binding(
                     get: { is_expanded },
-                    set: { newValue in withAnimation { is_expanded = newValue } }
+                    set: { newValue in withAnimation { is_expanded = newValue; /*workspace_controller.is_toolbar_expanded = newValue*/ } }
                 ))
                 {
                     Image(systemName: "camera") //Image(systemName: is_expanded ? "chevron.down" : "camera")

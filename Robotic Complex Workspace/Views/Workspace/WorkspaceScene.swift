@@ -160,13 +160,39 @@ public struct WorkspaceVolumetricWindow: SwiftUI.Scene
         self.inspector_controller = inspector_controller
     }
     
+    @AppStorage("ViewMode") private var view_mode: ViewMode = .immersive
+    
     @SceneBuilder public var body: some SwiftUI.Scene
     {
         WindowGroup(id: window_id)
         {
-            WorkspaceSceneView(controller: controller, inspector_controller: inspector_controller)
+            RealityView
+            { content in
+                
+                let cube = ModelEntity(
+                    mesh: .generateBox(
+                        size: 0.1,
+                        cornerRadius: 0.01
+                    ),
+                    materials: [
+                        SimpleMaterial(
+                            color: .cyan,
+                            isMetallic: true
+                        )
+                    ]
+                )
+                
+                content.add(cube)
+            }
+            .toolbar
+            {
+                Text("Volumetric Window")
+            }
+            .onDisappear { view_mode = .gallery } //controller.set_view_mode(.gallery)
+            //WorkspaceSceneView(controller: controller, inspector_controller: inspector_controller)
         }
         .windowStyle(.volumetric)
+        .volumeWorldAlignment(.gravityAligned)
         .windowResizability(.contentSize)
     }
 }
@@ -247,6 +273,9 @@ public let WorkspaceVolumetricWindowDefaultID = "workspace_volumetric"
     
     private var open_window = {}
     private var dismiss_window = {}
+    
+    // MARK: - Background clip management
+    //@Published public var is_toolbar_expanded: Bool = false
     
     // MARK: - Document management
     public var on_update_workspace = {}
