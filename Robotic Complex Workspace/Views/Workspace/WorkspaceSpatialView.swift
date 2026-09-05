@@ -22,9 +22,9 @@ struct WorkspaceSpatialView: View
     
     @Binding var document: Robotic_Complex_WorkspaceDocument
     
-    #if os(macOS) || os(iOS)
+    //#if os(macOS) || os(iOS)
     @AppStorage("ViewMode") private var view_mode: ViewMode = .scene
-    #endif
+    //#endif
     
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
@@ -38,6 +38,7 @@ struct WorkspaceSpatialView: View
     @State private var scene_content: RealityViewCameraContent?
     #else
     @State private var scene_content: RealityViewContent?
+    @EnvironmentObject var workspace_controller: WorkspaceSceneController
     #endif
     @State private var is_spatial = false
     
@@ -49,8 +50,34 @@ struct WorkspaceSpatialView: View
         ZStack
         {
             #if os(visionOS)
-            WorkspaceGalleryView(document: $document)
-                .frame(maxWidth: .infinity)
+            if assets_loaded
+            {
+                WorkspaceGalleryView(document: $document)
+                    .frame(maxWidth: .infinity)
+            }
+            else
+            {
+                RealityView
+                { content in
+                    assets_loading = true
+                    
+                    scene_content = content
+                    
+                    base_workspace.place_entity(in: content)
+                    {
+                        //pendant_controller.is_opened = true
+                        
+                        assets_loading = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                        {
+                            assets_loaded = true
+                            workspace_controller.set_view_mode(view_mode)
+                        }
+                    }
+                }
+                .frame(depth: 0)
+                .hidden()
+            }
             
             AssetsLoadingPane(assets_loading: assets_loading)
             #endif
@@ -184,11 +211,15 @@ struct AssetsLoadingPane: View
                 )
                 .progressViewStyle(.circular)
                 .padding()
+                #if os(macOS) || os(iOS)
                 .background
                 {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(.thinMaterial)
                 }
+                #else
+                .scaleEffect(1.05)
+                #endif
                 .offset(y: -32)
             }
         }

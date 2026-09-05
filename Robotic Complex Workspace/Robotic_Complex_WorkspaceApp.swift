@@ -49,7 +49,7 @@ struct Robotic_Complex_WorkspaceApp: App
                     dismiss_window(id: ObjectInspectorDefaultID)
                     
                     //dismiss_window(id: WorkspaceImmersiveSpaceDefaultID)
-                    dismiss_window(id: WorkspaceVolumetricWindowDefaultID)
+                    dismiss_window(id: WorkspacePortalWindowDefaultID)
                     Task { await dismiss_immersive_space() }
                 }
                 /*.onChange(of: scene_phase)
@@ -134,7 +134,7 @@ struct Robotic_Complex_WorkspaceApp: App
         #if os(visionOS)
         SpatialPendantScene(controller: pendant_controller)
         WorkspaceImmersiveSpace(controller: workspace_controller, inspector_controller: inspector_controller)
-        WorkspaceVolumetricWindow(controller: workspace_controller, inspector_controller: inspector_controller)
+        WorkspacePortalWindow(controller: workspace_controller, inspector_controller: inspector_controller)
         ObjectInspector(controller: inspector_controller)
         #endif
     }
@@ -162,11 +162,11 @@ struct Robotic_Complex_WorkspaceApp: App
         
         workspace_controller.set_window_functions
         {
-            open_window(id: WorkspaceVolumetricWindowDefaultID)
+            open_window(id: WorkspacePortalWindowDefaultID)
         }
         _:
         {
-            dismiss_window(id: WorkspaceVolumetricWindowDefaultID)
+            dismiss_window(id: WorkspacePortalWindowDefaultID)
         }
         
         inspector_controller.set_window_functions

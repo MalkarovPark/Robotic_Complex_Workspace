@@ -28,6 +28,8 @@ struct WorkspaceSceneView: View
     
     @State private var device_camera_position: simd_float3 = .zero
     
+    @AppStorage("ViewMode") private var view_mode: ViewMode = .immersive
+    
     public init(
         controller: WorkspaceSceneController,
         inspector_controller: ObjectInspectorController,
@@ -48,23 +50,9 @@ struct WorkspaceSceneView: View
     {
         RealityView
         { content in
-            assets_loading = true
-            
-            scene_content = content
-            
-            controller.workspace.place_entity(in: content)
-            {
-                assets_loading = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                {
-                    assets_loaded = true
-                }
-            }
+            controller.workspace.move_entity(to: content, as_portal: view_mode == .scene ? true : false)
         }
-        placeholder:
-        {
-            AssetsLoadingPane(assets_loading: assets_loading)
-        }
+        .frame(depth: view_mode == .scene ? 0.0 : 1.0)
         .highPriorityGesture(
             TapGesture()
                 .targetedToAnyEntity()
@@ -141,7 +129,7 @@ public struct WorkspaceImmersiveSpace: SwiftUI.Scene
 
 public let WorkspaceImmersiveSpaceDefaultID = "workspace_immersive"
 
-public struct WorkspaceVolumetricWindow: SwiftUI.Scene
+public struct WorkspacePortalWindow: SwiftUI.Scene
 {
     var window_id: String
     
@@ -149,7 +137,7 @@ public struct WorkspaceVolumetricWindow: SwiftUI.Scene
     let inspector_controller: ObjectInspectorController
     
     public init(
-        window_id: String = WorkspaceVolumetricWindowDefaultID,
+        window_id: String = WorkspacePortalWindowDefaultID,
         
         controller: WorkspaceSceneController,
         inspector_controller: ObjectInspectorController
@@ -166,38 +154,24 @@ public struct WorkspaceVolumetricWindow: SwiftUI.Scene
     {
         WindowGroup(id: window_id)
         {
-            RealityView
-            { content in
-                
-                let cube = ModelEntity(
-                    mesh: .generateBox(
-                        size: 0.1,
-                        cornerRadius: 0.01
-                    ),
-                    materials: [
-                        SimpleMaterial(
-                            color: .cyan,
-                            isMetallic: true
-                        )
-                    ]
-                )
-                
-                content.add(cube)
+            GeometryReader
+            { geometry in
+                WorkspaceSceneView(controller: controller, inspector_controller: inspector_controller)
+                    .onDisappear { if view_mode == .scene { view_mode = .gallery } }
+                .onChange(of: geometry.size)
+                { _, _ in
+                    //update_portal_entity_scale(with: geometry.size)
+                    controller.workspace.update_portal_size(with: geometry.size)
+                }
             }
-            .toolbar
-            {
-                Text("Volumetric Window")
-            }
-            .onDisappear { view_mode = .gallery } //controller.set_view_mode(.gallery)
-            //WorkspaceSceneView(controller: controller, inspector_controller: inspector_controller)
         }
-        .windowStyle(.volumetric)
+        .windowStyle(.plain)
         .volumeWorldAlignment(.gravityAligned)
-        .windowResizability(.contentSize)
+        //.windowResizability(.contentSize)
     }
 }
 
-public let WorkspaceVolumetricWindowDefaultID = "workspace_volumetric"
+public let WorkspacePortalWindowDefaultID = "workspace_portal"
 
 @MainActor public class WorkspaceSceneController: ObservableObject
 {

@@ -66,7 +66,7 @@ struct WorkspaceView: View
                 .onAppear { open_view() }
                 #if os(visionOS)
                 .opacity(add_object_view_presented || app_state.settings_view_presented ? 0 : 1)
-                .animation(.easeInOut(duration: 0.2), value: add_object_view_presented || app_state.settings_view_presented)
+                //.animation(.easeInOut(duration: 0.2), value: add_object_view_presented || app_state.settings_view_presented)
                 #endif
                 
                 /*Rectangle()
@@ -422,7 +422,7 @@ struct WorkspaceView: View
         pendant_controller.workspace = base_workspace
         #if os(visionOS)
         workspace_controller.workspace = base_workspace
-        workspace_controller.set_view_mode(view_mode) //workspace_controller.is_opened = view_mode == .immersive //true
+        //workspace_controller.set_view_mode(view_mode) //workspace_controller.is_opened = view_mode == .immersive //true
         
         inspector_controller.workspace = base_workspace
         
