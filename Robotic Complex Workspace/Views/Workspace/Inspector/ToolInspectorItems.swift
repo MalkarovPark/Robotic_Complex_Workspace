@@ -111,7 +111,7 @@ struct ToolInspectorItems: View
                 #if os(macOS)
                 .buttonStyle(.bordered)
                 #endif
-                #if !os(visionOS)
+                #if os(macOS)
                 .buttonBorderShape(.roundedRectangle)
                 #else
                 .buttonBorderShape(.circle)

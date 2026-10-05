@@ -30,31 +30,31 @@ struct SettingsView: View
             GeneralSettingsView()
             #if os(iOS) || os(visionOS)
                 .modifier(SheetCaption(is_presented: $setting_view_presented, label: "General"))
+            #if os(iOS)
+                .background { Rectangle().fill(Color(hex: "F2F2F6")) }
             #endif
-                .tabItem
-            {
-                Label("General", systemImage: "gear")
-            }
-            .tag(Tabs.general)
+            #endif
+                .tabItem { Label("General", systemImage: "gear") }
+                    .tag(Tabs.general)
             
             ModuleSettingsView()
             #if os(iOS) || os(visionOS)
                 .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Modules", plain: true))
+            #if os(iOS)
+                .background { Rectangle().fill(Color(hex: "F2F2F6")) }
             #endif
-                .tabItem
-            {
-                Label("Modules", systemImage: "puzzlepiece.extension")
-            }
+            #endif
+                .tabItem { Label("Modules", systemImage: "puzzlepiece.extension") }
             
             /*CellSettingsView()
             #if os(iOS) || os(visionOS)
                 .modifier(SheetCaption(is_presented: $setting_view_presented, label: "Cell", plain: true))
+            #if os(iOS)
+                .background { Rectangle().fill(Color(hex: "F2F2F6")) }
             #endif
-                .tabItem
-            {
-                Label("Cell", systemImage: "cube.transparent")
-            }
-            .tag(Tabs.cell)*/
+            #endif
+                .tabItem { Label("Cell", systemImage: "cube.transparent") }
+                    .tag(Tabs.cell)*/
         }
         #if os(macOS)
         .padding(20)

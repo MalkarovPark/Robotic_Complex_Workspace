@@ -20,7 +20,7 @@ struct WorkspaceGalleryView: View
     @EnvironmentObject var base_workspace: Workspace
     @EnvironmentObject var app_state: AppState
     
-    #if os(macOS) || os(iOS)
+    #if os(macOS)// || os(iOS)
     private let columns: [GridItem] = [.init(.adaptive(minimum: 128, maximum: .infinity), spacing: 24)]
     private let card_spacing: CGFloat = 24
     private let card_height: CGFloat = 128
@@ -77,9 +77,11 @@ struct WorkspaceGalleryView: View
         if !filtered_items.isEmpty //!items.isEmpty
         {
             Text(title)
-            #if os(macOS) || os(iOS)
+            #if os(macOS)
                 .font(.system(size: 16, weight: .light))
-            #else
+            #elseif os(iOS)
+                .font(.system(size: 20, weight: .light))
+            #elseif os(visionOS)
                 .font(.system(size: 24, weight: .light))
             #endif
             
@@ -327,7 +329,7 @@ private struct ObjectCardOverlay: View
                     Image(systemName: "pin.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                    #if os(macOS) || os(iOS)
+                    #if os(macOS)// || os(iOS)
                         .frame(width: 10, height: 10)
                     #else
                         .frame(width: 15, height: 15)

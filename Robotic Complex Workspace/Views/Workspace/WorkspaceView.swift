@@ -98,12 +98,29 @@ struct WorkspaceView: View
                 }
                 else
                 {
+                    #if os(macOS) || os(visionOS)
                     Text("Nothing selected")
                         .font(.title3)
                         .foregroundStyle(.secondary)
-                    #if os(iOS)
-                        .presentationDetents([.height(160)])
-                        .inspectorColumnWidth(400)
+                    #else
+                    if horizontal_size_class != .compact
+                    {
+                        Text("Nothing selected")
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                            .presentationDetents([.height(160)])
+                            .inspectorColumnWidth(400)
+                    }
+                    else
+                    {
+                        Text("Nothing selected")
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                            .presentationDetents([.height(160)])
+                            .inspectorColumnWidth(400)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .modifier(ViewCloseButton(is_presented: $inspector_presented))
+                    }
                     #endif
                 }
             }

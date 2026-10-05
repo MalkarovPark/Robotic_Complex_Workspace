@@ -215,9 +215,6 @@ struct AssetsLoadingPane: View
                 )
                 .progressViewStyle(.circular)
                 .padding()
-                #if os(iOS)
-                .scaleEffect(1.25)
-                #endif
                 #if os(macOS) || os(iOS)
                 .background
                 {
@@ -226,6 +223,9 @@ struct AssetsLoadingPane: View
                 }
                 #else
                 .scaleEffect(1.05)
+                #endif
+                #if os(iOS)
+                .scaleEffect(1.25)
                 #endif
                 .offset(y: -32)
             }

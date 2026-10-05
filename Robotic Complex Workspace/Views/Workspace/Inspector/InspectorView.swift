@@ -80,9 +80,9 @@ struct InspectorView: View
                     #else
                     .buttonBorderShape(.capsule)
                     #endif
-                    #if os(macOS)
+                    #if os(macOS) || os(iOS)
                     .buttonStyle(.bordered)
-                    .foregroundStyle(.red)
+                    .tint(.red)
                     #endif
                     
                     let placement_binding = Binding(
