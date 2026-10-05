@@ -81,10 +81,11 @@ struct WorkspaceView: View
                 {
                     #if os(macOS)
                     InspectorView(document: $document, workspace: base_workspace)
-                    #else
+                    #elseif os(iOS)
                     if horizontal_size_class != .compact
                     {
                         InspectorView(document: $document, workspace: base_workspace)
+                            .inspectorColumnWidth(400)
                     }
                     else
                     {
@@ -102,6 +103,7 @@ struct WorkspaceView: View
                         .foregroundStyle(.secondary)
                     #if os(iOS)
                         .presentationDetents([.height(160)])
+                        .inspectorColumnWidth(400)
                     #endif
                 }
             }

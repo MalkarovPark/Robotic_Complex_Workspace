@@ -34,9 +34,9 @@ struct InspectorView: View
     {
         ScrollView
         {
-            #if os(visionOS)
+            /*#if os(visionOS)
             Spacer(minLength: 72)
-            #endif
+            #endif*/
             
             VStack(spacing: 0)
             {
@@ -58,7 +58,11 @@ struct InspectorView: View
                         }
                         .textFieldStyle(.roundedBorder)
                 }
+                #if !os(visionOS)
                 .padding(10)
+                #else
+                .padding([.horizontal, .bottom], 10)
+                #endif
                 .onChange(of: workspace.selected_object ?? ProductionObject())
                 { _, new_value in
                     new_name = new_value.name
@@ -71,7 +75,11 @@ struct InspectorView: View
                         Label("Remove", systemImage: "trash")
                             .frame(maxWidth: .infinity)
                     }
+                    #if !os(visionOS)
                     .buttonBorderShape(.roundedRectangle)
+                    #else
+                    .buttonBorderShape(.capsule)
+                    #endif
                     #if os(macOS)
                     .buttonStyle(.bordered)
                     .foregroundStyle(.red)
@@ -96,11 +104,13 @@ struct InspectorView: View
                     #if os(macOS)
                     .buttonStyle(.bordered)
                     #endif
+                    #if !os(visionOS)
                     .buttonBorderShape(.roundedRectangle)
+                    #else
+                    .buttonBorderShape(.capsule)
+                    #endif
                 }
                 .padding([.horizontal, .bottom], 10)
-                
-                Divider()
                 
                 if let tool = object as? Tool
                 {
@@ -238,23 +248,55 @@ public struct InspectorItem<Content: View>: View
     
     public var body: some View
     {
-        DisclosureGroup(isExpanded: $is_expanded)
+        #if os(macOS) || os(iOS)
+        GroupBox
         {
-            content
+            DisclosureGroup(isExpanded: $is_expanded)
+            {
+                content
+                #if os(macOS)
+                    .padding(5)
+                #endif
+            }
+            label:
+            {
+                Text(label)
+                #if os(macOS)
+                    .font(.system(size: 14))
+                #elseif os(iOS)
+                    .font(.system(size: 18))
+                    .tint(.black)
+                #endif
+            }
         }
-        label:
+        .padding([.horizontal, .bottom], 10)
+        #else
+        VStack(spacing: 0)
         {
-            Text(label)
-                .font(.system(size: 13, weight: .bold))
+            DisclosureGroup(isExpanded: $is_expanded)
+            {
+                content
+                    .padding([.horizontal, .bottom], 16)
+            }
+            label:
+            {
+                Text(label)
+                    .font(.system(size: 18))
+            }
         }
-        .padding(10)
-        
-        Divider()
+        .background
+        {
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(.regularMaterial)
+        }
+        .padding([.horizontal, .bottom], 10)
+        #endif
     }
 }
 
 #Preview
 {
+    #if !os(visionOS)
     ZStack
     {
         
@@ -263,6 +305,12 @@ public struct InspectorItem<Content: View>: View
     {
         InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), workspace: Workspace())
     }
-    .frame(width: 400, height: 600)
+    .frame(width: 420, height: 600)
     .environmentObject(Workspace())
+    #else
+    InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), workspace: Workspace())
+        .glassBackgroundEffect()
+        .frame(width: 400, height: 600)
+        .environmentObject(Workspace())
+    #endif
 }

@@ -21,6 +21,8 @@ struct ToolInspectorItems: View
     @State private var origin_is_expanded: Bool = false
     @State private var space_is_expanded: Bool = false
     
+    private let field_width: CGFloat = 96
+    
     var body: some View
     {
         let attached_to = Binding(
@@ -80,39 +82,43 @@ struct ToolInspectorItems: View
             #endif
         }
         
-        HStack
+        InspectorItem(label: "Attachment", is_expanded: true)
         {
-            Picker("Attached to", selection: attached_to)
+            HStack
             {
-                if workspace.placed_robot_names.count > 0
+                Picker("Attached to", selection: attached_to)
                 {
-                    ForEach(workspace.attachment_supporting_robot_names, id: \.self)
-                    { name in
-                        Text(name)
+                    if workspace.placed_robot_names.count > 0
+                    {
+                        ForEach(workspace.attachment_supporting_robot_names, id: \.self)
+                        { name in
+                            Text(name)
+                        }
+                    }
+                    else
+                    {
+                        Text("None")
                     }
                 }
-                else
+                .buttonStyle(.bordered)
+                .disabled(tool.attached_to == nil)
+                
+                Toggle(isOn: is_attached)
                 {
-                    Text("None")
+                    Image(systemName: "pin.fill")
                 }
+                .toggleStyle(.button)
+                #if os(macOS)
+                .buttonStyle(.bordered)
+                #endif
+                #if !os(visionOS)
+                .buttonBorderShape(.roundedRectangle)
+                #else
+                .buttonBorderShape(.circle)
+                #endif
             }
-            .buttonStyle(.bordered)
-            .disabled(tool.attached_to == nil)
-            
-            Toggle(isOn: is_attached)
-            {
-                Image(systemName: "pin.fill")
-            }
-            .toggleStyle(.button)
-            #if os(macOS)
-            .buttonStyle(.bordered)
-            #endif
-            .buttonBorderShape(.roundedRectangle)
+            .disabled(workspace.attachment_supporting_robot_names.count == 0)
         }
-        .padding(10)
-        .disabled(workspace.attachment_supporting_robot_names.count == 0)
-        
-        Divider()
         
         InspectorItem(label: "Physics", is_expanded: false)
         {
@@ -142,6 +148,7 @@ struct ToolInspectorItems: View
                         .toggleStyle(.checkbox)
                     #else
                         .toggleStyle(.switch)
+                        .tint(.accent)
                         .padding(.trailing, 4)
                     #endif
                 }
@@ -201,7 +208,7 @@ struct ToolInspectorItems: View
                     
                     TextField("Mass", value: mass, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 64)
+                        .frame(width: field_width)
                         .labelsHidden()
                     
                     Stepper("Enter", value: mass, in: 0...1000000)
@@ -236,6 +243,7 @@ struct ToolInspectorItems: View
                         .toggleStyle(.checkbox)
                     #else
                         .toggleStyle(.switch)
+                        .tint(.accent)
                         .padding(.trailing, 4)
                     #endif
                 }*/
@@ -261,7 +269,7 @@ struct ToolInspectorItems: View
                     
                     TextField("Static Friction", value: static_friction, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 64)
+                        .frame(width: field_width)
                         .labelsHidden()
                 }
                 
@@ -286,7 +294,7 @@ struct ToolInspectorItems: View
                     
                     TextField("Dynamic Friction", value: dynamic_friction, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 64)
+                        .frame(width: field_width)
                         .labelsHidden()
                 }
                 
@@ -311,7 +319,7 @@ struct ToolInspectorItems: View
                     
                     TextField("Restitution", value: restitution, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 64)
+                        .frame(width: field_width)
                         .labelsHidden()
                 }
             }
@@ -322,6 +330,7 @@ struct ToolInspectorItems: View
 
 #Preview
 {
+    #if !os(visionOS)
     ZStack
     {
         
@@ -336,5 +345,14 @@ struct ToolInspectorItems: View
             }
         }
     }
+    .frame(width: 420, height: 600)
+    #else
+    ScrollView
+    {
+        Spacer(minLength: 32)
+        ToolInspectorItems(tool: Tool(), workspace: Workspace(), on_update: {})
+    }
+    .glassBackgroundEffect()
     .frame(width: 400, height: 600)
+    #endif
 }

@@ -44,7 +44,8 @@ struct ObjectInspectorView: View
                     Tab("Model", systemImage: symbol_name, value: 0)
                     {
                         InspectorView(document: $controller.document, workspace: workspace)
-                            .modifier(SimpleCaption(label: "Model", plain: false, clear_background: true))
+                            .modifier(SimpleCaption(label: "Model", plain: true, clear_background: true))
+                            //.modifier(SimpleCaption(label: "Model", plain: false, clear_background: true))
                     }
                     
                     if workspace.selected_object is any StateOutputCapable

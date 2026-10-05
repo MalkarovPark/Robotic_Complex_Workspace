@@ -161,7 +161,11 @@ struct WorkspaceSpatialView: View
                 .frame(maxWidth: pendant_width)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
                 .padding([.horizontal, .bottom], 7.8)
+                #if os(macOS) || os(visionOS)
                 .ignoresSafeArea(edges: .bottom)
+                #else
+                .ignoresSafeArea(edges: horizontal_size_class == .compact ? .init() : .bottom)
+                #endif
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
@@ -211,6 +215,9 @@ struct AssetsLoadingPane: View
                 )
                 .progressViewStyle(.circular)
                 .padding()
+                #if os(iOS)
+                .scaleEffect(1.25)
+                #endif
                 #if os(macOS) || os(iOS)
                 .background
                 {

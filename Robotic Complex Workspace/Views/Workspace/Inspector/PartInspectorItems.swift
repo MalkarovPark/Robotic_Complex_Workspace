@@ -16,6 +16,8 @@ struct PartInspectorItems: View
     
     public let on_update: () -> ()
     
+    private let field_width: CGFloat = 96
+    
     var body: some View
     {
         InspectorItem(label: "Apperance", is_expanded: true)
@@ -56,6 +58,7 @@ struct PartInspectorItems: View
                         .toggleStyle(.checkbox)
                     #else
                         .toggleStyle(.switch)
+                        .tint(.accent)
                         .padding(.trailing, 4)
                     #endif
                 }
@@ -107,6 +110,7 @@ struct PartInspectorItems: View
                         .toggleStyle(.checkbox)
                     #else
                         .toggleStyle(.switch)
+                        .tint(.accent)
                         .padding(.trailing, 4)
                     #endif
                 }
@@ -162,7 +166,7 @@ struct PartInspectorItems: View
                     
                     TextField("Mass", value: mass, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 64)
+                        .frame(width: field_width)
                         .labelsHidden()
                     
                     Stepper("Enter", value: mass, in: 0...1000000)
@@ -197,6 +201,7 @@ struct PartInspectorItems: View
                         .toggleStyle(.checkbox)
                     #else
                         .toggleStyle(.switch)
+                        .tint(.accent)
                         .padding(.trailing, 4)
                     #endif
                 }
@@ -222,7 +227,7 @@ struct PartInspectorItems: View
                     
                     TextField("Static Friction", value: static_friction, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 64)
+                        .frame(width: field_width)
                         .labelsHidden()
                 }
                 
@@ -247,7 +252,7 @@ struct PartInspectorItems: View
                     
                     TextField("Dynamic Friction", value: dynamic_friction, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 64)
+                        .frame(width: field_width)
                         .labelsHidden()
                 }
                 
@@ -272,7 +277,7 @@ struct PartInspectorItems: View
                     
                     TextField("Restitution", value: restitution, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 64)
+                        .frame(width: field_width)
                         .labelsHidden()
                 }
             }
@@ -288,6 +293,7 @@ struct PartInspectorItems: View
 
 #Preview
 {
+    #if !os(visionOS)
     ZStack
     {
         
@@ -302,6 +308,17 @@ struct PartInspectorItems: View
             }
         }
     }
-    .frame(width: 400, height: 600)
+    .frame(width: 420, height: 600)
     .environmentObject(Workspace())
+    #else
+    ScrollView
+    {
+        Spacer(minLength: 32)
+        
+        PartInspectorItems(part: Part(), on_update: {})
+            .environmentObject(Workspace())
+    }
+    .glassBackgroundEffect()
+    .frame(width: 400, height: 600)
+    #endif
 }

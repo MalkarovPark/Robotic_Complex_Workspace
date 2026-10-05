@@ -223,6 +223,7 @@ private struct OriginScaleView: View
 
 #Preview
 {
+    #if !os(visionOS)
     ZStack
     {
         
@@ -237,5 +238,15 @@ private struct OriginScaleView: View
             }
         }
     }
+    .frame(width: 420, height: 600)
+    #else
+    ScrollView
+    {
+        Spacer(minLength: 32)
+        
+        RobotInspectorItems(robot: Robot(), on_update: {})
+    }
     .frame(width: 400, height: 600)
+    .glassBackgroundEffect()
+    #endif
 }
