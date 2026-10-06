@@ -81,6 +81,7 @@ struct WorkspaceView: View
                 {
                     #if os(macOS)
                     InspectorView(document: $document, workspace: base_workspace)
+                        .inspectorColumnWidth(300)
                     #elseif os(iOS)
                     if horizontal_size_class != .compact
                     {
@@ -102,6 +103,9 @@ struct WorkspaceView: View
                     Text("Nothing selected")
                         .font(.title3)
                         .foregroundStyle(.secondary)
+                    #if os(macOS)
+                        .inspectorColumnWidth(300)
+                    #endif
                     #else
                     if horizontal_size_class != .compact
                     {

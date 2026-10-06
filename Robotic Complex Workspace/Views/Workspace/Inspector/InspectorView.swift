@@ -34,18 +34,8 @@ struct InspectorView: View
     {
         ScrollView
         {
-            /*#if os(visionOS)
-            Spacer(minLength: 72)
-            #endif*/
-            
             VStack(spacing: 0)
             {
-                /*Text(object_type_name)
-                    .font(.headline)
-                    .padding(10)
-                
-                Divider()*/
-                
                 HStack
                 {
                     TextField("None", text: $new_name)
