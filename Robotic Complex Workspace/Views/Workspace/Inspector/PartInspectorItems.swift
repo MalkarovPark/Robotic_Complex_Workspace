@@ -48,7 +48,6 @@ struct PartInspectorItems: View
                 {
                     Text("Use Custom Color")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -67,7 +66,6 @@ struct PartInspectorItems: View
                 {
                     Text("Custom Color")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -100,7 +98,6 @@ struct PartInspectorItems: View
                 {
                     Text("Physics Enabled")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -130,7 +127,6 @@ struct PartInspectorItems: View
                     
                     Text("Mode")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -160,7 +156,6 @@ struct PartInspectorItems: View
                     
                     Text("Mass (kg)")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -191,7 +186,6 @@ struct PartInspectorItems: View
                     
                     Text("Affected by Gravity")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -221,7 +215,6 @@ struct PartInspectorItems: View
                     
                     Text("Static Friction")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -246,7 +239,6 @@ struct PartInspectorItems: View
                     
                     Text("Dynamic Friction")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -271,7 +263,6 @@ struct PartInspectorItems: View
                     
                     Text("Restitution")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     

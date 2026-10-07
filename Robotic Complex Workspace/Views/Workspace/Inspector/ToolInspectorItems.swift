@@ -138,7 +138,6 @@ struct ToolInspectorItems: View
                 {
                     Text("Physics Enabled")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -168,7 +167,6 @@ struct ToolInspectorItems: View
                     
                     Text("Mode")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -202,7 +200,6 @@ struct ToolInspectorItems: View
                     
                     Text("Mass (kg)")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -233,7 +230,6 @@ struct ToolInspectorItems: View
                     
                     Text("Affected by Gravity")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -263,7 +259,6 @@ struct ToolInspectorItems: View
                     
                     Text("Static Friction")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -288,7 +283,6 @@ struct ToolInspectorItems: View
                     
                     Text("Dynamic Friction")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
@@ -313,7 +307,6 @@ struct ToolInspectorItems: View
                     
                     Text("Restitution")
                         .fontWeight(.light)
-                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
