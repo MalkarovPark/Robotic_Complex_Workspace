@@ -246,6 +246,8 @@ public struct InspectorItem<Content: View>: View
                 content
                 #if os(macOS)
                     .padding(5)
+                #elseif os(iOS)
+                    .padding(.top, 10)
                 #endif
             }
             label:
