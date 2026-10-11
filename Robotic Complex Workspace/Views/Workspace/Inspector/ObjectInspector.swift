@@ -233,5 +233,6 @@ public let ObjectInspectorDefaultID = "object_inspector"
 #Preview
 {
     @Previewable @State var controller = ObjectInspectorController(workspace: Workspace(), document: .constant(Robotic_Complex_WorkspaceDocument()))
+    
     ObjectInspectorView(controller: controller)
 }

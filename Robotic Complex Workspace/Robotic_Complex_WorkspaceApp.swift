@@ -23,7 +23,7 @@ struct Robotic_Complex_WorkspaceApp: App
     @Environment(\.openImmersiveSpace) private var open_immersive_space
     @Environment(\.dismissImmersiveSpace) private var dismiss_immersive_space
     
-    @Environment(\.scenePhase) private var scene_phase
+    //@Environment(\.scenePhase) private var scene_phase
     
     @StateObject var pendant_controller = PendantController()
     @StateObject var workspace_controller = WorkspaceSceneController()
@@ -68,7 +68,7 @@ struct Robotic_Complex_WorkspaceApp: App
         }
         .commands
         {
-            SidebarCommands() // Sidebar control items for view menu item
+            //SidebarCommands() // Sidebar control items for view menu item
             
             #if os(iOS) || os(visionOS)
             CommandGroup(after: CommandGroupPlacement.appSettings) // Application settings commands
@@ -179,7 +179,7 @@ struct Robotic_Complex_WorkspaceApp: App
         }
     }
     
-    private func document_is_open() -> Bool
+    /*private func document_is_open() -> Bool
     {
         UIApplication.shared.connectedScenes.contains
         {
@@ -188,7 +188,7 @@ struct Robotic_Complex_WorkspaceApp: App
                 $0.rootViewController is UINavigationController
             } ?? false
         }
-    }
+    }*/
     #endif
 }
 
@@ -233,13 +233,6 @@ public enum ViewMode: String, Equatable, CaseIterable
         }
     }
 }
-
-// MARK: – Scene transparency parameter
-#if !os(visionOS)
-let is_scene_transparent = false
-#else
-let is_scene_transparent = true
-#endif
 
 // MARK: - Document Reopener
 #if os(visionOS)

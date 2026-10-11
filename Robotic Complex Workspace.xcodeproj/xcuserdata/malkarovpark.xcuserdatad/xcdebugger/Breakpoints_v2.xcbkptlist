@@ -336,8 +336,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "475"
             endingLineNumber = "475"
-            landmarkName = "set_document_functions()"
-            landmarkType = "7">
+            landmarkName = "WorkspaceView"
+            landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -368,8 +368,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2180"
             endingLineNumber = "2180"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "update_target_tile_scale(_:_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -384,8 +384,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2164"
             endingLineNumber = "2164"
-            landmarkName = "Workspace"
-            landmarkType = "3">
+            landmarkName = "move_camera_target()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -400,8 +400,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2212"
             endingLineNumber = "2212"
-            landmarkName = "build_portal()"
-            landmarkType = "7">
+            landmarkName = "Workspace"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

@@ -75,11 +75,7 @@ struct ToolInspectorItems: View
                     }
             )
             
-            #if os(macOS)
             PositionView(position: tool.attached_to == nil ? position_binding : local_position_binding, with_steppers: true)
-            #else
-            PositionView(position: tool.attached_to != nil ? position_binding : local_position_binding)
-            #endif
         }
         
         InspectorItem(label: "Attachment", is_expanded: true)
@@ -337,6 +333,11 @@ struct ToolInspectorItems: View
                 ToolInspectorItems(tool: Tool(), workspace: Workspace(), on_update: {})
             }
         }
+        #if os(macOS)
+        .inspectorColumnWidth(300)
+        #else
+        .inspectorColumnWidth(400)
+        #endif
     }
     .frame(width: 420, height: 600)
     #else

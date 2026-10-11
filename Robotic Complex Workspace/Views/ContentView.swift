@@ -18,8 +18,6 @@ struct ContentView: View
     
     @Binding var document: Robotic_Complex_WorkspaceDocument // Opened document
     
-    @State var first_loaded = true // Fade in workspace scene property
-    
     @StateObject private var base_workspace = Workspace() // Workspace object for opened file
     
     #if os(iOS) || os(visionOS)

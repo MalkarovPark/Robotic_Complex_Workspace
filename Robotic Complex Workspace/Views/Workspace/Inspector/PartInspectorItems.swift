@@ -298,6 +298,11 @@ struct PartInspectorItems: View
                 PartInspectorItems(part: Part(), on_update: {})
             }
         }
+        #if os(macOS)
+        .inspectorColumnWidth(300)
+        #else
+        .inspectorColumnWidth(400)
+        #endif
     }
     .frame(width: 420, height: 600)
     .environmentObject(Workspace())

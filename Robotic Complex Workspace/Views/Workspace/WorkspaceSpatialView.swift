@@ -66,8 +66,8 @@ struct WorkspaceSpatialView: View
                     base_workspace.place_entity(in: content)
                     {
                         //pendant_controller.is_opened = true
-                        
                         assets_loading = false
+                        
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                         {
                             assets_loaded = true
@@ -196,9 +196,10 @@ struct WorkspaceSpatialView: View
     #endif
 }
 
-struct AssetsLoadingPane: View
+private struct AssetsLoadingPane: View
 {
     let assets_loading: Bool
+    
     var body: some View
     {
         ZStack
