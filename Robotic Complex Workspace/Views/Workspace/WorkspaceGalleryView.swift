@@ -159,6 +159,7 @@ private struct ProductionObjectCard: View
         .animation(.easeInOut(duration: 0.2), value: object.is_placed)
         .animation(.easeInOut(duration: 0.1), value: (object as? Tool)?.attached_to != nil)
         .buttonStyle(.plain)
+        .buttonBorderShape(.roundedRectangle(radius: 16))
         .id(view_id)
         .onAppear
         {

@@ -341,16 +341,22 @@ struct AddRobotView: View
             {
                 ForEach(Robot.internal_modules)
                 { module in
-                    GlassBoxCard(
-                        title: module.name,
-                        entity: module.entity,
-                        center_entity: true,
-                    )
-                    .frame(height: card_height)
-                    .onTapGesture
+                    
+                    Button
                     {
                         add_object(module, is_internal: true)
                     }
+                    label:
+                    {
+                        GlassBoxCard(
+                            title: module.name,
+                            entity: module.entity,
+                            center_entity: true,
+                        )
+                        .frame(height: card_height)
+                    }
+                    .buttonStyle(.plain)
+                    .buttonBorderShape(.roundedRectangle(radius: 16))
                 }
             }
             .padding()
@@ -364,16 +370,21 @@ struct AddRobotView: View
                 {
                     ForEach(Robot.external_modules)
                     { module in
-                        GlassBoxCard(
-                            title: module.name,
-                            entity: module.entity,
-                            center_entity: true,
-                        )
-                        .frame(height: card_height)
-                        .onTapGesture
+                        Button
                         {
                             add_object(module, is_internal: false)
                         }
+                        label:
+                        {
+                            GlassBoxCard(
+                                title: module.name,
+                                entity: module.entity,
+                                center_entity: true,
+                            )
+                            .frame(height: card_height)
+                        }
+                        .buttonStyle(.plain)
+                        .buttonBorderShape(.roundedRectangle(radius: 16))
                     }
                 }
                 .padding()
@@ -423,16 +434,21 @@ struct AddToolView: View
             {
                 ForEach(Tool.internal_modules)
                 { module in
-                    GlassBoxCard(
-                        title: module.name,
-                        entity: module.entity,
-                        center_entity: true,
-                    )
-                    .frame(height: card_height)
-                    .onTapGesture
+                    Button
                     {
                         add_object(module, is_internal: true)
                     }
+                    label:
+                    {
+                        GlassBoxCard(
+                            title: module.name,
+                            entity: module.entity,
+                            center_entity: true,
+                        )
+                        .frame(height: card_height)
+                    }
+                    .buttonStyle(.plain)
+                    .buttonBorderShape(.roundedRectangle(radius: 16))
                 }
             }
             .padding()
@@ -446,16 +462,21 @@ struct AddToolView: View
                 {
                     ForEach(Tool.external_modules)
                     { module in
-                        GlassBoxCard(
-                            title: module.name,
-                            entity: module.entity,
-                            center_entity: true,
-                        )
-                        .frame(height: card_height)
-                        .onTapGesture
+                        Button
                         {
                             add_object(module, is_internal: false)
                         }
+                        label:
+                        {
+                            GlassBoxCard(
+                                title: module.name,
+                                entity: module.entity,
+                                center_entity: true,
+                            )
+                            .frame(height: card_height)
+                        }
+                        .buttonStyle(.plain)
+                        .buttonBorderShape(.roundedRectangle(radius: 16))
                     }
                 }
                 .padding()
@@ -505,16 +526,21 @@ struct AddPartView: View
             {
                 ForEach(Part.internal_modules)
                 { module in
-                    GlassBoxCard(
-                        title: module.name,
-                        entity: module.entity,
-                        center_entity: true,
-                    )
-                    .frame(height: card_height)
-                    .onTapGesture
+                    Button
                     {
                         add_object(module, is_internal: true)
                     }
+                    label:
+                    {
+                        GlassBoxCard(
+                            title: module.name,
+                            entity: module.entity,
+                            center_entity: true,
+                        )
+                        .frame(height: card_height)
+                    }
+                    .buttonStyle(.plain)
+                    .buttonBorderShape(.roundedRectangle(radius: 16))
                 }
             }
             .padding()
@@ -528,16 +554,21 @@ struct AddPartView: View
                 {
                     ForEach(Part.external_modules)
                     { module in
-                        GlassBoxCard(
-                            title: module.name,
-                            entity: module.entity,
-                            center_entity: true,
-                        )
-                        .frame(height: card_height)
-                        .onTapGesture
+                        Button
                         {
                             add_object(module, is_internal: false)
                         }
+                        label:
+                        {
+                            GlassBoxCard(
+                                title: module.name,
+                                entity: module.entity,
+                                center_entity: true,
+                            )
+                            .frame(height: card_height)
+                        }
+                        .buttonStyle(.plain)
+                        .buttonBorderShape(.roundedRectangle(radius: 16))
                     }
                 }
                 .padding()
