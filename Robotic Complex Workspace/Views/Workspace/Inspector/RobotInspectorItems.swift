@@ -29,11 +29,7 @@ struct RobotInspectorItems: View
         
         InspectorItem(label: "Origin", is_expanded: false)
         {
-            #if os(macOS)
             PositionView(position: origin_binding, with_steppers: true)
-            #else
-            PositionView(position: origin_binding)
-            #endif
         }
         
         InspectorItem(label: "Working Area", is_expanded: false)
@@ -47,9 +43,9 @@ struct RobotInspectorItems: View
             {
                 GroupBox
                 {
-                    if let default_pointer_position = robot.default_pointer_position
+                    HStack
                     {
-                        HStack
+                        if let default_pointer_position = robot.default_pointer_position
                         {
                             Text("X \(String(format: "%.0f", default_pointer_position.x)) Y \(String(format: "%.0f", default_pointer_position.y)) Z \(String(format: "%.0f", default_pointer_position.z))")
                                 .font(.system(size: 10))
@@ -61,20 +57,22 @@ struct RobotInspectorItems: View
                                 .font(.system(size: 10))
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
-                        .padding(4)
+                        else
+                        {
+                            Text("None")
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity)
+                        }
                     }
-                    else
-                    {
-                        Text("None")
-                        #if os(macOS)
-                            .font(.system(size: 10))
-                        #endif
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity)
-                            .padding(4)
-                    }
+                    #if os(macOS)
+                    .frame(height: 24)
+                    #else
+                    .frame(height: 16)
+                    #endif
                 }
-                .padding(.top, 4)
+                #if os(visionOS)
+                .clipShape(Capsule(style: .continuous))
+                #endif
                 
                 HStack
                 {
@@ -88,6 +86,11 @@ struct RobotInspectorItems: View
                         Text("Set")
                             .frame(maxWidth: .infinity)
                     }
+                    #if os(iOS)
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.roundedRectangle)
+                    .tint(.black)
+                    #endif
                     
                     Button
                     {
@@ -99,6 +102,11 @@ struct RobotInspectorItems: View
                         Text("Clear")
                             .frame(maxWidth: .infinity)
                     }
+                    #if os(iOS)
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.roundedRectangle)
+                    .tint(.black)
+                    #endif
                     
                     Button
                     {
@@ -110,6 +118,11 @@ struct RobotInspectorItems: View
                             .frame(maxWidth: .infinity)
                             .disabled(robot.default_pointer_position == nil)
                     }
+                    #if os(iOS)
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.roundedRectangle)
+                    .tint(.black)
+                    #endif
                 }
             }
         }
@@ -121,6 +134,8 @@ private struct OriginScaleView: View
     @ObservedObject var robot: Robot
     
     let on_update: () -> ()
+    
+    let with_steppers = true
     
     public var body: some View
     {
@@ -145,35 +160,44 @@ private struct OriginScaleView: View
                         {
                             TextField("0", value: binding(for: component), format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            Stepper("Scale",
-                                    value: binding(for: component),
-                                    in: (0)...(Float.infinity))
-                            .labelsHidden()
+                            
+                            if with_steppers
+                            {
+                                Stepper("Position",
+                                        value: binding(for: component),
+                                        in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                .labelsHidden()
+                            }
                         }
                         #else
-                        VStack(spacing: 8)
+                        VStack
                         {
                             TextField("0", value: binding(for: component), format: .number)
                                 .textFieldStyle(.roundedBorder)
-                            #if os(iOS)
-                                .frame(minWidth: 60)
                                 .keyboardType(.decimalPad)
-                            #elseif os(visionOS)
-                                .frame(minWidth: 80)
-                                .keyboardType(.decimalPad)
-                            #endif
                             
-                            #if os(macOS)
-                            Stepper("Scale",
-                                    value: binding(for: component),
-                                    in: (0)...(Float.infinity))
-                            .labelsHidden()
-                            #endif
+                            if with_steppers
+                            {
+                                Rectangle()
+                                    .fill(.clear)
+                                    .frame(height: 42)
+                                    .overlay
+                                    {
+                                        Stepper("Position",
+                                                value: binding(for: component),
+                                                in: (0)...(Float.infinity))
+                                            .labelsHidden()
+                                            #if os(visionOS)
+                                            .scaleEffect(0.85)
+                                            #endif
+                                }
+                            }
                         }
                         #endif
                         
                         Text(component.info.text)
                             .fontWeight(.light)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
@@ -245,11 +269,10 @@ private struct OriginScaleView: View
     #else
     ScrollView
     {
-        Spacer(minLength: 32)
-        
         RobotInspectorItems(robot: Robot(), on_update: {})
     }
+    .modifier(SimpleCaption(label: "Model", plain: true, clear_background: true))
     .frame(width: 400, height: 600)
-    .glassBackgroundEffect()
+    .glassBackgroundEffect(in: .rect(cornerRadius: 30, style: .continuous))
     #endif
 }

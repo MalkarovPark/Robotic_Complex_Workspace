@@ -45,7 +45,6 @@ struct ObjectInspectorView: View
                     {
                         InspectorView(document: $controller.document, workspace: workspace)
                             .modifier(SimpleCaption(label: "Model", plain: true, clear_background: true))
-                            //.modifier(SimpleCaption(label: "Model", plain: false, clear_background: true))
                     }
                     
                     if workspace.selected_object is any StateOutputCapable
@@ -160,7 +159,9 @@ public struct ObjectInspector: SwiftUI.Scene
         {
             ObjectInspectorView(controller: controller)//, workspace: controller.workspace)
                 .onDisappear(perform: controller.dismiss)
+                .glassBackgroundEffect(in: .rect(cornerRadius: 30, style: .continuous))
         }
+        .windowStyle(.plain)
         .windowResizability(.contentSize)
     }
 }
@@ -230,9 +231,12 @@ public let ObjectInspectorDefaultID = "object_inspector"
     }
 }
 
-#Preview
+#Preview(windowStyle: .plain)
 {
     @Previewable @State var controller = ObjectInspectorController(workspace: Workspace(), document: .constant(Robotic_Complex_WorkspaceDocument()))
     
     ObjectInspectorView(controller: controller)
+        .modifier(SimpleCaption(label: "Model", plain: true, clear_background: true))
+        .frame(width: 400, height: 600)
+        .glassBackgroundEffect(in: .rect(cornerRadius: 30, style: .continuous))
 }

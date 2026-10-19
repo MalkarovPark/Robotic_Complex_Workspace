@@ -15,11 +15,12 @@
 		6236F9592AD345C4008FA7C4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F94F2AD345C4008FA7C4 /* SettingsView.swift */; };
 		6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */; };
 		6236F95E2AD345C4008FA7C4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9542AD345C4008FA7C4 /* ContentView.swift */; };
-		6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9602AD345FC008FA7C4 /* DynamicStack.swift */; };
+		6236F9632AD345FC008FA7C4 /* SafeAreaToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9602AD345FC008FA7C4 /* SafeAreaToggler.swift */; platformFilters = (ios, xros, ); };
 		6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9612AD345FC008FA7C4 /* ContextMenus.swift */; };
-		6236F9652AD345FC008FA7C4 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */; };
+		6236F9652AD345FC008FA7C4 /* SimpleCaption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6236F9622AD345FC008FA7C4 /* SimpleCaption.swift */; platformFilters = (xros, ); };
 		626EF85E2AD3493900F2A361 /* IndustrialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 626EF85D2AD3493900F2A361 /* IndustrialKit */; };
 		627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627D3E9A2AD34A7600D5988D /* AppState.swift */; };
+		62845B033086385700B02992 /* DuoStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62845B023086385700B02992 /* DuoStateTracker.swift */; platformFilter = ios; };
 		629DF71F2E180C41008DE761 /* RCWorkspace.icon in Resources */ = {isa = PBXBuildFile; fileRef = 629DF71E2E180C41008DE761 /* RCWorkspace.icon */; };
 		629DF7212E181C5A008DE761 /* IndustrialKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 629DF7202E181C5A008DE761 /* IndustrialKitUI */; };
 		62A2C0B32F40F1C200648E81 /* RobotInspectorItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A2C0B22F40F1C200648E81 /* RobotInspectorItems.swift */; };
@@ -45,11 +46,12 @@
 		6236F94F2AD345C4008FA7C4 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		6236F9512AD345C4008FA7C4 /* WorkspaceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
 		6236F9542AD345C4008FA7C4 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		6236F9602AD345FC008FA7C4 /* DynamicStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicStack.swift; sourceTree = "<group>"; };
+		6236F9602AD345FC008FA7C4 /* SafeAreaToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeAreaToggler.swift; sourceTree = "<group>"; };
 		6236F9612AD345FC008FA7C4 /* ContextMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextMenus.swift; sourceTree = "<group>"; };
-		6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
+		6236F9622AD345FC008FA7C4 /* SimpleCaption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleCaption.swift; sourceTree = "<group>"; };
 		627C254F2C9DA7660087D777 /* AddObjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddObjectView.swift; sourceTree = "<group>"; };
 		627D3E9A2AD34A7600D5988D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		62845B023086385700B02992 /* DuoStateTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoStateTracker.swift; sourceTree = "<group>"; };
 		629DF71E2E180C41008DE761 /* RCWorkspace.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RCWorkspace.icon; sourceTree = "<group>"; };
 		62A2C0B22F40F1C200648E81 /* RobotInspectorItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotInspectorItems.swift; sourceTree = "<group>"; };
 		62A2C0B42F40F1D700648E81 /* ToolInspectorItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolInspectorItems.swift; sourceTree = "<group>"; };
@@ -122,8 +124,9 @@
 			isa = PBXGroup;
 			children = (
 				6236F9612AD345FC008FA7C4 /* ContextMenus.swift */,
-				6236F9622AD345FC008FA7C4 /* ViewModifiers.swift */,
-				6236F9602AD345FC008FA7C4 /* DynamicStack.swift */,
+				6236F9622AD345FC008FA7C4 /* SimpleCaption.swift */,
+				6236F9602AD345FC008FA7C4 /* SafeAreaToggler.swift */,
+				62845B023086385700B02992 /* DuoStateTracker.swift */,
 			);
 			path = ViewModifiers;
 			sourceTree = "<group>";
@@ -266,9 +269,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62845B033086385700B02992 /* DuoStateTracker.swift in Sources */,
 				6236F95B2AD345C4008FA7C4 /* WorkspaceView.swift in Sources */,
 				62DA4D2D2F1F97160052D115 /* AddObjectView.swift in Sources */,
-				6236F9632AD345FC008FA7C4 /* DynamicStack.swift in Sources */,
+				6236F9632AD345FC008FA7C4 /* SafeAreaToggler.swift in Sources */,
 				62C69BC93023FCDC001833C7 /* ObjectInspector.swift in Sources */,
 				62A2C0B52F40F1D700648E81 /* ToolInspectorItems.swift in Sources */,
 				6236F95E2AD345C4008FA7C4 /* ContentView.swift in Sources */,
@@ -281,7 +285,7 @@
 				6236F9642AD345FC008FA7C4 /* ContextMenus.swift in Sources */,
 				62A2C0B72F40F1EC00648E81 /* PartInspectorItems.swift in Sources */,
 				6236F9372AD3439B008FA7C4 /* Robotic_Complex_WorkspaceApp.swift in Sources */,
-				6236F9652AD345FC008FA7C4 /* ViewModifiers.swift in Sources */,
+				6236F9652AD345FC008FA7C4 /* SimpleCaption.swift in Sources */,
 				621F91402F7FB95B00641082 /* WorkspaceScene.swift in Sources */,
 				627D3E9B2AD34A7600D5988D /* AppState.swift in Sources */,
 			);

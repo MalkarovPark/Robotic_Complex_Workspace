@@ -127,11 +127,7 @@ struct InspectorView: View
                                 }
                         )
                         
-                        #if os(macOS)
                         PositionView(position: position_binding, with_steppers: true)
-                        #else
-                        PositionView(position: position_binding)
-                        #endif
                     }
                 }
                 
@@ -301,8 +297,8 @@ public struct InspectorItem<Content: View>: View
     .environmentObject(Workspace())
     #else
     InspectorView(document: .constant(Robotic_Complex_WorkspaceDocument()), workspace: Workspace())
-        .glassBackgroundEffect()
+        .modifier(SimpleCaption(label: "Model", plain: true, clear_background: true))
         .frame(width: 400, height: 600)
-        .environmentObject(Workspace())
+        .glassBackgroundEffect(in: .rect(cornerRadius: 30, style: .continuous))
     #endif
 }

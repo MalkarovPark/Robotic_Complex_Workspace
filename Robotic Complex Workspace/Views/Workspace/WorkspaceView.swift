@@ -36,10 +36,12 @@ struct WorkspaceView: View
     @Environment(\.horizontalSizeClass) private var horizontal_size_class
     #endif
     
-    #if os(visionOS)
+    #if os(visionOS) || os(iOS) //#if os(visionOS)
     @Environment(\.dismiss) private var dismiss
     
+    #if os(visionOS)
     @State private var view_enabled = true
+    #endif
     #endif
     
     #if os(macOS) || os(iOS)
@@ -51,6 +53,11 @@ struct WorkspaceView: View
     #endif
     
     @State private var is_pan = false
+    
+    #if os(iOS)
+    @available(iOS 27.1, *) // iPhone Duo Only
+    @State private var device_hinge_state: DuoDeviceState = .none
+    #endif
     
     var body: some View
     {
@@ -66,13 +73,26 @@ struct WorkspaceView: View
                 .onAppear { open_view() }
                 #if os(visionOS)
                 .opacity(add_object_view_presented || app_state.settings_view_presented ? 0 : 1)
-                //.animation(.easeInOut(duration: 0.2), value: add_object_view_presented || app_state.settings_view_presented)
                 #endif
                 
                 /*Rectangle()
                     .fill(.bar)
                     .frame(width: 100, height: 100)
                     .onHover { hover in toolbar_hover = hover }*/
+                
+                #if os(iOS)
+                if #available(iOS 27.1, *) // iPhone Duo Only
+                {
+                    Rectangle()
+                        .fill(.clear)
+                        .allowsHitTesting(false)
+                        .trackDuoState($device_hinge_state)
+                        .onChange(of: device_hinge_state)
+                        { _, new_value in
+                            print(new_value)
+                        }
+                }
+                #endif
             }
             #if os(macOS) || os(iOS)
             .inspector(isPresented: $inspector_presented)
@@ -148,6 +168,24 @@ struct WorkspaceView: View
                         Label("Documents", systemImage: "chevron.left")
                     }
                     .buttonBorderShape(.circle)
+                }
+                #elseif os(iOS)
+                if #available(iOS 27.1, *) // iPhone Duo Only
+                {
+                    if device_hinge_state == .hOpen ||
+                       device_hinge_state == .hPartiallyOpen ||
+                       device_hinge_state == .hClosed ||
+                       device_hinge_state == .vClosed
+                    {
+                        ToolbarItem(id: "Documents", placement: .cancellationAction)
+                        {
+                            Button(action: { dismiss() })
+                            {
+                                Label("Documents", systemImage: "chevron.left")
+                            }
+                            .buttonBorderShape(.circle)
+                        }
+                    }
                 }
                 #endif
                 #if !os(macOS)
@@ -697,6 +735,11 @@ struct WorkspaceView_Previews: PreviewProvider
             WorkspaceView(document: .constant(Robotic_Complex_WorkspaceDocument()))
                 .environmentObject(Workspace())
                 .environmentObject(AppState())
+            #if os(visionOS)
+                .environmentObject(PendantController())
+                .environmentObject(WorkspaceSceneController())
+                .environmentObject(ObjectInspectorController(workspace: Workspace(), document: .constant(Robotic_Complex_WorkspaceDocument())))
+            #endif
         }
     }
 }

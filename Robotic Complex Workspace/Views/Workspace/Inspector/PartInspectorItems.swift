@@ -309,12 +309,11 @@ struct PartInspectorItems: View
     #else
     ScrollView
     {
-        Spacer(minLength: 32)
-        
         PartInspectorItems(part: Part(), on_update: {})
             .environmentObject(Workspace())
     }
-    .glassBackgroundEffect()
+    .modifier(SimpleCaption(label: "Model", plain: true, clear_background: true))
     .frame(width: 400, height: 600)
+    .glassBackgroundEffect(in: .rect(cornerRadius: 30, style: .continuous))
     #endif
 }

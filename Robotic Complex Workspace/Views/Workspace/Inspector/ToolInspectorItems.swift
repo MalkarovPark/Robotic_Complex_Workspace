@@ -343,10 +343,10 @@ struct ToolInspectorItems: View
     #else
     ScrollView
     {
-        Spacer(minLength: 32)
         ToolInspectorItems(tool: Tool(), workspace: Workspace(), on_update: {})
     }
-    .glassBackgroundEffect()
+    .modifier(SimpleCaption(label: "Model", plain: true, clear_background: true))
     .frame(width: 400, height: 600)
+    .glassBackgroundEffect(in: .rect(cornerRadius: 30, style: .continuous))
     #endif
 }
