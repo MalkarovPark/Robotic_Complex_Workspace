@@ -55,6 +55,10 @@ class AppState: ObservableObject
     @Published var locked = false // Does not allow you to make a duplicate connection to the scene caused by unknown reasons
     #endif
     
+    #if os(iOS)
+    @Published public var device_hinge_state: DuoDeviceState = .none
+    #endif
+    
     // MARK: - Application state init function
     init()
     {

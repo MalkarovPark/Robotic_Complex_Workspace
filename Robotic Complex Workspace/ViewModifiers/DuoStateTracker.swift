@@ -83,7 +83,7 @@ struct DuoStateTracker: ViewModifier
     }
 }
 
-@available(iOS 27.1, *) // iPhone Duo Only
+//@available(iOS 27.1, *) // iPhone Duo Only
 enum DuoDeviceState: String
 {
     case none

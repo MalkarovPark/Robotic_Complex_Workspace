@@ -165,7 +165,7 @@ private struct OriginScaleView: View
                             {
                                 Stepper("Position",
                                         value: binding(for: component),
-                                        in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                        in: (-Float.infinity)...(Float.infinity))
                                 .labelsHidden()
                             }
                         }

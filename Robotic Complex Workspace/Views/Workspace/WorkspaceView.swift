@@ -52,12 +52,18 @@ struct WorkspaceView: View
     @EnvironmentObject var inspector_controller: ObjectInspectorController
     #endif
     
-    @State private var is_pan = false
+    #if os(macOS)
+    let inspector_width: CGFloat = 300
+    #elseif os(iOS)
+    let inspector_width: CGFloat = 392 //400
+    #endif
     
-    #if os(iOS)
+    /*#if os(iOS)
     @available(iOS 27.1, *) // iPhone Duo Only
     @State private var device_hinge_state: DuoDeviceState = .none
-    #endif
+    #endif*/
+    
+    @State private var is_pan = false
     
     var body: some View
     {
@@ -86,11 +92,7 @@ struct WorkspaceView: View
                     Rectangle()
                         .fill(.clear)
                         .allowsHitTesting(false)
-                        .trackDuoState($device_hinge_state)
-                        .onChange(of: device_hinge_state)
-                        { _, new_value in
-                            print(new_value)
-                        }
+                        .trackDuoState($app_state.device_hinge_state) //($device_hinge_state)
                 }
                 #endif
             }
@@ -101,12 +103,12 @@ struct WorkspaceView: View
                 {
                     #if os(macOS)
                     InspectorView(document: $document, workspace: base_workspace)
-                        .inspectorColumnWidth(300)
+                        .inspectorColumnWidth(inspector_width)
                     #elseif os(iOS)
                     if horizontal_size_class != .compact
                     {
                         InspectorView(document: $document, workspace: base_workspace)
-                            .inspectorColumnWidth(400)
+                            .inspectorColumnWidth(inspector_width)
                     }
                     else
                     {
@@ -114,6 +116,7 @@ struct WorkspaceView: View
                             .presentationDetents([.medium, .large])
                             .presentationDragIndicator(.visible)
                             .modifier(SheetCaption(is_presented: $inspector_presented, label: object_type_name))
+                            .ignoresSafeArea(edges: .trailing)
                     }
                     #endif
                 }
@@ -124,7 +127,7 @@ struct WorkspaceView: View
                         .font(.title3)
                         .foregroundStyle(.secondary)
                     #if os(macOS)
-                        .inspectorColumnWidth(300)
+                        .inspectorColumnWidth(inspector_width)
                     #endif
                     #else
                     if horizontal_size_class != .compact
@@ -133,7 +136,7 @@ struct WorkspaceView: View
                             .font(.title3)
                             .foregroundStyle(.secondary)
                             .presentationDetents([.height(160)])
-                            .inspectorColumnWidth(400)
+                            .inspectorColumnWidth(inspector_width)
                     }
                     else
                     {
@@ -141,9 +144,10 @@ struct WorkspaceView: View
                             .font(.title3)
                             .foregroundStyle(.secondary)
                             .presentationDetents([.height(160)])
-                            .inspectorColumnWidth(400)
+                            .inspectorColumnWidth(inspector_width)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .modifier(ViewCloseButton(is_presented: $inspector_presented))
+                            .ignoresSafeArea(edges: .trailing)
                     }
                     #endif
                 }
@@ -172,10 +176,10 @@ struct WorkspaceView: View
                 #elseif os(iOS)
                 if #available(iOS 27.1, *) // iPhone Duo Only
                 {
-                    if device_hinge_state == .hOpen ||
-                       device_hinge_state == .hPartiallyOpen ||
-                       device_hinge_state == .hClosed ||
-                       device_hinge_state == .vClosed
+                    if app_state.device_hinge_state == .hOpen ||
+                        app_state.device_hinge_state == .hPartiallyOpen ||
+                        app_state.device_hinge_state == .hClosed ||
+                        app_state.device_hinge_state == .vClosed
                     {
                         ToolbarItem(id: "Documents", placement: .cancellationAction)
                         {

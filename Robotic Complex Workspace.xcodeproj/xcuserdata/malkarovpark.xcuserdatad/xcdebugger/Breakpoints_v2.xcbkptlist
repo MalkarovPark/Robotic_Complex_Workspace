@@ -334,8 +334,8 @@
             filePath = "Robotic Complex Workspace/Views/Workspace/WorkspaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "482"
-            endingLineNumber = "482"
+            startingLineNumber = "486"
+            endingLineNumber = "486"
             landmarkName = "open_view()"
             landmarkType = "7">
          </BreakpointContent>

@@ -129,47 +129,85 @@ struct WorkspaceSpatialView: View
             .frame(minWidth: 640, idealWidth: 800, minHeight: 576, idealHeight: 600)
             #endif
             
-            HStack(spacing: 0)
+            ZStack//(spacing: 0)
             {
                 if view_mode != .scene && assets_loaded
                 {
-                    WorkspaceGalleryView(document: $document)
-                        .frame(maxWidth: .infinity)
-                        .opacity(view_mode != .scene ? 1 : 0)
-                        .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
+                    GeometryReader
+                    { geometry in
+                        WorkspaceGalleryView(document: $document)
+                            .frame(maxWidth: .infinity)
+                            .opacity(view_mode != .scene ? 1 : 0)
+                            .animation(.spring(response: 0.35, dampingFraction: 0.95), value: geometry.size.width - pendant_width)
+                            .frame(width: geometry.size.width - pendant_width)
+                            //.border(.blue)
+                    }
+                    //.border(.green)
                 }
                 
-                SpatialPendant(
-                    controller: pendant_controller,
+                VStack
+                {
+                    #if os(iOS)
+                    if app_state.device_hinge_state == .vPartiallyOpen
+                    {
+                        Spacer()
+                    }
+                    #endif
                     
-                    shows_program_indices: true,
-                    
-                    on_update_workspace:
-                        {
-                            document.preset.programs = base_workspace.file_data().programs
-                            document.preset.registers = base_workspace.file_data().registers
-                        },
-                    on_update_robot:
-                        {
-                            document.preset.robots = base_workspace.file_data().robots
-                        },
-                    on_update_tool:
-                        {
-                            document.preset.tools = base_workspace.file_data().tools
-                        }
-                )
-                .frame(maxWidth: pendant_width)
-                .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
-                .padding([.horizontal, .bottom], 7.8)
-                #if os(macOS) || os(visionOS)
-                .ignoresSafeArea(edges: .bottom)
-                #else
-                .ignoresSafeArea(edges: horizontal_size_class == .compact ? .init() : .bottom)
-                #endif
+                    SpatialPendant(
+                        controller: pendant_controller,
+                        
+                        shows_program_indices: true,
+                        
+                        on_update_workspace:
+                            {
+                                document.preset.programs = base_workspace.file_data().programs
+                                document.preset.registers = base_workspace.file_data().registers
+                            },
+                        on_update_robot:
+                            {
+                                document.preset.robots = base_workspace.file_data().robots
+                            },
+                        on_update_tool:
+                            {
+                                document.preset.tools = base_workspace.file_data().tools
+                            }
+                    )
+                    #if os(iOS)
+                    .frame(maxHeight: pendant_height)
+                    #endif
+                    //.frame(maxWidth: pendant_width, maxHeight: pendant_height)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.95), value: pendant_width)
+                    .padding([.horizontal, .bottom], 7.8)
+                    #if os(macOS) || os(visionOS)
+                    .ignoresSafeArea(edges: .bottom)
+                    #else
+                    .ignoresSafeArea(
+                        edges: horizontal_size_class == .compact ||
+                        ((app_state.device_hinge_state == .vPartiallyOpen ||
+                          app_state.device_hinge_state == .vOpen) &&
+                         view_mode == .gallery) // iPhone Duo Only
+                        ? .init()
+                        : .bottom)
+                    #endif
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             AssetsLoadingPane(assets_loading: assets_loading)
+                .offset(x: {
+                #if !os(iOS) // iPhone Duo Only
+                    0
+                #else
+                    app_state.device_hinge_state == .none ||
+                    app_state.device_hinge_state == .vOpen ||
+                    app_state.device_hinge_state == .vPartiallyOpen ||
+                    app_state.device_hinge_state == .vClosed ||
+                    app_state.device_hinge_state == .hClosed
+                    ? 0
+                    : 40
+                #endif
+                }())
             #endif
         }
     }
@@ -179,19 +217,49 @@ struct WorkspaceSpatialView: View
     {
         if view_mode != .scene && assets_loaded
         {
+            #if os(macOS)
             if pendant_controller.is_opened && !(base_workspace.selected_object is Part)
             {
-                return 216
+                return 280 //256 //216
             }
             else
             {
                 return 0
             }
+            #else
+            if pendant_controller.is_opened &&
+                !(base_workspace.selected_object is Part) &&
+                app_state.device_hinge_state != .vClosed &&
+                app_state.device_hinge_state != .hClosed
+            {
+                return 280
+            }
+            else
+            {
+                return 0
+            }
+            #endif
         }
         else
         {
             return .infinity
         }
+    }
+    
+    private var pendant_height: CGFloat // iPhone Duo Only
+    {
+        #if os(iOS)
+        if app_state.device_hinge_state == .vPartiallyOpen
+        {
+            return 460
+        }
+        else
+        {
+            return .infinity
+        }
+        #else
+        return .infinity
+        #endif
     }
     #endif
 }
