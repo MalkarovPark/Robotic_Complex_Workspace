@@ -225,12 +225,14 @@ struct WorkspaceView: View
                         {
                             Label("Oribit Mode", systemImage: "rotate.3d")
                         }
+                        .labelStyle(.titleAndIcon)
                         .disabled(view_mode == .gallery)
                         
                         Button(action: { is_pan = true })
                         {
                             Label("Pan Mode", systemImage: "move.3d")
                         }
+                        .labelStyle(.titleAndIcon)
                         .disabled(view_mode == .gallery)
                         
                         Divider()
@@ -241,6 +243,7 @@ struct WorkspaceView: View
                             {
                                 Label(mode.rawValue, systemImage: mode.symbol_name)
                             }
+                            .labelStyle(.titleAndIcon)
                         }
                     }
                     label:

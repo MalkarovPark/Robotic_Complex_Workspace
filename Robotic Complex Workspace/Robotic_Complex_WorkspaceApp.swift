@@ -83,17 +83,19 @@ struct Robotic_Complex_WorkspaceApp: App
             
             CommandMenu("Performing")
             {
-                Button("Run/Pause")
+                Button(action: { app_state.start_pause_performing() })
                 {
-                    app_state.start_pause_performing()
+                    Label("Run/Pause", systemImage: "playpause")
                 }
                 .keyboardShortcut("R", modifiers: .command)
+                .labelStyle(.titleAndIcon)
                 
-                Button("Stop")
+                Button(action: { app_state.reset_performing() })
                 {
-                    app_state.reset_performing()
+                    Label("Stop", systemImage: "stop")
                 }
                 .keyboardShortcut(".", modifiers: .command)
+                .labelStyle(.titleAndIcon)
             }
         }
         #if os(visionOS)
