@@ -18,23 +18,23 @@ struct DuoStateTracker: ViewModifier
     func body(content: Content) -> some View
     {
         content
-            .onHingeChange // On Fold
-            { _, newContext in
-                self.current_hinge_context = newContext
-                updateState(with: newContext, size: nil)
+            .onHingeChange // on fold
+            { _, new_context in
+                self.current_hinge_context = new_context
+                update_state(with: new_context, size: nil)
             }
-            .onGeometryChange(for: CGSize.self) // On Rotate
+            .onGeometryChange(for: CGSize.self) // on rotate
             { proxy in
                 proxy.size
             }
             action:
-            { newSize in
-                latest_size = newSize
-                updateState(with: current_hinge_context, size: newSize)
+            { new_size in
+                latest_size = new_size
+                update_state(with: current_hinge_context, size: new_size)
             }
     }
     
-    private func updateState(with context: DeviceHingeContext?, size: CGSize?)
+    private func update_state(with context: DeviceHingeContext?, size: CGSize?)
     {
         guard let context = context, let hinge = context.hinge
         else

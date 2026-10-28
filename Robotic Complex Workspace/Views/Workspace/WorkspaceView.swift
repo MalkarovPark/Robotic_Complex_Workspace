@@ -58,11 +58,6 @@ struct WorkspaceView: View
     let inspector_width: CGFloat = 392 //400
     #endif
     
-    /*#if os(iOS)
-    @available(iOS 27.1, *) // iPhone Duo Only
-    @State private var device_hinge_state: DuoDeviceState = .none
-    #endif*/
-    
     @State private var is_pan = false
     
     var body: some View
@@ -93,6 +88,15 @@ struct WorkspaceView: View
                         .fill(.clear)
                         .allowsHitTesting(false)
                         .trackDuoState($app_state.device_hinge_state) //($device_hinge_state)
+                        .trackDuoState(Binding(
+                            get: { pendant_controller.is_vertical ? .vPartiallyOpen : .none },
+                            set:
+                                { new_value in
+                                    pendant_controller.is_vertical =
+                                    new_value != .vPartiallyOpen &&
+                                    new_value != .hClosed
+                                }
+                        ))
                 }
                 #endif
             }

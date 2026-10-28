@@ -129,7 +129,7 @@ struct WorkspaceSpatialView: View
             .frame(minWidth: 640, idealWidth: 800, minHeight: 576, idealHeight: 600)
             #endif
             
-            ZStack//(spacing: 0)
+            ZStack
             {
                 if view_mode != .scene && assets_loaded
                 {
